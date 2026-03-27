@@ -94,10 +94,10 @@ export default function Home() {
   const orgRT = [
     { role: "Ketua RT 01", name: "Sarip Hidayat" },
     { role: "Ketua RT 02", name: "Oneng" },
-    { role: "Ketua RT 03", name: "Mumun" },
+    { role: "Ketua RT 03", name: "mumun" },
   ];
   const orgPemuda = [
-    { role: "Ketua", name: "Ubay Rahmat H." },
+    { role: "Ketua", name: "aa bayet" },
     { role: "Wakil Ketua", name: "— Soon —" },
     { role: "Sekretaris", name: "— Soon —" },
     { role: "Bendahara", name: "— Soon —" },
