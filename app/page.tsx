@@ -87,7 +87,7 @@ export default function Home() {
 
   // Paguyuban data
   const orgDesa = [
-    { role: "Tokoh Agama / Pelindung", name: "Ust. Kurniadin", icon: "🕌" },
+    { role: "Tokoh Agama / Pelindung", name: "— Soon —", icon: "🕌" },
     { role: "Ketua RW / Pelindung", name: "Bpk. Enang", icon: "🏘️" },
     { role: "Pengelola DKM", name: "Bpk. Pupu Apipudin", icon: "🤲" },
   ];
@@ -600,12 +600,12 @@ export default function Home() {
                   content: (
                     <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                       {[
-                        { role: "Pelindung & Penasihat", name: "Ust. Kurniadin (Tokoh Agama) & Bpk. Enang (Ketua RW)", icon: "🕌" },
+                        { role: "Pelindung & Penasihat", name: "— Soon — (Tokoh Agama) & Bpk. Enang (Ketua RW)", icon: "🕌" },
                         { role: "Pengelola Dana Kemakmuran", name: "DKM Ciburial — Bpk. Pupu Apipudin", icon: "🤲" },
                         { role: "Koordinator RT 01", name: "Sarip Hidayat", icon: "🏘️" },
                         { role: "Koordinator RT 02", name: "Oneng", icon: "🏘️" },
                         { role: "Koordinator RT 03", name: "Mumun", icon: "🏘️" },
-                        { role: "Ketua Pemuda Makers", name: "Ubay Rahmat H.", icon: "⚡" },
+                        { role: "Ketua Pemuda Makers", name: "aa bayet", icon: "⚡" },
                       ].map((item, i) => (
                         <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 18px", background: "var(--cream)", borderRadius: 12, border: "1px solid var(--border)", flexWrap: "wrap", gap: 8 }}>
                           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
