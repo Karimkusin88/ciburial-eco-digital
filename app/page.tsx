@@ -15,7 +15,7 @@ const fRp = (n:number) => "Rp " + n.toLocaleString("id-ID");
 const DEF_KEG:Kegiatan[] = [
   {id:"d1",judul:"Pemasangan Smart PJU Perdana",tanggal:"2026-03-20",kategori:"update-kampung",deskripsi:"Milestone pertama! Smart PJU berbahan bambu berhasil dipasang di 2 titik strategis jalan utama Ciburial."},
   {id:"d2",judul:"HUT Kemerdekaan RI ke-81",tanggal:"2026-08-17",kategori:"kemerdekaan",deskripsi:"Perayaan HUT RI dengan lomba tradisional, upacara bendera, dan pentas seni pemuda Ciburial."},
-  {id:"d3",judul:"Peringatan Maulid Nabi SAW",tanggal:"2026-09-10",kategori:"keagamaan",deskripsi:"Pengajian dan doa bersama seluruh warga memperingati Maulid Nabi Muhammad SAW."},
+  {id:"d3",judul:"Peringatan Maulid Nabi SAW",tanggal:"2026-09-10",kategori:"keagamaan",deskripsi:"Pengajian bersama seluruh warga memperingati Maulid Nabi Muhammad SAW."},
   {id:"d4",judul:"Musyawarah Pembentukan Bank Sampah",tanggal:"2026-02-10",kategori:"kemasyarakatan",deskripsi:"Rembug warga menyiapkan sistem Bank Sampah Digital Ciburial perdana."},
 ];
 const DEF_PROD:Produk[] = [
@@ -27,7 +27,7 @@ const DEF_PROD:Produk[] = [
   {id:"p6",nama:"Pigura Bambu",deskripsi:"Pigura foto artistik dari bambu terpilih. Cocok untuk dekorasi atau hadiah.",harga:70000,tag:"Craft",icon:"🎋"},
 ];
 const DEF_TX:Transaksi[] = [
-  {id:"t1",tanggal:"2026-01-15",keterangan:"Donasi Ust. Kurniadin & jamaah",kategori:"Donasi Warga",tipe:"masuk",jumlah:500000},
+  {id:"t1",tanggal:"2026-01-15",keterangan:"Donasi jamaah",kategori:"Donasi Warga",tipe:"masuk",jumlah:500000},
   {id:"t2",tanggal:"2026-01-20",keterangan:"Donasi CSR PT. Sejahtera Garut",kategori:"Donasi Institusi",tipe:"masuk",jumlah:2000000},
   {id:"t3",tanggal:"2026-02-01",keterangan:"Pembelian material tiang PJU (2 unit)",kategori:"Smart PJU & Keamanan",tipe:"keluar",jumlah:850000},
   {id:"t4",tanggal:"2026-02-05",keterangan:"Donasi online via QRIS (Februari)",kategori:"Donasi Online",tipe:"masuk",jumlah:750000},
@@ -41,7 +41,7 @@ const DEF_TX:Transaksi[] = [
 
 // ─── RAB GLOBAL (dari proposal) ─────────────────────────────────────────────
 const ALOKASI = [
-  {label:"Balai Serba Guna & Ruang Publik",  target:80000000, icon:"🏛️",color:"#2D5A40",desc:"Material konstruksi baja ringan & bambu"},
+  {label:"Balai Serba Guna & Ruang Publik",  target:80000000, icon:"🏛️",color:"#2D5A40",desc:"Material konstruksi"},
   {label:"Smart Farming & Peternakan Modern", target:60000000, icon:"🌾",color:"#4A7C59",desc:"Infrastruktur kandang, bibit, instalasi kebun, pupuk"},
   {label:"Learning Hub",                      target:45000000, icon:"📚",color:"#B8943F",desc:"PC/Laptop, server, perabotan, buku perpustakaan"},
   {label:"Smart PJU & Keamanan",              target:25000000, icon:"💡",color:"#1A3A6B",desc:"Panel surya, lampu DC, tiang, IP Camera CCTV"},
@@ -121,7 +121,7 @@ export default function Home() {
 
   // ─── STRUKTUR ORGANISASI ─────────────────────────────────────────────────
   const dwnPelindung=[
-    {role:"Tokoh Agama",         name:"Ust. Kurniadin",   icon:"🕌"},
+    {role:"Tokoh Agama",         name:"— Sedang Dalam Proses musyawarah —",   icon:"🕌"},
     {role:"Kepala Kewilayahan",  name:"Bpk. Enang (Ketua RW)", icon:"🏘️"},
     {role:"Koordinator RT 01",   name:"Sarip Hidayat",    icon:"👤"},
     {role:"Koordinator RT 02",   name:"Oneng",            icon:"👤"},
@@ -131,9 +131,9 @@ export default function Home() {
     {role:"Pengelola Dana DKM",  name:"Bpk. Pupu Apipudin", icon:"🤲"},
   ];
   const timEksekutif=[
-    {role:"Ketua Pelaksana (PM)",name:"Ubay Rahmat H.",   icon:"⚡"},
-    {role:"Sekretaris",          name:"— Hasil Voting —", icon:"📋"},
-    {role:"Bendahara",           name:"— Hasil Voting —", icon:"💰"},
+    {role:"Ketua Pelaksana ",name:"— Sedang Dalam Proses Pemilihan —",   icon:"⚡"},
+    {role:"Sekretaris",          name:"— Sedang Dalam Proses Pemilihan —", icon:"📋"},
+    {role:"Bendahara",           name:"— Sedang Dalam Proses Pemilihan —", icon:"💰"},
   ];
   const divisi=[
     {icon:"🏗️",nama:"Green Build",        full:"Infrastruktur & Konstruksi Hijau", tugas:"Balai Serba Guna, Smart PJU, drainase resapan"},
@@ -300,12 +300,12 @@ export default function Home() {
                 <h2 className="fnt h4" style={{fontSize:"clamp(24px,5vw,58px)",fontWeight:600,fontStyle:"italic",color:"var(--go)",letterSpacing:"-.02em",marginBottom:10}}>Eco-Digital Village</h2>
                 <div className="h5" style={{marginBottom:32}}>
                   <p className="fnt" style={{fontSize:"clamp(14px,2vw,20px)",fontWeight:300,fontStyle:"italic",color:"var(--em)",letterSpacing:".02em"}}>
-                    Inovasi Desa Mandiri Berbasis Kearifan Lokal dan Teknologi Masa Depan
+                    Inovasi Desa Mandiri yang menggabungkan Kearifan Lokal & Teknologi Masa Depan
                   </p>
                 </div>
                 <div className="h5" style={{display:"flex",flexWrap:"wrap",gap:10,alignItems:"flex-end"}}>
                   <p style={{maxWidth:480,fontSize:15,fontWeight:400,lineHeight:1.8,color:"var(--ts)"}}>
-                    Memutus rantai ketertinggalan dengan digitalisasi hasil bumi, ekosistem sirkular, dan generasi muda yang melek teknologi — tanpa meninggalkan identitas kampung halaman.
+                    Kami memutus rantai ketertinggalan dengan digitalisasi hasil bumi, ekosistem sirkular, dan generasi muda yang melek teknologi — **tanpa meninggalkan identitas kampung halaman**.
                   </p>
                   <div style={{display:"flex",gap:8,flexWrap:"wrap",marginLeft:"auto"}}>
                     {["🌱 Pertanian Organik","🐄 Peternakan Modern","🎋 Kerajinan Bambu","💡 Smart PJU","♻️ Eco-Waste","📚 Learning Hub","🏛️ Balai Warga"].map(tag=>(
@@ -484,8 +484,8 @@ export default function Home() {
                     <div className="dl"/>
                     <h2 className="fnt" style={{fontSize:36,fontWeight:300,color:"var(--cr)",lineHeight:1.15,letterSpacing:"-.02em",marginBottom:14}}>Donasi<br/>Kemakmuran<br/>Kampung</h2>
                     <p style={{fontSize:13,lineHeight:1.85,color:"rgba(250,248,243,.5)",marginBottom:32}}>
-                      Target RAB Global <strong style={{color:"var(--gl)"}}>Rp 250.000.000</strong>.<br/>
-                      Dukung Balai Warga, Smart Farming, Learning Hub, Smart PJU, dan Internet Desa.
+                      Target RAB Tahun Pertama <strong style={{color:"var(--gl)"}}>Rp 250.000.000</strong>.<br/>
+                      Mari bersama membangun Balai Warga, Smart Farming, Learning Hub, Smart PJU, dan Internet Desa untuk masa depan ciburial.
                     </p>
                     <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:22}}>
                       {[{icon:"📱",l:"QRIS",s:"Scan & Bayar Instan"},{icon:"🏦",l:"Transfer Bank",s:"Rekening Resmi DKM"},{icon:"🌐",l:"Crypto / Web3",s:"EVM-Compatible Wallet"}].map((m,i)=>(
@@ -505,7 +505,7 @@ export default function Home() {
                       onMouseEnter={e=>{(e.currentTarget as HTMLButtonElement).style.background="rgba(255,255,255,.08)";(e.currentTarget as HTMLButtonElement).style.color="var(--cr)";}}
                       onMouseLeave={e=>{(e.currentTarget as HTMLButtonElement).style.background="transparent";(e.currentTarget as HTMLButtonElement).style.color="rgba(250,248,243,.55)";}}
                     >
-                      Lihat Transparansi Dana →
+                      Lihat Transparansi Dana Langsung →
                     </button>
                   </div>
                   <div style={{background:"var(--ea)",padding:"60px 52px",display:"flex",flexDirection:"column",justifyContent:"center"}}>
@@ -644,7 +644,7 @@ export default function Home() {
                       <p style={{marginBottom:28}}>Mengingat besarnya skala pergerakan ini, kami membuka ruang kolaborasi dan memohon dukungan dari Bapak/Ibu/Saudara guna merealisasikan cetak biru kemakmuran desa ini.</p>
                       <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))",gap:12}}>
                         {[
-                          {role:"Ketua Pemuda Ciburial Makers",name:"— Soon —",label:"Tanda Tangan & Stempel"},
+                          {role:"Ketua Pemuda Ciburial Makers",name:"[Sedang Dalam Proses Pemelihan]",label:"Tanda Tangan & Stempel"},
                           {role:"Ketua DKM Ciburial",name:"Bpk. Pupu Apipudin",label:"Mengetahui / Menyetujui"},
                           {role:"Ketua RW Kp. Ciburial",name:"Bpk. Enang",label:"Mengetahui / Menyetujui"},
                         ].map((s,i)=>(
@@ -738,7 +738,7 @@ export default function Home() {
                     <div style={{display:"flex",flexDirection:"column",gap:16}}>
                       {[
                         {group:"A. Dewan Pelindung & Penasihat",items:[
-                          "Tokoh Agama: Ust. Kurniadin",
+                          "Tokoh Agama: [Dalam Proses Musyawarah]",
                           "Kepala Kewilayahan: Bpk. Enang (Ketua RW)",
                           "Koordinator: Ketua RT 01 (Sarip Hidayat), RT 02 (Oneng), RT 03 (Mumun)",
                         ]},
@@ -746,9 +746,9 @@ export default function Home() {
                           "Pengelola Dana DKM: Bpk. Pupu Apipudin",
                         ]},
                         {group:"C. Tim Eksekutif Lapangan (Ciburial Makers)",items:[
-                          "Ketua Pelaksana (PM): Ubay Rahmat H.",
-                          "Sekretaris & Administrasi: [Hasil Voting]",
-                          "Bendahara Program: [Hasil Voting]",
+                          "Ketua Pelaksana (PM): [sedang proses pemilihan]",
+                          "Sekretaris & Administrasi: [sedang proses pemilihan]",
+                          "Bendahara Program: [sedang proses pemilihan]",
                         ]},
                         {group:"D. 5 Divisi Operasional",items:[
                           "🏗️ Green Build — Infrastruktur & Konstruksi Hijau",
