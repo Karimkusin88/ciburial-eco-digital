@@ -61,7 +61,7 @@ export default function AdminPage() {
   /* ─── form state ─── */
   const emptyK = { judul:"", tanggal: new Date().toISOString().split("T")[0], kategori:"keagamaan", deskripsi:"", foto:"" };
   const emptyP = { nama:"", deskripsi:"", harga:"", tag:"", icon:"🎋" };
-  const emptyT = { tanggal: new Date().toISOString().split("T")[0], keterangan:"", kategori:"Donasi Warga", tipe:"masuk" as const, jumlah:"" };
+  const emptyT: { tanggal:string; keterangan:string; kategori:string; tipe:"masuk"|"keluar"; jumlah:string } = { tanggal: new Date().toISOString().split("T")[0], keterangan:"", kategori:"Donasi Warga", tipe:"masuk", jumlah:"" };
 
   const [kForm, setKForm] = useState(emptyK);
   const [pForm, setPForm] = useState(emptyP);
