@@ -286,6 +286,14 @@ export default function Home() {
           }
           .hero-content{
             padding: 60px 20px 40px !important;
+            color: #3e2723 !important;
+          }
+
+          /* Tambahin baris ini buat maksa semua teks di dalam hero-content jadi gelap */
+          .hero-content p, 
+          .hero-content span, 
+          .hero-content div {
+            color: #3e2723 !important;
           }
           .hero-title{ font-size: clamp(48px, 14vw, 72px) !important; }
           .hero-sub{   font-size: clamp(18px, 6vw, 28px) !important; }
