@@ -311,13 +311,23 @@ export default function Home() {
       <main style={{minHeight:"100vh",background:"var(--cr)"}}>
 
         {/* ════════════════ NAVBAR ════════════════ */}
-        <nav className={scrolled?"ng":""} style={{position:"fixed",top:0,width:"100%",zIndex:50,transition:"background .3s,box-shadow .3s",background:scrolled?undefined:"transparent"}}>
-          <div style={{maxWidth:1320,margin:"0 auto",padding:"0 28px",height:70,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+        <nav className={scrolled ? "ng" : ""} style={{
+  position: "fixed",
+  top: 0,
+  width: "100%",
+  zIndex: 50,
+  transition: "background .3s, box-shadow .3s",
+  /* BIKIN BACKGROUND SOLID PAS DI-SCROLL BIAR GAK TEMBUS PANDANG KONTEN */
+  background: scrolled ? "#F4F1EA" : "transparent", /* Ganti hex-nya kalau krem lu beda, atau pakai var(--bg) */
+  /* TAMBAH BAYANGAN HALUS BIAR KELIATAN BATAS NAVBAR SAMA KONTEN */
+  boxShadow: scrolled ? "0 4px 20px rgba(0, 0, 0, 0.05)" : "none" 
+}}>
+  <div style={{maxWidth:1320,margin:"0 auto",padding:"0 28px",height:70,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
 
-            <button onClick={()=>go("tentang")} style={{background:"none",border:"none",cursor:"pointer",textAlign:"left"}}>
-              <div className="fnt" style={{fontSize:20,fontWeight:600,color:"var(--fo)",lineHeight:1,letterSpacing:"-.02em"}}>Ciburial</div>
-              <div style={{fontSize:9,fontWeight:700,letterSpacing:".18em",textTransform:"uppercase",color:"var(--go)"}}>Eco-Digital Village</div>
-            </button>
+    <button onClick={()=>go("tentang")} style={{background:"none",border:"none",cursor:"pointer",textAlign:"left"}}>
+      <div className="fnt" style={{fontSize:20,fontWeight:600,color:"var(--fo)",lineHeight:1,letterSpacing:"-.02em"}}>Ciburial</div>
+      <div style={{fontSize:9,fontWeight:700,letterSpacing:".18em",textTransform:"uppercase",color:"var(--go)"}}>Eco-Digital Village</div>
+    </button>
 
             {/* Desktop */}
             <div className="hidden md:flex" style={{gap:2,alignItems:"center"}}>
