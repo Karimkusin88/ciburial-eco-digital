@@ -262,6 +262,12 @@ export default function Home() {
 
         /* ── HERO MOBILE RESPONSIVE ── */
         /* Desktop: full viewport height, content di bawah */
+        .hero-section{
+          min-height: 100svh;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+        }
         .hero-content{
           padding: 0 32px 80px;
           padding-top: 140px;
@@ -272,13 +278,17 @@ export default function Home() {
         .hero-title{ font-size: clamp(54px, 12vw, 154px); }
         .hero-sub{   font-size: clamp(22px, 5vw, 58px); }
 
-        /* Mobile: compact, semua konten langsung terlihat */
+        /* Mobile: hilangkan full-height, konten langsung keliatan */
         @media (max-width: 768px) {
-          .hero-content{
-            padding: 100px 22px 48px !important;
+          .hero-section{
+            min-height: 0 !important;
+            justify-content: flex-start !important;
           }
-          .hero-title{ font-size: clamp(52px, 15vw, 80px) !important; }
-          .hero-sub{   font-size: clamp(20px, 6vw, 32px) !important; }
+          .hero-content{
+            padding: 96px 22px 48px !important;
+          }
+          .hero-title{ font-size: clamp(48px, 14vw, 72px) !important; }
+          .hero-sub{   font-size: clamp(18px, 6vw, 28px) !important; }
         }
       `}</style>
 
@@ -398,7 +408,7 @@ export default function Home() {
           <div className="pi">
 
             {/* HERO — mobile responsive fix */}
-            <section style={{position:"relative",overflow:"hidden",minHeight:"100svh",display:"flex",flexDirection:"column",justifyContent:"flex-end"}}>
+            <section className="hero-section" style={{position:"relative",overflow:"hidden"}}>
               <div style={{position:"absolute",top:0,right:0,width:"42%",height:"100%",background:"linear-gradient(135deg,var(--fo) 0%,var(--fm) 60%,var(--fl) 100%)",clipPath:"polygon(18% 0%,100% 0%,100% 100%,0% 100%)",opacity:.055,pointerEvents:"none"}}/>
               <div style={{position:"absolute",bottom:0,left:0,width:"100%",height:"35%",background:"linear-gradient(0deg,var(--cd) 0%,transparent 100%)",pointerEvents:"none"}}/>
 
