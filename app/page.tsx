@@ -285,7 +285,7 @@ export default function Home() {
             justify-content: flex-start !important;
           }
           .hero-content{
-            padding: 96px 20px 40px !important;
+            padding: 60px 20px 40px !important;
           }
           .hero-title{ font-size: clamp(48px, 14vw, 72px) !important; }
           .hero-sub{   font-size: clamp(18px, 6vw, 28px) !important; }
