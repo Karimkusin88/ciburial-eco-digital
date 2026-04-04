@@ -285,10 +285,18 @@ export default function Home() {
             justify-content: flex-start !important;
           }
           .hero-content{
-            padding: 96px 22px 48px !important;
+            padding: 96px 20px 40px !important;
           }
           .hero-title{ font-size: clamp(48px, 14vw, 72px) !important; }
           .hero-sub{   font-size: clamp(18px, 6vw, 28px) !important; }
+
+          /* Kurangin padding semua section konten di HP */
+          .sec {
+            padding: 52px 20px !important;
+          }
+
+          /* Tab pages lain juga perlu fix */
+          .pi { padding-left: 0; padding-right: 0; }
         }
       `}</style>
 
@@ -458,7 +466,7 @@ export default function Home() {
             </div>
 
             {/* STATS */}
-            <section style={{background:"var(--cw)",padding:"68px 32px"}}>
+            <section className="sec" style={{background:"var(--cw)",padding:"68px 32px"}}>
               <div style={{maxWidth:1320,margin:"0 auto",display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(130px,1fr))",gap:2}}>
                 {[
                   {v:"450",    l:"Jiwa",      s:"Total Populasi"},
@@ -478,7 +486,7 @@ export default function Home() {
             </section>
 
             {/* VISI MISI */}
-            <section style={{padding:"104px 32px",background:"var(--cr)"}}>
+            <section className="sec" style={{padding:"104px 32px",background:"var(--cr)"}}>
               <div style={{maxWidth:1320,margin:"0 auto",display:"flex",flexWrap:"wrap",gap:52,alignItems:"flex-start"}}>
                 <div className="rv" style={{flex:"0 0 270px"}}>
                   <div className="dl"/>
@@ -512,7 +520,7 @@ export default function Home() {
             </section>
 
             {/* DEMOGRAFI */}
-            <section style={{padding:"104px 32px",background:"var(--fo)"}}>
+            <section className="sec" style={{padding:"104px 32px",background:"var(--fo)"}}>
               <div style={{maxWidth:1320,margin:"0 auto"}}>
                 <div className="rv" style={{textAlign:"center",marginBottom:56}}>
                   <div className="dl dlc"/>
@@ -534,7 +542,7 @@ export default function Home() {
             </section>
 
             {/* PAGUYUBAN + DIVISI */}
-            <section style={{padding:"104px 32px",background:"var(--cr)"}}>
+            <section className="sec" style={{padding:"104px 32px",background:"var(--cr)"}}>
               <div style={{maxWidth:1320,margin:"0 auto"}}>
                 <div className="rv" style={{textAlign:"center",marginBottom:60}}>
                   <div className="dl dlc"/>
@@ -605,7 +613,7 @@ export default function Home() {
             </section>
 
             {/* DONASI SPLIT */}
-            <section style={{padding:"0 32px 104px"}}>
+            <section className="sec" style={{padding:"0 32px 104px"}}>
               <div style={{maxWidth:1320,margin:"0 auto"}}>
                 <div className="rv" style={{borderRadius:28,overflow:"hidden",display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(250px,1fr))"}}>
                   <div style={{background:"var(--fo)",padding:"60px 52px"}}>
