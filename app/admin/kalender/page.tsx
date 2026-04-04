@@ -319,27 +319,56 @@ export default function KalenderPage() {
       {/* MODAL FORM */}
       {showModal && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50 }}>
-          <div style={{ background: "white", borderRadius: 20, width: "100%", maxWidth: 480, padding: 28 }}>
-            <h2 style={{ margin: 0, fontSize: 22, fontWeight: 800 }}>{editingId ? "Edit Kegiatan" : "Tambah Kegiatan Baru"}</h2>
-            <div style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: 16 }}>
-              <input type="text" placeholder="Judul kegiatan" value={form.judul} onChange={(e) => setForm({ ...form, judul: e.target.value })} style={{ padding: 14, borderRadius: 10, border: "1px solid #ddd" }} />
-              <textarea placeholder="Deskripsi" value={form.deskripsi} onChange={(e) => setForm({ ...form, deskripsi: e.target.value })} style={{ padding: 14, borderRadius: 10, border: "1px solid #ddd", minHeight: 100 }} />
-              <input type="date" value={form.tanggal} onChange={(e) => setForm({ ...form, tanggal: e.target.value })} style={{ padding: 14, borderRadius: 10, border: "1px solid #ddd" }} />
-              <input type="time" value={form.jam_mulai} onChange={(e) => setForm({ ...form, jam_mulai: e.target.value })} style={{ padding: 14, borderRadius: 10, border: "1px solid #ddd" }} />
-              <input type="text" placeholder="Lokasi" value={form.lokasi} onChange={(e) => setForm({ ...form, lokasi: e.target.value })} style={{ padding: 14, borderRadius: 10, border: "1px solid #ddd" }} />
-              <select value={form.kategori} onChange={(e) => setForm({ ...form, kategori: e.target.value })} style={{ padding: 14, borderRadius: 10, border: "1px solid #ddd" }}>
-                {Object.keys(KAT_COLOR).map((k) => (
-                  <option key={k} value={k}>{k.charAt(0).toUpperCase() + k.slice(1)}</option>
-                ))}
-              </select>
-            </div>
-            <div style={{ marginTop: 28, display: "flex", gap: 12 }}>
-              <button onClick={() => { setShowModal(false); setEditingId(null); }} style={{ flex: 1, padding: 14, borderRadius: 12, border: "1px solid #ddd", background: "white" }}>Batal</button>
-              <button onClick={handleSave} style={{ flex: 1, padding: 14, borderRadius: 12, background: "#2d5a40", color: "white", border: "none" }}>Simpan</button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
+         <div style={{ background: "white", borderRadius: 20, width: "100%", maxWidth: 520, padding: 28, maxHeight: "90vh", overflowY: "auto" }}>
+          <h2 style={{ margin: 0, fontSize: 22, fontWeight: 800 }}>{editingId ? "Edit Kegiatan" : "Tambah Kegiatan Baru"}</h2>
+
+          <div style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: 16 }}>
+           {/* ... field judul, deskripsi, tanggal, jam, lokasi, kategori tetap sama ... */}
+
+           {/* UPLOAD FOTO BARU - GANTI FIELD URL LAMA DENGAN INI */}
+           <div>
+            <label style={{ display: "block", fontSize: 13, color: "#555", marginBottom: 6 }}>Foto Kegiatan (Opsional)</label>
+            <input 
+              type="file" 
+              accept="image/*" 
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+              
+                // Upload ke Supabase Storage
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${Date.now()}.${fileExt}`;
+              
+                const { data, error } = await supabase.storage
+                  .from('kegiatan-foto')
+                  .upload(fileName, file, { upsert: true });
+
+                if (error) {
+                 alert("Gagal upload foto: " + error.message);
+                 return;
+                 }
+
+                const { data: urlData } = supabase.storage
+                  .from('kegiatan-foto')
+                  .getPublicUrl(fileName);
+
+                setForm({ ...form, foto_url: urlData.publicUrl });
+                alert("Foto berhasil diupload! ✅");
+              }}
+              style={{ padding: 10, border: "1px solid #ddd", borderRadius: 10, width: "100%" }}
+           />
+           {/* Preview foto */}
+           {form.foto_url && (
+             <img 
+               src={form.foto_url} 
+               alt="Preview" 
+               style={{ marginTop: 12, maxWidth: "100%", maxHeight: 200, borderRadius: 12, objectFit: "cover" }} 
+             />
+           )}
+         </div>
+       </div>
+
+       {/* Tombol simpan & batal tetap sama */}
+     </div>
+   </div>
+)}
