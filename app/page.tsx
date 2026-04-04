@@ -238,6 +238,27 @@ export default function Home() {
         ::-webkit-scrollbar{width:5px;}
         ::-webkit-scrollbar-thumb{background:var(--el);border-radius:99px;}
 
+        /* ── DROPDOWN LAYANAN ── */
+        .drop-menu{
+          position:absolute; top:calc(100% + 8px); right:0;
+          background:var(--cw); border:1px solid var(--bo);
+          border-radius:16px; padding:8px; min-width:200px;
+          box-shadow:0 16px 48px rgba(28,58,43,.12);
+          opacity:0; transform:translateY(-8px); pointer-events:none;
+          transition:opacity .25s cubic-bezier(.22,1,.36,1), transform .25s cubic-bezier(.22,1,.36,1);
+          z-index:100;
+        }
+        .drop-menu.open{ opacity:1; transform:translateY(0); pointer-events:all; }
+        .drop-item{
+          display:flex; align-items:center; gap:10;
+          padding:10px 14px; border-radius:10px;
+          text-decoration:none; font-size:12px; font-weight:600;
+          letter-spacing:.05em; color:var(--ts);
+          transition:background .15s, color .15s;
+          white-space:nowrap;
+        }
+        .drop-item:hover{ background:var(--cd); color:var(--fo); }
+
         /* ── HERO MOBILE RESPONSIVE ── */
         /* Desktop: full viewport height, content di bawah */
         .hero-content{
@@ -278,6 +299,36 @@ export default function Home() {
                   {t.label}
                 </button>
               ))}
+              {/* Dropdown Layanan Warga */}
+              <div style={{position:"relative"}} onMouseEnter={()=>setDropOpen(true)} onMouseLeave={()=>setDropOpen(false)}>
+                <button style={{
+                  display:"flex",alignItems:"center",gap:5,
+                  padding:"8px 14px",fontSize:11,fontWeight:600,letterSpacing:".08em",textTransform:"uppercase",
+                  border:"none",borderRadius:99,cursor:"pointer",transition:"all .25s",
+                  background:dropOpen?"var(--fo)":"transparent",
+                  color:dropOpen?"#fff":"var(--ts)",
+                }}>
+                  Layanan
+                  <span style={{fontSize:9,transition:"transform .25s",transform:dropOpen?"rotate(180deg)":"rotate(0)"}}>▾</span>
+                </button>
+                <div className={`drop-menu ${dropOpen?"open":""}`}>
+                  <a href="/pengaduan" className="drop-item">
+                    <span style={{fontSize:18}}>📢</span>
+                    <div>
+                      <div style={{fontWeight:700,color:"var(--tp)"}}>Pengaduan Warga</div>
+                      <div style={{fontSize:10,color:"var(--tm)",fontWeight:500}}>Laporkan masalah kampung</div>
+                    </div>
+                  </a>
+                  <a href="/voting" className="drop-item">
+                    <span style={{fontSize:18}}>🗳️</span>
+                    <div>
+                      <div style={{fontWeight:700,color:"var(--tp)"}}>Voting</div>
+                      <div style={{fontSize:10,color:"var(--tm)",fontWeight:500}}>Suara warga Ciburial</div>
+                    </div>
+                  </a>
+                </div>
+              </div>
+
               {/* Tombol AI — link ke halaman terpisah /ai */}
               <a href="/ai" style={{
                 display:"flex",alignItems:"center",gap:6,
@@ -318,6 +369,24 @@ export default function Home() {
             <a href="/ai" style={{display:"flex",alignItems:"center",gap:8,padding:"12px 0",fontSize:12,fontWeight:700,letterSpacing:".08em",textTransform:"uppercase",color:"#2d5a40",textDecoration:"none",borderBottom:"1px solid var(--bo)"}}>
               <span>🤖</span> Ciburial AI <span style={{fontSize:9,padding:"2px 6px",background:"rgba(45,90,64,0.1)",borderRadius:99,color:"#4a7c59"}}>BETA</span>
             </a>
+            {/* Layanan Warga di mobile menu */}
+            <div style={{padding:"8px 0 4px",borderBottom:"1px solid var(--bo)"}}>
+              <div style={{fontSize:9,fontWeight:700,letterSpacing:".15em",textTransform:"uppercase",color:"var(--tm)",marginBottom:8}}>Layanan Warga</div>
+              <a href="/pengaduan" style={{display:"flex",alignItems:"center",gap:10,padding:"10px 0",textDecoration:"none",borderBottom:"1px solid rgba(229,224,216,.5)"}}>
+                <span style={{fontSize:18}}>📢</span>
+                <div>
+                  <div style={{fontSize:12,fontWeight:700,color:"var(--tp)",letterSpacing:".04em",textTransform:"uppercase"}}>Pengaduan Warga</div>
+                  <div style={{fontSize:11,color:"var(--tm)"}}>Laporkan masalah kampung</div>
+                </div>
+              </a>
+              <a href="/voting" style={{display:"flex",alignItems:"center",gap:10,padding:"10px 0",textDecoration:"none"}}>
+                <span style={{fontSize:18}}>🗳️</span>
+                <div>
+                  <div style={{fontSize:12,fontWeight:700,color:"var(--tp)",letterSpacing:".04em",textTransform:"uppercase"}}>Voting</div>
+                  <div style={{fontSize:11,color:"var(--tm)"}}>Suara warga Ciburial</div>
+                </div>
+              </a>
+            </div>
           </div>
         </nav>
 
@@ -1146,6 +1215,18 @@ export default function Home() {
                     onMouseLeave={e=>(e.currentTarget.style.color="rgba(250,248,243,.38)")}
                   >{t.label}</button>
                 ))}
+                <a href="/pengaduan" style={{fontSize:12,fontWeight:500,color:"rgba(250,248,243,.38)",textDecoration:"none",transition:"color .2s"}}
+                  onMouseEnter={e=>(e.currentTarget.style.color="var(--cr)")}
+                  onMouseLeave={e=>(e.currentTarget.style.color="rgba(250,248,243,.38)")}
+                >📢 Pengaduan Warga</a>
+                <a href="/voting" style={{fontSize:12,fontWeight:500,color:"rgba(250,248,243,.38)",textDecoration:"none",transition:"color .2s"}}
+                  onMouseEnter={e=>(e.currentTarget.style.color="var(--cr)")}
+                  onMouseLeave={e=>(e.currentTarget.style.color="rgba(250,248,243,.38)")}
+                >🗳️ Voting</a>
+                <a href="/ai" style={{fontSize:12,fontWeight:500,color:"rgba(122,173,138,.6)",textDecoration:"none",transition:"color .2s"}}
+                  onMouseEnter={e=>(e.currentTarget.style.color="#7aad8a")}
+                  onMouseLeave={e=>(e.currentTarget.style.color="rgba(122,173,138,.6)")}
+                >🤖 Ciburial AI</a>
               </div>
             </div>
             <div>
