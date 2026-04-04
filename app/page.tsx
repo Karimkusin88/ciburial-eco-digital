@@ -1245,7 +1245,7 @@ export default function Home() {
             </div>
             <div>
               <h4 style={{fontSize:10,fontWeight:700,letterSpacing:".14em",textTransform:"uppercase",color:"var(--go)",marginBottom:18}}>Lokasi</h4>
-              <p style={{fontSize:12,lineHeight:1.9,color:"rgba(250,248,243,.38)"}}>Kp Ciburial<br/>Desa Hanjuang, Kec. Bungbulang<br/>Kab. Garut, Jawa Barat 44165</p>
+              <p style={{fontSize:12,lineHeight:1.9,color:"rgba(250,248,243,.38)"}}>Kp Ciburial Rw 08<br/>Desa Hanjuang, Kec. Bungbulang<br/>Kab. Garut, Jawa Barat 44165</p>
             </div>
             <div>
               <h4 style={{fontSize:10,fontWeight:700,letterSpacing:".14em",textTransform:"uppercase",color:"var(--go)",marginBottom:18}}>Navigasi</h4>
