@@ -33,13 +33,14 @@ export default function VotingPage() {
     if (voted[votingId]) return showToast("Kamu sudah vote!");
     setLoading(pilihanId);
     await supabase.from("suara_voting").insert({ voting_id: votingId, pilihan_id: pilihanId });
-    await supabase.rpc("increment_suara", { pilihan_id: pilihanId }).catch(() => {
-      // fallback: manual update
-      const current = pilihanMap[votingId]?.find(p => p.id === pilihanId);
-      if (current) {
-        supabase.from("pilihan_voting").update({ jumlah_suara: (current.jumlah_suara || 0) + 1 }).eq("id", pilihanId);
-      }
-    });
+    // fallback: manual increment jumlah suara
+    const current = pilihanMap[votingId]?.find(p => p.id === pilihanId);
+    if (current) {
+      await supabase
+        .from("pilihan_voting")
+        .update({ jumlah_suara: (current.jumlah_suara || 0) + 1 })
+        .eq("id", pilihanId);
+    }
     setVoted({ ...voted, [votingId]: pilihanId });
     showToast("✅ Suara kamu tercatat!");
     setLoading(null);
