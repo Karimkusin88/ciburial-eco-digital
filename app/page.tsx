@@ -307,7 +307,27 @@ export default function Home() {
           .pi { padding-left: 0; padding-right: 0; }
         }
       `}</style>
+      
+      {/* NAVBAR */}
+  <nav className={scrolled?"ng":""} style={{
+    position:"fixed",
+    top:0,
+    width:"100%",
+    zIndex:999,
+    transition:"background .3s,box-shadow .3s",
+    background:scrolled?undefined:"transparent"
+  }}>
+    ...
+  </nav>
 
+  {/* MAIN */}
+  <main style={{
+    minHeight:"100dvh",
+    background:"var(--cr)",
+    paddingTop:"70px"
+  }}>
+    </main>    
+      
       <main style={{
         minHeight: "100dvh",
         background: "var(--cr)",
