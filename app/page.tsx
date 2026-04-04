@@ -307,27 +307,7 @@ export default function Home() {
           .pi { padding-left: 0; padding-right: 0; }
         }
       `}</style>
-      
-      {/* NAVBAR */}
-  <nav className={scrolled?"ng":""} style={{
-    position:"fixed",
-    top:0,
-    width:"100%",
-    zIndex:999,
-    transition:"background .3s,box-shadow .3s",
-    background:scrolled?undefined:"transparent"
-  }}>
-    ...
-  </nav>
 
-  {/* MAIN */}
-  <main style={{
-    minHeight:"100dvh",
-    background:"var(--cr)",
-    paddingTop:"70px"
-  }}>
-    </main>    
-      
       <main style={{
         minHeight: "100dvh",
         background: "var(--cr)",
@@ -335,11 +315,11 @@ export default function Home() {
       }}>
 
         {/* ════════════════ NAVBAR ════════════════ */}
-        <nav className={scrolled ? "ng" : ""} style={{
-  position: "fixed",
-  top: 0,
-  width: "100%",
-  zIndex: 50,
+      <nav className={scrolled ? "ng" : ""} style={{
+        position: "fixed",
+       top: 0,
+       width: "100%",
+       zIndex: 50,
   transition: "background .3s, box-shadow .3s",
   /* BIKIN BACKGROUND SOLID PAS DI-SCROLL BIAR GAK TEMBUS PANDANG KONTEN */
   background: scrolled ? "#F4F1EA" : "transparent", /* Ganti hex-nya kalau krem lu beda, atau pakai var(--bg) */
