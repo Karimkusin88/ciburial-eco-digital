@@ -5,7 +5,7 @@ import { supabase, isSupabaseReady } from "@/lib/supabase";
 // =====================
 // ZAKAT PAGE
 // =====================
-interface ZakatRow { id: string; kk_id: string; jumlah_jiwa: number; jenis: string; nominal_kg: number; nominal_uang: number; tgl_bayar: string; keluarga: { kepala_keluarga: string; rt: string; }; }
+interface ZakatRow { id: string; kk_id: string; tahun: number; jumlah_jiwa: number; jenis: string; nominal_kg: number; nominal_uang: number; tgl_bayar: string; keluarga: { kepala_keluarga: string; rt: string; }; }
 
 const HARGA_BERAS = 15000;
 const emptyZakat = { kk_id: "", tahun: new Date().getFullYear(), jumlah_jiwa: 1, jenis: "beras", nominal_kg: 0, nominal_uang: 0, tgl_bayar: new Date().toISOString().split("T")[0] };
