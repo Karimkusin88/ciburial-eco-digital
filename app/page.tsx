@@ -237,6 +237,27 @@ export default function Home() {
 
         ::-webkit-scrollbar{width:5px;}
         ::-webkit-scrollbar-thumb{background:var(--el);border-radius:99px;}
+
+        /* ── HERO MOBILE RESPONSIVE ── */
+        /* Desktop: full viewport height, content di bawah */
+        .hero-content{
+          padding: 0 32px 80px;
+          padding-top: 140px;
+          max-width: 100%;
+          position: relative;
+          z-index: 1;
+        }
+        .hero-title{ font-size: clamp(54px, 12vw, 154px); }
+        .hero-sub{   font-size: clamp(22px, 5vw, 58px); }
+
+        /* Mobile: compact, semua konten langsung terlihat */
+        @media (max-width: 768px) {
+          .hero-content{
+            padding: 100px 22px 48px !important;
+          }
+          .hero-title{ font-size: clamp(52px, 15vw, 80px) !important; }
+          .hero-sub{   font-size: clamp(20px, 6vw, 32px) !important; }
+        }
       `}</style>
 
       <main style={{minHeight:"100vh",background:"var(--cr)"}}>
@@ -306,35 +327,38 @@ export default function Home() {
         {tab==="tentang"&&!checkout&&(
           <div className="pi">
 
-            {/* HERO */}
-            <section style={{minHeight:"100vh",display:"flex",flexDirection:"column",justifyContent:"flex-end",padding:"0 32px 80px",position:"relative",overflow:"hidden"}}>
-              <div style={{position:"absolute",top:0,right:0,width:"42%",height:"100%",background:"linear-gradient(135deg,var(--fo) 0%,var(--fm) 60%,var(--fl) 100%)",clipPath:"polygon(18% 0%,100% 0%,100% 100%,0% 100%)",opacity:.055}}/>
+            {/* HERO — mobile responsive fix */}
+            <section style={{position:"relative",overflow:"hidden",minHeight:"100svh",display:"flex",flexDirection:"column",justifyContent:"flex-end"}}>
+              <div style={{position:"absolute",top:0,right:0,width:"42%",height:"100%",background:"linear-gradient(135deg,var(--fo) 0%,var(--fm) 60%,var(--fl) 100%)",clipPath:"polygon(18% 0%,100% 0%,100% 100%,0% 100%)",opacity:.055,pointerEvents:"none"}}/>
               <div style={{position:"absolute",bottom:0,left:0,width:"100%",height:"35%",background:"linear-gradient(0deg,var(--cd) 0%,transparent 100%)",pointerEvents:"none"}}/>
 
-              <div className="h1" style={{position:"absolute",top:114,left:32,display:"flex",alignItems:"center",gap:10}}>
-                <div style={{width:28,height:1,background:"var(--go)"}}/>
-                <span style={{fontSize:10,fontWeight:700,letterSpacing:".2em",textTransform:"uppercase",color:"var(--go)"}}>Kp. Ciburial, Garut — Est. 2026</span>
-              </div>
+              <div className="hero-content">
+                {/* Tag lokasi */}
+                <div className="h1" style={{display:"flex",alignItems:"center",gap:10,marginBottom:28}}>
+                  <div style={{width:28,height:1,background:"var(--go)",flexShrink:0}}/>
+                  <span style={{fontSize:10,fontWeight:700,letterSpacing:".2em",textTransform:"uppercase",color:"var(--go)"}}>Kp. Ciburial, Garut — Est. 2026</span>
+                </div>
 
-              <div style={{maxWidth:1320,margin:"0 auto",width:"100%"}}>
-                <div className="h2" style={{marginBottom:6}}>
-                  <span style={{fontSize:12,fontWeight:600,letterSpacing:".14em",textTransform:"uppercase",color:"var(--em)"}}>Selamat Datang di</span>
-                </div>
-                <h1 className="fnt h3" style={{fontSize:"clamp(64px,12vw,154px)",fontWeight:300,lineHeight:.9,color:"var(--fo)",letterSpacing:"-.03em",marginBottom:6}}>Ciburial</h1>
-                <h2 className="fnt h4" style={{fontSize:"clamp(24px,5vw,58px)",fontWeight:600,fontStyle:"italic",color:"var(--go)",letterSpacing:"-.02em",marginBottom:10}}>Eco-Digital Village</h2>
-                <div className="h5" style={{marginBottom:32}}>
-                  <p className="fnt" style={{fontSize:"clamp(14px,2vw,20px)",fontWeight:300,fontStyle:"italic",color:"var(--em)",letterSpacing:".02em"}}>
-                    Inovasi Desa Mandiri Berbasis Kearifan Lokal dan Teknologi Masa Depan
-                  </p>
-                </div>
-                <div className="h5" style={{display:"flex",flexWrap:"wrap",gap:10,alignItems:"flex-end"}}>
-                  <p style={{maxWidth:480,fontSize:15,fontWeight:400,lineHeight:1.8,color:"var(--ts)"}}>
-                    Memutus rantai ketertinggalan dengan digitalisasi hasil bumi, ekosistem sirkular, dan generasi muda yang melek teknologi — tanpa meninggalkan identitas kampung halaman.
-                  </p>
-                  <div style={{display:"flex",gap:8,flexWrap:"wrap",marginLeft:"auto"}}>
-                    {["🌱 Pertanian Organik","🐄 Peternakan Modern","🎋 Kerajinan Bambu","💡 Smart PJU","♻️ Eco-Waste","📚 Learning Hub","🏛️ Balai Warga"].map(tag=>(
-                      <span key={tag} style={{padding:"6px 13px",fontSize:11,fontWeight:600,border:"1px solid var(--bo)",borderRadius:99,color:"var(--ts)",background:"var(--cw)"}}>{tag}</span>
-                    ))}
+                <div style={{maxWidth:1320,margin:"0 auto",width:"100%"}}>
+                  <div className="h2" style={{marginBottom:6}}>
+                    <span style={{fontSize:12,fontWeight:600,letterSpacing:".14em",textTransform:"uppercase",color:"var(--em)"}}>Selamat Datang di</span>
+                  </div>
+                  <h1 className="fnt h3 hero-title" style={{fontWeight:300,lineHeight:.9,color:"var(--fo)",letterSpacing:"-.03em",marginBottom:6}}>Ciburial</h1>
+                  <h2 className="fnt h4 hero-sub" style={{fontWeight:600,fontStyle:"italic",color:"var(--go)",letterSpacing:"-.02em",marginBottom:10}}>Eco-Digital Village</h2>
+                  <div className="h5" style={{marginBottom:24}}>
+                    <p className="fnt" style={{fontSize:"clamp(13px,2vw,18px)",fontWeight:300,fontStyle:"italic",color:"var(--em)",letterSpacing:".02em"}}>
+                      Inovasi Desa Mandiri Berbasis Kearifan Lokal dan Teknologi Masa Depan
+                    </p>
+                  </div>
+                  <div className="h5" style={{display:"flex",flexWrap:"wrap",gap:10}}>
+                    <p style={{maxWidth:480,fontSize:15,fontWeight:400,lineHeight:1.8,color:"var(--ts)",marginBottom:12}}>
+                      Memutus rantai ketertinggalan dengan digitalisasi hasil bumi, ekosistem sirkular, dan generasi muda yang melek teknologi — tanpa meninggalkan identitas kampung halaman.
+                    </p>
+                    <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+                      {["🌱 Pertanian Organik","🐄 Peternakan Modern","🎋 Kerajinan Bambu","💡 Smart PJU","♻️ Eco-Waste","📚 Learning Hub","🏛️ Balai Warga"].map(tag=>(
+                        <span key={tag} style={{padding:"6px 13px",fontSize:11,fontWeight:600,border:"1px solid var(--bo)",borderRadius:99,color:"var(--ts)",background:"var(--cw)"}}>{tag}</span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
