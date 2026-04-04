@@ -263,7 +263,7 @@ export default function Home() {
         /* ── HERO MOBILE RESPONSIVE ── */
         /* Desktop: full viewport height, content di bawah */
         .hero-section{
-          min-height: 100svh;
+          min-height: 100dvh;
           display: flex;
           flex-direction: column;
           justify-content: flex-end;
@@ -308,7 +308,11 @@ export default function Home() {
         }
       `}</style>
 
-      <main style={{minHeight:"100vh",background:"var(--cr)"}}>
+      <main style={{
+        minHeight:"100dvh"
+        background:"var(--cr)",
+        paddingTop:"60px"
+      }}>
 
         {/* ════════════════ NAVBAR ════════════════ */}
         <nav className={scrolled ? "ng" : ""} style={{
