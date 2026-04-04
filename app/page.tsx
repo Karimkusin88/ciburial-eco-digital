@@ -309,7 +309,7 @@ export default function Home() {
       `}</style>
 
       <main style={{
-        minHeight: "100dvh"
+        minHeight: "100dvh",
         background: "var(--cr)",
         paddingTop: "60px"
       }}>
