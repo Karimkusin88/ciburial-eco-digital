@@ -62,6 +62,7 @@ export default function Home() {
   const [checkout,   setCheckout]   = useState(false);
   const [scrolled,   setScrolled]   = useState(false);
   const [mobOpen,    setMobOpen]    = useState(false);
+  const [dropOpen,   setDropOpen]   = useState(false);
   const [fTipe,      setFTipe]      = useState<"semua"|"masuk"|"keluar">("semua");
   const [fKat,       setFKat]       = useState("semua");
   const [propOpen,   setPropOpen]   = useState<number|null>(null);
