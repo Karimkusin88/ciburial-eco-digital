@@ -275,47 +275,19 @@ export default function Home() {
 
         /* ── HERO MOBILE RESPONSIVE ── */
         /* Desktop: full viewport height, content di bawah */
-        .hero-section{
-          min-height: 100svh;
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-end;
-        }
-        .hero-content{
-          padding: 0 32px 80px;
-          padding-top: 140px;
-          max-width: 100%;
-          position: relative;
-          z-index: 1;
-        }
-        .hero-title{ font-size: clamp(54px, 12vw, 154px); }
-        .hero-sub{   font-size: clamp(22px, 5vw, 58px); }
+        /* HERO — simple padding approach, no full-height trick */
+        .hero-section{ position:relative; overflow:hidden; }
+        .hero-content{ padding:160px 32px 100px; max-width:100%; position:relative; z-index:1; }
+        .hero-title{ font-size:clamp(54px,10vw,154px); }
+        .hero-sub{   font-size:clamp(22px,4vw,58px); }
 
-        /* Mobile: hilangkan full-height, konten langsung keliatan */
-        @media (max-width: 768px) {
-          .hero-section{
-            min-height: 0 !important;
-            justify-content: flex-start !important;
-          }
-          .hero-content{
-            padding: 96px 20px 40px !important;
-          }
-          .hero-title{ font-size: clamp(48px, 14vw, 72px) !important; }
-          .hero-sub{   font-size: clamp(18px, 6vw, 28px) !important; }
-
-          /* Kurangin padding semua section konten di HP */
-          .sec {
-            padding: 52px 20px !important;
-          }
-
-          /* Tab pages lain juga perlu fix */
-          .pi { padding-left: 0; padding-right: 0; }
-
-          /* Fix visi misi layout — kolom kiri full width di mobile */
-          .visi-wrap { gap: 28px !important; }
-          .visi-left { flex: 0 0 100% !important; }
-
-          /* Reveal sudah ditangani di CSS utama atas */
+        @media(max-width:768px){
+          .hero-content{ padding:100px 20px 56px !important; }
+          .hero-title{ font-size:clamp(44px,13vw,68px) !important; }
+          .hero-sub{   font-size:clamp(18px,6vw,28px) !important; }
+          .sec{ padding:52px 20px !important; }
+          .visi-wrap{ gap:28px !important; }
+          .visi-left{ flex:0 0 100% !important; }
         }
       `}</style>
 
