@@ -692,7 +692,7 @@ export default function Home() {
         ════════════════════════════════════════════════ */}
         {tab==="kegiatan"&&(
           <div className="pi" style={{paddingTop:"clamp(48px,8vw,106px)",paddingBottom:"clamp(48px,8vw,106px)"}}>
-            <div style={{maxWidth:1320,margin:"0 auto",padding:"0 clamp(16px,3vw,28px)"}}}>
+            <div style={{maxWidth:1320,margin:"0 auto",padding:"0 clamp(16px,3vw,28px)"}}>
 
               <div className="rv" style={{marginBottom:44,display:"flex",flexWrap:"wrap",alignItems:"flex-end",justifyContent:"space-between",gap:20}}>
                 <div>
@@ -764,7 +764,7 @@ export default function Home() {
         ════════════════════════════════════════════════ */}
         {tab==="proposal"&&(
           <div className="pi" style={{paddingTop:"clamp(48px,8vw,106px)",paddingBottom:"clamp(48px,8vw,106px)"}}>
-            <div style={{maxWidth:900,margin:"0 auto",padding:"0 clamp(16px,3vw,28px)"}}}>
+            <div style={{maxWidth:900,margin:"0 auto",padding:"0 clamp(16px,3vw,28px)"}}>
 
               {/* Header */}
               <div className="rv" style={{textAlign:"center",marginBottom:48}}>
@@ -1033,7 +1033,7 @@ export default function Home() {
         ════════════════════════════════════════════════ */}
         {tab==="transparansi"&&(
           <div className="pi" style={{paddingTop:"clamp(48px,8vw,106px)",paddingBottom:"clamp(48px,8vw,106px)"}}>
-            <div style={{maxWidth:1100,margin:"0 auto",padding:"0 clamp(16px,3vw,28px)"}}}>
+            <div style={{maxWidth:1100,margin:"0 auto",padding:"0 clamp(16px,3vw,28px)"}}>
 
               <div className="rv" style={{textAlign:"center",marginBottom:48}}>
                 <div className="dl dlc"/>
@@ -1154,7 +1154,7 @@ export default function Home() {
         ════════════════════════════════════════════════ */}
         {tab==="marketplace"&&!checkout&&(
           <div className="pi" style={{paddingTop:"clamp(48px,8vw,106px)",paddingBottom:"clamp(48px,8vw,106px)"}}>
-            <div style={{maxWidth:1320,margin:"0 auto",padding:"0 clamp(16px,3vw,28px)"}}}>
+            <div style={{maxWidth:1320,margin:"0 auto",padding:"0 clamp(16px,3vw,28px)"}}>
               <div className="rv" style={{marginBottom:60,display:"flex",flexWrap:"wrap",alignItems:"flex-end",justifyContent:"space-between",gap:20}}>
                 <div>
                   <div className="dl"/>
@@ -1198,7 +1198,7 @@ export default function Home() {
         {/* CHECKOUT */}
         {checkout&&(
           <div className="pi" style={{paddingTop:"clamp(48px,8vw,106px)",paddingBottom:"clamp(48px,8vw,106px)",minHeight:"100vh"}}>
-            <div style={{maxWidth:560,margin:"0 auto",padding:"0 clamp(16px,3vw,28px)"}}}>
+            <div style={{maxWidth:560,margin:"0 auto",padding:"0 clamp(16px,3vw,28px)"}}>
               <button onClick={()=>setCheckout(false)} style={{display:"flex",alignItems:"center",gap:8,background:"none",border:"none",cursor:"pointer",fontSize:11,fontWeight:700,letterSpacing:".1em",textTransform:"uppercase",color:"var(--tm)",marginBottom:32,padding:0,transition:"color .2s"}}
                 onMouseEnter={e=>(e.currentTarget.style.color="var(--fo)")}
                 onMouseLeave={e=>(e.currentTarget.style.color="var(--tm)")}
