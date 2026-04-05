@@ -3,6 +3,8 @@
 // Requires: lib/supabase.ts + npm install @supabase/supabase-js
 import { useState, useEffect } from "react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
+import dynamic from "next/dynamic";
+const CuacaSholatWidget = dynamic(() => import("@/components/CuacaSholatWidget"), { ssr: false });
 
 type TabType = "tentang"|"kegiatan"|"proposal"|"transparansi"|"marketplace";
 interface Kegiatan  { id:string; judul:string; tanggal:string; kategori:string; deskripsi:string; foto?:string; }
@@ -638,6 +640,13 @@ export default function Home() {
                     ))}
                   </div>
                 </div>
+              </div>
+            </section>
+
+            {/* WIDGET CUACA & SHOLAT */}
+            <section className="sec" style={{padding:"52px 32px 0"}}>
+              <div style={{maxWidth:1320,margin:"0 auto"}}>
+                <CuacaSholatWidget />
               </div>
             </section>
 
