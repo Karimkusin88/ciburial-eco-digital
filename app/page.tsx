@@ -80,19 +80,7 @@ export default function Home() {
   },[]);
 
   useEffect(()=>{
-    // Hanya jalankan reveal animation di desktop
-    const isMobile = window.innerWidth <= 768;
-    if(isMobile){ return; } // mobile: semua langsung visible via CSS
-    const obs=new IntersectionObserver(
-      es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("iv");}}),
-      {threshold:0, rootMargin:"0px 0px -40px 0px"}
-    );
-    // Tandai elemen sebagai rv-ready (set invisible) baru observe
-    document.querySelectorAll(".rv").forEach(el=>{
-      el.classList.add("rv-ready");
-      obs.observe(el);
-    });
-    return()=>obs.disconnect();
+    // Reveal animation dihapus
   },[tab,checkout]);
 
   useEffect(()=>{
@@ -173,14 +161,7 @@ export default function Home() {
         .fnt{font-family:'Cormorant Garamond',serif;}
 
         /* reveal */
-        /* Reveal: default VISIBLE, JS akan set invisible dulu sebelum animate */
-        .rv{ opacity:1; transform:none; transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1); }
-        .rv.rv-ready{ opacity:0; transform:translateY(22px); }
-        .rv.rv-ready.iv{ opacity:1; transform:none; }
-        /* Mobile: skip animasi sama sekali */
-        @media(max-width:768px){ .rv,.rv.rv-ready,.rv.rv-ready.iv{ opacity:1!important; transform:none!important; transition:none!important; } }
-        .d1{transition-delay:.06s}.d2{transition-delay:.12s}.d3{transition-delay:.18s}
-        .d4{transition-delay:.24s}.d5{transition-delay:.3s}.d6{transition-delay:.36s}
+        /* Reveal animation dihapus - semua konten langsung visible */
 
         /* hero anim */
         @keyframes fu{from{opacity:0;transform:translateY(44px)}to{opacity:1;transform:translateY(0)}}
@@ -508,7 +489,7 @@ export default function Home() {
             {/* VISI MISI */}
             <section className="sec" style={{padding:"clamp(48px,8vw,104px) clamp(16px,4vw,32px)",background:"var(--cr)"}}>
               <div className="visi-wrap" style={{maxWidth:1320,margin:"0 auto",display:"flex",flexWrap:"wrap",gap:52,alignItems:"flex-start"}}>
-                <div className="rv visi-left" style={{flex:"0 0 270px"}}>
+                <div className="visi-left" style={{flex:"0 0 270px"}}>
                   <div className="dl"/>
                   <h2 className="fnt" style={{fontSize:"clamp(30px,4vw,50px)",fontWeight:300,color:"var(--fo)",lineHeight:1.1,letterSpacing:"-.02em",marginBottom:16}}>Visi &<br/>Misi Kami</h2>
                   <p style={{fontSize:14,lineHeight:1.8,color:"var(--ts)",marginBottom:20}}>
@@ -542,7 +523,7 @@ export default function Home() {
             {/* DEMOGRAFI */}
             <section className="sec" style={{padding:"clamp(48px,8vw,104px) clamp(16px,4vw,32px)",background:"var(--fo)"}}>
               <div style={{maxWidth:1320,margin:"0 auto"}}>
-                <div className="rv" style={{textAlign:"center",marginBottom:56}}>
+                <div className="" style={{textAlign:"center",marginBottom:56}}>
                   <div className="dl dlc"/>
                   <h2 className="fnt" style={{fontSize:"clamp(30px,5vw,54px)",fontWeight:300,color:"var(--cr)",letterSpacing:"-.02em"}}>Keluarga Besar Ciburial</h2>
                   <p style={{color:"rgba(250,248,243,.45)",fontSize:14,marginTop:10,maxWidth:400,margin:"10px auto 0"}}>Pemuda mendominasi — 55% dari 450 jiwa. Mereka adalah modal utama quantum leap Ciburial.</p>
@@ -564,18 +545,18 @@ export default function Home() {
             {/* PAGUYUBAN + DIVISI */}
             <section className="sec" style={{padding:"clamp(48px,8vw,104px) clamp(16px,4vw,32px)",background:"var(--cr)"}}>
               <div style={{maxWidth:1320,margin:"0 auto"}}>
-                <div className="rv" style={{textAlign:"center",marginBottom:60}}>
+                <div className="" style={{textAlign:"center",marginBottom:60}}>
                   <div className="dl dlc"/>
                   <h2 className="fnt" style={{fontSize:"clamp(30px,5vw,54px)",fontWeight:300,color:"var(--fo)",letterSpacing:"-.02em"}}>Struktur Kepengurusan</h2>
                   <p style={{color:"var(--ts)",fontSize:14,marginTop:10}}>Gerakan ini digerakkan oleh tenaga muda profesional dari desa sendiri.</p>
                 </div>
 
                 {/* Dewan Pelindung */}
-                <div className="rv" style={{marginBottom:12}}>
+                <div className="" style={{marginBottom:12}}>
                   <div style={{fontSize:11,fontWeight:700,letterSpacing:".14em",textTransform:"uppercase",color:"var(--go)",marginBottom:14}}>A. Dewan Pelindung & Penasihat</div>
-                  <div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
+                  <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(130px,1fr))",gap:12}}>
                     {dwnPelindung.map((item,i)=>(
-                      <div key={i} className="ch" style={{flex:"0 0 auto",minWidth:150,background:"var(--cw)",border:"1px solid var(--bo)",borderRadius:16,padding:"18px 16px 14px",textAlign:"center"}}>
+                      <div key={i} className="ch" style={{background:"var(--cw)",border:"1px solid var(--bo)",borderRadius:16,padding:"18px 16px 14px",textAlign:"center"}}>
                         <div style={{width:44,height:44,borderRadius:"50%",background:"var(--cd)",margin:"0 auto 10px",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,border:"2px solid var(--bo)"}}>{item.icon}</div>
                         <div style={{fontSize:13,fontWeight:700,color:"var(--tp)",marginBottom:3}}>{item.name}</div>
                         <div style={{fontSize:9,fontWeight:700,letterSpacing:".09em",textTransform:"uppercase",color:"var(--go)"}}>{item.role}</div>
@@ -585,8 +566,8 @@ export default function Home() {
                 </div>
 
                 {/* DKM + Tim Eksekutif */}
-                <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))",gap:14,marginBottom:12}}>
-                  <div className="rv d2" style={{background:"var(--cw)",border:"1px solid var(--bo)",borderRadius:20,padding:"28px"}}>
+                <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(min(260px,100%),1fr))",gap:14,marginBottom:12}}>
+                  <div className="d2" style={{background:"var(--cw)",border:"1px solid var(--bo)",borderRadius:20,padding:"28px"}}>
                     <div style={{fontSize:11,fontWeight:700,letterSpacing:".14em",textTransform:"uppercase",color:"var(--go)",marginBottom:20}}>B. Dewan Pengawas Kas</div>
                     {dwnPengawas.map((item,i)=>(
                       <div key={i} style={{display:"flex",alignItems:"center",gap:12,padding:"14px",background:"var(--cd)",borderRadius:12}}>
@@ -598,7 +579,7 @@ export default function Home() {
                       </div>
                     ))}
                   </div>
-                  <div className="rv d3" style={{background:"var(--cw)",border:"1px solid var(--bo)",borderRadius:20,padding:"28px"}}>
+                  <div className="d3" style={{background:"var(--cw)",border:"1px solid var(--bo)",borderRadius:20,padding:"28px"}}>
                     <div style={{fontSize:11,fontWeight:700,letterSpacing:".14em",textTransform:"uppercase",color:"var(--go)",marginBottom:20}}>C. Tim Eksekutif Lapangan</div>
                     <div style={{display:"flex",flexDirection:"column",gap:10}}>
                       {timEksekutif.map((item,i)=>(
@@ -615,7 +596,7 @@ export default function Home() {
                 </div>
 
                 {/* 5 Divisi */}
-                <div className="rv" style={{marginTop:8}}>
+                <div className="" style={{marginTop:8}}>
                   <div style={{fontSize:11,fontWeight:700,letterSpacing:".14em",textTransform:"uppercase",color:"var(--go)",marginBottom:14}}>D. 5 Divisi Operasional (Garda Depan)</div>
                   <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(190px,1fr))",gap:12}}>
                     {divisi.map((d,i)=>(
@@ -642,7 +623,7 @@ export default function Home() {
             {/* DONASI SPLIT */}
             <section className="sec" style={{padding:"0 clamp(16px,4vw,32px) clamp(48px,8vw,104px)"}}>
               <div style={{maxWidth:1320,margin:"0 auto"}}>
-                <div className="rv" style={{borderRadius:28,overflow:"hidden",display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(250px,1fr))"}}>
+                <div className="" style={{borderRadius:28,overflow:"hidden",display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(250px,1fr))"}}>
                   <div style={{background:"var(--fo)",padding:"60px 52px"}}>
                     <div className="dl"/>
                     <h2 className="fnt" style={{fontSize:36,fontWeight:300,color:"var(--cr)",lineHeight:1.15,letterSpacing:"-.02em",marginBottom:14}}>Donasi<br/>Kemakmuran<br/>Kampung</h2>
@@ -694,7 +675,7 @@ export default function Home() {
           <div className="pi" style={{paddingTop:"clamp(48px,8vw,106px)",paddingBottom:"clamp(48px,8vw,106px)"}}>
             <div style={{maxWidth:1320,margin:"0 auto",padding:"0 clamp(16px,3vw,28px)"}}>
 
-              <div className="rv" style={{marginBottom:44,display:"flex",flexWrap:"wrap",alignItems:"flex-end",justifyContent:"space-between",gap:20}}>
+              <div className="" style={{marginBottom:44,display:"flex",flexWrap:"wrap",alignItems:"flex-end",justifyContent:"space-between",gap:20}}>
                 <div>
                   <div className="dl"/>
                   <h1 className="fnt" style={{fontSize:"clamp(40px,7vw,84px)",fontWeight:300,color:"var(--fo)",lineHeight:.95,letterSpacing:"-.03em"}}>Kegiatan<br/><em>Kampung</em></h1>
@@ -703,7 +684,7 @@ export default function Home() {
               </div>
 
               {/* Filter kategori */}
-              <div className="rv" style={{display:"flex",gap:8,flexWrap:"wrap",marginBottom:36}}>
+              <div className="" style={{display:"flex",gap:8,flexWrap:"wrap",marginBottom:36}}>
                 {[{k:"semua",l:"✦ Semua"},...Object.entries(KAT_CFG).map(([k,v])=>({k,l:v.label}))].map(item=>(
                   <button key={item.k} onClick={()=>setFKat(item.k)} style={{padding:"7px 16px",fontSize:11,fontWeight:700,letterSpacing:".06em",border:"1px solid var(--bo)",borderRadius:99,cursor:"pointer",transition:"all .2s",background:fKat===item.k?"var(--fo)":"var(--cw)",color:fKat===item.k?"#fff":"var(--ts)"}}>
                     {item.l}
@@ -767,7 +748,7 @@ export default function Home() {
             <div style={{maxWidth:900,margin:"0 auto",padding:"0 clamp(16px,3vw,28px)"}}>
 
               {/* Header */}
-              <div className="rv" style={{textAlign:"center",marginBottom:48}}>
+              <div className="" style={{textAlign:"center",marginBottom:48}}>
                 <div className="dl dlc"/>
                 <div style={{fontSize:10,fontWeight:700,letterSpacing:".2em",textTransform:"uppercase",color:"var(--go)",marginBottom:14}}>Dokumen Resmi — No. 01/CBM/III/2026</div>
                 <h1 className="fnt" style={{fontSize:"clamp(30px,5vw,58px)",fontWeight:300,color:"var(--fo)",lineHeight:1.05,letterSpacing:"-.025em",marginBottom:10}}>
@@ -783,7 +764,7 @@ export default function Home() {
               </div>
 
               {/* Info strip */}
-              <div className="rv" style={{display:"flex",flexWrap:"wrap",gap:10,justifyContent:"center",marginBottom:44}}>
+              <div className="" style={{display:"flex",flexWrap:"wrap",gap:10,justifyContent:"center",marginBottom:44}}>
                 {[{icon:"🌐",l:"ciburial-eco-digital.vercel.app"},{icon:"📧",l:"ciburial.smarthub@gmail.com"},{icon:"📍",l:"Garut, Jawa Barat 44165"}].map((item,i)=>(
                   <div key={i} style={{display:"flex",alignItems:"center",gap:8,padding:"9px 18px",background:"var(--cw)",border:"1px solid var(--bo)",borderRadius:99}}>
                     <span>{item.icon}</span><span style={{fontSize:12,fontWeight:600,color:"var(--ts)"}}>{item.l}</span>
@@ -1008,7 +989,7 @@ export default function Home() {
                   )
                 },
               ].map((section,i)=>(
-                <div key={i} className="rv" style={{marginBottom:8}}>
+                <div key={i} className="" style={{marginBottom:8}}>
                   <button
                     onClick={()=>setPropOpen(propOpen===i?null:i)}
                     style={{width:"100%",display:"flex",justifyContent:"space-between",alignItems:"center",padding:"20px 26px",background:propOpen===i?"var(--fo)":"var(--cw)",border:"1px solid var(--bo)",borderRadius:propOpen===i?"18px 18px 0 0":18,cursor:"pointer",transition:"background .25s,border-radius .25s",textAlign:"left"}}
@@ -1035,7 +1016,7 @@ export default function Home() {
           <div className="pi" style={{paddingTop:"clamp(48px,8vw,106px)",paddingBottom:"clamp(48px,8vw,106px)"}}>
             <div style={{maxWidth:1100,margin:"0 auto",padding:"0 clamp(16px,3vw,28px)"}}>
 
-              <div className="rv" style={{textAlign:"center",marginBottom:48}}>
+              <div className="" style={{textAlign:"center",marginBottom:48}}>
                 <div className="dl dlc"/>
                 <h1 className="fnt" style={{fontSize:"clamp(30px,5vw,58px)",fontWeight:300,color:"var(--fo)",lineHeight:1.05,letterSpacing:"-.025em",marginBottom:10}}>Transparansi<br/><em>Dana Kampung</em></h1>
                 <p style={{fontSize:14,color:"var(--ts)",lineHeight:1.7,maxWidth:400,margin:"0 auto"}}>
@@ -1062,7 +1043,7 @@ export default function Home() {
               </div>
 
               {/* Progress global */}
-              <div className="rv pgw" style={{padding:"24px 28px",background:"var(--cw)",border:"1px solid var(--bo)",borderRadius:18,marginBottom:36}}>
+              <div className="pgw" style={{padding:"24px 28px",background:"var(--cw)",border:"1px solid var(--bo)",borderRadius:18,marginBottom:36}}>
                 <div style={{display:"flex",justifyContent:"space-between",marginBottom:12,flexWrap:"wrap",gap:8}}>
                   <span style={{fontSize:13,fontWeight:700,color:"var(--tp)"}}>Progress Pencapaian Target RAB (Rp 250 juta)</span>
                   <span style={{fontSize:14,fontWeight:700,color:"var(--fo)"}}>{Math.round((totMasuk/totTarget)*100)}%</span>
@@ -1072,7 +1053,7 @@ export default function Home() {
               </div>
 
               {/* Alokasi breakdown */}
-              <div className="rv" style={{marginBottom:36}}>
+              <div className="" style={{marginBottom:36}}>
                 <h3 style={{fontSize:11,fontWeight:700,letterSpacing:".12em",textTransform:"uppercase",color:"var(--tm)",marginBottom:16}}>Rincian Alokasi Dana (RAB Global)</h3>
                 <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(230px,1fr))",gap:12}}>
                   {ALOKASI.map((item,i)=>{
@@ -1096,7 +1077,7 @@ export default function Home() {
               </div>
 
               {/* Riwayat transaksi */}
-              <div className="rv">
+              <div className="">
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16,flexWrap:"wrap",gap:12}}>
                   <h3 style={{fontSize:11,fontWeight:700,letterSpacing:".12em",textTransform:"uppercase",color:"var(--tm)"}}>Riwayat Transaksi</h3>
                   <div style={{display:"flex",gap:6}}>
@@ -1155,7 +1136,7 @@ export default function Home() {
         {tab==="marketplace"&&!checkout&&(
           <div className="pi" style={{paddingTop:"clamp(48px,8vw,106px)",paddingBottom:"clamp(48px,8vw,106px)"}}>
             <div style={{maxWidth:1320,margin:"0 auto",padding:"0 clamp(16px,3vw,28px)"}}>
-              <div className="rv" style={{marginBottom:60,display:"flex",flexWrap:"wrap",alignItems:"flex-end",justifyContent:"space-between",gap:20}}>
+              <div className="" style={{marginBottom:60,display:"flex",flexWrap:"wrap",alignItems:"flex-end",justifyContent:"space-between",gap:20}}>
                 <div>
                   <div className="dl"/>
                   <h1 className="fnt" style={{fontSize:"clamp(40px,7vw,84px)",fontWeight:300,color:"var(--fo)",lineHeight:.95,letterSpacing:"-.03em"}}>Galeri<br/><em>Produk</em></h1>
