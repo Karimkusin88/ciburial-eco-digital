@@ -80,11 +80,18 @@ export default function Home() {
   },[]);
 
   useEffect(()=>{
+    // Hanya jalankan reveal animation di desktop
+    const isMobile = window.innerWidth <= 768;
+    if(isMobile){ return; } // mobile: semua langsung visible via CSS
     const obs=new IntersectionObserver(
-      es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add("iv");}),
-      {threshold:.08}
+      es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("iv");}}),
+      {threshold:0, rootMargin:"0px 0px -40px 0px"}
     );
-    document.querySelectorAll(".rv").forEach(el=>obs.observe(el));
+    // Tandai elemen sebagai rv-ready (set invisible) baru observe
+    document.querySelectorAll(".rv").forEach(el=>{
+      el.classList.add("rv-ready");
+      obs.observe(el);
+    });
     return()=>obs.disconnect();
   },[tab,checkout]);
 
@@ -166,8 +173,12 @@ export default function Home() {
         .fnt{font-family:'Cormorant Garamond',serif;}
 
         /* reveal */
-        .rv{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1);}
-        .rv.iv{opacity:1;transform:none;}
+        /* Reveal: default VISIBLE, JS akan set invisible dulu sebelum animate */
+        .rv{ opacity:1; transform:none; transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1); }
+        .rv.rv-ready{ opacity:0; transform:translateY(22px); }
+        .rv.rv-ready.iv{ opacity:1; transform:none; }
+        /* Mobile: skip animasi sama sekali */
+        @media(max-width:768px){ .rv,.rv.rv-ready,.rv.rv-ready.iv{ opacity:1!important; transform:none!important; transition:none!important; } }
         .d1{transition-delay:.06s}.d2{transition-delay:.12s}.d3{transition-delay:.18s}
         .d4{transition-delay:.24s}.d5{transition-delay:.3s}.d6{transition-delay:.36s}
 
@@ -304,13 +315,7 @@ export default function Home() {
           .visi-wrap { gap: 28px !important; }
           .visi-left { flex: 0 0 100% !important; }
 
-          /* Fix reveal (.rv) — kadang bikin void karena opacity:0 
-             sebelum IntersectionObserver trigger di mobile */
-          .rv {
-            opacity: 1 !important;
-            transform: none !important;
-            transition: none !important;
-          }
+          /* Reveal sudah ditangani di CSS utama atas */
         }
       `}</style>
 
