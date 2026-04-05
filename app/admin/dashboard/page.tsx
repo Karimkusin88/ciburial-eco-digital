@@ -20,7 +20,7 @@ export default function DashboardPage() {
       supabase.from("transaksi").select("*").order("tanggal", { ascending: false }).limit(6),
       supabase.from("pengaduan").select("status").order("created_at", { ascending: false }),
       supabase.from("saldo_poin").select("total_poin,total_setor_kg"),
-      supabase.from("anak_posyandu").select("id", { count: "exact" }),
+      supabase.from("anak_posyandu").select("id", { count: "exact", head: true }),
       supabase.from("voting").select("id,status"),
       supabase.from("absensi_ronda").select("id", { count: "exact" }),
     ]);
@@ -39,7 +39,7 @@ export default function DashboardPage() {
       { icon: "👥", label: "Total Warga", value: totalWarga, sub: "Jiwa tercatat", color: "#1a3a6b" },
       { icon: "♻️", label: "Sampah Terkelola", value: `${totalSampahKg.toFixed(0)} kg`, sub: `${(sp.data || []).length} KK aktif`, color: "#4a8c5c" },
       { icon: "🪙", label: "Total Poin", value: totalPoin.toLocaleString(), sub: "Poin terdistribusi", color: "#b8943f" },
-      { icon: "👶", label: "Anak Posyandu", value: anak.count || 0, sub: "Terdaftar", color: "#8b2020" },
+      { icon: "👶", label: "Anak Posyandu", value: ak.count || 0, sub: "Terdaftar", color: "#8b2020" },
       { icon: "📢", label: "Pengaduan", value: pengaduanMasuk, sub: `${pengaduanSelesai} selesai`, color: "#5a2d82" },
       { icon: "💰", label: "Dana Masuk", value: `Rp${(txMasuk / 1000000).toFixed(1)}jt`, sub: "Total donasi", color: "#2d5a40" },
       { icon: "📊", label: "Saldo Kas", value: `Rp${((txMasuk - txKeluar) / 1000000).toFixed(1)}jt`, sub: "Saldo saat ini", color: "#1a3a6b" },
@@ -47,7 +47,6 @@ export default function DashboardPage() {
     if (tx.data) setTransaksi(tx.data);
     if (pg.data) setPengaduan(pg.data);
     if (sp.data) setSampah(sp.data);
-    if (ak.data) setAnak(ak.data);
     setLoading(false);
   }
 
