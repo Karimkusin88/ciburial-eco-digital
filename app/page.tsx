@@ -486,7 +486,7 @@ export default function Home() {
             </div>
 
             {/* STATS */}
-            <section className="sec" style={{background:"var(--cw)",padding:"68px 32px"}}>
+            <section className="sec" style={{background:"var(--cw)",padding:"clamp(40px,6vw,68px) clamp(16px,4vw,32px)"}}>
               <div style={{maxWidth:1320,margin:"0 auto",display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(130px,1fr))",gap:2}}>
                 {[
                   {v:"450",    l:"Jiwa",      s:"Total Populasi"},
@@ -506,7 +506,7 @@ export default function Home() {
             </section>
 
             {/* VISI MISI */}
-            <section className="sec" style={{padding:"104px 32px",background:"var(--cr)"}}>
+            <section className="sec" style={{padding:"clamp(48px,8vw,104px) clamp(16px,4vw,32px)",background:"var(--cr)"}}>
               <div className="visi-wrap" style={{maxWidth:1320,margin:"0 auto",display:"flex",flexWrap:"wrap",gap:52,alignItems:"flex-start"}}>
                 <div className="rv visi-left" style={{flex:"0 0 270px"}}>
                   <div className="dl"/>
@@ -540,7 +540,7 @@ export default function Home() {
             </section>
 
             {/* DEMOGRAFI */}
-            <section className="sec" style={{padding:"104px 32px",background:"var(--fo)"}}>
+            <section className="sec" style={{padding:"clamp(48px,8vw,104px) clamp(16px,4vw,32px)",background:"var(--fo)"}}>
               <div style={{maxWidth:1320,margin:"0 auto"}}>
                 <div className="rv" style={{textAlign:"center",marginBottom:56}}>
                   <div className="dl dlc"/>
@@ -562,7 +562,7 @@ export default function Home() {
             </section>
 
             {/* PAGUYUBAN + DIVISI */}
-            <section className="sec" style={{padding:"104px 32px",background:"var(--cr)"}}>
+            <section className="sec" style={{padding:"clamp(48px,8vw,104px) clamp(16px,4vw,32px)",background:"var(--cr)"}}>
               <div style={{maxWidth:1320,margin:"0 auto"}}>
                 <div className="rv" style={{textAlign:"center",marginBottom:60}}>
                   <div className="dl dlc"/>
@@ -633,14 +633,14 @@ export default function Home() {
             </section>
 
             {/* WIDGET CUACA & SHOLAT */}
-            <section className="sec" style={{padding:"52px 32px 0"}}>
+            <section className="sec" style={{padding:"clamp(32px,4vw,52px) clamp(16px,4vw,32px) 0"}}>
               <div style={{maxWidth:1320,margin:"0 auto"}}>
                 <CuacaSholatWidget />
               </div>
             </section>
 
             {/* DONASI SPLIT */}
-            <section className="sec" style={{padding:"0 32px 104px"}}>
+            <section className="sec" style={{padding:"0 clamp(16px,4vw,32px) clamp(48px,8vw,104px)"}}>
               <div style={{maxWidth:1320,margin:"0 auto"}}>
                 <div className="rv" style={{borderRadius:28,overflow:"hidden",display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(250px,1fr))"}}>
                   <div style={{background:"var(--fo)",padding:"60px 52px"}}>
@@ -691,8 +691,8 @@ export default function Home() {
             TAB: KEGIATAN KAMPUNG
         ════════════════════════════════════════════════ */}
         {tab==="kegiatan"&&(
-          <div className="pi" style={{paddingTop:106,paddingBottom:106}}>
-            <div style={{maxWidth:1320,margin:"0 auto",padding:"0 28px"}}>
+          <div className="pi" style={{paddingTop:"clamp(48px,8vw,106px)",paddingBottom:"clamp(48px,8vw,106px)"}}>
+            <div style={{maxWidth:1320,margin:"0 auto",padding:"0 clamp(16px,3vw,28px)"}}}>
 
               <div className="rv" style={{marginBottom:44,display:"flex",flexWrap:"wrap",alignItems:"flex-end",justifyContent:"space-between",gap:20}}>
                 <div>
@@ -763,8 +763,8 @@ export default function Home() {
             TAB: PROPOSAL
         ════════════════════════════════════════════════ */}
         {tab==="proposal"&&(
-          <div className="pi" style={{paddingTop:106,paddingBottom:106}}>
-            <div style={{maxWidth:900,margin:"0 auto",padding:"0 28px"}}>
+          <div className="pi" style={{paddingTop:"clamp(48px,8vw,106px)",paddingBottom:"clamp(48px,8vw,106px)"}}>
+            <div style={{maxWidth:900,margin:"0 auto",padding:"0 clamp(16px,3vw,28px)"}}}>
 
               {/* Header */}
               <div className="rv" style={{textAlign:"center",marginBottom:48}}>
@@ -1032,8 +1032,8 @@ export default function Home() {
             TAB: TRANSPARANSI DANA
         ════════════════════════════════════════════════ */}
         {tab==="transparansi"&&(
-          <div className="pi" style={{paddingTop:106,paddingBottom:106}}>
-            <div style={{maxWidth:1100,margin:"0 auto",padding:"0 28px"}}>
+          <div className="pi" style={{paddingTop:"clamp(48px,8vw,106px)",paddingBottom:"clamp(48px,8vw,106px)"}}>
+            <div style={{maxWidth:1100,margin:"0 auto",padding:"0 clamp(16px,3vw,28px)"}}}>
 
               <div className="rv" style={{textAlign:"center",marginBottom:48}}>
                 <div className="dl dlc"/>
@@ -1153,8 +1153,8 @@ export default function Home() {
             TAB: MARKETPLACE
         ════════════════════════════════════════════════ */}
         {tab==="marketplace"&&!checkout&&(
-          <div className="pi" style={{paddingTop:106,paddingBottom:106}}>
-            <div style={{maxWidth:1320,margin:"0 auto",padding:"0 28px"}}>
+          <div className="pi" style={{paddingTop:"clamp(48px,8vw,106px)",paddingBottom:"clamp(48px,8vw,106px)"}}>
+            <div style={{maxWidth:1320,margin:"0 auto",padding:"0 clamp(16px,3vw,28px)"}}}>
               <div className="rv" style={{marginBottom:60,display:"flex",flexWrap:"wrap",alignItems:"flex-end",justifyContent:"space-between",gap:20}}>
                 <div>
                   <div className="dl"/>
@@ -1197,8 +1197,8 @@ export default function Home() {
 
         {/* CHECKOUT */}
         {checkout&&(
-          <div className="pi" style={{paddingTop:106,paddingBottom:106,minHeight:"100vh"}}>
-            <div style={{maxWidth:560,margin:"0 auto",padding:"0 28px"}}>
+          <div className="pi" style={{paddingTop:"clamp(48px,8vw,106px)",paddingBottom:"clamp(48px,8vw,106px)",minHeight:"100vh"}}>
+            <div style={{maxWidth:560,margin:"0 auto",padding:"0 clamp(16px,3vw,28px)"}}}>
               <button onClick={()=>setCheckout(false)} style={{display:"flex",alignItems:"center",gap:8,background:"none",border:"none",cursor:"pointer",fontSize:11,fontWeight:700,letterSpacing:".1em",textTransform:"uppercase",color:"var(--tm)",marginBottom:32,padding:0,transition:"color .2s"}}
                 onMouseEnter={e=>(e.currentTarget.style.color="var(--fo)")}
                 onMouseLeave={e=>(e.currentTarget.style.color="var(--tm)")}
