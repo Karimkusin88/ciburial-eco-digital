@@ -263,7 +263,7 @@ export default function Home() {
         /* ── HERO MOBILE RESPONSIVE ── */
         /* Desktop: full viewport height, content di bawah */
         .hero-section{
-          min-height: 100dvh;
+          min-height: 100svh;
           display: flex;
           flex-direction: column;
           justify-content: flex-end;
@@ -285,15 +285,7 @@ export default function Home() {
             justify-content: flex-start !important;
           }
           .hero-content{
-            padding: 60px 20px 40px !important;
-            color: #3e2723 !important;
-          }
-
-          /* Tambahin baris ini buat maksa semua teks di dalam hero-content jadi gelap */
-          .hero-content p, 
-          .hero-content span, 
-          .hero-content div {
-            color: #3e2723 !important;
+            padding: 96px 20px 40px !important;
           }
           .hero-title{ font-size: clamp(48px, 14vw, 72px) !important; }
           .hero-sub{   font-size: clamp(18px, 6vw, 28px) !important; }
@@ -308,30 +300,16 @@ export default function Home() {
         }
       `}</style>
 
-      <main style={{
-        minHeight: "100dvh",
-        background: "var(--cr)",
-        paddingTop: "60px"
-      }}>
+      <main style={{minHeight:"100vh",background:"var(--cr)"}}>
 
         {/* ════════════════ NAVBAR ════════════════ */}
-      <nav className={scrolled ? "ng" : ""} style={{
-        position: "fixed",
-       top: 0,
-       width: "100%",
-       zIndex: 50,
-  transition: "background .3s, box-shadow .3s",
-  /* BIKIN BACKGROUND SOLID PAS DI-SCROLL BIAR GAK TEMBUS PANDANG KONTEN */
-  background: scrolled ? "#F4F1EA" : "transparent", /* Ganti hex-nya kalau krem lu beda, atau pakai var(--bg) */
-  /* TAMBAH BAYANGAN HALUS BIAR KELIATAN BATAS NAVBAR SAMA KONTEN */
-  boxShadow: scrolled ? "0 4px 20px rgba(0, 0, 0, 0.05)" : "none" 
-}}>
-  <div style={{maxWidth:1320,margin:"0 auto",padding:"0 28px",height:70,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+        <nav className={scrolled?"ng":""} style={{position:"fixed",top:0,width:"100%",zIndex:50,transition:"background .3s,box-shadow .3s",background:scrolled?undefined:"transparent"}}>
+          <div style={{maxWidth:1320,margin:"0 auto",padding:"0 28px",height:70,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
 
-    <button onClick={()=>go("tentang")} style={{background:"none",border:"none",cursor:"pointer",textAlign:"left"}}>
-      <div className="fnt" style={{fontSize:20,fontWeight:600,color:"var(--fo)",lineHeight:1,letterSpacing:"-.02em"}}>Ciburial</div>
-      <div style={{fontSize:9,fontWeight:700,letterSpacing:".18em",textTransform:"uppercase",color:"var(--go)"}}>Eco-Digital Village</div>
-    </button>
+            <button onClick={()=>go("tentang")} style={{background:"none",border:"none",cursor:"pointer",textAlign:"left"}}>
+              <div className="fnt" style={{fontSize:20,fontWeight:600,color:"var(--fo)",lineHeight:1,letterSpacing:"-.02em"}}>Ciburial</div>
+              <div style={{fontSize:9,fontWeight:700,letterSpacing:".18em",textTransform:"uppercase",color:"var(--go)"}}>Eco-Digital Village</div>
+            </button>
 
             {/* Desktop */}
             <div className="hidden md:flex" style={{gap:2,alignItems:"center"}}>
@@ -353,6 +331,13 @@ export default function Home() {
                   <span style={{fontSize:9,transition:"transform .25s",transform:dropOpen?"rotate(180deg)":"rotate(0)"}}>▾</span>
                 </button>
                 <div className={`drop-menu ${dropOpen?"open":""}`}>
+                  <a href="/kalender" className="drop-item">
+                    <span style={{fontSize:18}}>📅</span>
+                    <div>
+                      <div style={{fontWeight:700,color:"var(--tp)"}}>Kalender Kegiatan</div>
+                      <div style={{fontSize:10,color:"var(--tm)",fontWeight:500}}>Agenda & jadwal kampung</div>
+                    </div>
+                  </a>
                   <a href="/pengaduan" className="drop-item">
                     <span style={{fontSize:18}}>📢</span>
                     <div>
@@ -365,6 +350,14 @@ export default function Home() {
                     <div>
                       <div style={{fontWeight:700,color:"var(--tp)"}}>Voting</div>
                       <div style={{fontSize:10,color:"var(--tm)",fontWeight:500}}>Suara warga Ciburial</div>
+                    </div>
+                  </a>
+                  <div style={{height:1,background:"var(--bo)",margin:"4px 0"}}/>
+                  <a href="/tukar-poin" className="drop-item">
+                    <span style={{fontSize:18}}>♻️</span>
+                    <div>
+                      <div style={{fontWeight:700,color:"var(--tp)"}}>Tukar Poin</div>
+                      <div style={{fontSize:10,color:"var(--tm)",fontWeight:500}}>Klaim reward Bank Sampah</div>
                     </div>
                   </a>
                 </div>
@@ -413,6 +406,13 @@ export default function Home() {
             {/* Layanan Warga di mobile menu */}
             <div style={{padding:"8px 0 4px",borderBottom:"1px solid var(--bo)"}}>
               <div style={{fontSize:9,fontWeight:700,letterSpacing:".15em",textTransform:"uppercase",color:"var(--tm)",marginBottom:8}}>Layanan Warga</div>
+              <a href="/kalender" style={{display:"flex",alignItems:"center",gap:10,padding:"10px 0",textDecoration:"none",borderBottom:"1px solid rgba(229,224,216,.5)"}}>
+                <span style={{fontSize:18}}>📅</span>
+                <div>
+                  <div style={{fontSize:12,fontWeight:700,color:"var(--tp)",letterSpacing:".04em",textTransform:"uppercase"}}>Kalender Kegiatan</div>
+                  <div style={{fontSize:11,color:"var(--tm)"}}>Agenda & jadwal kampung</div>
+                </div>
+              </a>
               <a href="/pengaduan" style={{display:"flex",alignItems:"center",gap:10,padding:"10px 0",textDecoration:"none",borderBottom:"1px solid rgba(229,224,216,.5)"}}>
                 <span style={{fontSize:18}}>📢</span>
                 <div>
@@ -420,11 +420,18 @@ export default function Home() {
                   <div style={{fontSize:11,color:"var(--tm)"}}>Laporkan masalah kampung</div>
                 </div>
               </a>
-              <a href="/voting" style={{display:"flex",alignItems:"center",gap:10,padding:"10px 0",textDecoration:"none"}}>
+              <a href="/voting" style={{display:"flex",alignItems:"center",gap:10,padding:"10px 0",textDecoration:"none",borderBottom:"1px solid rgba(229,224,216,.5)"}}>
                 <span style={{fontSize:18}}>🗳️</span>
                 <div>
                   <div style={{fontSize:12,fontWeight:700,color:"var(--tp)",letterSpacing:".04em",textTransform:"uppercase"}}>Voting</div>
                   <div style={{fontSize:11,color:"var(--tm)"}}>Suara warga Ciburial</div>
+                </div>
+              </a>
+              <a href="/tukar-poin" style={{display:"flex",alignItems:"center",gap:10,padding:"10px 0",textDecoration:"none"}}>
+                <span style={{fontSize:18}}>♻️</span>
+                <div>
+                  <div style={{fontSize:12,fontWeight:700,color:"var(--tp)",letterSpacing:".04em",textTransform:"uppercase"}}>Tukar Poin</div>
+                  <div style={{fontSize:11,color:"var(--tm)"}}>Klaim reward Bank Sampah</div>
                 </div>
               </a>
             </div>
@@ -1245,7 +1252,7 @@ export default function Home() {
             </div>
             <div>
               <h4 style={{fontSize:10,fontWeight:700,letterSpacing:".14em",textTransform:"uppercase",color:"var(--go)",marginBottom:18}}>Lokasi</h4>
-              <p style={{fontSize:12,lineHeight:1.9,color:"rgba(250,248,243,.38)"}}>Kp Ciburial Rw 08<br/>Desa Hanjuang, Kec. Bungbulang<br/>Kab. Garut, Jawa Barat 44165</p>
+              <p style={{fontSize:12,lineHeight:1.9,color:"rgba(250,248,243,.38)"}}>Kp Ciburial<br/>Desa Hanjuang, Kec. Bungbulang<br/>Kab. Garut, Jawa Barat 44165</p>
             </div>
             <div>
               <h4 style={{fontSize:10,fontWeight:700,letterSpacing:".14em",textTransform:"uppercase",color:"var(--go)",marginBottom:18}}>Navigasi</h4>
@@ -1256,6 +1263,10 @@ export default function Home() {
                     onMouseLeave={e=>(e.currentTarget.style.color="rgba(250,248,243,.38)")}
                   >{t.label}</button>
                 ))}
+                <a href="/kalender" style={{fontSize:12,fontWeight:500,color:"rgba(250,248,243,.38)",textDecoration:"none",transition:"color .2s"}}
+                  onMouseEnter={e=>(e.currentTarget.style.color="var(--cr)")}
+                  onMouseLeave={e=>(e.currentTarget.style.color="rgba(250,248,243,.38)")}
+                >📅 Kalender Kegiatan</a>
                 <a href="/pengaduan" style={{fontSize:12,fontWeight:500,color:"rgba(250,248,243,.38)",textDecoration:"none",transition:"color .2s"}}
                   onMouseEnter={e=>(e.currentTarget.style.color="var(--cr)")}
                   onMouseLeave={e=>(e.currentTarget.style.color="rgba(250,248,243,.38)")}
@@ -1264,6 +1275,10 @@ export default function Home() {
                   onMouseEnter={e=>(e.currentTarget.style.color="var(--cr)")}
                   onMouseLeave={e=>(e.currentTarget.style.color="rgba(250,248,243,.38)")}
                 >🗳️ Voting</a>
+                <a href="/tukar-poin" style={{fontSize:12,fontWeight:500,color:"rgba(250,248,243,.38)",textDecoration:"none",transition:"color .2s"}}
+                  onMouseEnter={e=>(e.currentTarget.style.color="var(--cr)")}
+                  onMouseLeave={e=>(e.currentTarget.style.color="rgba(250,248,243,.38)")}
+                >♻️ Tukar Poin</a>
                 <a href="/ai" style={{fontSize:12,fontWeight:500,color:"rgba(122,173,138,.6)",textDecoration:"none",transition:"color .2s"}}
                   onMouseEnter={e=>(e.currentTarget.style.color="#7aad8a")}
                   onMouseLeave={e=>(e.currentTarget.style.color="rgba(122,173,138,.6)")}
