@@ -1,0 +1,171 @@
+"use client";
+import { useState, useEffect } from "react";
+
+interface Cuaca { suhu: number; deskripsi: string; icon: string; kota: string; kelembaban: number; angin: number; }
+interface Sholat { subuh: string; dzuhur: string; ashar: string; maghrib: string; isya: string; }
+
+// Lokasi default Ciburial, Garut
+const LAT = -7.2167;
+const LON = 107.9167;
+const KOTA = "Ciburial, Garut";
+
+function formatWaktu(date: Date) {
+  return date.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+}
+
+// Hitung jadwal sholat sederhana (kalkulasi astronomi)
+function hitungSholat(lat: number, lon: number, date: Date): Sholat {
+  const d = Math.floor((date.getTime() - new Date(date.getFullYear(), 0, 0).getTime()) / 86400000);
+  const timezone = 7; // WIB
+  const B = (360 / 365) * (d - 81) * (Math.PI / 180);
+  const EoT = 9.87 * Math.sin(2 * B) - 7.53 * Math.cos(B) - 1.5 * Math.sin(B);
+  const noon = 12 - (lon - timezone * 15) / 15 - EoT / 60;
+  const decl = 23.45 * Math.sin(B) * (Math.PI / 180);
+  const latRad = lat * (Math.PI / 180);
+  function ha(angle: number) { return (180 / Math.PI) * Math.acos((Math.sin(angle * Math.PI / 180) - Math.sin(latRad) * Math.sin(decl)) / (Math.cos(latRad) * Math.cos(decl))); }
+  const toTime = (decimal: number) => { const h = Math.floor(decimal); const m = Math.round((decimal - h) * 60); return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`; };
+  return {
+    subuh: toTime(noon - ha(-18) / 15),
+    dzuhur: toTime(noon + 0.07),
+    ashar: toTime(noon + ha(Math.atan(1 / (1 + Math.tan(Math.abs(latRad - decl)))) * 180 / Math.PI) / 15),
+    maghrib: toTime(noon + ha(-0.833) / 15),
+    isya: toTime(noon + ha(-17) / 15),
+  };
+}
+
+export default function CuacaSholatWidget() {
+  const [cuaca, setCuaca] = useState<Cuaca | null>(null);
+  const [sholat, setSholat] = useState<Sholat | null>(null);
+  const [now, setNow] = useState(new Date());
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 60000);
+    return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    setSholat(hitungSholat(LAT, LON, now));
+    fetchCuaca();
+  }, []);
+
+  async function fetchCuaca() {
+    try {
+      // Open-Meteo API — free, no key needed
+      const res = await fetch(
+        `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&current_weather=true&hourly=relativehumidity_2m,windspeed_10m&timezone=Asia%2FJakarta`
+      );
+      const data = await res.json();
+      const wc = data.current_weather;
+      const iconMap: Record<number, string> = {
+        0: "☀️", 1: "🌤️", 2: "⛅", 3: "☁️",
+        45: "🌫️", 48: "🌫️", 51: "🌦️", 53: "🌦️", 55: "🌧️",
+        61: "🌧️", 63: "🌧️", 65: "🌧️", 71: "❄️", 80: "🌦️",
+        95: "⛈️", 96: "⛈️", 99: "⛈️",
+      };
+      const descMap: Record<number, string> = {
+        0: "Cerah", 1: "Cerah Berawan", 2: "Berawan", 3: "Mendung",
+        45: "Berkabut", 48: "Berkabut Tebal", 51: "Gerimis", 53: "Gerimis", 55: "Gerimis Lebat",
+        61: "Hujan Ringan", 63: "Hujan", 65: "Hujan Lebat", 71: "Bersalju", 80: "Hujan Lokal",
+        95: "Badai", 96: "Badai Petir", 99: "Badai Besar",
+      };
+      setCuaca({
+        suhu: Math.round(wc.temperature),
+        deskripsi: descMap[wc.weathercode] || "Cerah",
+        icon: iconMap[wc.weathercode] || "🌤️",
+        kota: KOTA,
+        kelembaban: data.hourly?.relativehumidity_2m?.[new Date().getHours()] || 75,
+        angin: Math.round(wc.windspeed),
+      });
+    } catch {
+      setCuaca({ suhu: 24, deskripsi: "Cerah Berawan", icon: "🌤️", kota: KOTA, kelembaban: 75, angin: 8 });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const HARI_ID = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+  const BULAN_ID = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+
+  // Tentukan sholat berikutnya
+  function sholatBerikutnya() {
+    if (!sholat) return null;
+    const nowStr = formatWaktu(now);
+    const waktuList = [
+      { nama: "Subuh", waktu: sholat.subuh },
+      { nama: "Dzuhur", waktu: sholat.dzuhur },
+      { nama: "Ashar", waktu: sholat.ashar },
+      { nama: "Maghrib", waktu: sholat.maghrib },
+      { nama: "Isya", waktu: sholat.isya },
+    ];
+    return waktuList.find(w => w.waktu > nowStr) || waktuList[0];
+  }
+  const next = sholatBerikutnya();
+
+  return (
+    <div style={{ fontFamily: "'Segoe UI',system-ui,sans-serif" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+        {/* Cuaca */}
+        <div style={{ background: "linear-gradient(135deg, #2d5a40 0%, #4a8c5c 100%)", borderRadius: 20, padding: 20, color: "white" }}>
+          <div style={{ fontSize: 11, opacity: 0.7, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>
+            📍 {KOTA}
+          </div>
+          {loading ? (
+            <div style={{ opacity: 0.5, fontSize: 14 }}>Memuat cuaca...</div>
+          ) : cuaca && (
+            <>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+                <div style={{ fontSize: 48 }}>{cuaca.icon}</div>
+                <div>
+                  <div style={{ fontSize: 36, fontWeight: 900, lineHeight: 1 }}>{cuaca.suhu}°C</div>
+                  <div style={{ fontSize: 14, opacity: 0.85 }}>{cuaca.deskripsi}</div>
+                </div>
+              </div>
+              <div style={{ display: "flex", gap: 16, fontSize: 12, opacity: 0.75 }}>
+                <span>💧 {cuaca.kelembaban}%</span>
+                <span>💨 {cuaca.angin} km/j</span>
+              </div>
+              <div style={{ marginTop: 10, fontSize: 12, opacity: 0.6 }}>
+                {HARI_ID[now.getDay()]}, {now.getDate()} {BULAN_ID[now.getMonth()]} {now.getFullYear()}
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Jadwal Sholat */}
+        <div style={{ background: "white", borderRadius: 20, padding: 20, border: "1px solid rgba(45,90,64,0.12)", boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+            <div style={{ fontSize: 14, fontWeight: 700, color: "#1a2e1f" }}>🕌 Jadwal Sholat</div>
+            {next && (
+              <div style={{ background: "rgba(45,90,64,0.08)", borderRadius: 20, padding: "3px 10px", fontSize: 11, color: "#2d5a40", fontWeight: 600 }}>
+                {next.nama} {next.waktu}
+              </div>
+            )}
+          </div>
+          {sholat && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              {[
+                { nama: "Subuh", waktu: sholat.subuh, icon: "🌙" },
+                { nama: "Dzuhur", waktu: sholat.dzuhur, icon: "☀️" },
+                { nama: "Ashar", waktu: sholat.ashar, icon: "🌤️" },
+                { nama: "Maghrib", waktu: sholat.maghrib, icon: "🌆" },
+                { nama: "Isya", waktu: sholat.isya, icon: "⭐" },
+              ].map(s => {
+                const isNext = next?.nama === s.nama;
+                return (
+                  <div key={s.nama} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "6px 10px", borderRadius: 10, background: isNext ? "rgba(45,90,64,0.08)" : "transparent", border: isNext ? "1px solid rgba(45,90,64,0.15)" : "1px solid transparent" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <span style={{ fontSize: 14 }}>{s.icon}</span>
+                      <span style={{ fontSize: 13, fontWeight: isNext ? 700 : 400, color: isNext ? "#2d5a40" : "#1a2e1f" }}>{s.nama}</span>
+                    </div>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: isNext ? "#2d5a40" : "#6b7c6d" }}>{s.waktu}</span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
