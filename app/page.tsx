@@ -239,6 +239,14 @@ export default function Home() {
         .div-card:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(28,58,43,.08);}
 
         ::-webkit-scrollbar{width:5px;}
+        /* Navbar responsive fix */
+        .nav-desktop { display: flex !important; }
+        .nav-desktop { display: flex !important; }
+
+        @media (max-width: 768px) {
+        .nav-desktop { display: none !important; }
+        .nav-mobile-btn { display: flex !important; }
+        }
         ::-webkit-scrollbar-thumb{background:var(--el);border-radius:99px;}
 
         /* ── DROPDOWN LAYANAN ── */
@@ -314,7 +322,7 @@ export default function Home() {
             </button>
 
             {/* Desktop */}
-            <div className="hidden md:flex" style={{gap:2,alignItems:"center"}}>
+            <div className="nav-desktop" style={{gap:2,alignItems:"center"}}>
               {TABS.map(t=>(
                 <button key={t.key} onClick={()=>go(t.key)} style={{padding:"8px 14px",fontSize:11,fontWeight:600,letterSpacing:".08em",textTransform:"uppercase",border:"none",borderRadius:99,cursor:"pointer",transition:"all .25s",background:(tab===t.key)||(t.key==="marketplace"&&checkout)?"var(--fo)":"transparent",color:(tab===t.key)||(t.key==="marketplace"&&checkout)?"#fff":"var(--ts)"}}>
                   {t.label}
@@ -388,14 +396,14 @@ export default function Home() {
             </div>
 
             {/* Mobile burger */}
-            <button className="md:hidden" onClick={()=>setMobOpen(!mobOpen)} style={{background:"none",border:"none",cursor:"pointer",padding:8,display:"flex",flexDirection:"column",gap:5}}>
+            <button className="nav-mobile-btn" onClick={()=>setMobOpen(!mobOpen)} style={{background:"none",border:"none",cursor:"pointer",padding:8,display:"flex",flexDirection:"column",gap:5}}>
               <div style={{width:22,height:2,background:"var(--fo)",borderRadius:2}}/>
               <div style={{width:15,height:2,background:"var(--fo)",borderRadius:2}}/>
               <div style={{width:22,height:2,background:"var(--fo)",borderRadius:2}}/>
             </button>
           </div>
 
-          <div className={`mob md:hidden ${mobOpen?"op":""}`} style={{background:"var(--cw)",borderTop:"1px solid var(--bo)",padding:"12px 28px 20px"}}>
+          <div className={`mob nav-mobile-btn ${mobOpen?"op":""}`} style={{background:"var(--cw)",borderTop:"1px solid var(--bo)",padding:"12px 28px 20px"}}>
             {TABS.map(t=>(
               <button key={t.key} onClick={()=>go(t.key)} style={{display:"block",width:"100%",textAlign:"left",padding:"11px 0",fontSize:12,fontWeight:600,letterSpacing:".08em",textTransform:"uppercase",background:"none",border:"none",color:tab===t.key?"var(--fo)":"var(--ts)",cursor:"pointer",borderBottom:"1px solid var(--bo)"}}>
                 {t.label}
