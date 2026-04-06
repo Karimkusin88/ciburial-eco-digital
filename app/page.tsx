@@ -215,7 +215,7 @@ export default function Home() {
         .ac.op{max-height:1200px;}
 
         /* mobile menu */
-        .mob{opacity:0;transform:translateY(-10px);pointer-events:none;transition:opacity .25s,transform .25s cubic-bezier(.22,1,.36,1);}
+        .mob{top: 70px;left: 0;width: 100%;background: var(--cw);opacity:0;transform:translateY(-10px);pointer-events:none;transition:opacity .25s,transform .25s cubic-bezier(.22,1,.36,1);}
         .mob.op{opacity:1;transform:translateY(0);pointer-events:all;}
 
         /* kegiatan card */
