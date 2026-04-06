@@ -4,6 +4,7 @@
 import { useState, useEffect } from "react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 import dynamic from "next/dynamic";
+import test from "node:test";
 const CuacaSholatWidget = dynamic(() => import("@/components/CuacaSholatWidget"), { ssr: false });
 
 type TabType = "tentang"|"kegiatan"|"proposal"|"transparansi"|"marketplace";
@@ -632,20 +633,36 @@ export default function Home() {
                       Dukung Balai Warga, Smart Farming, Learning Hub, Smart PJU, dan Internet Desa.
                     </p>
                     <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:22}}>
-                      {[{icon:"📱",l:"QRIS",s:"Scan & Bayar Instan",},{icon:"🏦",l:"Transfer Bank",s:"Rekening Resmi DKM", rek:"SeaBank:90135555066 a.n Ubay Rahmat H"},{icon:"🌐",l:"Crypto / Web3",s:"EVM-Compatible Wallet",rek: "0x71723715478b344164e992b49ae1fCEb6467888B"}].map((m,i)=>(
-                        <div key={i} style={{display:"flex",alignItems:"center",gap:14,padding:"13px 18px",background:"rgba(255,255,255,.06)",borderRadius:12,border:"1px solid rgba(255,255,255,.09)",cursor:"pointer",transition:"background .2s"}}
-                          onMouseEnter={e=>(e.currentTarget.style.background="rgba(255,255,255,.11)")}
-                          onMouseLeave={e=>(e.currentTarget.style.background="rgba(255,255,255,.06)")}
-                        >
-                          <span style={{fontSize:22}}>{m.icon}</span>
-                          <div>
-                            <div style={{fontSize:13,fontWeight:700,color:"var(--cr)"}}>{m.l}</div>
-                            <div style={{fontSize:11,color:"rgba(250,248,243,.38)"}}>{m.s}</div>
-                          </div>
-                          <div style={{fontSize:12,fontWeight:700,color:"var(--gl)",letterSpacing:"0.5px",marginTop:2}}>{m.rek}
-                        </div>
-                      </div>
-                      ))}
+                      {[
+  { icon: "📱", l: "QRIS", s: "Scan & Bayar Instan", rek: "Gunakan QRIS di bawah ini (Testing)", img: "/qris-test.jpeg" },
+  { icon: "🏦", l: "Transfer Bank", s: "Rekening Resmi DKM", rek:"SeaBank:90135555066 a.n Ubay Rahmat H" },
+  { icon: "🌐", l: "Crypto / Web3", s: "EVM-Compatible Wallet", rek: "0x71723715478b344164e992b49ae1fCEb6467888B" }
+].map((m, i) => (
+  <div key={i} style={{display:"flex",alignItems:"flex-start",gap:14,padding:"13px 18px",background:"rgba(255,255,255,.06)",borderRadius:12,border:"1px solid rgba(255,255,255,.09)",cursor:"pointer",transition:"background .2s"}}
+    onMouseEnter={e=>(e.currentTarget.style.background="rgba(255,255,255,.11)")}
+    onMouseLeave={e=>(e.currentTarget.style.background="rgba(255,255,255,.06)")}
+  >
+    <span style={{fontSize:22, marginTop: 2}}>{m.icon}</span>
+    
+    <div style={{display: "flex", flexDirection: "column", gap: 2, width: "100%"}}>
+      <div style={{fontSize:13,fontWeight:700,color:"var(--cr)"}}>{m.l}</div>
+      <div style={{fontSize:11,color:"rgba(250,248,243,.38)"}}>{m.s}</div>
+      
+      {/* letterSpacing udah dibenerin huruf besarnya */}
+      <div style={{fontSize:12, fontWeight:700, color:"var(--gl)", letterSpacing:"0.5px", marginTop:2}}>
+        {m.rek}
+      </div>
+
+      {/* KODE PEMANGGIL GAMBAR QRIS */}
+      {m.img && (
+        <div style={{marginTop: 12, background: "#fff", padding: 8, borderRadius: 8, width: "fit-content"}}>
+          <img src={m.img} alt="QRIS" style={{width: 120, height: 120, objectFit: "contain", display: "block"}} />
+        </div>
+      )}
+    </div>
+  </div>
+))}
+
                     </div>
                     <button onClick={()=>go("transparansi")} style={{padding:"10px 20px",borderRadius:99,fontSize:11,fontWeight:700,letterSpacing:".09em",textTransform:"uppercase",border:"1px solid rgba(255,255,255,.18)",background:"transparent",color:"rgba(250,248,243,.55)",cursor:"pointer",transition:"all .2s"}}
                       onMouseEnter={e=>{(e.currentTarget as HTMLButtonElement).style.background="rgba(255,255,255,.08)";(e.currentTarget as HTMLButtonElement).style.color="var(--cr)";}}
