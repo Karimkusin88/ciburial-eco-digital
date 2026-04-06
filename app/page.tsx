@@ -275,7 +275,7 @@ export default function Home() {
       <main style={{minHeight:"100dvh",background:"var(--cr)"}}>
 
         {/* ════════════════ NAVBAR ════════════════ */}
-        <nav className={scrolled?"ng":""} style={{position:"sticky",top:0,width:"100%",zIndex:50,transition:"background .3s,box-shadow .3s",background:scrolled?undefined:"transparent"}}>
+        <nav className={scrolled?"ng":""} style={{position:"sticky",top:0,width:"100%",zIndex:50,transition:"all 0.3s ease-in-out",background: scrolled ? "#FDFBF7" : "transparent",boxShadow: scrolled ? "0 4px 10px rgba(0, 0, 0, 0.05)" : "none"}}>
           <div style={{maxWidth:1320,margin:"0 auto",padding:"0 28px",height:70,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
 
             <button onClick={()=>go("tentang")} style={{background:"none",border:"none",cursor:"pointer",textAlign:"left"}}>
