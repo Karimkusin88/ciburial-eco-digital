@@ -258,13 +258,13 @@ export default function Home() {
         /* Desktop: full viewport height, content di bawah */
         /* HERO — simple padding approach, no full-height trick */
         .hero-section{ position:relative; overflow:hidden; }
-        .hero-content{ padding:160px 32px 100px; max-width:100%; position:relative; z-index:1; }
+        .hero-content{ padding:100px 20px 56px; max-width:100%; position:relative; z-index:1; }
         .hero-title{ font-size:clamp(54px,10vw,154px); }
         .hero-sub{   font-size:clamp(22px,4vw,58px); }
 
         @media(max-width:768px){
-          .hero-content{ padding:100px 20px 56px !important; }
-          .hero-title{ font-size:clamp(44px,13vw,68px) !important; }
+          .hero-content{ padding:60px 16px 32px !important; }
+          .hero-title{ font-size:clamp(32px,10vw,48px) !important; }
           .hero-sub{   font-size:clamp(18px,6vw,28px) !important; }
           .sec{ padding:52px 20px !important; }
           .visi-wrap{ gap:28px !important; }
