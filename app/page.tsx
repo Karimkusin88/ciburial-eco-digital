@@ -632,7 +632,7 @@ export default function Home() {
                       Dukung Balai Warga, Smart Farming, Learning Hub, Smart PJU, dan Internet Desa.
                     </p>
                     <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:22}}>
-                      {[{icon:"📱",l:"QRIS",s:"Scan & Bayar Instan"},{icon:"🏦",l:"Transfer Bank",s:"Rekening Resmi DKM"},{icon:"🌐",l:"Crypto / Web3",s:"EVM-Compatible Wallet"}].map((m,i)=>(
+                      {[{icon:"📱",l:"QRIS",s:"Scan & Bayar Instan",},{icon:"🏦",l:"Transfer Bank",s:"Rekening Resmi DKM", rek:"SeaBank:90135555066 a.n Ubay Rahmat H"},{icon:"🌐",l:"Crypto / Web3",s:"EVM-Compatible Wallet",rek: "0x71723715478b344164e992b49ae1fCEb6467888B"}].map((m,i)=>(
                         <div key={i} style={{display:"flex",alignItems:"center",gap:14,padding:"13px 18px",background:"rgba(255,255,255,.06)",borderRadius:12,border:"1px solid rgba(255,255,255,.09)",cursor:"pointer",transition:"background .2s"}}
                           onMouseEnter={e=>(e.currentTarget.style.background="rgba(255,255,255,.11)")}
                           onMouseLeave={e=>(e.currentTarget.style.background="rgba(255,255,255,.06)")}
@@ -642,7 +642,9 @@ export default function Home() {
                             <div style={{fontSize:13,fontWeight:700,color:"var(--cr)"}}>{m.l}</div>
                             <div style={{fontSize:11,color:"rgba(250,248,243,.38)"}}>{m.s}</div>
                           </div>
+                          <div style={{fontSize:12,fontWeight:700,color:"var(--gl)",letterSpacing:"0.5px",marginTop:2}}>{m.rek}
                         </div>
+                      </div>
                       ))}
                     </div>
                     <button onClick={()=>go("transparansi")} style={{padding:"10px 20px",borderRadius:99,fontSize:11,fontWeight:700,letterSpacing:".09em",textTransform:"uppercase",border:"1px solid rgba(255,255,255,.18)",background:"transparent",color:"rgba(250,248,243,.55)",cursor:"pointer",transition:"all .2s"}}
@@ -957,7 +959,7 @@ export default function Home() {
                     <div>
                       <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(200px,1fr))",gap:12,marginBottom:24}}>
                         {[
-                          {icon:"🏦",t:"Rekening Bank Resmi",sub:"Bank [SeaBank]",detail:"No. Rek: [9013555550666]\nA.n: [Ubay Rahmat H]"},
+                          {icon:"🏦",t:"Rekening Bank Resmi",sub:"Bank [SeaBank]",detail:"No. Rek: [901355550666]\nA.n: [Ubay Rahmat H]"},
                           {icon:"📱",t:"QRIS Resmi",sub:"Scan & Bayar Instan",detail:"(https://cdn.phototourl.com/free/2026-04-06-619e93dc-ec97-4b65-892a-15570ffd8f6b.jpg)"},
                           {icon:"🌐",t:"Crypto / Web3",sub:"EVM Compatible Wallet",detail:"Wallet Address:\n[0x71723715478b344164e992b49ae1fCEb6467888B]"},
                         ].map((m,i)=>(
