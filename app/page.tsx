@@ -119,7 +119,7 @@ export default function Home() {
 
   // ─── STRUKTUR ORGANISASI ─────────────────────────────────────────────────
   const dwnPelindung=[
-    {role:"Tokoh Agama",         name:"Ust. Kurniadin",   icon:"🕌"},
+    {role:"Tokoh Agama",         name:"— Hasil Musyawarah —",   icon:"🕌"},
     {role:"Kepala Kewilayahan",  name:"Bpk. Enang (Ketua RW)", icon:"🏘️"},
     {role:"Koordinator RT 01",   name:"Sarip Hidayat",    icon:"👤"},
     {role:"Koordinator RT 02",   name:"Oneng",            icon:"👤"},
@@ -129,7 +129,7 @@ export default function Home() {
     {role:"Pengelola Dana DKM",  name:"Bpk. Pupu Apipudin", icon:"🤲"},
   ];
   const timEksekutif=[
-    {role:"Ketua Pelaksana (PM)",name:"Ubay Rahmat H.",   icon:"⚡"},
+    {role:"Ketua Pelaksana (PM)",name:"— Hasil Voting —",   icon:"⚡"},
     {role:"Sekretaris",          name:"— Hasil Voting —", icon:"📋"},
     {role:"Bendahara",           name:"— Hasil Voting —", icon:"💰"},
   ];
@@ -470,12 +470,12 @@ export default function Home() {
             <section className="sec" style={{background:"var(--cw)",padding:"clamp(40px,6vw,68px) clamp(16px,4vw,32px)"}}>
               <div style={{maxWidth:1320,margin:"0 auto",display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(130px,1fr))",gap:2}}>
                 {[
-                  {v:"450",    l:"Jiwa",      s:"Total Populasi"},
-                  {v:"3",      l:"RT",        s:"Rukun Tetangga"},
-                  {v:"55%",    l:"Pemuda",    s:"Gen. Penerus"},
-                  {v:"5",      l:"Divisi",    s:"Tim Lapangan"},
-                  {v:"7",      l:"Program",   s:"Unggulan"},
-                  {v:"250jt",  l:"Target",    s:"RAB Global"},
+                  {v:"450",    l:"Jiwa",             s:"Total Populasi"},
+                  {v:"3",      l:"RT",               s:"Rukun Tetangga"},
+                  {v:"55%",    l:"Pemuda/Pemudi",    s:"Gen. Penerus"},
+                  {v:"5",      l:"Divisi",           s:"Tim Lapangan"},
+                  {v:"7",      l:"Program",          s:"Unggulan"},
+                  {v:"250jt",  l:"Target",           s:"RAB Global Tahun 2026"},
                 ].map((s,i)=>(
                   <div key={i} className={`rv d${i+1}`} style={{padding:"40px 18px",textAlign:"center",borderRight:i<5?"1px solid var(--bo)":"none"}}>
                     <div className="fnt" style={{fontSize:"clamp(30px,4vw,56px)",fontWeight:300,color:"var(--fo)",lineHeight:1}}>{s.v}</div>
@@ -529,7 +529,7 @@ export default function Home() {
                   <p style={{color:"rgba(250,248,243,.45)",fontSize:14,marginTop:10,maxWidth:400,margin:"10px auto 0"}}>Pemuda mendominasi — 55% dari 450 jiwa. Mereka adalah modal utama quantum leap Ciburial.</p>
                 </div>
                 <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(230px,1fr))",gap:18}}>
-                  {[{l:"Pemuda (Penerus)",pct:55,c:"var(--go)"},{l:"Lansia (Sesepuh)",pct:45,c:"rgba(250,248,243,.28)"}].map((item,i)=>(
+                  {[{l:"Pemuda/Pemudi (Penerus)",pct:55,c:"var(--go)"},{l:"Lansia (Sesepuh)",pct:45,c:"rgba(250,248,243,.28)"}].map((item,i)=>(
                     <div key={i} className={`rv pgw d${i+1}`} style={{padding:"32px",background:"rgba(255,255,255,.05)",borderRadius:18,border:"1px solid rgba(255,255,255,.08)"}}>
                       <div style={{display:"flex",justifyContent:"space-between",marginBottom:16}}>
                         <span style={{fontSize:13,fontWeight:600,color:"rgba(250,248,243,.62)"}}>{item.l}</span>
@@ -759,7 +759,7 @@ export default function Home() {
                 </p>
                 <p style={{fontSize:13,color:"var(--ts)",lineHeight:1.7,maxWidth:480,margin:"0 auto"}}>
                   Diajukan oleh Paguyuban Warga & Pemuda Ciburial Makers<br/>
-                  Kp. Ciburial, Desa Hanjuang, Kec. Bungbulang, Kab. Garut 44165
+                  Kp. Ciburial RW 08, Desa Hanjuang, Kec. Bungbulang, Kab. Garut 44165
                 </p>
               </div>
 
@@ -882,7 +882,7 @@ export default function Home() {
                     <div style={{display:"flex",flexDirection:"column",gap:16}}>
                       {[
                         {group:"A. Dewan Pelindung & Penasihat",items:[
-                          "Tokoh Agama: Ust. Kurniadin",
+                          "Tokoh Agama: [Hasil Voting]",
                           "Kepala Kewilayahan: Bpk. Enang (Ketua RW)",
                           "Koordinator: Ketua RT 01 (Sarip Hidayat), RT 02 (Oneng), RT 03 (Mumun)",
                         ]},
@@ -890,7 +890,7 @@ export default function Home() {
                           "Pengelola Dana DKM: Bpk. Pupu Apipudin",
                         ]},
                         {group:"C. Tim Eksekutif Lapangan (Ciburial Makers)",items:[
-                          "Ketua Pelaksana (PM): Ubay Rahmat H.",
+                          "Ketua Pelaksana (PM): [Hasil Voting]",
                           "Sekretaris & Administrasi: [Hasil Voting]",
                           "Bendahara Program: [Hasil Voting]",
                         ]},
@@ -957,9 +957,9 @@ export default function Home() {
                     <div>
                       <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(200px,1fr))",gap:12,marginBottom:24}}>
                         {[
-                          {icon:"🏦",t:"Rekening Bank Resmi",sub:"Bank [Nama Bank]",detail:"No. Rek: [Masukkan No Rekening]\nA.n: [Nama Pemilik]"},
-                          {icon:"📱",t:"QRIS Resmi",sub:"Scan & Bayar Instan",detail:"(Barcode QRIS akan disisipkan di sini)"},
-                          {icon:"🌐",t:"Crypto / Web3",sub:"EVM Compatible Wallet",detail:"Wallet Address:\n[Masukkan Address]"},
+                          {icon:"🏦",t:"Rekening Bank Resmi",sub:"Bank [SeaBank]",detail:"No. Rek: [9013555550666]\nA.n: [Ubay Rahmat H]"},
+                          {icon:"📱",t:"QRIS Resmi",sub:"Scan & Bayar Instan",detail:"(https://cdn.phototourl.com/free/2026-04-06-619e93dc-ec97-4b65-892a-15570ffd8f6b.jpg)"},
+                          {icon:"🌐",t:"Crypto / Web3",sub:"EVM Compatible Wallet",detail:"Wallet Address:\n[0x71723715478b344164e992b49ae1fCEb6467888B]"},
                         ].map((m,i)=>(
                           <div key={i} style={{padding:"18px",background:"var(--fo)",borderRadius:14}}>
                             <div style={{fontSize:24,marginBottom:8}}>{m.icon}</div>
