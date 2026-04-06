@@ -976,17 +976,29 @@ export default function Home() {
                     <div>
                       <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(200px,1fr))",gap:12,marginBottom:24}}>
                         {[
-                          {icon:"🏦",t:"Rekening Bank Resmi",sub:"Bank [SeaBank]",detail:"No. Rek: [901355550666]\nA.n: [Ubay Rahmat H]"},
-                          {icon:"📱",t:"QRIS Resmi",sub:"Scan & Bayar Instan",detail:"(https://cdn.phototourl.com/free/2026-04-06-619e93dc-ec97-4b65-892a-15570ffd8f6b.jpg)"},
-                          {icon:"🌐",t:"Crypto / Web3",sub:"EVM Compatible Wallet",detail:"Wallet Address:\n[0x71723715478b344164e992b49ae1fCEb6467888B]"},
-                        ].map((m,i)=>(
-                          <div key={i} style={{padding:"18px",background:"var(--fo)",borderRadius:14}}>
-                            <div style={{fontSize:24,marginBottom:8}}>{m.icon}</div>
-                            <div style={{fontSize:13,fontWeight:700,color:"var(--cr)",marginBottom:4}}>{m.t}</div>
-                            <div style={{fontSize:11,color:"rgba(250,248,243,.5)"}}>{m.sub}</div>
-                            <div style={{fontSize:11,color:"rgba(250,248,243,.35)",marginTop:6,whiteSpace:"pre-line"}}>{m.detail}</div>
-                          </div>
-                        ))}
+  {icon:"🏦",t:"Rekening Bank Resmi",sub:"Bank SeaBank",detail:"No. Rek: 901355550666\nA.n: Ubay Rahmat H"},
+  {icon:"📱",t:"QRIS Resmi",sub:"Scan & Bayar Instan",detail:"", img:"/qris-test.jpeg"}, // Pakai file lokal yang tadi
+  {icon:"🌐",t:"Crypto / Web3",sub:"EVM Compatible Wallet",detail:"Wallet Address:\n0x71723715478b344164e992b49ae1fCEb6467888B"},
+].map((m,i)=>(
+  <div key={i} style={{padding:"18px",background:"var(--fo)",borderRadius:14}}>
+    <div style={{fontSize:24,marginBottom:8}}>{m.icon}</div>
+    <div style={{fontSize:13,fontWeight:700,color:"var(--cr)",marginBottom:4}}>{m.t}</div>
+    <div style={{fontSize:11,color:"rgba(250,248,243,.5)"}}>{m.sub}</div>
+    
+    {m.detail && (
+      <div style={{fontSize:11,color:"rgba(250,248,243,.35)",marginTop:6,whiteSpace:"pre-line"}}>
+        {m.detail}
+      </div>
+    )}
+
+    {/* Ini yang manggil gambar dari folder public lu */}
+    {m.img && (
+      <div style={{marginTop: 10, background: "#fff", padding: 6, borderRadius: 8, width: "fit-content"}}>
+        <img src={m.img} alt="QRIS Ciburial" style={{width: 100, height: 100, objectFit: "contain", display: "block"}} />
+      </div>
+    )}
+  </div>
+))}
                       </div>
                       <p style={{fontSize:14,lineHeight:1.9,color:"var(--ts)",marginBottom:24}}>
                         Setiap dukungan Anda adalah lentera nyata bagi jalan desa kami, buku dan ilmu bagi generasi muda kami, serta roda penggerak bagi kemakmuran warga Ciburial. Kami percaya, kemajuan teknologi akan membawa keberkahan jika disandingkan dengan kelestarian alam dan niat tulus bergotong royong.
