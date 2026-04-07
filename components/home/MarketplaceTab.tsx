@@ -1,5 +1,6 @@
 "use client";
 import { Produk, Iklan, fRp } from "./types";
+import { useState } from "react";
 
 interface MarketplaceTabProps {
   produk: Produk[];
@@ -10,6 +11,36 @@ interface MarketplaceTabProps {
 }
 
 export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout, setCheckout }: MarketplaceTabProps) {
+  const [loadingSnap, setLoadingSnap] = useState(false);
+
+  const bayarSekarang = async () => {
+    setLoadingSnap(true);
+    try {
+      const res = await fetch("/api/midtrans/tokenize", {
+        method: "POST",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify({ 
+          order_id: `MKT-${Date.now()}`,
+          gross_amount: 150000, 
+          item_details: [{ id: "mkt-1", price: 150000, quantity: 1, name: "Checkout Produk Ciburial" }]
+        })
+      });
+      const data = await res.json();
+      if (data.token && (window as any).snap) {
+        (window as any).snap.pay(data.token, {
+          onSuccess: function(r:any){ alert("Pembayaran sukses! Terima kasih."); setCheckout(false); },
+          onPending: function(r:any){ alert("Menunggu pembayaran Anda."); },
+          onError: function(r:any){ alert("Pembayaran gagal."); }
+        });
+      } else {
+        alert("Gagal memanggil API payment. " + (data.error || "Cek console log atau .env"));
+      }
+    } catch (e) {
+      alert("Error contacting server.");
+    }
+    setLoadingSnap(false);
+  };
+
   if (checkout) {
     return (
       <div className="pi" style={{ paddingTop: "clamp(48px,8vw,106px)", paddingBottom: "clamp(48px,8vw,106px)", minHeight: "100vh" }}>
@@ -43,8 +74,8 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                 <label style={{ display: "block", fontSize: 10, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--ts)", marginBottom: 7 }}>Catatan (opsional)</label>
                 <textarea rows={2} className="fi" placeholder="Warna, ukuran, atau permintaan khusus..." style={{ resize: "vertical" }} />
               </div>
-              <button type="button" className="btn" style={{ width: "100%", padding: "15px", borderRadius: 13, fontSize: 11, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", border: "none", cursor: "pointer", background: "var(--fo)", color: "#fff", marginTop: 4 }}>
-                <span>Kirim Pesanan →</span>
+              <button type="button" onClick={bayarSekarang} disabled={loadingSnap} className="btn" style={{ width: "100%", padding: "15px", borderRadius: 13, fontSize: 11, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", border: "none", cursor: loadingSnap ? "wait" : "pointer", background: "var(--fo)", color: "#fff", marginTop: 4, opacity: loadingSnap ? 0.7 : 1 }}>
+                <span>{loadingSnap ? "Memproses Midtrans..." : "Bayar via Midtrans (Rp150.000) →"}</span>
               </button>
             </div>
           </div>

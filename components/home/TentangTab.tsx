@@ -9,6 +9,8 @@ interface TentangTabProps {
   testimoni?: Testimoni[];
 }
 
+import { useState } from "react";
+
 // ─── STRUKTUR ORGANISASI ─────────────────────────────────────────────────
 const dwnPelindung = [
   { role: "Tokoh Agama", name: "— Hasil Musyawarah —", icon: "🕌" },
@@ -34,6 +36,36 @@ const divisi = [
 ];
 
 export default function TentangTab({ onNavigate, testimoni = [] }: TentangTabProps) {
+  const [loadingDonasi, setLoadingDonasi] = useState(false);
+
+  const bayarDonasi = async () => {
+    setLoadingDonasi(true);
+    try {
+      const res = await fetch("/api/midtrans/tokenize", {
+        method: "POST",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify({ 
+          order_id: `DONASI-${Date.now()}`,
+          gross_amount: 50000, 
+          item_details: [{ id: "dn-50k", price: 50000, quantity: 1, name: "Donasi Ciburial Eco-Digital" }]
+        })
+      });
+      const data = await res.json();
+      if (data.token && (window as any).snap) {
+        (window as any).snap.pay(data.token, {
+          onSuccess: function(r:any){ alert("Donasi sukses diterima! Dana langsung terdata di transparansi."); },
+          onPending: function(r:any){ alert("Menunggu status pembayaran donasi."); },
+          onError: function(r:any){ alert("Pembayaran gagal."); }
+        });
+      } else {
+        alert("Gagal memanggil API. Cek .env.");
+      }
+    } catch (e) {
+      alert("Error.");
+    }
+    setLoadingDonasi(false);
+  };
+
   return (
     <div className="pi">
 
@@ -339,12 +371,17 @@ export default function TentangTab({ onNavigate, testimoni = [] }: TentangTabPro
                   </div>
                 ))}
               </div>
-              <button onClick={() => onNavigate("transparansi")} style={{ padding: "10px 20px", borderRadius: 99, fontSize: 11, fontWeight: 700, letterSpacing: ".09em", textTransform: "uppercase", border: "1px solid rgba(255,255,255,.18)", background: "transparent", color: "rgba(250,248,243,.55)", cursor: "pointer", transition: "all .2s" }}
-                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,.08)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--cr)"; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; (e.currentTarget as HTMLButtonElement).style.color = "rgba(250,248,243,.55)"; }}
-              >
-                Lihat Transparansi Dana →
-              </button>
+              <div style={{ display: "flex", gap: 14, flexWrap: "wrap", alignItems: "center" }}>
+                <button onClick={bayarDonasi} disabled={loadingDonasi} style={{ padding: "10px 20px", borderRadius: 99, fontSize: 11, fontWeight: 700, letterSpacing: ".09em", textTransform: "uppercase", border: "none", background: "var(--go)", color: "#fff", cursor: loadingDonasi ? "wait" : "pointer", opacity: loadingDonasi ? 0.7 : 1, transition: "all .2s" }}>
+                  {loadingDonasi ? "Memuat..." : "Donasi Otomatis (Rp50.000)"}
+                </button>
+                <button onClick={() => onNavigate("transparansi")} style={{ padding: "10px 20px", borderRadius: 99, fontSize: 11, fontWeight: 700, letterSpacing: ".09em", textTransform: "uppercase", border: "1px solid rgba(255,255,255,.18)", background: "transparent", color: "rgba(250,248,243,.55)", cursor: "pointer", transition: "all .2s" }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,.08)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--cr)"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; (e.currentTarget as HTMLButtonElement).style.color = "rgba(250,248,243,.55)"; }}
+                >
+                  Lihat Transparansi Dana →
+                </button>
+              </div>
             </div>
             <div style={{ background: "var(--ea)", padding: "60px 52px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
               <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--go)", marginBottom: 20 }}>Doa untuk Donatur</div>
