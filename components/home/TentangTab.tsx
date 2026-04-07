@@ -250,7 +250,11 @@ export default function TentangTab({ onNavigate, testimoni = [] }: TentangTabPro
                 
                 {/* COVER BESAR KHUSUS BERITA */}
                 {t.tipe === "berita" && t.foto && (
-                  <img src={t.foto} alt={t.nama} style={{ width: "100%", height: 190, borderRadius: 14, objectFit: "cover", marginBottom: 4 }} />
+                  (t.foto.toLowerCase().includes(".mp4") || t.foto.toLowerCase().includes(".webm")) ? (
+                    <video src={t.foto} controls playsInline style={{ width: "100%", height: 190, borderRadius: 14, objectFit: "cover", marginBottom: 4 }} />
+                  ) : (
+                    <img src={t.foto} alt={t.nama} style={{ width: "100%", height: 190, borderRadius: 14, objectFit: "cover", marginBottom: 4 }} />
+                  )
                 )}
 
                 <div style={{ padding: t.tipe === "berita" && t.foto ? "0 16px" : 0, display: "flex", flexDirection: "column", gap: 14, flex: 1 }}>
@@ -264,7 +268,11 @@ export default function TentangTab({ onNavigate, testimoni = [] }: TentangTabPro
                   <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 10, borderTop: "1px solid var(--bo)", paddingTop: 18 }}>
                     {/* AVATAR KECIL (Khusus Tokoh) */}
                     {t.tipe === "tokoh" && t.foto ? (
-                      <img src={t.foto} alt={t.nama} style={{ width: 44, height: 44, borderRadius: "50%", objectFit: "cover" }} />
+                      (t.foto.toLowerCase().includes(".mp4") || t.foto.toLowerCase().includes(".webm")) ? (
+                        <video src={t.foto} autoPlay muted loop playsInline style={{ width: 44, height: 44, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+                      ) : (
+                        <img src={t.foto} alt={t.nama} style={{ width: 44, height: 44, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+                      )
                     ) : (
                       <div style={{ width: 44, height: 44, borderRadius: "50%", background: "var(--cd)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>
                         {t.tipe === "tokoh" ? "👤" : "🗞️"}
