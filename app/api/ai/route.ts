@@ -1,5 +1,6 @@
 // app/api/ai/route.ts
 import { NextRequest, NextResponse } from "next/server";
+import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 // Rate limiting sederhana (in-memory)
 const rateLimit = new Map<string, { count: number; reset: number }>();
@@ -78,6 +79,35 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    let dynamicContext = "";
+    if (isSupabaseReady()) {
+      try {
+        const [kRes, pRes, tAllRes] = await Promise.all([
+          supabase.from("kegiatan").select("judul, tanggal").order("tanggal", { ascending: false }).limit(3),
+          supabase.from("produk").select("nama, harga").order("created_at", { ascending: false }).limit(5),
+          supabase.from("transaksi").select("tipe, jumlah") // fetch all for true balance
+        ]);
+        
+        const keg = kRes.data || [];
+        const prod = pRes.data || [];
+        const txAll = tAllRes.data || [];
+        
+        const saldoReal = txAll.reduce((acc, curr) => acc + (curr.tipe === "masuk" ? curr.jumlah : -curr.jumlah), 0);
+        
+        dynamicContext = `
+INFO DATA REAL-TIME KAMPUNG CIBURIAL (DARI DATABASE INTERNAL):
+- Saldo Dana Kemakmuran Aktif Saat Ini: Rp ${saldoReal.toLocaleString("id-ID")}
+- 3 Kegiatan Terdekat/Terbaru: ${keg.length ? keg.map((k: any) => `${k.judul} (${k.tanggal})`).join(", ") : "Belum ada"}
+- Produk di Marketplace: ${prod.length ? prod.map((p: any) => `${p.nama} (Rp ${p.harga.toLocaleString("id-ID")})`).join(", ") : "Belum ada"}
+- Posyandu, Ronda, & Bank Sampah: (Sistem pencatatan sedang dalam pengembangan oleh Ciburial Makers. Jawab kepada warga bahwa fitur ini akan segera terintegrasi secara digital).
+`;
+      } catch (err) {
+        console.error("Gagal load data supabase buat AI", err);
+      }
+    }
+
+    const finalSystemPrompt = SYSTEM_PROMPT + "\n\n" + dynamicContext;
+
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -87,7 +117,7 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({
         model: "llama-3.3-70b-versatile",
         messages: [
-          { role: "system", content: SYSTEM_PROMPT },
+          { role: "system", content: finalSystemPrompt },
           ...recentMessages,
         ],
         max_tokens: 2048,
