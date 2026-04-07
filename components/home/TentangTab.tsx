@@ -246,24 +246,38 @@ export default function TentangTab({ onNavigate, testimoni = [] }: TentangTabPro
           
           <div style={{ display: "flex", gap: 20, padding: "0 clamp(16px,4vw,32px) 20px", overflowX: "auto", scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch" }} className="hide-scroll">
             {testimoni.map((t, i) => (
-              <div key={t.id || i} style={{ scrollSnapAlign: "start", flex: "0 0 clamp(280px, 40vw, 400px)", background: "var(--cw)", border: "1px solid var(--bo)", borderRadius: 20, padding: 28, display: "flex", flexDirection: "column", gap: 18 }}>
-                <div style={{ fontSize: 32, lineHeight: 1, color: "var(--go)", opacity: 0.5 }}>&quot;</div>
-                <p style={{ fontSize: 14, lineHeight: 1.7, color: "var(--ts)", flex: 1, fontStyle: "italic" }}>
-                  {t.pesan}
-                </p>
-                <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 10, borderTop: "1px solid var(--bo)", paddingTop: 18 }}>
-                  {t.foto ? (
-                    <img src={t.foto} alt={t.nama} style={{ width: 44, height: 44, borderRadius: "50%", objectFit: "cover" }} />
-                  ) : (
-                    <div style={{ width: 44, height: 44, borderRadius: "50%", background: "var(--cd)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>👤</div>
-                  )}
-                  <div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: "var(--tp)" }}>{t.nama}</div>
-                    <div style={{ fontSize: 11, fontWeight: 600, color: "var(--go)", letterSpacing: ".04em", textTransform: "uppercase" }}>{t.jabatan}</div>
+              <div key={t.id || i} style={{ scrollSnapAlign: "start", flex: "0 0 clamp(280px, 40vw, 400px)", background: "var(--cw)", border: "1px solid var(--bo)", borderRadius: 20, padding: t.tipe === "berita" && t.foto ? "12px 12px 28px 12px" : 28, display: "flex", flexDirection: "column", gap: 14 }}>
+                
+                {/* COVER BESAR KHUSUS BERITA */}
+                {t.tipe === "berita" && t.foto && (
+                  <img src={t.foto} alt={t.nama} style={{ width: "100%", height: 190, borderRadius: 14, objectFit: "cover", marginBottom: 4 }} />
+                )}
+
+                <div style={{ padding: t.tipe === "berita" && t.foto ? "0 16px" : 0, display: "flex", flexDirection: "column", gap: 14, flex: 1 }}>
+                  {t.tipe === "tokoh" && <div style={{ fontSize: 32, lineHeight: 1, color: "var(--go)", opacity: 0.5 }}>&quot;</div>}
+                  {t.tipe === "berita" && !t.foto && <div style={{ fontSize: 28, lineHeight: 1, color: "var(--go)", opacity: 0.5 }}>📰</div>}
+                  
+                  <p style={{ fontSize: 14, lineHeight: 1.7, color: "var(--ts)", flex: 1, fontStyle: t.tipe === "tokoh" ? "italic" : "normal" }}>
+                    {t.tipe === "tokoh" ? `"${t.pesan}"` : t.pesan}
+                  </p>
+                  
+                  <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 10, borderTop: "1px solid var(--bo)", paddingTop: 18 }}>
+                    {/* AVATAR KECIL (Khusus Tokoh) */}
+                    {t.tipe === "tokoh" && t.foto ? (
+                      <img src={t.foto} alt={t.nama} style={{ width: 44, height: 44, borderRadius: "50%", objectFit: "cover" }} />
+                    ) : (
+                      <div style={{ width: 44, height: 44, borderRadius: "50%", background: "var(--cd)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>
+                        {t.tipe === "tokoh" ? "👤" : "🗞️"}
+                      </div>
+                    )}
+                    <div>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: "var(--tp)" }}>{t.nama}</div>
+                      <div style={{ fontSize: 11, fontWeight: 600, color: "var(--go)", letterSpacing: ".04em", textTransform: "uppercase" }}>{t.jabatan}</div>
+                    </div>
+                    <span style={{ marginLeft: "auto", fontSize: 10, fontWeight: 700, padding: "4px 8px", background: t.tipe === "tokoh" ? "rgba(184,148,63,.1)" : "rgba(45,90,64,.1)", color: t.tipe === "tokoh" ? "#7A5A1E" : "#2D5A40", borderRadius: 6, textTransform: "uppercase" }}>
+                      {t.tipe}
+                    </span>
                   </div>
-                  <span style={{ marginLeft: "auto", fontSize: 10, fontWeight: 700, padding: "4px 8px", background: t.tipe === "tokoh" ? "rgba(184,148,63,.1)" : "rgba(45,90,64,.1)", color: t.tipe === "tokoh" ? "#7A5A1E" : "#2D5A40", borderRadius: 6, textTransform: "uppercase" }}>
-                    {t.tipe}
-                  </span>
                 </div>
               </div>
             ))}
