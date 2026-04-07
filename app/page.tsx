@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
-import { TabType, Kegiatan, Produk, Transaksi, Testimoni, DEF_KEG, DEF_PROD, DEF_TX, DEF_TESTIMONI, ALOKASI } from "@/components/home/types";
+import { TabType, Kegiatan, Produk, Transaksi, Testimoni, Iklan, DEF_KEG, DEF_PROD, DEF_TX, DEF_TESTIMONI, DEF_IKLAN, ALOKASI } from "@/components/home/types";
 import Navbar from "@/components/home/Navbar";
 import TentangTab from "@/components/home/TentangTab";
 import KegiatanTab from "@/components/home/KegiatanTab";
@@ -19,6 +19,7 @@ export default function Home() {
   const [produk, setProduk] = useState<Produk[]>(DEF_PROD);
   const [transaksi, setTransaksi] = useState<Transaksi[]>(DEF_TX);
   const [testimoni, setTestimoni] = useState<Testimoni[]>(DEF_TESTIMONI);
+  const [iklan, setIklan] = useState<Iklan[]>(DEF_IKLAN);
   const [dataLoad, setDataLoad] = useState(false);
 
   useEffect(() => {
@@ -42,11 +43,14 @@ export default function Home() {
       
       // Fetch testimoni (catch error if table doesn't exist yet)
       let tm: any = { data: null };
+      let ikl: any = { data: null };
       try {
         tm = await supabase.from("testimoni").select("*").order("created_at", { ascending: false });
+        ikl = await supabase.from("iklan").select("*").order("created_at", { ascending: false });
       } catch (e) {}
       
       if (tm && tm.data && tm.data.length > 0) setTestimoni(tm.data as Testimoni[]);
+      if (ikl && ikl.data && ikl.data.length > 0) setIklan(ikl.data as Iklan[]);
 
       setDataLoad(false);
     })();
@@ -92,6 +96,7 @@ export default function Home() {
       {tab === "marketplace" && (
         <MarketplaceTab 
           produk={produk} 
+          iklan={iklan}
           dataLoad={dataLoad} 
           checkout={checkout} 
           setCheckout={setCheckout} 

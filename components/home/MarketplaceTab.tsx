@@ -1,14 +1,15 @@
 "use client";
-import { Produk, fRp } from "./types";
+import { Produk, Iklan, fRp } from "./types";
 
 interface MarketplaceTabProps {
   produk: Produk[];
+  iklan?: Iklan[];
   dataLoad: boolean;
   checkout: boolean;
   setCheckout: (val: boolean) => void;
 }
 
-export default function MarketplaceTab({ produk, dataLoad, checkout, setCheckout }: MarketplaceTabProps) {
+export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout, setCheckout }: MarketplaceTabProps) {
   if (checkout) {
     return (
       <div className="pi" style={{ paddingTop: "clamp(48px,8vw,106px)", paddingBottom: "clamp(48px,8vw,106px)", minHeight: "100vh" }}>
@@ -62,6 +63,54 @@ export default function MarketplaceTab({ produk, dataLoad, checkout, setCheckout
           </div>
           <p style={{ maxWidth: 320, fontSize: 14, lineHeight: 1.8, color: "var(--ts)" }}>Setiap produk adalah cerminan keahlian dan kecintaan pemuda Ciburial terhadap tanah dan bambu mereka.</p>
         </div>
+
+        {/* IKLAN & PROMO SLIDER */}
+        {iklan.length > 0 && !dataLoad && (
+          <div style={{ marginBottom: 60 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
+              <span style={{ fontSize: 24 }}>📺</span>
+              <div>
+                <h2 style={{ fontSize: 16, fontWeight: 700, color: "var(--fo)", letterSpacing: ".02em", textTransform: "uppercase" }}>Sorotan & Promo</h2>
+                <p style={{ fontSize: 13, color: "var(--ts)" }}>Papan iklan warga dan penawaran spesial minggu ini.</p>
+              </div>
+            </div>
+            
+            <div style={{ display: "flex", gap: 16, overflowX: "auto", scrollSnapType: "x mandatory", paddingBottom: 16 }} className="hide-scroll">
+              {iklan.map((ik, i) => (
+                <div key={ik.id || i} style={{ scrollSnapAlign: "start", flex: "0 0 clamp(300px, 80vw, 600px)", background: "var(--cw)", border: "1px solid var(--bo)", borderRadius: 20, overflow: "hidden", position: "relative", aspectRatio: "16/9" }}>
+                  {ik.tipe === "video" ? (
+                    <>
+                      <video 
+                        src={ik.mediaUrl} 
+                        autoPlay muted loop playsInline 
+                        onClick={(e) => { e.currentTarget.muted = !e.currentTarget.muted; }}
+                        style={{ width: "100%", height: "100%", objectFit: "cover", cursor: "pointer" }} 
+                      />
+                      <div style={{ position: "absolute", top: 12, left: 12, background: "rgba(0,0,0,0.6)", color: "#fff", padding: "4px 10px", borderRadius: 8, fontSize: 10, fontWeight: 700, backdropFilter: "blur(4px)" }}>
+                        Tap Video untuk 🔊 Suara
+                      </div>
+                    </>
+                  ) : (
+                    <img src={ik.mediaUrl} alt={ik.judul} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  )}
+                  <div style={{ position: "absolute", bottom: 0, left: 0, width: "100%", padding: "40px 20px 20px", background: "linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%)", color: "#fff", pointerEvents: "none" }}>
+                    <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 4 }}>{ik.judul}</h3>
+                    <p style={{ fontSize: 12, opacity: 0.9, lineHeight: 1.5, maxWidth: "90%" }}>{ik.deskripsi}</p>
+                    {ik.linkTujuan && (
+                      <a href={ik.linkTujuan} target="_blank" rel="noreferrer" style={{ display: "inline-block", marginTop: 10, padding: "6px 14px", background: "var(--go)", color: "#fff", borderRadius: 8, fontSize: 11, fontWeight: 700, textDecoration: "none", pointerEvents: "auto" }}>
+                        Lihat Promo →
+                      </a>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <style>{`
+              .hide-scroll::-webkit-scrollbar { display: none; }
+              .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+            `}</style>
+          </div>
+        )}
 
         {dataLoad && (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(270px,1fr))", gap: 18 }}>

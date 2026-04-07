@@ -38,6 +38,15 @@ export interface Testimoni {
   tipe: "tokoh" | "berita";
 }
 
+export interface Iklan {
+  id: string;
+  judul: string;
+  deskripsi: string;
+  mediaUrl: string;
+  tipe: "video" | "foto";
+  linkTujuan?: string;
+}
+
 export const fRp = (n: number) => "Rp " + n.toLocaleString("id-ID");
 
 export const TABS = [
@@ -99,4 +108,21 @@ export const DEF_TESTIMONI: Testimoni[] = [
   { id: "tm2", tipe: "berita", nama: "Berita Lokal", jabatan: "Media", pesan: "Penerapan PJU berbasis panel surya dari bambu di Kp. Ciburial sukses mengurangi beban listrik desa secara signifikan. Bukti nyata inovasi pemuda!", foto: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=400&q=80" },
   { id: "tm3", tipe: "tokoh", nama: "Bpk. Camat", jabatan: "Pemerintahan Kecamatan", pesan: "Konsep Bank Sampah Digital yang terintegrasi dengan poin penukaran adalah terobosan sirkular ekonomi tingkat kampung yang patut dicontoh daerah lain.", foto: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80" },
   { id: "tm4", tipe: "tokoh", nama: "Tokoh Pemuda", jabatan: "Karang Taruna", pesan: "Melihat kaum pemuda bertransformasi jadi 'Makers' yang memproduksi lampu pintar dan pupuk organik adalah secercah harapan untuk masa depan kemandirian Ciburial.", foto: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&q=80" }
+];
+
+export const DEF_IKLAN: Iklan[] = [
+  { 
+    id: "ik1", 
+    tipe: "video", 
+    judul: "Pasar Lebaran Ciburial", 
+    deskripsi: "Diskon 50% untuk produk kerajinan bambu minggu ini. Tersedia di stand nomor 4!", 
+    mediaUrl: "https://www.w3schools.com/html/mov_bbb.mp4" 
+  },
+  { 
+    id: "ik2", 
+    tipe: "foto", 
+    judul: "Warung Sembako Teh Yani", 
+    deskripsi: "Sedia beras, telur, dan minyak goreng. Bisa bayar pakai poin bank sampah!", 
+    mediaUrl: "https://images.unsplash.com/photo-1534723452862-4c874018d66d?w=800&q=80" 
+  }
 ];

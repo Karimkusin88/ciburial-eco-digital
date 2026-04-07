@@ -53,7 +53,11 @@ export default function KegiatanTab({ kegiatan, dataLoad }: KegiatanTabProps) {
                 return (
                   <div key={k.id} className={`rv kc d${(i % 3) + 1}`} style={{ background: "var(--cw)", border: "1px solid var(--bo)", borderRadius: 18, overflow: "hidden" }}>
                     {k.foto ? (
-                      <img src={k.foto} alt={k.judul} style={{ width: "100%", aspectRatio: "16/9", objectFit: "cover" }} />
+                      (k.foto.toLowerCase().includes(".mp4") || k.foto.toLowerCase().includes(".webm")) ? (
+                        <video src={k.foto} autoPlay muted loop playsInline style={{ width: "100%", aspectRatio: "16/9", objectFit: "cover" }} />
+                      ) : (
+                        <img src={k.foto} alt={k.judul} style={{ width: "100%", aspectRatio: "16/9", objectFit: "cover" }} />
+                      )
                     ) : (
                       <div style={{ height: 5, background: kat.color }} />
                     )}
