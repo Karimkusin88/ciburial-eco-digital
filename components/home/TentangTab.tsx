@@ -1,6 +1,7 @@
 "use client";
 import dynamic from "next/dynamic";
 import { TabType, Testimoni } from "./types";
+import { useState } from "react";
 
 const CuacaSholatWidget = dynamic(() => import("@/components/CuacaSholatWidget"), { ssr: false });
 
@@ -8,8 +9,6 @@ interface TentangTabProps {
   onNavigate: (t: TabType) => void;
   testimoni?: Testimoni[];
 }
-
-import { useState } from "react";
 
 // ─── STRUKTUR ORGANISASI ─────────────────────────────────────────────────
 const dwnPelindung = [
@@ -349,7 +348,7 @@ export default function TentangTab({ onNavigate, testimoni = [] }: TentangTabPro
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 22 }}>
                 {[
-                  { icon: "📱", l: "QRIS", s: "Scan & Bayar Instan", rek: "Gunakan QRIS di bawah ini (Testing)", img: "/qris-test.jpeg" },
+                  { icon: "📱", l: "QRIS & E-Wallet", s: "Otomatis via Midtrans", rek: "Silakan gunakan tombol Donasi Otomatis di bawah ↓" },
                   { icon: "🏦", l: "Transfer Bank", s: "Rekening Resmi DKM", rek: "SeaBank:90135555066 a.n Ubay Rahmat H" },
                   { icon: "🌐", l: "Crypto / Web3", s: "EVM-Compatible Wallet", rek: "0x71723715478b344164e992b49ae1fCEb6467888B" }
                 ].map((m, i) => (

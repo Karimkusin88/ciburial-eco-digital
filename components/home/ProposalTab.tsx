@@ -203,7 +203,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 12, marginBottom: 24 }}>
             {[
               { icon: "🏦", t: "Rekening Bank Resmi", sub: "Bank SeaBank", detail: "No. Rek: 901355550666\nA.n: Ubay Rahmat H" },
-              { icon: "📱", t: "QRIS Resmi", sub: "Scan & Bayar Instan", detail: "", img: "/qris-test.jpeg" },
+              { icon: "📱", t: "QRIS & E-Wallet", sub: "Scan via GoPay/OVO/ShopeePay", detail: "Generate otomatis melalui integrasi Payment Gateway Ciburial." },
               { icon: "🌐", t: "Crypto / Web3", sub: "EVM Compatible Wallet", detail: "Wallet Address:\n0x71723715478b344164e992b49ae1fCEb6467888B" },
             ].map((m, i) => (
               <div key={i} style={{ padding: "18px", background: "var(--fo)", borderRadius: 14 }}>
