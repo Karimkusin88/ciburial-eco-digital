@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { Kegiatan, KAT_CFG } from "./types";
 
 interface KegiatanTabProps {
@@ -7,7 +8,7 @@ interface KegiatanTabProps {
 }
 
 export default function KegiatanTab({ kegiatan, dataLoad }: KegiatanTabProps) {
-  const [fKat, setFKat] = __useState("semua");
+  const [fKat, setFKat] = useState<string>("semua");
   const kegFil = fKat === "semua" ? kegiatan : kegiatan.filter(k => k.kategori === fKat);
 
   return (
