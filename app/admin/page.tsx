@@ -11,8 +11,9 @@ import "./admin-styles.css";
 interface Kegiatan { id: string; judul: string; tanggal: string; kategori: string; deskripsi: string; foto?: string; }
 interface Produk    { id: string; nama: string; deskripsi: string; harga: number; tag: string; icon: string; }
 interface Transaksi { id: string; tanggal: string; keterangan: string; kategori: string; tipe: "masuk" | "keluar"; jumlah: number; }
+interface Testimoni { id: string; nama: string; jabatan: string; pesan: string; foto?: string; tipe: "tokoh" | "berita"; }
 
-type AdminTab = "kegiatan" | "produk" | "transaksi";
+type AdminTab = "kegiatan" | "produk" | "transaksi" | "testimoni";
 
 const formatRp = (n: number) => "Rp " + n.toLocaleString("id-ID");
 
@@ -58,15 +59,19 @@ export default function AdminPage() {
   const [kegiatanList,  setKegiatanList]  = useState<Kegiatan[]>([]);
   const [produkList,    setProdukList]    = useState<Produk[]>([]);
   const [transaksiList, setTransaksiList] = useState<Transaksi[]>([]);
+  const [testimoniList, setTestimoniList] = useState<Testimoni[]>([]);
 
   /* ─── form state ─── */
   const emptyK = { judul:"", tanggal: new Date().toISOString().split("T")[0], kategori:"keagamaan", deskripsi:"", foto:"" };
   const emptyP = { nama:"", deskripsi:"", harga:"", tag:"", icon:"🎋" };
   const emptyT: { tanggal:string; keterangan:string; kategori:string; tipe:"masuk"|"keluar"; jumlah:string } = { tanggal: new Date().toISOString().split("T")[0], keterangan:"", kategori:"Donasi Warga", tipe:"masuk", jumlah:"" };
+  const emptyTm: { nama:string; jabatan:string; pesan:string; tipe:"tokoh"|"berita"; foto:string } = { nama:"", jabatan:"", pesan:"", tipe:"tokoh", foto:"" };
 
   const [kForm, setKForm] = useState(emptyK);
   const [pForm, setPForm] = useState(emptyP);
   const [tForm, setTForm] = useState(emptyT);
+  const [tmForm, setTmForm] = useState(emptyTm);
+  const [tmFile, setTmFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 
   const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(""), 3000); };
@@ -79,9 +84,13 @@ export default function AdminPage() {
       supabase.from("produk").select("*").order("created_at", { ascending: false }),
       supabase.from("transaksi").select("*").order("tanggal", { ascending: false }),
     ]);
+    let tm: any = { data: null };
+    try { tm = await supabase.from("testimoni").select("*").order("created_at", { ascending: false }); } catch (e) {}
+
     if (k.data) setKegiatanList(k.data as Kegiatan[]);
     if (p.data) setProdukList(p.data as Produk[]);
     if (t.data) setTransaksiList(t.data as Transaksi[]);
+    if (tm.data) setTestimoniList(tm.data as Testimoni[]);
   }, []);
 
   useEffect(() => { if (auth) fetchAll(); }, [auth, fetchAll]);
@@ -152,6 +161,40 @@ export default function AdminPage() {
     if (!confirm("Hapus transaksi ini?")) return;
     await supabase.from("transaksi").delete().eq("id", id);
     fetchAll(); showToast("🗑️ Transaksi dihapus");
+  };
+
+  /* ─── testimoni CRUD ─── */
+  const addTestimoni = async () => {
+    if (!tmForm.nama || !tmForm.pesan) return showToast("❌ Nama & pesan wajib diisi");
+    setLoading(true);
+    let finalUrl = tmForm.foto;
+
+    if (tmFile) {
+      const ext = tmFile.name.split('.').pop() || "jpg";
+      const fName = `ts_${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage.from('ciburial-assets').upload(fName, tmFile);
+      if (upErr) {
+        setLoading(false);
+        return showToast(upErr.message.includes("Bucket not found") ? "❌ Gagal: Buat bucket 'ciburial-assets' dulu di Supabase Storage!" : "❌ Gagal upload foto: " + upErr.message);
+      }
+      const { data } = supabase.storage.from('ciburial-assets').getPublicUrl(fName);
+      finalUrl = data.publicUrl;
+    }
+
+    const { error } = await supabase.from("testimoni").insert({ ...tmForm, foto: finalUrl || null });
+    setLoading(false);
+    if (error) return showToast("❌ Gagal: " + error.message);
+    setTmForm(emptyTm); setTmFile(null); fetchAll(); showToast("✅ Testimoni ditambahkan!");
+  };
+
+  const deleteTestimoni = async (id: string, foto?: string) => {
+    if (!confirm("Hapus testimoni ini?")) return;
+    if (foto && foto.includes("ciburial-assets")) {
+      const fileName = foto.split("/").pop();
+      if (fileName) supabase.storage.from('ciburial-assets').remove([fileName]);
+    }
+    await supabase.from("testimoni").delete().eq("id", id);
+    fetchAll(); showToast("🗑️ Testimoni dihapus");
   };
 
   /* ─── Ringkasan keuangan ─── */
@@ -243,8 +286,8 @@ export default function AdminPage() {
         </div>
 
         {/* ── TAB NAV ── */}
-        <div style={{ display:"flex", gap:4, marginBottom:20, background:"#FFFEF9", padding:4, borderRadius:14, border:"1px solid #E5E0D8", width:"fit-content" }}>
-          {([["kegiatan","📅 Kegiatan"],["produk","🛒 Produk"],["transaksi","💰 Transaksi"]] as const).map(([key, label]) => (
+        <div style={{ display:"flex", gap:4, marginBottom:20, background:"#FFFEF9", padding:4, borderRadius:14, border:"1px solid #E5E0D8", width:"fit-content", flexWrap:"wrap" }}>
+          {([["kegiatan","📅 Kegiatan"],["produk","🛒 Produk"],["transaksi","💰 Transaksi"],["testimoni","💬 Tokoh & Berita"]] as const).map(([key, label]) => (
             <button key={key} onClick={() => setActiveTab(key)} style={{
               padding:"9px 20px", borderRadius:10, fontSize:12, fontWeight:700, letterSpacing:".06em",
               border:"none", cursor:"pointer", transition:"all .2s",
@@ -498,6 +541,74 @@ export default function AdminPage() {
                   </tbody>
                 </table>
               </div>
+            </div>
+          </div>
+        )}
+        {/* ═══════════════ TAB: TESTIMONI ═══════════════ */}
+        {activeTab === "testimoni" && (
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 2fr", gap:20, alignItems:"start" }}>
+            {/* Form tambah */}
+            <div style={{ background:"#FFFEF9", border:"1px solid #E5E0D8", borderRadius:20, padding:"28px" }}>
+              <h3 style={{ fontSize:14, fontWeight:700, color:"#1C3A2B", marginBottom:20, paddingBottom:14, borderBottom:"1px solid #E5E0D8" }}>➕ Tambah Testimoni / Berita</h3>
+              <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
+                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
+                  <button onClick={() => setTmForm({...tmForm, tipe:"tokoh"})} style={{ padding:"10px", fontSize:11, fontWeight:700, borderRadius:10, border:"1px solid #E5E0D8", background: tmForm.tipe === "tokoh" ? "#1C3A2B" : "#FFFEF9", color: tmForm.tipe === "tokoh" ? "#fff" : "#9A8C85", cursor:"pointer" }}>👤 Dari Tokoh</button>
+                  <button onClick={() => setTmForm({...tmForm, tipe:"berita"})} style={{ padding:"10px", fontSize:11, fontWeight:700, borderRadius:10, border:"1px solid #E5E0D8", background: tmForm.tipe === "berita" ? "#1A3A6B" : "#FFFEF9", color: tmForm.tipe === "berita" ? "#fff" : "#9A8C85", cursor:"pointer" }}>📰 Artikel Berita</button>
+                </div>
+                <div>
+                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Nama Tokoh / Media *</label>
+                  <input className="field" value={tmForm.nama} onChange={e => setTmForm({...tmForm, nama:e.target.value})} placeholder="Cth: Garut News / H. Kepala Desa" />
+                </div>
+                <div>
+                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Jabatan / Subteks</label>
+                  <input className="field" value={tmForm.jabatan} onChange={e => setTmForm({...tmForm, jabatan:e.target.value})} placeholder="Cth: Media Lokal / Kepala Kecamatan" />
+                </div>
+                <div>
+                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Isi Pesan/Kutipan *</label>
+                  <textarea className="field" rows={4} value={tmForm.pesan} onChange={e => setTmForm({...tmForm, pesan:e.target.value})} placeholder="Ketik disini..." style={{ resize:"vertical" }} />
+                </div>
+                <div style={{ background:"rgba(28,58,43,.06)", padding:14, borderRadius:12, border:"1px dashed rgba(28,58,43,.2)" }}>
+                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#1C3A2B", marginBottom:6 }}>Upload Foto / Logo</label>
+                  <input type="file" accept="image/*" onChange={e => setTmFile(e.target.files?.[0] || null)} style={{ fontSize:12, width:"100%" }} />
+                  {tmFile && <p style={{ fontSize:10, color:"#1C6B3A", marginTop:8, fontWeight:700 }}>✓ File dipilih: {tmFile.name}</p>}
+                  
+                  <div style={{ marginTop:14, fontSize:10, color:"#9A8C85", borderTop:"1px solid rgba(28,58,43,.1)", paddingTop:10 }}>ATAU paste link (opsional):</div>
+                  <input className="field" value={tmForm.foto} onChange={e => setTmForm({...tmForm, foto:e.target.value})} placeholder="https://..." style={{ marginTop:6, fontSize:11, padding:"8px 12px" }} disabled={!!tmFile} />
+                  <p style={{ fontSize:9, color:"#8B2020", marginTop:6 }}>PENTING: Fitur upload lokal mewajibkan pembuatan Bucket bernama <strong>ciburial-assets</strong> di menu Supabase Storage dan diaturnya ke setting Public.</p>
+                </div>
+                <button onClick={addTestimoni} disabled={loading} style={{ padding:"13px", borderRadius:12, background:"#1C3A2B", color:"#fff", fontSize:12, fontWeight:700, letterSpacing:".08em", textTransform:"uppercase", border:"none", cursor:"pointer", opacity:loading ? .6 : 1, marginTop:4 }}>
+                  {loading ? "Menyimpan/Upload..." : "Simpan Data"}
+                </button>
+              </div>
+            </div>
+
+            {/* List */}
+            <div style={{ background:"#FFFEF9", border:"1px solid #E5E0D8", borderRadius:20, overflow:"hidden" }}>
+              <div style={{ padding:"20px 24px", borderBottom:"1px solid #E5E0D8" }}>
+                <h3 style={{ fontSize:14, fontWeight:700, color:"#1C3A2B" }}>Daftar Testimoni & Berita ({testimoniList.length})</h3>
+              </div>
+              {testimoniList.length === 0 ? (
+                <div style={{ padding:"48px", textAlign:"center", color:"#9A8C85", fontSize:13 }}>Belum ada data. Tambahkan Testimoni pertama lu!</div>
+              ) : (
+                <div style={{ maxHeight:520, overflowY:"auto" }}>
+                  {testimoniList.map((tm) => (
+                    <div key={tm.id} className="row-hover" style={{ padding:"16px 24px", borderBottom:"1px solid #E5E0D8", display:"flex", gap:14, alignItems:"flex-start", transition:"background .15s" }}>
+                      {tm.foto ? <img src={tm.foto} alt="" style={{ width:50, height:50, borderRadius:"50%", objectFit:"cover", flexShrink:0, border:"2px solid #E5E0D8" }} /> : <div style={{ width:50, height:50, borderRadius:"50%", background:"#F0EDE5", display:"flex", alignItems:"center", justifyContent:"center", fontSize:20, flexShrink:0 }}>👤</div>}
+                      <div style={{ flex:1 }}>
+                        <div style={{ display:"flex", gap:8, alignItems:"center", marginBottom:4 }}>
+                          <span style={{ fontSize:14, fontWeight:700, color:"#1A1410" }}>{tm.nama}</span>
+                          <span style={{ fontSize:9, fontWeight:700, padding:"2px 8px", borderRadius:6, textTransform:"uppercase", background: tm.tipe === "tokoh" ? "rgba(184,148,63,.1)" : "rgba(45,90,160,.1)", color: tm.tipe === "tokoh" ? "#7A5A1E" : "#1A3A6B" }}>
+                            {tm.tipe}
+                          </span>
+                        </div>
+                        <div style={{ fontSize:11, fontWeight:700, color:"#9A8C85", textTransform:"uppercase", letterSpacing:".06em", marginBottom:8 }}>{tm.jabatan}</div>
+                        <div style={{ fontSize:12, color:"#5A4A40", fontStyle:"italic", lineHeight:1.6 }}>&quot;{tm.pesan}&quot;</div>
+                      </div>
+                      <button className="btn-sm" onClick={() => deleteTestimoni(tm.id, tm.foto)} style={{ background:"#FDF0F0", color:"#8B2020", flexShrink:0 }}>🗑️ Hapus</button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         )}

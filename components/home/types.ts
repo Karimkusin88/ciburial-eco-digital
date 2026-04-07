@@ -29,6 +29,15 @@ export interface Transaksi {
   jumlah: number;
 }
 
+export interface Testimoni {
+  id: string;
+  nama: string;
+  jabatan: string;
+  pesan: string;
+  foto?: string;
+  tipe: "tokoh" | "berita";
+}
+
 export const fRp = (n: number) => "Rp " + n.toLocaleString("id-ID");
 
 export const TABS = [
@@ -83,4 +92,11 @@ export const DEF_TX: Transaksi[] = [
   { id: "t8", tanggal: "2026-03-10", keterangan: "Pengadaan buku Learning Hub", kategori: "Learning Hub", tipe: "keluar", jumlah: 180000 },
   { id: "t9", tanggal: "2026-03-15", keterangan: "Donasi online via QRIS (Maret)", kategori: "Donasi Online", tipe: "masuk", jumlah: 420000 },
   { id: "t10", tanggal: "2026-03-22", keterangan: "Penjualan Lampu Hex-Bamboo (3 unit)", kategori: "Marketplace", tipe: "masuk", jumlah: 450000 },
+];
+
+export const DEF_TESTIMONI: Testimoni[] = [
+  { id: "tm1", tipe: "tokoh", nama: "H. Kepala Desa", jabatan: "Pemerintahan Desa", pesan: "Inisiatif Ciburial Eco-Digital sangat sejalan dengan visi masa depan desa. Kami mendukung penuh transisi ini menuju desa mandiri energi dan ekonomi.", foto: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80" },
+  { id: "tm2", tipe: "berita", nama: "Berita Lokal", jabatan: "Media", pesan: "Penerapan PJU berbasis panel surya dari bambu di Kp. Ciburial sukses mengurangi beban listrik desa secara signifikan. Bukti nyata inovasi pemuda!", foto: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=400&q=80" },
+  { id: "tm3", tipe: "tokoh", nama: "Bpk. Camat", jabatan: "Pemerintahan Kecamatan", pesan: "Konsep Bank Sampah Digital yang terintegrasi dengan poin penukaran adalah terobosan sirkular ekonomi tingkat kampung yang patut dicontoh daerah lain.", foto: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80" },
+  { id: "tm4", tipe: "tokoh", nama: "Tokoh Pemuda", jabatan: "Karang Taruna", pesan: "Melihat kaum pemuda bertransformasi jadi 'Makers' yang memproduksi lampu pintar dan pupuk organik adalah secercah harapan untuk masa depan kemandirian Ciburial.", foto: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&q=80" }
 ];

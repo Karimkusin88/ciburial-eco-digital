@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
-import { TabType, Kegiatan, Produk, Transaksi, DEF_KEG, DEF_PROD, DEF_TX, ALOKASI } from "@/components/home/types";
+import { TabType, Kegiatan, Produk, Transaksi, Testimoni, DEF_KEG, DEF_PROD, DEF_TX, DEF_TESTIMONI, ALOKASI } from "@/components/home/types";
 import Navbar from "@/components/home/Navbar";
 import TentangTab from "@/components/home/TentangTab";
 import KegiatanTab from "@/components/home/KegiatanTab";
@@ -18,6 +18,7 @@ export default function Home() {
   const [kegiatan, setKegiatan] = useState<Kegiatan[]>(DEF_KEG);
   const [produk, setProduk] = useState<Produk[]>(DEF_PROD);
   const [transaksi, setTransaksi] = useState<Transaksi[]>(DEF_TX);
+  const [testimoni, setTestimoni] = useState<Testimoni[]>(DEF_TESTIMONI);
   const [dataLoad, setDataLoad] = useState(false);
 
   useEffect(() => {
@@ -38,6 +39,15 @@ export default function Home() {
       if (k.data?.length) setKegiatan(k.data as Kegiatan[]);
       if (p.data?.length) setProduk(p.data as Produk[]);
       if (t.data?.length) setTransaksi(t.data as Transaksi[]);
+      
+      // Fetch testimoni (catch error if table doesn't exist yet)
+      let tm: any = { data: null };
+      try {
+        tm = await supabase.from("testimoni").select("*").order("created_at", { ascending: false });
+      } catch (e) {}
+      
+      if (tm && tm.data && tm.data.length > 0) setTestimoni(tm.data as Testimoni[]);
+
       setDataLoad(false);
     })();
   }, []);
@@ -58,7 +68,7 @@ export default function Home() {
       <Navbar tab={tab} checkout={checkout} scrolled={scrolled} onNavigate={go} />
 
       {tab === "tentang" && !checkout && (
-        <TentangTab onNavigate={go} />
+        <TentangTab onNavigate={go} testimoni={testimoni} />
       )}
 
       {tab === "kegiatan" && (

@@ -1,11 +1,12 @@
 "use client";
 import dynamic from "next/dynamic";
-import { TabType } from "./types";
+import { TabType, Testimoni } from "./types";
 
 const CuacaSholatWidget = dynamic(() => import("@/components/CuacaSholatWidget"), { ssr: false });
 
 interface TentangTabProps {
   onNavigate: (t: TabType) => void;
+  testimoni?: Testimoni[];
 }
 
 // ─── STRUKTUR ORGANISASI ─────────────────────────────────────────────────
@@ -32,7 +33,7 @@ const divisi = [
   { icon: "📢", nama: "Public Relations", full: "Humas & Transparansi Publik", tugas: "Dokumentasi, laporan dana, komunikasi CSR" },
 ];
 
-export default function TentangTab({ onNavigate }: TentangTabProps) {
+export default function TentangTab({ onNavigate, testimoni = [] }: TentangTabProps) {
   return (
     <div className="pi">
 
@@ -231,6 +232,48 @@ export default function TentangTab({ onNavigate }: TentangTabProps) {
           </div>
         </div>
       </section>
+
+      {/* TESTIMONI & BERITA SLIDER */}
+      {testimoni.length > 0 && (
+        <section className="sec" style={{ padding: "clamp(48px,8vw,104px) 0", background: "var(--fo)", overflow: "hidden" }}>
+          <div style={{ maxWidth: 1320, margin: "0 auto", padding: "0 clamp(16px,4vw,32px)" }}>
+            <div style={{ textAlign: "center", marginBottom: 40 }}>
+              <div className="dl dlc" style={{ background: "var(--go)" }} />
+              <h2 className="fnt" style={{ fontSize: "clamp(26px,4vw,44px)", fontWeight: 300, color: "var(--cw)", letterSpacing: "-.02em" }}>Dukungan & Liputan</h2>
+              <p style={{ color: "var(--ts)", fontSize: 13, marginTop: 10 }}>Apa kata mereka tentang inisiatif Ciburial Eco-Digital.</p>
+            </div>
+          </div>
+          
+          <div style={{ display: "flex", gap: 20, padding: "0 clamp(16px,4vw,32px) 20px", overflowX: "auto", scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch" }} className="hide-scroll">
+            {testimoni.map((t, i) => (
+              <div key={t.id || i} style={{ scrollSnapAlign: "start", flex: "0 0 clamp(280px, 40vw, 400px)", background: "var(--cw)", border: "1px solid var(--bo)", borderRadius: 20, padding: 28, display: "flex", flexDirection: "column", gap: 18 }}>
+                <div style={{ fontSize: 32, lineHeight: 1, color: "var(--go)", opacity: 0.5 }}>&quot;</div>
+                <p style={{ fontSize: 14, lineHeight: 1.7, color: "var(--ts)", flex: 1, fontStyle: "italic" }}>
+                  {t.pesan}
+                </p>
+                <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 10, borderTop: "1px solid var(--bo)", paddingTop: 18 }}>
+                  {t.foto ? (
+                    <img src={t.foto} alt={t.nama} style={{ width: 44, height: 44, borderRadius: "50%", objectFit: "cover" }} />
+                  ) : (
+                    <div style={{ width: 44, height: 44, borderRadius: "50%", background: "var(--cd)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>👤</div>
+                  )}
+                  <div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: "var(--tp)" }}>{t.nama}</div>
+                    <div style={{ fontSize: 11, fontWeight: 600, color: "var(--go)", letterSpacing: ".04em", textTransform: "uppercase" }}>{t.jabatan}</div>
+                  </div>
+                  <span style={{ marginLeft: "auto", fontSize: 10, fontWeight: 700, padding: "4px 8px", background: t.tipe === "tokoh" ? "rgba(184,148,63,.1)" : "rgba(45,90,64,.1)", color: t.tipe === "tokoh" ? "#7A5A1E" : "#2D5A40", borderRadius: 6, textTransform: "uppercase" }}>
+                    {t.tipe}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+          <style>{`
+            .hide-scroll::-webkit-scrollbar { display: none; }
+            .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+          `}</style>
+        </section>
+      )}
 
       {/* WIDGET CUACA & SHOLAT */}
       <section className="sec" style={{ padding: "clamp(32px,4vw,52px) clamp(16px,4vw,32px) 0" }}>
