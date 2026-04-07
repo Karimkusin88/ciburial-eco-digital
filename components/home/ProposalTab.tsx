@@ -9,6 +9,43 @@ interface ProposalTabProps {
 
 export default function ProposalTab({ transaksi }: ProposalTabProps) {
   const [propOpen, setPropOpen] = useState<number | null>(null);
+  const [loadingDonasi, setLoadingDonasi] = useState(false);
+
+  const bayarDonasi = async () => {
+    const raw = window.prompt("Berapa nominal donasi yang ingin disalurkan? (Contoh: 50000)\nMinimal: Rp 10.000", "50000");
+    if (!raw) return;
+    const qty = parseInt(raw.replace(/[^0-9]/g, ''), 10);
+    if (isNaN(qty) || qty < 10000) {
+      alert("Nominal tidak valid atau kurang dari minimal Rp 10.000");
+      return;
+    }
+    setLoadingDonasi(true);
+    try {
+      const res = await fetch("/api/midtrans/tokenize", {
+        method: "POST",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify({ 
+          order_id: `DONASI-${Date.now()}`,
+          gross_amount: qty, 
+          item_details: [{ id: "dn-custom", price: qty, quantity: 1, name: "Donasi Ciburial Eco-Digital" }]
+        })
+      });
+      const data = await res.json();
+      if (data.token && (window as any).snap) {
+        (window as any).snap.pay(data.token, {
+          onSuccess: function(r:any){ alert("Donasi sukses diterima! Dana langsung terdata di transparansi."); },
+          onPending: function(r:any){ alert("Menunggu status pembayaran donasi."); },
+          onError: function(r:any){ alert("Pembayaran gagal."); }
+        });
+      } else {
+        alert("Server Midtrans belum nyambung! Cek .env di Settings Vercel. (Pesan sistem: " + (data.error || "Missing Token") + ")");
+      }
+    } catch (e) {
+      alert("Error menghubungi server.");
+    }
+    setLoadingDonasi(false);
+  };
+
 
   const sections = [
     {
@@ -202,17 +239,20 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
         <div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 12, marginBottom: 24 }}>
             {[
-              { icon: "🏦", t: "Rekening Bank Resmi", sub: "Bank SeaBank", detail: "No. Rek: 901355550666\nA.n: Ubay Rahmat H" },
-              { icon: "📱", t: "QRIS & E-Wallet", sub: "Scan via GoPay/OVO/ShopeePay", detail: "Generate otomatis melalui integrasi Payment Gateway Ciburial." },
-              { icon: "🌐", t: "Crypto / Web3", sub: "EVM Compatible Wallet", detail: "Wallet Address:\n0x71723715478b344164e992b49ae1fCEb6467888B" },
+              { id: "bank", icon: "🏦", t: "Rekening Bank Resmi", sub: "Bank SeaBank", detail: "No. Rek: 901355550666\nA.n: Ubay Rahmat H" },
+              { id: "midtrans", icon: "📱", t: "QRIS & E-Wallet", sub: "Secara Otomatis via Midtrans", detail: loadingDonasi ? "⏳ MEMUAT MIDTRANS..." : "➡️ SILAKAN KLIK KOTAK INI UNTUK MULAI DONASI" },
+              { id: "crypto", icon: "🌐", t: "Crypto / Web3", sub: "EVM Compatible Wallet", detail: "Wallet Address:\n0x71723715478b344164e992b49ae1fCEb6467888B" },
             ].map((m, i) => (
-              <div key={i} style={{ padding: "18px", background: "var(--fo)", borderRadius: 14 }}>
+              <div key={i} onClick={m.id === "midtrans" ? bayarDonasi : undefined} style={{ padding: "18px", background: "var(--fo)", borderRadius: 14, cursor: m.id === "midtrans" ? (loadingDonasi ? "wait" : "pointer") : "default", opacity: m.id === "midtrans" && loadingDonasi ? 0.6 : 1, transition: "opacity .2s, background .2s" }}
+                onMouseEnter={e => m.id === "midtrans" ? (e.currentTarget.style.background = "var(--cd)") : undefined}
+                onMouseLeave={e => m.id === "midtrans" ? (e.currentTarget.style.background = "var(--fo)") : undefined}
+              >
                 <div style={{ fontSize: 24, marginBottom: 8 }}>{m.icon}</div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: "var(--cr)", marginBottom: 4 }}>{m.t}</div>
                 <div style={{ fontSize: 11, color: "rgba(250,248,243,.5)" }}>{m.sub}</div>
 
                 {m.detail && (
-                  <div style={{ fontSize: 11, color: "rgba(250,248,243,.35)", marginTop: 6, whiteSpace: "pre-line" }}>
+                  <div style={{ fontSize: 11, color: m.id === "midtrans" ? "var(--gl)" : "rgba(250,248,243,.35)", fontWeight: m.id === "midtrans" ? 700 : 400, marginTop: 9, whiteSpace: "pre-line" }}>
                     {m.detail}
                   </div>
                 )}

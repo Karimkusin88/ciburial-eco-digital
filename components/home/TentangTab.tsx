@@ -38,6 +38,13 @@ export default function TentangTab({ onNavigate, testimoni = [] }: TentangTabPro
   const [loadingDonasi, setLoadingDonasi] = useState(false);
 
   const bayarDonasi = async () => {
+    const raw = window.prompt("Berapa nominal donasi yang ingin disalurkan? (Contoh: 50000)\nMinimal: Rp 10.000", "50000");
+    if (!raw) return;
+    const qty = parseInt(raw.replace(/[^0-9]/g, ''), 10);
+    if (isNaN(qty) || qty < 10000) {
+      alert("Nominal tidak valid atau kurang dari minimal Rp 10.000");
+      return;
+    }
     setLoadingDonasi(true);
     try {
       const res = await fetch("/api/midtrans/tokenize", {
@@ -45,8 +52,8 @@ export default function TentangTab({ onNavigate, testimoni = [] }: TentangTabPro
         headers: { "Content-type": "application/json" },
         body: JSON.stringify({ 
           order_id: `DONASI-${Date.now()}`,
-          gross_amount: 50000, 
-          item_details: [{ id: "dn-50k", price: 50000, quantity: 1, name: "Donasi Ciburial Eco-Digital" }]
+          gross_amount: qty, 
+          item_details: [{ id: "dn-custom", price: qty, quantity: 1, name: "Donasi Ciburial Eco-Digital" }]
         })
       });
       const data = await res.json();
@@ -57,7 +64,7 @@ export default function TentangTab({ onNavigate, testimoni = [] }: TentangTabPro
           onError: function(r:any){ alert("Pembayaran gagal."); }
         });
       } else {
-        alert("Gagal memanggil API. Cek .env.");
+        alert("Server Midtrans belum nyambung! Cek .env di Settings Vercel. (Pesan sistem: " + (data.error || "Missing Token") + ")");
       }
     } catch (e) {
       alert("Error.");
@@ -348,27 +355,24 @@ export default function TentangTab({ onNavigate, testimoni = [] }: TentangTabPro
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 22 }}>
                 {[
-                  { icon: "📱", l: "QRIS & E-Wallet", s: "Otomatis via Midtrans", rek: "Silakan gunakan tombol Donasi Otomatis di bawah ↓" },
-                  { icon: "🏦", l: "Transfer Bank", s: "Rekening Resmi DKM", rek: "SeaBank:90135555066 a.n Ubay Rahmat H" },
-                  { icon: "🌐", l: "Crypto / Web3", s: "EVM-Compatible Wallet", rek: "0x71723715478b344164e992b49ae1fCEb6467888B" }
+                  { id: "midtrans", icon: "📱", l: "QRIS & E-Wallet", s: "Otomatis via Midtrans", rek: "Silakan Klik Kotak Ini Untuk Donasi Otomatis →" },
+                  { id: "bank", icon: "🏦", l: "Transfer Bank", s: "Rekening Resmi DKM", rek: "SeaBank:90135555066 a.n Ubay Rahmat H" },
+                  { id: "crypto", icon: "🌐", l: "Crypto / Web3", s: "EVM-Compatible Wallet", rek: "0x71723715478b344164e992b49ae1fCEb6467888B" }
                 ].map((m, i) => (
-                  <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 14, padding: "13px 18px", background: "rgba(255,255,255,.06)", borderRadius: 12, border: "1px solid rgba(255,255,255,.09)", cursor: "pointer", transition: "background .2s" }}
-                    onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,.11)")}
-                    onMouseLeave={e => (e.currentTarget.style.background = "rgba(255,255,255,.06)")}
+                  <div key={i} onClick={m.id === "midtrans" ? bayarDonasi : undefined} style={{ display: "flex", alignItems: "flex-start", gap: 14, padding: "13px 18px", background: "rgba(255,255,255,.06)", borderRadius: 12, border: "1px solid rgba(255,255,255,.09)", cursor: m.id === "midtrans" ? (loadingDonasi ? "wait" : "pointer") : "default", transition: "background .2s", opacity: m.id === "midtrans" && loadingDonasi ? 0.6 : 1 }}
+                    onMouseEnter={e => m.id === "midtrans" ? (e.currentTarget.style.background = "rgba(255,255,255,.11)") : undefined}
+                    onMouseLeave={e => m.id === "midtrans" ? (e.currentTarget.style.background = "rgba(255,255,255,.06)") : undefined}
                   >
                     <span style={{ fontSize: 22, marginTop: 2 }}>{m.icon}</span>
                     <div style={{ display: "flex", flexDirection: "column", gap: 2, width: "100%" }}>
                       <div style={{ fontSize: 13, fontWeight: 700, color: "var(--cr)" }}>{m.l}</div>
                       <div style={{ fontSize: 11, color: "rgba(250,248,243,.38)" }}>{m.s}</div>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: "var(--gl)", letterSpacing: "0.5px", marginTop: 2 }}>{m.rek}</div>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: "var(--gl)", letterSpacing: "0.5px", marginTop: 2 }}>{m.id === "midtrans" && loadingDonasi ? "⏳ MEMUAT MIDTRANS..." : m.rek}</div>
                     </div>
                   </div>
                 ))}
               </div>
               <div style={{ display: "flex", gap: 14, flexWrap: "wrap", alignItems: "center" }}>
-                <button onClick={bayarDonasi} disabled={loadingDonasi} style={{ padding: "10px 20px", borderRadius: 99, fontSize: 11, fontWeight: 700, letterSpacing: ".09em", textTransform: "uppercase", border: "none", background: "var(--go)", color: "#fff", cursor: loadingDonasi ? "wait" : "pointer", opacity: loadingDonasi ? 0.7 : 1, transition: "all .2s" }}>
-                  {loadingDonasi ? "Memuat..." : "Donasi Otomatis (Rp50.000)"}
-                </button>
                 <button onClick={() => onNavigate("transparansi")} style={{ padding: "10px 20px", borderRadius: 99, fontSize: 11, fontWeight: 700, letterSpacing: ".09em", textTransform: "uppercase", border: "1px solid rgba(255,255,255,.18)", background: "transparent", color: "rgba(250,248,243,.55)", cursor: "pointer", transition: "all .2s" }}
                   onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,.08)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--cr)"; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; (e.currentTarget as HTMLButtonElement).style.color = "rgba(250,248,243,.55)"; }}
