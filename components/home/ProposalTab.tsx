@@ -216,12 +216,6 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
                     {m.detail}
                   </div>
                 )}
-
-                {m.img && (
-                  <div style={{ marginTop: 10, background: "#fff", padding: 6, borderRadius: 8, width: "fit-content" }}>
-                    <img src={m.img} alt="QRIS Ciburial" style={{ width: 100, height: 100, objectFit: "contain", display: "block" }} />
-                  </div>
-                )}
               </div>
             ))}
           </div>

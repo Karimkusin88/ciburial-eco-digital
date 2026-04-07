@@ -361,11 +361,6 @@ export default function TentangTab({ onNavigate, testimoni = [] }: TentangTabPro
                       <div style={{ fontSize: 13, fontWeight: 700, color: "var(--cr)" }}>{m.l}</div>
                       <div style={{ fontSize: 11, color: "rgba(250,248,243,.38)" }}>{m.s}</div>
                       <div style={{ fontSize: 12, fontWeight: 700, color: "var(--gl)", letterSpacing: "0.5px", marginTop: 2 }}>{m.rek}</div>
-                      {m.img && (
-                        <div style={{ marginTop: 12, background: "#fff", padding: 8, borderRadius: 8, width: "fit-content" }}>
-                          <img src={m.img} alt="QRIS" style={{ width: 120, height: 120, objectFit: "contain", display: "block" }} />
-                        </div>
-                      )}
                     </div>
                   </div>
                 ))}
