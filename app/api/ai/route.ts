@@ -69,6 +69,15 @@ export async function POST(req: NextRequest) {
     // Batasi history maksimal 20 pesan biar ga kebanyakan token
     const recentMessages = messages.slice(-20);
 
+    // Validasi API key
+    if (!process.env.GROQ_API_KEY) {
+      console.error("GROQ_API_KEY belum dikonfigurasi di .env.local");
+      return NextResponse.json(
+        { error: "AI belum dikonfigurasi. Tambahkan GROQ_API_KEY ke .env.local" },
+        { status: 503 }
+      );
+    }
+
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {

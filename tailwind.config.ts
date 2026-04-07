@@ -8,8 +8,8 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Montserrat', 'sans-serif'],
-        logo: ['Pacifico', 'cursive'],
+        sans: ['var(--font-dm-sans)', 'DM Sans', 'sans-serif'],
+        serif: ['var(--font-cormorant)', 'Cormorant Garamond', 'serif'],
       }
     },
   },

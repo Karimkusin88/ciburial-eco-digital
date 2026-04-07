@@ -1,24 +1,26 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Pacifico&display=swap');
+@import "tailwindcss";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-body {
-  background-color: #FDFBF7;
-  color: #3E322D;
-  font-family: 'Montserrat', sans-serif;
-  scroll-behavior: smooth;
+/* ─── BASE ─── */
+:root{
+  --fo:#1C3A2B;--fm:#2D5A40;--fl:#4A7C59;
+  --cr:#FAF8F3;--cd:#F0EDE5;--cw:#FFFEF9;
+  --go:#B8943F;--gl:#D4AC5A;
+  --ea:#3D2B1F;--em:#6B4F3A;--el:#A08070;
+  --tp:#1A1410;--ts:#5A4A40;--tm:#9A8C85;
+  --bo:#E5E0D8;
+  --gb:#E8F5EE;--gt:#1C6B3A;
+  --rb:#FDF0F0;--rt:#8B2020;
 }
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--cr);color:var(--tp);font-family:var(--font-dm-sans,'DM Sans'),sans-serif;scroll-behavior:smooth;}
+.fnt{font-family:var(--font-cormorant,'Cormorant Garamond'),serif;}
+.font-sans{font-family:var(--font-dm-sans,'DM Sans'),sans-serif;}
 
-.font-logo { font-family: 'Pacifico', cursive; }
-.font-sans { font-family: 'Montserrat', sans-serif; }
-
+/* ─── ANIMATIONS ─── */
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(30px); }
   to { opacity: 1; transform: translateY(0); }
 }
-
 .animate-masuk {
   opacity: 0;
   animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -26,3 +28,109 @@ body {
 .delay-100 { animation-delay: 100ms; }
 .delay-200 { animation-delay: 200ms; }
 .delay-300 { animation-delay: 300ms; }
+
+/* hero anim */
+@keyframes fu{from{opacity:0;transform:translateY(44px)}to{opacity:1;transform:translateY(0)}}
+.h1{animation:fu .9s cubic-bezier(.22,1,.36,1) .05s both}
+.h2{animation:fu .9s cubic-bezier(.22,1,.36,1) .2s both}
+.h3{animation:fu .9s cubic-bezier(.22,1,.36,1) .34s both}
+.h4{animation:fu .9s cubic-bezier(.22,1,.36,1) .46s both}
+.h5{animation:fu .9s cubic-bezier(.22,1,.36,1) .57s both}
+@keyframes pi{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.pi{animation:pi .4s cubic-bezier(.22,1,.36,1) both}
+
+/* nav */
+.ng{background:rgba(250,248,243,.97)!important;box-shadow:0 1px 0 var(--bo);}
+
+/* deco line */
+.dl{display:inline-block;width:44px;height:2px;background:var(--go);margin-bottom:20px;}
+.dlc{display:block;margin:0 auto 20px;}
+
+/* marquee */
+@keyframes mq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.mq{animation:mq 22s linear infinite}.mq:hover{animation-play-state:paused}
+
+/* button slide effect */
+.btn{position:relative;overflow:hidden;transition:color .3s;}
+.btn::before{content:'';position:absolute;inset:0;background:var(--go);transform:translateX(-105%);transition:transform .4s cubic-bezier(.22,1,.36,1);}
+.btn:hover::before{transform:translateX(0);}
+.btn span{position:relative;z-index:1;}
+
+/* card hover */
+.ch{transition:transform .35s cubic-bezier(.22,1,.36,1),box-shadow .35s ease;}
+.ch:hover{transform:translateY(-5px);box-shadow:0 18px 52px rgba(28,58,43,.1);}
+
+/* inputs */
+.fi{border:1px solid var(--bo);background:var(--cw);transition:border-color .25s,box-shadow .25s;outline:none;font-family:var(--font-dm-sans,'DM Sans'),sans-serif;width:100%;border-radius:12px;padding:14px 18px;font-size:14px;}
+.fi:focus{border-color:var(--fm);box-shadow:0 0 0 3px rgba(45,90,64,.08);}
+
+/* progress */
+.pg{height:5px;background:var(--cd);border-radius:99px;overflow:hidden;}
+.pgf{height:100%;border-radius:99px;transition:width 1.2s cubic-bezier(.22,1,.36,1) .2s;}
+.pgw:not(.iv) .pgf{width:0!important;}
+
+/* table */
+.tbl{width:100%;border-collapse:collapse;}
+.tbl th{font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--tm);padding:12px 16px;text-align:left;border-bottom:1px solid var(--bo);}
+.tbl td{font-size:13px;padding:13px 16px;border-bottom:1px solid var(--bo);color:var(--ts);vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:var(--cr);}
+
+/* accordion */
+.ac{max-height:0;overflow:hidden;transition:max-height .45s cubic-bezier(.22,1,.36,1);}
+.ac.op{max-height:1200px;}
+
+/* mobile menu */
+.mob{top:70px;left:0;width:100%;background: var(--cw);opacity:0;transform:translateY(-10px);pointer-events:none;transition:opacity .25s,transform .25s cubic-bezier(.22,1,.36,1);}
+.mob.op{opacity:1;visibility:visible;transform:translateY(0);pointer-events:all;}
+
+/* kegiatan card */
+.kc{transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s ease;}
+.kc:hover{transform:translateY(-4px);box-shadow:0 14px 44px rgba(28,58,43,.1);}
+
+/* skeleton */
+@keyframes sh{0%{background-position:-400px 0}100%{background-position:400px 0}}
+.sk{background:linear-gradient(90deg,var(--cd) 25%,var(--cr) 50%,var(--cd) 75%);background-size:800px;animation:sh 1.5s infinite;}
+
+/* divisi badge */
+.div-card{transition:all .3s cubic-bezier(.22,1,.36,1);}
+.div-card:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(28,58,43,.08);}
+
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-thumb{background:var(--el);border-radius:99px;}
+
+/* ── DROPDOWN LAYANAN ── */
+.drop-menu{
+  position:absolute; top:calc(100% + 8px); right:0;
+  background:var(--cw); border:1px solid var(--bo);
+  border-radius:16px; padding:8px; min-width:200px;
+  box-shadow:0 16px 48px rgba(28,58,43,.12);
+  opacity:0; transform:translateY(-8px); pointer-events:none;
+  transition:opacity .25s cubic-bezier(.22,1,.36,1), transform .25s cubic-bezier(.22,1,.36,1);
+  z-index:100;
+}
+.drop-menu.open{ opacity:1; transform:translateY(0); pointer-events:all; }
+.drop-item{
+  display:flex; align-items:center; gap:10px;
+  padding:10px 14px; border-radius:10px;
+  text-decoration:none; font-size:12px; font-weight:600;
+  letter-spacing:.05em; color:var(--ts);
+  transition:background .15s, color .15s;
+  white-space:nowrap;
+}
+.drop-item:hover{ background:var(--cd); color:var(--fo); }
+
+/* ── HERO RESPONSIVE ── */
+.hero-section{ position:relative; overflow:hidden; }
+.hero-content{ padding:100px 20px 56px; max-width:100%; position:relative; z-index:1; }
+.hero-title{ font-size:clamp(54px,10vw,154px); }
+.hero-sub{   font-size:clamp(22px,4vw,58px); }
+
+@media(max-width:768px){
+  .hero-content{ padding:60px 16px 32px !important; }
+  .hero-title{ font-size:clamp(32px,10vw,48px) !important; }
+  .hero-sub{   font-size:clamp(18px,6vw,28px) !important; }
+  .sec{ padding:52px 20px !important; }
+  .visi-wrap{ gap:28px !important; }
+  .visi-left{ flex:0 0 100% !important; }
+}

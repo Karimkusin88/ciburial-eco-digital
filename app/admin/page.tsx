@@ -1,11 +1,12 @@
 "use client";
 // app/admin/page.tsx
 // Akses di: https://your-site.vercel.app/admin
-// Password default: ciburial2026  ← ganti sesuai keinginan
+// PIN admin disimpan di environment variable ADMIN_PIN
 import { useState, useEffect, useCallback } from "react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
+import "./admin-styles.css";
 
-const ADMIN_PASSWORD = "ciburial2026";
+// PIN diverifikasi server-side via /api/admin/verify
 
 interface Kegiatan { id: string; judul: string; tanggal: string; kategori: string; deskripsi: string; foto?: string; }
 interface Produk    { id: string; nama: string; deskripsi: string; harga: number; tag: string; icon: string; }
@@ -86,10 +87,22 @@ export default function AdminPage() {
   useEffect(() => { if (auth) fetchAll(); }, [auth, fetchAll]);
 
   /* ─── login ─── */
-  const handleLogin = () => {
-    if (pwInput === ADMIN_PASSWORD) { setAuth(true); setPwErr(false); }
-    else { setPwErr(true); }
-  };
+  function handleLogin() {
+    if (!pwInput.trim()) { setPwErr(true); return; }
+    setLoading(true);
+    fetch("/api/admin/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ pin: pwInput }),
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) { setAuth(true); setPwErr(false); }
+        else { setPwErr(true); }
+      })
+      .catch(() => setPwErr(true))
+      .finally(() => setLoading(false));
+  }
 
   /* ─── kegiatan CRUD ─── */
   const addKegiatan = async () => {
@@ -148,59 +161,34 @@ export default function AdminPage() {
 
   /* ══════ PASSWORD GATE ══════ */
   if (!auth) return (
-    <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;600&family=DM+Sans:opsz,wght@9..40,400;9..40,600;9..40,700&display=swap');
-        *{box-sizing:border-box;margin:0;padding:0;}
-        body{font-family:'DM Sans',sans-serif;background:#FAF8F3;}
-        .fnt{font-family:'Cormorant Garamond',serif;}
-        .field{width:100%;padding:14px 18px;border:1px solid #E5E0D8;border-radius:12px;font-size:14px;font-family:'DM Sans',sans-serif;background:#FFFEF9;outline:none;transition:border-color .25s,box-shadow .25s;}
-        .field:focus{border-color:#2D5A40;box-shadow:0 0 0 3px rgba(45,90,64,.08);}
-      `}</style>
+    <div className="admin-page">
       <div style={{ minHeight:"100vh", background:"#FAF8F3", display:"flex", alignItems:"center", justifyContent:"center", padding:"24px" }}>
         <div style={{ width:"100%", maxWidth:400, background:"#FFFEF9", border:"1px solid #E5E0D8", borderRadius:28, padding:"48px 40px", textAlign:"center" }}>
           <div style={{ width:64, height:64, borderRadius:"50%", background:"#1C3A2B", display:"flex", alignItems:"center", justifyContent:"center", margin:"0 auto 20px", fontSize:28 }}>🌿</div>
           <h1 className="fnt" style={{ fontSize:30, fontWeight:300, color:"#1C3A2B", letterSpacing:"-.02em", marginBottom:6 }}>Admin Panel</h1>
           <p style={{ fontSize:12, color:"#9A8C85", marginBottom:32, fontWeight:600, letterSpacing:".05em" }}>Ciburial Eco-Digital Village</p>
           <input
-            type="password" placeholder="Masukkan password admin"
-            className="field" value={pwInput}
-            onChange={e => { setPwInput(e.target.value); setPwErr(false); }}
+            type="tel" inputMode="numeric" placeholder="Masukkan PIN admin (6 digit)"
+            className="field-login" value={pwInput}
+            maxLength={6}
+            onChange={e => { setPwInput(e.target.value.replace(/\D/g, '')); setPwErr(false); }}
             onKeyDown={e => e.key === "Enter" && handleLogin()}
-            style={{ marginBottom: pwErr ? 8 : 20, borderColor: pwErr ? "#8B2020" : undefined }}
+            style={{ marginBottom: pwErr ? 8 : 20, borderColor: pwErr ? "#8B2020" : undefined, textAlign:"center", fontSize:24, letterSpacing:".3em", fontWeight:700 }}
           />
-          {pwErr && <p style={{ fontSize:12, color:"#8B2020", fontWeight:700, marginBottom:16 }}>Password salah. Coba lagi.</p>}
-          <button onClick={handleLogin} style={{ width:"100%", padding:"14px", borderRadius:14, background:"#1C3A2B", color:"#fff", fontSize:12, fontWeight:700, letterSpacing:".1em", textTransform:"uppercase", border:"none", cursor:"pointer" }}>
-            Masuk →
+          {pwErr && <p style={{ fontSize:12, color:"#8B2020", fontWeight:700, marginBottom:16 }}>PIN salah. Coba lagi.</p>}
+          <button onClick={handleLogin} disabled={loading} style={{ width:"100%", padding:"14px", borderRadius:14, background:"#1C3A2B", color:"#fff", fontSize:12, fontWeight:700, letterSpacing:".1em", textTransform:"uppercase", border:"none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}>
+            {loading ? "Memverifikasi..." : "Masuk →"}
           </button>
           <p style={{ fontSize:11, color:"#C8C0B8", marginTop:20 }}>Hanya untuk pengelola resmi Ciburial</p>
         </div>
       </div>
-    </>
+    </div>
   );
 
   /* ══════ ADMIN DASHBOARD ══════ */
   return (
-    <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap');
-        *{box-sizing:border-box;margin:0;padding:0;}
-        body{font-family:'DM Sans',sans-serif;background:#F0EDE5;}
-        .fnt{font-family:'Cormorant Garamond',serif;}
-        .field{width:100%;padding:11px 16px;border:1px solid #E5E0D8;border-radius:10px;font-size:13px;font-family:'DM Sans',sans-serif;background:#FFFEF9;outline:none;transition:border-color .2s,box-shadow .2s;}
-        .field:focus{border-color:#2D5A40;box-shadow:0 0 0 3px rgba(45,90,64,.07);}
-        .row-hover:hover{background:#FAF8F3!important;}
-        .btn-sm{padding:7px 14px;border-radius:8px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border:none;cursor:pointer;transition:opacity .2s;}
-        .btn-sm:hover{opacity:.85;}
-        .tag{padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700;}
-        ::-webkit-scrollbar{width:4px;} ::-webkit-scrollbar-thumb{background:#C8C0B8;border-radius:99px;}
-
-        /* toast */
-        .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#1C3A2B;color:#fff;padding:12px 24px;border-radius:99px;font-size:13px;font-weight:600;white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,.2);z-index:999;animation:toastIn .3s cubic-bezier(.22,1,.36,1);}
-        @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(12px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
-      `}</style>
-
-      {toast && <div className="toast">{toast}</div>}
+    <div className="admin-page" style={{background:"#F0EDE5",minHeight:"100vh"}}>
+      {toast && <div className="admin-toast">{toast}</div>}
 
       {/* ── HEADER ── */}
       <header style={{ background:"#1C3A2B", padding:"0 28px", height:60, display:"flex", alignItems:"center", justifyContent:"space-between", position:"sticky", top:0, zIndex:40 }}>
@@ -514,6 +502,6 @@ export default function AdminPage() {
           </div>
         )}
       </main>
-    </>
+    </div>
   );
 }
