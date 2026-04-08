@@ -73,17 +73,25 @@ export default function AdminPosyanduPage(){
 
     if(error){showToast(`❌ ${error.message}`,false);setLoading(false);return;}
 
-    // Reward ke ibu
+    // Reward ke ibu - dengan anti-spam cek
     const ibu=anggotaList.find(a=>a.kk_id===anak.kk_id);
     if(ibu){
-      const saldoBaru=(ibu.saldo_poin||0)+POIN_POSYANDU;
-      await supabase.from("anggota_kk").update({saldo_poin:saldoBaru}).eq("id",ibu.id);
-      await supabase.from("riwayat_poin").insert({
-        anggota_id:ibu.id,kk_id:anak.kk_id,
-        jumlah:POIN_POSYANDU,jenis:"masuk",sumber:"posyandu",
-        keterangan:`Hadir posyandu — ${anak.nama} — ${new Date().toLocaleDateString("id-ID")}`,
-      });
-      showToast(`✅ Data tersimpan! ${ibu.nama} dapat +${POIN_POSYANDU} poin! 🎉`);
+      // Cek sudah dapat poin hari ini
+      const hariIni=new Date().toISOString().split("T")[0];
+      const{data:cekSpam2}=await supabase.from("riwayat_poin").select("id").eq("anggota_id",ibu.id).eq("sumber","posyandu").gte("created_at",`${hariIni}T00:00:00`).lte("created_at",`${hariIni}T23:59:59`).limit(1);
+      const sudahDapatPoin=cekSpam2&&cekSpam2.length>0;
+      const saldoBaru=(ibu.saldo_poin||0)+(sudahDapatPoin?0:POIN_POSYANDU);
+      if(!sudahDapatPoin){
+        await supabase.from("anggota_kk").update({saldo_poin:saldoBaru}).eq("id",ibu.id);
+        await supabase.from("riwayat_poin").insert({
+          anggota_id:ibu.id,kk_id:anak.kk_id,
+          jumlah:POIN_POSYANDU,jenis:"masuk",sumber:"posyandu",
+          keterangan:`Hadir posyandu — ${anak.nama} — ${new Date().toLocaleDateString("id-ID")}`,
+        });
+        showToast(`✅ Data tersimpan! ${ibu.nama} dapat +${POIN_POSYANDU} poin! 🎉`);
+      }else{
+        showToast(`✅ Data tersimpan! (Poin sudah diberikan hari ini)`);
+      }
       if(gz.status!=="normal")setTimeout(()=>showToast(`⚠️ Status gizi ${gz.status} — konsultasi ke bidan!`,false),1500);
     }else{
       showToast(`✅ Data tersimpan! Status: ${gz.status}`);
@@ -103,6 +111,11 @@ export default function AdminPosyanduPage(){
     // Cari anak balita dari KK ini
     const anakBalita=anakList.filter(a=>a.kk_id===ibu.kk_id);
     if(anakBalita.length===0)return showToast(`⚠️ ${ibu.nama} tidak punya balita terdaftar`,false);
+
+    // Anti-spam: cek sudah dapat poin posyandu hari ini
+    const hariIni=new Date().toISOString().split("T")[0];
+    const{data:cekSpam}=await supabase.from("riwayat_poin").select("id").eq("anggota_id",ibu.id).eq("sumber","posyandu").gte("created_at",`${hariIni}T00:00:00`).lte("created_at",`${hariIni}T23:59:59`).limit(1);
+    if(cekSpam&&cekSpam.length>0)return showToast(`⚠️ ${ibu.nama} sudah dapat poin posyandu hari ini!`,false);
 
     // Tambah poin ke ibu
     const saldoBaru=(ibu.saldo_poin||0)+POIN_POSYANDU;

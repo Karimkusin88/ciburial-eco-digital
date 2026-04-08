@@ -58,9 +58,9 @@ export default function AdminRondaPage() {
     const nama = kk?.kepala_keluarga || anggota?.nama || "Unknown";
     const realKKId = kk?.id || anggota?.kk_id;
 
-    // Cek udah absen belum
-    const sudah = absensi.find(a=>a.jadwal_id===activeJadwal&&a.nama===nama);
-    if(sudah)return showToast(`⚠️ ${nama} sudah absen!`,false);
+    // Cek DB langsung - anti spam
+    const{data:cekAbsen}=await supabase.from("absensi_ronda").select("id").eq("jadwal_id",activeJadwal).eq("kk_id",realKKId||"").limit(1);
+    if(cekAbsen&&cekAbsen.length>0)return showToast(`⚠️ ${nama} sudah absen di jadwal ini!`,false);
 
     // Catat absensi
     await supabase.from("absensi_ronda").insert({
