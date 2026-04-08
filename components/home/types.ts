@@ -18,6 +18,7 @@ export interface Produk {
   harga: number;
   tag: string;
   icon: string;
+  foto?: string;
 }
 
 export interface Transaksi {
