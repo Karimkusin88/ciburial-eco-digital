@@ -10,18 +10,88 @@ interface MarketplaceTabProps {
   setCheckout: (val: boolean) => void;
 }
 
-// Gunakan warna solid yang kontrasnya tajam
-const CATEGORI = ["Semua", "Kerajinan", "Pertanian", "Makanan", "Eco-Waste", "Bambu"];
+// Data kategori yang lebih umum ala e-commerce
+const CATEGORI = [
+  { id: "Semua", icon: "🏠" },
+  { id: "Kerajinan", icon: "🎋" },
+  { id: "Pertanian", icon: "🌾" },
+  { id: "Makanan", icon: "🍲" },
+  { id: "Eco-Waste", icon: "♻️" },
+  { id: "Bambu", icon: "🎍" }
+];
+
 const MOCK_SOLD = [42, 128, 76, 215, 93, 54];
 const MOCK_RATING = [4.8, 4.9, 4.7, 5.0, 4.6, 4.8];
 
+// Tipe data untuk item di keranjang
+interface CartItem extends Produk {
+  qty: number;
+}
+
 export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout, setCheckout }: MarketplaceTabProps) {
   const [loadingSnap, setLoadingSnap] = useState(false);
-  const [selectedProduk, setSelectedProduk] = useState<Produk | null>(null);
   const [search, setSearch] = useState("");
   const [activeKat, setActiveKat] = useState("Semua");
   const [activeSlide, setActiveSlide] = useState(0);
   const sliderRef = useRef<HTMLDivElement>(null);
+
+  // State untuk Keranjang Belanja
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [showCart, setShowCart] = useState(false);
+
+  // Load keranjang dari localStorage pas komponen pertama kali jalan
+  useEffect(() => {
+    const savedCart = localStorage.getItem("ciburial_cart");
+    if (savedCart) {
+      try {
+        setCart(JSON.parse(savedCart));
+      } catch (e) {
+        console.error("Gagal load cart", e);
+      }
+    }
+  }, []);
+
+  // Simpan keranjang ke localStorage setiap kali ada perubahan di 'cart'
+  useEffect(() => {
+    localStorage.setItem("ciburial_cart", JSON.stringify(cart));
+  }, [cart]);
+
+  // Fungsi tambah ke keranjang
+  const addToCart = (p: Produk) => {
+    setCart((prev) => {
+      const existing = prev.find((item) => item.id === p.id);
+      if (existing) {
+        // Kalau udah ada, tambah jumlahnya (qty)
+        return prev.map((item) =>
+          item.id === p.id ? { ...item, qty: item.qty + 1 } : item
+        );
+      }
+      // Kalau belum ada, masukin baru dengan qty 1
+      return [...prev, { ...p, qty: 1 }];
+    });
+    alert(`${p.nama} berhasil masuk keranjang! 🛒`);
+  };
+
+  // Fungsi ubah jumlah barang di keranjang
+  const updateQty = (id: string, delta: number) => {
+    setCart((prev) =>
+      prev.map((item) => {
+        if (item.id === id) {
+          const newQty = Math.max(1, item.qty + delta); // Minimal 1
+          return { ...item, qty: newQty };
+        }
+        return item;
+      })
+    );
+  };
+
+  // Fungsi hapus dari keranjang
+  const removeFromCart = (id: string) => {
+    setCart((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  // Hitung total harga keranjang
+  const totalCartPrice = cart.reduce((total, item) => total + item.harga * item.qty, 0);
 
   // Auto-scroll banner
   useEffect(() => {
@@ -42,264 +112,315 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
     return matchSearch && matchKat;
   });
 
-  const bayarSekarang = async (p: Produk) => {
+  const bayarSekarang = async () => {
+    if (cart.length === 0) return alert("Keranjang kosong bro!");
+    
     setLoadingSnap(true);
     try {
+      // Bikin format detail item buat Midtrans
+      const itemDetails = cart.map((item) => ({
+        id: item.id,
+        price: item.harga,
+        quantity: item.qty,
+        name: item.nama.substring(0, 50) // Midtrans batesin nama item max 50 karakter
+      }));
+
       const res = await fetch("/api/midtrans/tokenize", {
         method: "POST",
         headers: { "Content-type": "application/json" },
         body: JSON.stringify({
           order_id: `MKT-${Date.now()}`,
-          gross_amount: p.harga,
-          item_details: [{ id: p.id, price: p.harga, quantity: 1, name: p.nama }]
+          gross_amount: totalCartPrice,
+          item_details: itemDetails
         })
       });
       const data = await res.json();
       if (data.token && (window as any).snap) {
         (window as any).snap.pay(data.token, {
-          onSuccess: function (r: any) { alert("Pembayaran sukses! Terima kasih sudah berbelanja di Ciburial Marketplace. 🎉"); setCheckout(false); },
+          onSuccess: function (r: any) { 
+            alert("Pembayaran sukses! 🎉"); 
+            setCart([]); // Kosongin keranjang kalau sukses
+            setShowCart(false);
+          },
           onPending: function (r: any) { alert("Menunggu konfirmasi pembayaran Anda."); },
           onError: function (r: any) { alert("Pembayaran gagal. Silakan coba lagi."); }
         });
       } else {
-        alert("Payment Gateway belum aktif. Cek ENV Midtrans. (" + (data.error || "Missing Token") + ")");
+        alert("Payment Gateway belum aktif. (" + (data.error || "Missing Token") + ")");
       }
     } catch (e) { alert("Error menghubungi server."); }
     setLoadingSnap(false);
   };
 
-  // ─── CHECKOUT PAGE (DESAIN SOLID & KONTRAS TINGGI) ─────────────────────
-  if (checkout && selectedProduk) {
-    const p = selectedProduk;
+  // ─── TAMPILAN KERANJANG (MODAL/SIDEBAR ALA TOKPED) ─────────────────────────
+  if (showCart) {
     return (
-      <div className="pi" style={{ paddingTop: "clamp(64px,10vw,120px)", paddingBottom: 80, minHeight: "100vh", background: "#F5F5F0" }}>
-        <div style={{ maxWidth: 600, margin: "0 auto", padding: "0 clamp(16px,3vw,28px)" }}>
-
-          {/* Back */}
-          <button onClick={() => { setCheckout(false); setSelectedProduk(null); }} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", fontSize: 13, fontWeight: 700, color: "#1A4D2E", marginBottom: 24, padding: "6px 0" }}>
-            ← Kembali ke Toko
+      <div className="pi" style={{ paddingTop: "clamp(64px,10vw,120px)", paddingBottom: 80, minHeight: "100vh", background: "#F3F4F5" }}>
+        <div style={{ maxWidth: 800, margin: "0 auto", padding: "0 clamp(16px,3vw,28px)", display: "flex", flexDirection: "column", gap: 20 }}>
+          
+          <button onClick={() => setShowCart(false)} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", fontSize: 14, fontWeight: 700, color: "#03AC0E", padding: "6px 0", alignSelf: "flex-start" }}>
+            ← Lanjut Belanja
           </button>
 
-          {/* Order Summary Card - SOLID WHITE */}
-          <div style={{ background: "#FFFFFF", border: "1px solid #E0E0E0", borderRadius: 20, overflow: "hidden", marginBottom: 16, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
-            <div style={{ background: "#F0F0F0", padding: "16px 22px", display: "flex", alignItems: "center", gap: 14, borderBottom: "1px solid #E0E0E0" }}>
-              <div style={{ width: 56, height: 56, borderRadius: 16, background: "rgba(0,0,0,0.05)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28 }}>{p.icon || "🎋"}</div>
-              <div>
-                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "#666", marginBottom: 2 }}>{p.tag || "Produk Lokal"}</div>
-                <div style={{ fontSize: 16, fontWeight: 800, color: "#1A1A1A" }}>{p.nama}</div>
-              </div>
-              <div style={{ marginLeft: "auto", textAlign: "right" }}>
-                <div style={{ fontSize: 10, color: "#999" }}>Total</div>
-                <div className="fnt" style={{ fontSize: 20, fontWeight: 700, color: "#1A4D2E" }}>{fRp(p.harga)}</div>
-              </div>
-            </div>
-            
-             <div style={{ padding: "16px 22px", background: "#FFFFFF", borderBottom: "1px solid #E0E0E0"}}>
-                 <div style={{fontSize: 12, color: "#333", display: "flex", alignItems: "center", gap: 8}}>
-                     <span>🌱</span>
-                     <span>"Mendukung ekonomi warga Kp. Ciburial, Garut."</span>
-                 </div>
-             </div>
+          <h2 style={{ margin: 0, color: "#31353B", fontSize: 24, fontWeight: 800 }}>Keranjang Belanja</h2>
 
-            <div style={{ padding: "24px 22px", display: "flex", flexDirection: "column", gap: 16 }}>
-              {/* Form Input - SOLID & JELAS */}
-              {[{ l: "Nama Lengkap", t: "text", p: "Cth: Budi Santoso" }, { l: "No. WhatsApp Aktif", t: "tel", p: "Cth: 08123456789" }].map((f, i) => (
-                <div key={i}>
-                  <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: "#666", marginBottom: 8 }}>{f.l}</label>
-                  <input type={f.t} placeholder={f.p} style={{ width: "100%", padding: "14px", background: "#FAFAFA", border: "1px solid #CCCCCC", borderRadius: 10, color: "#1A1A1A", fontSize: 14, boxSizing: "border-box" }} />
+          <div style={{ display: "flex", gap: 24, flexWrap: "wrap", alignItems: "flex-start" }}>
+            {/* List Barang */}
+            <div style={{ flex: "1 1 60%", minWidth: 300, background: "#FFF", borderRadius: 12, padding: 24, boxShadow: "0 1px 6px 0 rgba(49,53,59,0.12)" }}>
+              {cart.length === 0 ? (
+                <div style={{ textAlign: "center", padding: "40px 0", color: "#8D96AA" }}>
+                  <div style={{ fontSize: 48, marginBottom: 16 }}>🛒</div>
+                  <h3 style={{ margin: "0 0 8px 0", color: "#31353B" }}>Keranjangmu kosong</h3>
+                  <p style={{ margin: 0, fontSize: 14 }}>Yuk, temukan produk desa pilihanmu!</p>
                 </div>
-              ))}
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+                  {cart.map((item) => (
+                    <div key={item.id} style={{ display: "flex", gap: 16, borderBottom: "1px solid #E5E7E9", paddingBottom: 24 }}>
+                       <div style={{ width: 80, height: 80, borderRadius: 8, background: "#F3F4F5", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, flexShrink: 0 }}>
+                         {item.foto ? <img src={item.foto} alt={item.nama} style={{width: "100%", height: "100%", objectFit: "cover", borderRadius: 8}}/> : (item.icon || "📦")}
+                       </div>
+                       <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: 16, fontWeight: 600, color: "#31353B", marginBottom: 4 }}>{item.nama}</div>
+                          <div style={{ fontSize: 14, fontWeight: 700, color: "#FA591D", marginBottom: 16 }}>{fRp(item.harga)}</div>
+                          
+                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                             <button onClick={() => removeFromCart(item.id)} style={{ background: "none", border: "none", color: "#8D96AA", fontSize: 12, fontWeight: 600, cursor: "pointer", padding: 0 }}>Tulis Catatan</button>
+                             
+                             <div style={{ display: "flex", alignItems: "center", gap: 12, border: "1px solid #E5E7E9", borderRadius: 4, padding: "4px 8px" }}>
+                               <button onClick={() => item.qty > 1 ? updateQty(item.id, -1) : removeFromCart(item.id)} style={{ background: "none", border: "none", color: item.qty > 1 ? "#03AC0E" : "#8D96AA", fontSize: 16, fontWeight: 700, cursor: "pointer", width: 24 }}>-</button>
+                               <span style={{ fontSize: 14, fontWeight: 600, color: "#31353B", minWidth: 20, textAlign: "center" }}>{item.qty}</span>
+                               <button onClick={() => updateQty(item.id, 1)} style={{ background: "none", border: "none", color: "#03AC0E", fontSize: 16, fontWeight: 700, cursor: "pointer", width: 24 }}>+</button>
+                             </div>
+                          </div>
+                       </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Ringkasan Belanja */}
+            <div style={{ flex: "1 1 30%", minWidth: 280, background: "#FFF", borderRadius: 12, padding: 24, boxShadow: "0 1px 6px 0 rgba(49,53,59,0.12)", position: "sticky", top: 100 }}>
+               <h3 style={{ margin: "0 0 16px 0", color: "#31353B", fontSize: 16, fontWeight: 700 }}>Ringkasan Belanja</h3>
+               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12, fontSize: 14, color: "#8D96AA" }}>
+                 <span>Total Harga ({cart.length} barang)</span>
+                 <span>{fRp(totalCartPrice)}</span>
+               </div>
+               <hr style={{ border: "none", borderTop: "1px solid #E5E7E9", margin: "16px 0" }} />
+               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 24, fontSize: 16, fontWeight: 800, color: "#31353B" }}>
+                 <span>Total Harga</span>
+                 <span>{fRp(totalCartPrice)}</span>
+               </div>
+               
+               <button 
+                  onClick={bayarSekarang} 
+                  disabled={loadingSnap || cart.length === 0} 
+                  style={{ width: "100%", padding: "14px", borderRadius: 8, fontSize: 16, fontWeight: 700, border: "none", cursor: loadingSnap || cart.length === 0 ? "not-allowed" : "pointer", background: loadingSnap || cart.length === 0 ? "#E5E7E9" : "#03AC0E", color: loadingSnap || cart.length === 0 ? "#AAB4C8" : "#FFF", transition: "all 0.2s" }}
+               >
+                 {loadingSnap ? "Memproses..." : `Beli (${cart.length})`}
+               </button>
             </div>
           </div>
 
-          {/* Payment button - SOLID GREEN */}
-          <button onClick={() => bayarSekarang(p)} disabled={loadingSnap} style={{ width: "100%", padding: "18px", borderRadius: 16, fontSize: 14, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", border: "none", cursor: loadingSnap ? "wait" : "pointer", background: loadingSnap ? "#999" : "#1A4D2E", color: "#FFFFFF", transition: "all 0.3s", boxShadow: loadingSnap ? "none" : "0 4px 12px rgba(26, 77, 46, 0.2)", display: "flex", alignItems: "center", justifyContent: "center", gap: 10 }}>
-            <span>{loadingSnap ? "⏳ Memproses..." : `📦 Checkout & Bayar (${fRp(p.harga)})`}</span>
-          </button>
         </div>
       </div>
     );
   }
 
-  // ─── MAIN MARKETPLACE PAGE (DESAIN SOLID & KONTRAS TINGGI) ─────────────────────
+  // ─── MAIN MARKETPLACE PAGE (DESAIN TOKPEDIA-STYLE) ─────────────────────────
   return (
-    <div className="pi" style={{ paddingTop: "clamp(64px,10vw,120px)", paddingBottom: 80, background: "#F5F5F0", minHeight: "100vh" }}>
-      <div style={{ maxWidth: 1320, margin: "0 auto", padding: "0 clamp(12px,3vw,24px)" }}>
+    <div className="pi" style={{ paddingTop: "clamp(64px,10vw,120px)", paddingBottom: 80, background: "#F3F4F5", minHeight: "100vh", fontFamily: "'Nunito Sans', sans-serif" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 clamp(12px,3vw,24px)" }}>
 
-        {/* ── TOP HERO SEARCH BAR - SOLID GREY ── */}
-        <div style={{ background: "#FFFFFF", border: "1px solid #E0E0E0", borderRadius: 24, padding: "32px", marginBottom: 32, display: "flex", flexWrap: "wrap", gap: 24, alignItems: "center", justifyContent: "space-between", boxShadow: "0 4px 12px rgba(0,0,0,0.03)" }}>
-          <div>
-            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: "#1A4D2E", marginBottom: 8 }}>PROFIL DESA DIGITAL</div>
-            <h1 className="fnt" style={{ fontSize: "clamp(28px,4vw,42px)", fontWeight: 800, color: "#1A1A1A", letterSpacing: "-.02em", lineHeight: 1.1 }}>
-              Marketplace <span style={{ color: "#1A4D2E" }}>Ciburial</span>
-            </h1>
+        {/* ── HEADER SEARCH & CART PULL-UP ── */}
+        <div style={{ background: "#FFF", borderRadius: 12, padding: "16px 24px", marginBottom: 24, display: "flex", gap: 16, alignItems: "center", boxShadow: "0 1px 6px 0 rgba(49,53,59,0.12)" }}>
+          <div style={{ fontWeight: 800, color: "#03AC0E", fontSize: 24, marginRight: 16 }}>Ciburial<span style={{color: "#31353B"}}>Market</span></div>
+          
+          <div style={{ flex: 1, position: "relative" }}>
+            <span style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", fontSize: 16, color: "#8D96AA" }}>🔍</span>
+            <input
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Cari produk desa di sini..."
+              style={{ width: "100%", padding: "12px 16px 12px 48px", borderRadius: 8, border: "1px solid #E5E7E9", color: "#31353B", fontSize: 14, outline: "none", boxSizing: "border-box", transition: "border-color 0.2s" }}
+              onFocus={(e) => e.target.style.borderColor = "#03AC0E"}
+              onBlur={(e) => e.target.style.borderColor = "#E5E7E9"}
+            />
           </div>
-          <div style={{ display: "flex", gap: 10, alignItems: "center", flex: 1, minWidth: 240, maxWidth: 440 }}>
-            <div style={{ position: "relative", flex: 1 }}>
-              <span style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", fontSize: 16, color: "#999" }}>🔍</span>
-              <input
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                placeholder="Cari produk lokal..."
-                style={{ width: "100%", padding: "16px 16px 16px 48px", borderRadius: 14, background: "#FFFFFF", border: "1px solid #CCCCCC", color: "#1A1A1A", fontSize: 14, outline: "none", boxSizing: "border-box", transition: "all 0.3s" }}
-                onFocus={(e) => e.target.style.borderColor = "#1A4D2E"}
-                onBlur={(e) => e.target.style.borderColor = "#CCCCCC"}
-              />
-            </div>
-          </div>
+
+          {/* Ikon Keranjang */}
+          <button onClick={() => setShowCart(true)} style={{ position: "relative", background: "none", border: "none", cursor: "pointer", fontSize: 24, padding: "8px 12px", color: "#8D96AA" }}>
+             🛒
+             {cart.length > 0 && (
+               <span style={{ position: "absolute", top: 4, right: 4, background: "#EF144A", color: "#FFF", fontSize: 10, fontWeight: 700, padding: "2px 6px", borderRadius: "10px", border: "2px solid #FFF" }}>
+                 {cart.length}
+               </span>
+             )}
+          </button>
         </div>
 
-        {/* ── CATEGORY CHIPS ── */}
-        <div style={{ display: "flex", gap: 10, overflowX: "auto", marginBottom: 32, paddingBottom: 8 }} className="hide-scroll">
-          {CATEGORI.map(k => (
-            <button key={k} onClick={() => setActiveKat(k)} style={{
-              flexShrink: 0, padding: "12px 26px", borderRadius: 14, fontSize: 13, fontWeight: 700, cursor: "pointer", transition: "all 0.3s ease",
-              background: activeKat === k ? "#1A4D2E" : "#FFFFFF",
-              border: `1px solid ${activeKat === k ? "#1A4D2E" : "#CCCCCC"}`,
-              color: activeKat === k ? "#FFFFFF" : "#1A1A1A",
-              boxShadow: activeKat === k ? "0 4px 10px rgba(26, 77, 46, 0.15)" : "none"
-            }}>
-              {k}
-            </button>
-          ))}
+        {/* ── BANNER SLIDER (ALA TOKPED) ── */}
+        {iklan.length > 0 && !dataLoad && (
+          <div style={{ marginBottom: 32, position: "relative", borderRadius: 12, overflow: "hidden" }}>
+            <div ref={sliderRef} style={{ display: "flex", overflowX: "hidden", scrollSnapType: "x mandatory" }}>
+              {iklan.map((ik, i) => (
+                <div key={ik.id || i} style={{ flex: "0 0 100%", scrollSnapAlign: "start", position: "relative", aspectRatio: "12/3", minHeight: 200, background: "#03AC0E" }}>
+                  {ik.tipe === "video" ? (
+                    <video src={ik.mediaUrl} autoPlay muted loop playsInline style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  ) : (
+                    <img src={ik.mediaUrl} alt={ik.judul} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  )}
+                  {/* Kalau butuh teks overlay, uncomment ini */}
+                  {/* <div style={{ position: "absolute", inset: 0, padding: "40px", display: "flex", flexDirection: "column", justifyContent: "center", background: "linear-gradient(90deg, rgba(3,172,14,0.9) 0%, rgba(3,172,14,0) 100%)" }}>
+                    <h2 style={{ color: "#FFF", margin: "0 0 8px", fontSize: 28 }}>{ik.judul}</h2>
+                    <p style={{ color: "#FFF", margin: 0, fontSize: 16 }}>{ik.deskripsi}</p>
+                  </div> */}
+                </div>
+              ))}
+            </div>
+            {/* Dots */}
+             {iklan.length > 1 && (
+              <div style={{ position: "absolute", bottom: 16, left: 24, display: "flex", gap: 6 }}>
+                {iklan.map((_, i) => (
+                  <div key={i} onClick={() => setActiveSlide(i)} style={{ width: i === activeSlide ? 24 : 8, height: 8, borderRadius: 4, background: i === activeSlide ? "#FFF" : "rgba(255,255,255,0.5)", cursor: "pointer", transition: "all 0.3s" }} />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── KATEGORI POPULER ── */}
+        <div style={{ background: "#FFF", borderRadius: 12, padding: "24px", marginBottom: 32, boxShadow: "0 1px 6px 0 rgba(49,53,59,0.12)" }}>
+           <h2 style={{ margin: "0 0 16px 0", color: "#31353B", fontSize: 20, fontWeight: 800 }}>Kategori Desa</h2>
+           <div style={{ display: "flex", gap: 16, overflowX: "auto", paddingBottom: 8 }} className="hide-scroll">
+             {CATEGORI.map(k => (
+               <button key={k.id} onClick={() => setActiveKat(k.id)} style={{
+                 flexShrink: 0, padding: "12px 20px", borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: "pointer", transition: "all 0.2s ease",
+                 display: "flex", alignItems: "center", gap: 8,
+                 background: activeKat === k.id ? "#E5F7E6" : "#FFF",
+                 border: `1px solid ${activeKat === k.id ? "#03AC0E" : "#E5E7E9"}`,
+                 color: activeKat === k.id ? "#03AC0E" : "#31353B",
+               }}>
+                 <span style={{ fontSize: 18 }}>{k.icon}</span>
+                 {k.id}
+               </button>
+             ))}
+           </div>
+        </div>
+
+        {/* ── HEADER PRODUK ── */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+           <h2 style={{ margin: 0, color: "#31353B", fontSize: 20, fontWeight: 800 }}>
+             {search ? `Hasil pencarian "${search}"` : `Produk ${activeKat === "Semua" ? "Pilihan Untukmu" : activeKat}`}
+           </h2>
         </div>
 
         {/* ── SKELETON ── */}
         {dataLoad && (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(240px,1fr))", gap: 20 }}>
-            {[1, 2, 3, 4].map(i => <div key={i} className="sk" style={{ height: 320, borderRadius: 20, background: "#FFFFFF" }} />)}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(180px,1fr))", gap: 16 }}>
+            {[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="sk" style={{ height: 280, borderRadius: 12, background: "#FFF" }} />)}
           </div>
         )}
 
-        {/* ── BENTO GRID (PRODUK & BANNER) ── */}
+        {/* ── PRODUK GRID (CARD ALA TOKPED) ── */}
         {!dataLoad && (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 24, gridAutoFlow: "dense" }}>
-                
-                {/* Banner Promo / Iklan Warung Lokal (SOLID WHITE) */}
-                {iklan.length > 0 && (
-                     <div style={{ gridColumn: "span 2 / auto", position: "relative", borderRadius: 24, overflow: "hidden", minHeight: 250, border: "1px solid #E0E0E0", boxShadow: "0 4px 15px rgba(0,0,0,0.05)" }}>
-                        <div ref={sliderRef} style={{ display: "flex", height: "100%", overflowX: "hidden", scrollSnapType: "x mandatory" }}>
-                        {iklan.map((ik, i) => (
-                            <div key={ik.id || i} style={{ flex: "0 0 100%", scrollSnapAlign: "start", position: "relative", background: "#FFFFFF" }}>
-                            {ik.tipe === "video" ? (
-                                <video src={ik.mediaUrl} autoPlay muted loop playsInline style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                            ) : (
-                                <img src={ik.mediaUrl} alt={ik.judul} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                            )}
-                            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%)", display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "32px" }}>
-                                <div style={{ display: "inline-block", background: "#FFFFFF", color: "#1A4D2E", fontSize: 10, fontWeight: 800, padding: "5px 12px", borderRadius: 8, marginBottom: 12, textTransform: "uppercase", letterSpacing: ".1em", width: "max-content" }}>UMKM Lokal</div>
-                                <h3 style={{ color: "#FFFFFF", fontSize: 28, fontWeight: 800, margin: 0, marginBottom: 8, lineHeight: 1.2 }}>{ik.judul}</h3>
-                                <p style={{ color: "rgba(255,255,255,0.9)", fontSize: 14, margin: 0, maxWidth: "80%" }}>{ik.deskripsi}</p>
-                            </div>
-                            </div>
-                        ))}
-                        </div>
-                     </div>
-                )}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(190px,1fr))", gap: 16 }}>
+            {filteredProduk.map((p, i) => {
+              const sold = MOCK_SOLD[i % MOCK_SOLD.length];
+              const rating = MOCK_RATING[i % MOCK_RATING.length];
+              return (
+                <div key={p.id} className="product-card"
+                    style={{ 
+                        background: "#FFF", 
+                        borderRadius: 12, 
+                        border: "1px solid #E5E7E9", 
+                        cursor: "pointer", 
+                        display: "flex", 
+                        flexDirection: "column",
+                        transition: "box-shadow 0.2s, transform 0.2s",
+                        position: "relative",
+                        overflow: "hidden"
+                    }}
+                    onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = "translateY(-4px)";
+                        e.currentTarget.style.boxShadow = "0 4px 12px 0 rgba(49,53,59,0.15)";
+                    }}
+                    onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = "translateY(0)";
+                        e.currentTarget.style.boxShadow = "none";
+                    }}
+                >
+                  
+                  {/* Product Image */}
+                  <div style={{ aspectRatio: "1/1", background: "#F3F4F5", display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
+                    {p.foto ? (
+                      <img src={p.foto} alt={p.nama} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    ) : (
+                      <span style={{ fontSize: 64 }}>{p.icon || "🎋"}</span>
+                    )}
+                    {/* Badge Diskon / Label */}
+                    {p.tag && (
+                      <div style={{ position: "absolute", top: 8, left: 8, padding: "4px 8px", background: "#FFEAEE", color: "#EF144A", borderRadius: 4, fontSize: 10, fontWeight: 800 }}>{p.tag}</div>
+                    )}
+                  </div>
 
-                {/* List Produk (SOLID WHITE & JELAS) */}
-                {filteredProduk.map((p, i) => {
-                const sold = MOCK_SOLD[i % MOCK_SOLD.length];
-                const rating = MOCK_RATING[i % MOCK_RATING.length];
-                return (
-                    <div key={p.id} className="product-card"
-                        style={{ 
-                            background: "#FFFFFF", 
-                            borderRadius: 20, 
-                            border: "1px solid #E0E0E0", 
-                            cursor: "pointer", 
-                            display: "flex", 
-                            flexDirection: "column",
-                            transition: "all 0.3s",
-                            position: "relative",
-                            overflow: "hidden",
-                            boxShadow: "0 2px 8px rgba(0,0,0,0.03)"
-                        }}
-                        onClick={() => { setSelectedProduk(p); setCheckout(true); }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.transform = "translateY(-5px)";
-                            e.currentTarget.style.boxShadow = "0 8px 20px rgba(0,0,0,0.08)";
-                            e.currentTarget.style.borderColor = "#1A4D2E";
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = "translateY(0)";
-                            e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.03)";
-                            e.currentTarget.style.borderColor = "#E0E0E0";
-                        }}
-                    >
+                  {/* Info */}
+                  <div style={{ padding: "12px", display: "flex", flexDirection: "column", gap: 4, flex: 1 }}>
+                    <div style={{ fontSize: 14, color: "#31353B", lineHeight: 1.4, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", minHeight: 40 }}>{p.nama}</div>
                     
-                    {/* Product Image */}
-                    <div style={{ aspectRatio: "4/3", background: "#FAFAFA", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", zIndex: 1, borderBottom: "1px solid #E0E0E0" }}>
-                        {p.foto ? (
-                        <img src={p.foto} alt={p.nama} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                        ) : (
-                        <span style={{ fontSize: 64, filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.1))" }}>{p.icon || "🎋"}</span>
-                        )}
-                        {p.tag && (
-                        <div style={{ position: "absolute", top: 12, left: 12, padding: "5px 12px", background: "rgba(26, 77, 46, 0.9)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 8, fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".1em", color: "#FFFFFF" }}>{p.tag}</div>
-                        )}
+                    <div className="fnt" style={{ fontSize: 16, fontWeight: 800, color: "#31353B", marginTop: 4 }}>{fRp(p.harga)}</div>
+                    
+                    {/* Badge Lokasi */}
+                    <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 4 }}>
+                      <span style={{fontSize: 12}}>📍</span>
+                      <span style={{ fontSize: 12, color: "#8D96AA" }}>Kp. Ciburial</span>
                     </div>
 
-                    {/* Info */}
-                    <div style={{ padding: "20px", display: "flex", flexDirection: "column", gap: 10, flex: 1, zIndex: 1 }}>
-                        <div style={{ fontSize: 16, fontWeight: 800, color: "#1A1A1A", lineHeight: 1.3 }}>{p.nama}</div>
-                        <div style={{ fontSize: 12, color: "#4F4F4F", lineHeight: 1.5, flexGrow: 1 }}>{p.deskripsi.slice(0, 60)}...</div>
-
-                        {/* Story / Impact Mini Badge - JELAS */}
-                        <div style={{ display: "flex", alignItems: "center", gap: 6, background: "rgba(26, 77, 46, 0.05)", padding: "6px 10px", borderRadius: 6, border: "1px solid rgba(26, 77, 46, 0.1)"}}>
-                            <span style={{fontSize: 10}}>🌱</span>
-                            <span style={{ fontSize: 10, color: "#1A4D2E", fontWeight: 700 }}>Kontribusi Ekonomi Desa</span>
-                        </div>
-
-                        {/* Rating & Sold - HITAM & KONTRAST */}
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 8 }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                                <span style={{ fontSize: 11, color: "#1A1A1A", fontWeight: 800 }}>⭐ {rating}</span>
-                                <span style={{ fontSize: 10, color: "#CCCCCC" }}>|</span>
-                                <span style={{ fontSize: 11, color: "#666666" }}>{sold} terjual</span>
-                            </div>
-                        </div>
-
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 12, paddingTop: 12, borderTop: "1px solid #E0E0E0" }}>
-                            <div style={{display: "flex", flexDirection: "column"}}>
-                                <span style={{fontSize: 9, color: "#999999", textTransform: "uppercase", letterSpacing: "0.1em"}}>Harga / Produk</span>
-                                <span className="fnt" style={{ fontSize: 18, fontWeight: 800, color: "#1A4D2E" }}>{fRp(p.harga)}</span>
-                            </div>
-                            <div className="btn-beli" style={{ padding: "10px 18px", background: "transparent", border: "1px solid #1A4D2E", borderRadius: 10, fontSize: 11, fontWeight: 700, color: "#1A4D2E", transition: "all 0.2s" }}>Beli Sekarang</div>
-                        </div>
+                    {/* Rating & Sold */}
+                    <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 4 }}>
+                      <span style={{ fontSize: 11, color: "#FFC400" }}>★</span>
+                      <span style={{ fontSize: 12, color: "#8D96AA" }}>{rating}</span>
+                      <span style={{ fontSize: 10, color: "#D6D6D6" }}>|</span>
+                      <span style={{ fontSize: 12, color: "#8D96AA" }}>Terjual {sold}</span>
                     </div>
-                    </div>
-                );
-                })}
-            </div>
+
+                    {/* Tombol Tambah Keranjang (Muncul pas di-hover) */}
+                    <button 
+                      className="btn-add-cart"
+                      onClick={(e) => {
+                        e.stopPropagation(); // Biar gak ke-trigger modal checkout lama
+                        addToCart(p);
+                      }}
+                      style={{ marginTop: 12, padding: "8px", background: "#FFF", border: "1px solid #03AC0E", borderRadius: 8, fontSize: 12, fontWeight: 700, color: "#03AC0E", cursor: "pointer", transition: "all 0.2s" }}>
+                      + Keranjang
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         )}
-
-        {/* ── TRUST BADGES - SOLID WHITE ── */}
-        <div style={{ marginTop: 60, padding: "32px", background: "#FFFFFF", borderRadius: 24, border: "1px solid #E0E0E0", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 24, boxShadow: "0 2px 10px rgba(0,0,0,0.03)" }}>
-          {[
-            { icon: "🌿", t: "Produk Lokal Autentik", d: "Asli buatan warga Kp. Ciburial" },
-            { icon: "📦", t: "Pengiriman Cepat", d: "Dikirim langsung dari Makers desa" },
-            { icon: "🤝", t: "Pemberdayaan Warga", d: "Keuntungan untuk ekonomi desa" },
-            { icon: "♻️", t: "Ramah Lingkungan", d: "Material lokal & organik" },
-          ].map((b, i) => (
-            <div key={i} style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
-              <div style={{ fontSize: 28, background: "rgba(0,0,0,0.05)", padding: 12, borderRadius: 14 }}>{b.icon}</div>
-              <div>
-                <div style={{ fontSize: 14, fontWeight: 800, color: "#1A1A1A", marginBottom: 4 }}>{b.t}</div>
-                <div style={{ fontSize: 12, color: "#666666", lineHeight: 1.4 }}>{b.d}</div>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
 
       <style>{`
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
         
-        .product-card:hover .btn-beli {
-            background: #1A4D2E !important;
-            color: #FFFFFF !important;
+        /* Tombol keranjang efek Tokped */
+        .product-card .btn-add-cart {
+            opacity: 1; /* Di HP tetep kelihatan */
+        }
+        
+        @media (min-width: 768px) {
+            .product-card .btn-add-cart {
+                opacity: 0; /* Di Desktop sembunyi dulu */
+            }
+            .product-card:hover .btn-add-cart {
+                opacity: 1; /* Muncul pas di-hover */
+                background: #03AC0E !important;
+                color: #FFF !important;
+            }
         }
       `}</style>
     </div>
