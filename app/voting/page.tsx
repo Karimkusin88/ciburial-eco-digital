@@ -4,398 +4,392 @@ import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 interface Voting { id: string; judul: string; deskripsi: string; tgl_mulai: string; tgl_selesai: string; status: string; }
 interface Pilihan { id: string; voting_id: string; teks: string; jumlah_vote: number; }
-interface Anggota { id: string; kk_id: string; nama: string; nfc_id: string; tgl_lahir: string; rt:string; }
+interface Pemilih { id: string; kk_id: string; nama: string; nfc_id: string; tgl_lahir: string; rt: string; }
 
 function hitungUmur(tgl_lahir: string) {
-  if(!tgl_lahir) return 0;
-  const d1 = new Date();
-  const d2 = new Date(tgl_lahir);
+  if (!tgl_lahir) return 0;
+  const d1 = new Date(), d2 = new Date(tgl_lahir);
   let age = d1.getFullYear() - d2.getFullYear();
   const m = d1.getMonth() - d2.getMonth();
   if (m < 0 || (m === 0 && d1.getDate() < d2.getDate())) age--;
   return age;
 }
 
+function parseJudul(str: string) {
+  if (str.startsWith("[PEMILU] ")) return { tipe: "PEMILU", text: str.replace("[PEMILU] ", "") };
+  if (str.startsWith("[MUSYAWARAH] ")) return { tipe: "MUSYAWARAH", text: str.replace("[MUSYAWARAH] ", "") };
+  return { tipe: "STANDAR", text: str };
+}
+function parseKandidat(str: string) {
+  const parts = str.split("|||");
+  return { nama: parts[0], foto: parts[1] || null };
+}
+
+const PESAN_MOTIVASI = [
+  { foto: "/vm1.png", kutipan: "Satu suara Anda adalah cahaya bagi masa depan kampung. Gunakan hak pilih dengan penuh tanggung jawab.", nama: "Bapak Ketua RW 08" },
+  { foto: "/vm2.png", kutipan: "Teknologi digital hadir bukan untuk mempersulit, tapi mempermudah kita berdemokrasi dari rumah sendiri.", nama: "Warga Digital Ciburial" },
+  { foto: "/vm3.png", kutipan: "Bersatu kita coblos! Demokrasi yang kuat lahir dari partisipasi aktif seluruh warga, tanpa terkecuali.", nama: "Komunitas RW 08 Ciburial" },
+  { foto: "/vm4.png", kutipan: "Tap kartu, berikan suara. Sesederhana itu hak pilih Anda dihitung dan dihormati sistem Eco-Digital.", nama: "Tim TI Kampung Ciburial" },
+  { foto: "/vm5.png", kutipan: "Suara Anda hari ini adalah warisan terbaik yang bisa kita titipkan kepada generasi penerus kampung kita.", nama: "Pesan KPK Ciburial RW 08" },
+];
+
+const C = {
+  cream: "#f5f0e8",
+  darkGreen: "#1a2e1f",
+  green: "#2d5a40",
+  lightGreen: "#7a9a7e",
+  gold: "#b8943f",
+  red: "#c0392b",
+  white: "#ffffff",
+};
+
 export default function VotingPage() {
   const [votings, setVotings] = useState<Voting[]>([]);
-  const [pilihanMap, setPilihanMap] = useState<Record<string, Pilihan[]>>({});
-  const [pemilihList, setPemilihList] = useState<Anggota[]>([]);
-  
-  const [activeVoting, setActiveVoting] = useState<string | null>(null);
+  const [aktivPilihan, setAktivPilihan] = useState<Pilihan[]>([]);
+  const [pemilihList, setPemilihList] = useState<Pemilih[]>([]);
+
+  const [activeVoting, setActiveVoting] = useState<Voting | null>(null);
   const [scanning, setScanning] = useState(false);
-  const [verifikasiSukses, setVerifikasiSukses] = useState<Anggota | null>(null);
-
-  const [loading, setLoading] = useState<string | null>(null);
-  const [konfirmasiSuara, setKonfirmasiSuara] = useState<Pilihan | null>(null);
+  const [terverifikasi, setTerverifikasi] = useState<Pemilih | null>(null);
+  const [konfirmasi, setKonfirmasi] = useState<Pilihan | null>(null);
+  const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState({ msg: "", type: "info" });
-  
+  const [slideIdx, setSlideIdx] = useState(0);
+
   const nfcRef = useRef<any>(null);
-  const pemilihListRef = useRef(pemilihList);
-  useEffect(() => { pemilihListRef.current = pemilihList; }, [pemilihList]);
+  const pemilihRef = useRef<Pemilih[]>([]);
+  useEffect(() => { pemilihRef.current = pemilihList; }, [pemilihList]);
 
-  const showToast = (msg: string, type: "success"|"error"|"info" = "info") => { setToast({ msg, type }); setTimeout(() => setToast({ msg: "", type: "info" }), 4000); };
+  // Auto-slide motivasi
+  useEffect(() => {
+    if (activeVoting) return;
+    const t = setInterval(() => setSlideIdx(i => (i + 1) % PESAN_MOTIVASI.length), 5000);
+    return () => clearInterval(t);
+  }, [activeVoting]);
 
-  async function fetchAll() {
+  const showToast = (msg: string, type: "success" | "error" | "info" = "info") => {
+    setToast({ msg, type });
+    setTimeout(() => setToast({ msg: "", type: "info" }), 4000);
+  };
+
+  // Fetch global list
+  useEffect(() => {
     if (!isSupabaseReady()) return;
-    const [vReq, angReq, kkReq, pilReq] = await Promise.all([
+    Promise.all([
       supabase.from("voting").select("*").eq("status", "aktif").order("created_at", { ascending: false }),
       supabase.from("anggota_kk").select("id, kk_id, nama, nfc_id, tgl_lahir, keluarga(rt)"),
       supabase.from("keluarga").select("id, kepala_keluarga, nfc_id, rt, tgl_lahir_kepala"),
-      supabase.from("pilihan_voting").select("*")
-    ]);
-    
-    if (vReq.data) {
-      setVotings(vReq.data);
-      const pm: Record<string, Pilihan[]> = {};
-      if (pilReq.data) {
-        // Grouping without db-side order constraints that might cause silent fails
-        const sortedPilihan = [...(pilReq.data as Pilihan[])].sort((a,b) => String(a.id).localeCompare(String(b.id)));
-        sortedPilihan.forEach((p) => {
-          if (!pm[p.voting_id]) pm[p.voting_id] = [];
-          pm[p.voting_id].push(p);
-        });
-      }
-      setPilihanMap(pm);
-    }
-    
-    // Combine Anggota and Kepala Keluarga to ensure nobody is left behind, filter >= 18
-    let allDewasa: Anggota[] = [];
-    if (angReq.data) {
-      const angDewasa = (angReq.data as any[]).filter(a => hitungUmur(a.tgl_lahir) >= 18).map(a => ({ id: a.id, kk_id: a.kk_id, nama: a.nama, nfc_id: a.nfc_id, tgl_lahir: a.tgl_lahir, rt: a.keluarga?.rt }));
-      allDewasa.push(...angDewasa);
-    }
-    if (kkReq.data) {
-      const kkDewasa = (kkReq.data as any[]).filter(k => hitungUmur(k.tgl_lahir_kepala) >= 18).map(k => ({ id: k.id, kk_id: k.id, nama: k.kepala_keluarga, nfc_id: k.nfc_id, tgl_lahir: k.tgl_lahir_kepala, rt: k.rt }));
-      allDewasa.push(...kkDewasa);
-    }
+    ]).then(([vRes, angRes, kkRes]) => {
+      if (vRes.data) setVotings(vRes.data);
 
-    // Remove duplicates by nfc_id
-    const unikNfc = Array.from(new Map(allDewasa.filter(v => v.nfc_id).map(item => [item.nfc_id, item])).values());
-    setPemilihList(unikNfc);
+      let list: Pemilih[] = [];
+      if (angRes.data) {
+        (angRes.data as any[]).filter(a => hitungUmur(a.tgl_lahir) >= 18).forEach(a =>
+          list.push({ id: a.id, kk_id: a.kk_id, nama: a.nama, nfc_id: a.nfc_id, tgl_lahir: a.tgl_lahir, rt: (a.keluarga as any)?.rt ?? "" })
+        );
+      }
+      if (kkRes.data) {
+        (kkRes.data as any[]).filter(k => hitungUmur(k.tgl_lahir_kepala) >= 18).forEach(k =>
+          list.push({ id: k.id, kk_id: k.id, nama: k.kepala_keluarga, nfc_id: k.nfc_id, tgl_lahir: k.tgl_lahir_kepala, rt: k.rt })
+        );
+      }
+      const unik = Array.from(new Map(list.filter(v => v.nfc_id).map(v => [v.nfc_id, v])).values());
+      setPemilihList(unik);
+    });
+  }, []);
+
+  // Fetch pilihan LAZILY ketika user Pilih agenda — ini fix utamanya!
+  async function bukaBilik(v: Voting) {
+    setActiveVoting(v);
+    setAktivPilihan([]);
+    setTerverifikasi(null);
+    setKonfirmasi(null);
+
+    const { data, error } = await supabase.from("pilihan_voting").select("*").eq("voting_id", v.id).order("id");
+    if (error) console.error("Gagal load pilihan:", error.message);
+    setAktivPilihan(data ?? []);
   }
 
-  useEffect(() => { fetchAll(); }, []);
-
-  // --- Otorisasi Pemilih ---
-  async function startNfcScan() {
-    if (!("NDEFReader" in window)) return showToast("Sistem NFC E-KTP/Kartu tidak didukung di perangkat ini.", "error");
+  // NFC
+  async function startNFC() {
+    if (!("NDEFReader" in window)) return showToast("Perangkat tidak mendukung NFC (Chrome Android diperlukan).", "error");
     try {
       const ndef = new (window as any).NDEFReader();
       nfcRef.current = ndef;
       await ndef.scan();
       setScanning(true);
-      showToast("Pemindai Aktif! Tempelkan ID Card DPT Anda ke belakang perangkat...", "info");
-      
+      showToast("📡 Pemindai Aktif! Tempelkan ID Card ke belakang HP...", "info");
       ndef.addEventListener("reading", async ({ serialNumber }: any) => {
         const nfcId = serialNumber.replace(/:/g, "").toUpperCase();
-        const found = pemilihListRef.current.find(a => a.nfc_id === nfcId);
-        
-        if (found) {
-          stopNfcScan();
-          await prosesVerifikasi(found);
-        } else {
-          showToast("❌ Kartu NFC Ditolak! ID tidak valid atau usia belum mencukupi hak pilih.", "error");
-        }
+        const found = pemilihRef.current.find(p => p.nfc_id === nfcId);
+        if (!found) return showToast("❌ Kartu ditolak! Tidak terdaftar / usia < 18 tahun.", "error");
+        stopNFC();
+        await verifikasi(found);
       });
-    } catch (e) {
-      showToast("Akses perangkat keras NFC gagal.", "error");
-      setScanning(false);
-    }
+    } catch { showToast("Gagal mengakses NFC.", "error"); }
   }
 
-  function stopNfcScan() {
-    if (nfcRef.current) nfcRef.current.stop?.();
-    setScanning(false);
-  }
+  function stopNFC() { nfcRef.current?.stop?.(); setScanning(false); }
 
-  async function prosesVerifikasi(anggota: Anggota) {
+  async function verifikasi(p: Pemilih) {
     if (!activeVoting) return;
-    setLoading("verify");
-    
-    // Pengecekan Single Vote menggunakan kolom ip_address untuk menampung unique Anggota ID.
-    const { data: voteExist } = await supabase.from("vote_record")
-      .select("id").eq("voting_id", activeVoting).eq("ip_address", anggota.id).limit(1);
-    
-    if (voteExist && voteExist.length > 0) {
-      showToast(`Akses Ditolak: Hak suara Sdr/i ${anggota.nama} telah digunakan!`, "error");
-      closeBilik();
+    setLoading(true);
+    const { data } = await supabase.from("vote_record").select("id").eq("voting_id", activeVoting.id).eq("ip_address", p.id).limit(1);
+    if (data && data.length > 0) {
+      showToast(`Akses Ditolak: Hak suara ${p.nama} sudah digunakan!`, "error");
+      setActiveVoting(null);
     } else {
-      setVerifikasiSukses(anggota);
-      showToast(`Verifikasi Sukses. Selamat datang, ${anggota.nama}.`, "success");
+      setTerverifikasi(p);
+      showToast(`✅ Terverifikasi: ${p.nama}`, "success");
     }
-    setLoading(null);
+    setLoading(false);
   }
 
-  // --- Proses Pemungutan ---
   async function kirimSuara() {
-    if (!activeVoting || !verifikasiSukses || !konfirmasiSuara) return;
-    setLoading("submit");
-    
+    if (!activeVoting || !terverifikasi || !konfirmasi) return;
+    setLoading(true);
     try {
-      // Merekam ke dalam buku suara
-      const { error: errRecord } = await supabase.from("vote_record").insert({ 
-        voting_id: activeVoting, 
-        kk_id: verifikasiSukses.kk_id,
-        ip_address: verifikasiSukses.id 
+      const { error } = await supabase.from("vote_record").insert({
+        voting_id: activeVoting.id,
+        kk_id: terverifikasi.kk_id,
+        ip_address: terverifikasi.id,
       });
-      if (errRecord) throw errRecord;
+      if (error) throw error;
 
-      const currentChoice = pilihanMap[activeVoting]?.find(p => p.id === konfirmasiSuara.id);
-      if (currentChoice) {
-        await supabase.from("pilihan_voting")
-          .update({ jumlah_vote: (currentChoice.jumlah_vote || 0) + 1 })
-          .eq("id", konfirmasiSuara.id);
-      }
+      const terpilih = aktivPilihan.find(p => p.id === konfirmasi.id);
+      if (terpilih) await supabase.from("pilihan_voting").update({ jumlah_vote: (terpilih.jumlah_vote || 0) + 1 }).eq("id", terpilih.id);
 
-      showToast("🎉 Suara sah! Hak konstitusional Anda berhasil dienkripsi dan masuk ke kotak digital.", "success");
-      setKonfirmasiSuara(null);
-      closeBilik();
-    } catch (e) {
-      showToast("Terjadi kesalahan sistem saat mengenkripsi suara (Koneksi Terputus).", "error");
-    }
-    setLoading(null);
+      showToast("🎉 Suara sah berhasil masuk ke kotak digital!", "success");
+      setKonfirmasi(null);
+      setActiveVoting(null);
+      setTerverifikasi(null);
+    } catch { showToast("Gagal menyimpan suara. Coba lagi.", "error"); }
+    setLoading(false);
   }
 
-  function closeBilik() {
-    setActiveVoting(null); setVerifikasiSukses(null);
-    if (scanning) stopNfcScan();
-  }
-
-  // --- Parsing Strings ---
-  const activeData = votings.find(v => v.id === activeVoting);
-  function parseJudul(str:string) {
-    if(str.startsWith("[PEMILU] ")) return { tipe:"PEMILU", text:str.replace("[PEMILU] ","") };
-    if(str.startsWith("[MUSYAWARAH] ")) return { tipe:"MUSYAWARAH", text:str.replace("[MUSYAWARAH] ","") };
-    return { tipe:"STANDAR", text:str };
-  }
-  function parseKandidat(str:string) {
-    const parts = str.split("|||");
-    return { nama: parts[0], foto: parts[1]||null };
-  }
-
-  // Tema Warna Eco-Digital Ciburial
-  const Colors = {
-    bgCreme: "#f5f0e8",
-    bgDarkGreen: "#1a2e1f",
-    greenPrimary: "#2d5a40",
-    greenLight: "#7a9a7e",
-    textLight: "#f5f0e8",
-    goldAccent: "#b8943f",
-    redAlert: "#dc3545"
-  };
-
-  const bgTexture = `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20.5V18H0v-2h20v-2H0v-2h20v-2H0V8h20V6H0V4h20V2H0V0h22v20h2V0h2v20h2V0h2v20h2V0h2v20h2V0h2v20h2v2H20v-1.5zM0 20h2v20H0V20zm4 0h2v20H4V20zm4 0h2v20H8V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 4h20v2H20v-2zm0 4h20v2H20v-2zm0 4h20v2H20v-2zm0 4h20v2H20v-2z' fill='%236b7c6d' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E")`;
+  const tipeAktif = activeVoting ? parseJudul(activeVoting.judul) : null;
+  const slide = PESAN_MOTIVASI[slideIdx];
 
   return (
-    <div style={{minHeight:"100vh",background:Colors.bgCreme,backgroundImage:bgTexture,fontFamily:"'Inter',system-ui,sans-serif",color:Colors.bgDarkGreen,display:"flex",flexDirection:"column"}}>
-      {/* Notifikasi Absolut */}
+    <div style={{ minHeight: "100vh", background: C.cream, fontFamily: "'Inter','DM Sans',system-ui,sans-serif", color: C.darkGreen }}>
+      {/* Toast */}
       {toast.msg && (
-        <div style={{position:"fixed",top:40,left:"50%",transform:"translateX(-50%)",zIndex:9999,background:toast.type==="success"?Colors.greenPrimary:toast.type==="error"?Colors.redAlert:Colors.bgDarkGreen,color:"white",padding:"16px 32px",borderRadius:12,boxShadow:"0 20px 40px rgba(0,0,0,0.3)",fontWeight:800,fontSize:15,animation:"slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)"}}>
-          {toast.type==="success"?"✅ ":toast.type==="error"?"🚫 ":"ℹ️ "}{toast.msg}
+        <div style={{ position: "fixed", top: 24, left: "50%", transform: "translateX(-50%)", zIndex: 9999, padding: "14px 28px", borderRadius: 12, background: toast.type === "success" ? C.green : toast.type === "error" ? C.red : C.darkGreen, color: "white", fontWeight: 800, fontSize: 14, boxShadow: "0 15px 35px rgba(0,0,0,0.25)", animation: "slideDown .4s ease" }}>
+          {toast.msg}
         </div>
       )}
 
-      {/* HEADER RESMI */}
-      <header style={{padding:"32px 40px",borderBottom:`1px solid rgba(45,90,64,0.15)`,background:"white",boxShadow:"0 10px 30px rgba(45,90,64,0.05)",zIndex:20,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-        <div style={{display:"flex",alignItems:"center",gap:24}}>
-          <div style={{width:60,height:60,background:Colors.greenPrimary,borderRadius:16,display:"flex",alignItems:"center",justifyContent:"center",fontSize:32,boxShadow:`0 0 20px rgba(45,90,64,0.2)`}}>🗳️</div>
-          <div>
-            <div style={{fontSize:11,color:Colors.greenPrimary,letterSpacing:"0.3em",fontWeight:900,marginBottom:4}}>KOMISI PEMILIHAN KAMPUNG (KPK) CIBURIAL RW 08</div>
-            <h1 style={{margin:0,fontSize:26,fontWeight:900,color:Colors.bgDarkGreen,letterSpacing:"-0.02em"}}>Bilik Suara Pintar Digital</h1>
-          </div>
-        </div>
-        {verifikasiSukses ? (
-          <div style={{background:"rgba(45,90,64,0.1)",border:`1px solid rgba(45,90,64,0.3)`,padding:"12px 24px",borderRadius:99,display:"flex",alignItems:"center",gap:12}}>
-            <div style={{width:10,height:10,borderRadius:"50%",background:Colors.greenPrimary,animation:"pulse 2s infinite"}}/>
-            <div>
-              <div style={{fontSize:10,color:Colors.greenLight,fontWeight:800,textTransform:"uppercase",letterSpacing:"0.1em"}}>Identitas DPT Tervalidasi</div>
-              <div style={{fontSize:15,fontWeight:900,color:Colors.greenPrimary}}>{verifikasiSukses.nama} <span style={{fontSize:12,color:Colors.greenLight,marginLeft:6}}>— Usia {hitungUmur(verifikasiSukses.tgl_lahir)}th</span></div>
+      {/* Konfirmasi Modal */}
+      {konfirmasi && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(26,46,31,.95)", zIndex: 999, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ background: C.white, borderRadius: 28, padding: 40, maxWidth: 480, width: "100%", textAlign: "center", animation: "zoomIn .3s ease" }}>
+            <div style={{ fontSize: 44, marginBottom: 12 }}>🔒</div>
+            <h2 style={{ margin: "0 0 8px", fontSize: 22, color: C.darkGreen, fontWeight: 900 }}>Kunci Pilihan Anda?</h2>
+            <p style={{ color: C.lightGreen, fontSize: 14, margin: "0 0 24px", lineHeight: 1.7 }}>Pilihan yang disahkan tidak bisa diubah atau dibatalkan oleh siapapun. Pastikan ini adalah keputusan terbaik Anda.</p>
+            <div style={{ background: C.cream, borderRadius: 16, padding: 20, marginBottom: 28 }}>
+              <div style={{ fontSize: 12, color: C.lightGreen, fontWeight: 800, letterSpacing: "0.08em", marginBottom: 8 }}>PILIHAN ANDA:</div>
+              <div style={{ fontSize: 20, fontWeight: 900, color: C.green }}>{parseKandidat(konfirmasi.teks).nama}</div>
             </div>
-          </div>
-        ) : (
-          <button onClick={() => window.location.href="/"} style={{background:"transparent",color:Colors.greenLight,border:`1px solid rgba(45,90,64,0.2)`,padding:"10px 20px",borderRadius:99,fontSize:14,fontWeight:800,cursor:"pointer"}}>
-            Tinggalkan TPS ✕
-          </button>
-        )}
-      </header>
-
-      {/* MODAL KONFIRMASI (FINAL STEP) */}
-      {konfirmasiSuara && activeData && (
-        <div style={{position:"fixed",inset:0,background:"rgba(26,46,31,0.95)",backdropFilter:"blur(10px)",zIndex:999,display:"flex",alignItems:"center",justifyContent:"center"}}>
-          <div style={{background:"white",border:`1px solid ${Colors.greenLight}`,padding:48,borderRadius:32,maxWidth:500,width:"100%",textAlign:"center",boxShadow:"0 25px 50px -12px rgba(0,0,0,0.5)",animation:"zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)"}}>
-            <div style={{fontSize:40,marginBottom:16}}>🔒</div>
-            <h2 style={{margin:"0 0 8px",fontSize:24,color:Colors.bgDarkGreen,fontWeight:900}}>Kunci Pilihan Sah Anda?</h2>
-            <p style={{margin:"0 0 32px",color:Colors.greenLight,fontSize:15,lineHeight:1.6}}>Keputusan yang telah disetujui, dienkripsi sepenuhnya, dan tidak dapat dibatalkan atau diubah oleh siapapun. Pastikan ini adalah pilihan terbaik dari Anda pribadi.</p>
-            
-            <div style={{background:Colors.bgCreme,padding:"24px",borderRadius:24,border:`1px solid rgba(45,90,64,0.1)`,marginBottom:32}}>
-              <div style={{fontSize:11,color:Colors.greenLight,fontWeight:800,letterSpacing:"0.1em",marginBottom:8}}>PILIHAN TERCATAT:</div>
-              <div style={{fontSize:20,fontWeight:900,color:Colors.greenPrimary}}>{parseKandidat(konfirmasiSuara.teks).nama}</div>
-            </div>
-
-            <div style={{display:"flex",gap:16}}>
-              <button onClick={()=>setKonfirmasiSuara(null)} style={{flex:1,padding:"18px",background:"transparent",color:Colors.greenLight,border:`2px solid rgba(45,90,64,0.2)`,borderRadius:16,fontSize:16,fontWeight:800,cursor:"pointer"}}>Koreksi Ulang</button>
-              <button 
-                onClick={kirimSuara} disabled={loading==="submit"}
-                style={{flex:1.5,padding:"18px",background:Colors.greenPrimary,color:"white",border:"none",borderRadius:16,fontSize:16,fontWeight:800,cursor:loading?"not-allowed":"pointer",boxShadow:`0 10px 20px rgba(45,90,64,0.3)`}}>
-                {loading==="submit" ? "Mengenkripsi..." : "🔐 SAH! Masukkan Suara"}
+            <div style={{ display: "flex", gap: 12 }}>
+              <button onClick={() => setKonfirmasi(null)} style={{ flex: 1, padding: 16, borderRadius: 12, background: "transparent", border: `2px solid ${C.lightGreen}`, color: C.lightGreen, fontWeight: 800, fontSize: 14, cursor: "pointer" }}>Koreksi</button>
+              <button onClick={kirimSuara} disabled={loading} style={{ flex: 2, padding: 16, borderRadius: 12, background: C.green, color: "white", border: "none", fontWeight: 900, fontSize: 15, cursor: loading ? "not-allowed" : "pointer" }}>
+                {loading ? "Menyimpan..." : "🔐 SAH! Masukkan Suara"}
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* ARENA PEMILIHAN */}
-      <main style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",padding:"40px 20px",position:"relative",zIndex:10}}>
-        
-        {/* SKENARIO 1: Belum Pilih Agenda */}
-        {!activeVoting && (
-          <div style={{maxWidth:800,width:"100%"}}>
-            
-            <div style={{background:Colors.bgDarkGreen, borderLeft:`6px solid ${Colors.goldAccent}`, padding:"24px", borderRadius:"16px", marginBottom:32, boxShadow:"0 5px 15px rgba(0,0,0,0.05)"}}>
-              <h3 style={{color:Colors.goldAccent, margin:"0 0 8px 0", fontSize:18, fontWeight:900}}>Pesan Komisi Pemilihan Kampung (KPK)</h3>
-              <p style={{color:Colors.textLight, margin:0, fontSize:15, lineHeight:1.6}}>Selamat datang para pemilih! Suara Anda adalah fondasi masa depan Kampung Ciburial. Gunakan hak pilih Anda dengan <b>LUBER</b> (Langsung, Umum, Bebas, Rahasia) dan <b>JURDIL</b> (Jujur & Adil). Masa depan RW 08 berada di tangan kita bersama!</p>
-            </div>
-
-            <div style={{textAlign:"center",marginBottom:40}}>
-              <h2 style={{fontSize:32,fontWeight:900,color:Colors.bgDarkGreen,marginBottom:12}}>Agenda Pemilihan Terbuka</h2>
-              <p style={{color:Colors.greenLight,fontSize:16}}>Pilih bilik pemungutan suara resmi di bawah ini yang akan Anda masuki.</p>
-            </div>
-            
-            <div style={{display:"grid",gap:20}}>
-              {votings.length===0 ? (
-                <div style={{padding:"60px 20px",textAlign:"center",background:"white",borderRadius:24,border:`1px dashed ${Colors.greenLight}`,boxShadow:"0 10px 30px rgba(0,0,0,0.05)"}}>
-                  <div style={{fontSize:40,marginBottom:16}}>📭</div>
-                  <div style={{fontSize:16,color:Colors.greenLight,fontWeight:600}}>Tidak ada agenda pemungutan suara yang aktif/dibuka saat ini.</div>
-                </div>
-              ) : votings.map(v => {
-                const { tipe, text } = parseJudul(v.judul);
-                return (
-                  <div key={v.id} onClick={()=>setActiveVoting(v.id)} style={{background:"white",padding:"32px 40px",borderRadius:24,border:`1px solid rgba(45,90,64,0.1)`,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"space-between",boxShadow:"0 10px 30px rgba(0,0,0,0.05)",transition:"all 0.2s"}}>
-                    <div>
-                      <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:12}}>
-                        <span style={{background:tipe==="PEMILU"?"rgba(45,90,64,0.1)":"rgba(184,148,63,0.1)",color:tipe==="PEMILU"?Colors.greenPrimary:Colors.goldAccent,padding:"6px 12px",borderRadius:8,fontSize:11,fontWeight:900,letterSpacing:"0.1em"}}>{tipe==="PEMILU"?"KOTAK PEMILU DPT":"JAJAK PENDAPAT (MUSYAWARAH)"}</span>
-                      </div>
-                      <h3 style={{margin:"0 0 8px",color:Colors.bgDarkGreen,fontSize:22,fontWeight:900}}>{text}</h3>
-                      <p style={{margin:0,color:Colors.greenLight,fontSize:14,maxWidth:500,lineHeight:1.6}}>{v.deskripsi || "Tanpa deskripsi resmi tambahan."}</p>
-                    </div>
-                    <div style={{width:50,height:50,background:Colors.bgCreme,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",color:Colors.greenPrimary,fontSize:20,fontWeight:900}}>→</div>
-                  </div>
-                )
-              })}
+      {/* Header */}
+      <header style={{ background: C.white, borderBottom: "1px solid rgba(45,90,64,.12)", padding: "20px 32px", display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 50, boxShadow: "0 4px 20px rgba(0,0,0,.05)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <div style={{ width: 52, height: 52, background: C.green, borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26 }}>🗳️</div>
+          <div>
+            <div style={{ fontSize: 10, color: C.green, letterSpacing: "0.2em", fontWeight: 900 }}>KPK CIBURIAL RW 08 — E-VOTING</div>
+            <h1 style={{ margin: 0, fontSize: 20, fontWeight: 900, color: C.darkGreen }}>Bilik Suara Pintar Digital</h1>
+          </div>
+        </div>
+        {terverifikasi ? (
+          <div style={{ background: "rgba(45,90,64,.08)", border: `1px solid rgba(45,90,64,.25)`, borderRadius: 99, padding: "10px 20px", display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ width: 8, height: 8, background: C.green, borderRadius: "50%", animation: "pulse 1.5s infinite" }} />
+            <div>
+              <div style={{ fontSize: 10, color: C.lightGreen, fontWeight: 800, textTransform: "uppercase" }}>DPT Terverifikasi</div>
+              <div style={{ fontSize: 14, fontWeight: 900, color: C.green }}>{terverifikasi.nama}</div>
             </div>
           </div>
+        ) : (
+          <a href="/" style={{ color: C.lightGreen, fontSize: 13, fontWeight: 700, textDecoration: "none" }}>← Kembali</a>
         )}
+      </header>
 
-        {/* SKENARIO 2: Otorisasi NFC Sahaja */}
-        {activeVoting && !verifikasiSukses && (
-          <div style={{maxWidth:600,width:"100%",background:"white",padding:48,borderRadius:32,border:`1px solid rgba(45,90,64,0.1)`,boxShadow:"0 20px 50px rgba(0,0,0,0.08)",textAlign:"center",animation:"zoomIn 0.3s ease-out"}}>
-            <h2 style={{margin:"0 0 12px",fontSize:28,fontWeight:900,color:Colors.bgDarkGreen}}>Otorisasi Daftar Pemilih Tetap (DPT)</h2>
-            <p style={{margin:"0 0 40px",fontSize:15,color:Colors.greenLight,lineHeight:1.6}}>Sistem mendeteksi bahwa hak pilih untuk agenda ini mewajibkan usia peserta minimum <b>18 Tahun (+1 Hari)</b>. Harap siapkan Kartu Warga E-KTP Ciburial Anda.</p>
-            
-            <div style={{display:"flex",flexDirection:"column",gap:20}}>
-              {/* Scan NFC Button */}
-              {!scanning && (
-                <button onClick={startNfcScan} style={{padding:"24px",background:Colors.greenPrimary,color:"white",border:"none",borderRadius:24,fontSize:18,fontWeight:900,cursor:"pointer",boxShadow:`0 10px 25px rgba(45,90,64,0.3)`}}>
-                  <span style={{fontSize:24,display:"block",marginBottom:8}}>💳</span> Pindai Kartu Warga Terdaftar (Tap E-KTP)
-                </button>
-              )}
-              {scanning && (
-                <div style={{padding:"40px 24px",background:"rgba(45,90,64,0.05)",border:`2px dashed ${Colors.greenPrimary}`,borderRadius:24}}>
-                  <div style={{width:80,height:80,background:Colors.greenPrimary,borderRadius:"50%",margin:"0 auto 20px",display:"flex",alignItems:"center",justifyContent:"center",fontSize:32,animation:"pulse 1.5s infinite",boxShadow:`0 0 30px rgba(45,90,64,0.4)`}}>📡</div>
-                  <div style={{fontSize:18,fontWeight:800,color:Colors.greenPrimary,marginBottom:8}}>Menunggu Pindaian...</div>
-                  <div style={{fontSize:14,color:Colors.greenLight}}>Tempelkan Kartu DPT Warga Kampung Ciburial ke zona NFC (Punggung Handphone).</div>
-                  <button onClick={stopNfcScan} style={{marginTop:24,padding:"10px 24px",background:"transparent",color:Colors.redAlert,border:`1px solid ${Colors.redAlert}`,borderRadius:99,fontSize:14,fontWeight:800,cursor:"pointer"}}>Batalkan Pindai</button>
-                </div>
-              )}
-              
-              <div style={{marginTop:20,fontSize:13,color:Colors.greenLight,background:Colors.bgCreme,padding:"12px 16px",borderRadius:12,fontWeight:600}}>
-                💡 Prinsip Rahasia & Aman: Identitas Anda hanya digunakan untuk mengecek Hak Pilih (mencegah pencoblosan ganda). Suara Anda terekam secara anonim.
+      <main style={{ maxWidth: 1000, margin: "0 auto", padding: "36px 20px" }}>
+
+        {/* ===== LOBBY: Pilih Agenda ===== */}
+        {!activeVoting && (
+          <>
+            {/* Motivasi Slide */}
+            <div style={{ borderRadius: 24, overflow: "hidden", marginBottom: 32, position: "relative", height: 280, background: C.darkGreen, boxShadow: "0 15px 40px rgba(0,0,0,.15)" }}>
+              <img src={slide.foto} alt="motivasi" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.45, transition: "opacity .5s" }} />
+              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(26,46,31,.95) 0%, rgba(26,46,31,.2) 100%)" }} />
+              <div style={{ position: "relative", zIndex: 2, padding: "36px 40px", height: "100%", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                <div style={{ fontSize: 11, color: C.gold, fontWeight: 900, letterSpacing: "0.2em", marginBottom: 12, textTransform: "uppercase" }}>💬 Pesan Motivasi Pemilihan</div>
+                <blockquote style={{ margin: 0, fontSize: 22, fontWeight: 800, color: "white", lineHeight: 1.5, maxWidth: 600, fontStyle: "italic" }}>"{slide.kutipan}"</blockquote>
+                <div style={{ marginTop: 16, fontSize: 13, color: C.gold, fontWeight: 700 }}>— {slide.nama}</div>
+              </div>
+              {/* Dots indicator */}
+              <div style={{ position: "absolute", bottom: 16, right: 20, display: "flex", gap: 6 }}>
+                {PESAN_MOTIVASI.map((_, i) => (
+                  <div key={i} onClick={() => setSlideIdx(i)} style={{ width: i === slideIdx ? 20 : 8, height: 8, borderRadius: 99, background: i === slideIdx ? C.gold : "rgba(255,255,255,.4)", cursor: "pointer", transition: "all .3s" }} />
+                ))}
               </div>
             </div>
+
+            {/* Himbauan KPU */}
+            <div style={{ background: C.green, borderRadius: 20, padding: "20px 28px", marginBottom: 32, display: "flex", alignItems: "center", gap: 20 }}>
+              <span style={{ fontSize: 32, flexShrink: 0 }}>📣</span>
+              <div>
+                <div style={{ fontWeight: 900, fontSize: 16, color: "white", marginBottom: 4 }}>Himbauan Komisi Pemilihan Kampung (KPK)</div>
+                <div style={{ fontSize: 14, color: "rgba(255,255,255,.8)", lineHeight: 1.6 }}>Gunakan hak pilih Anda sesuai <b>hati nurani</b> — bukan tekanan pihak manapun. Pemilihan ini bersifat <b>LANGSUNG, UMUM, BEBAS & RAHASIA</b>. Suara Anda dijamin aman oleh sistem enkripsi digital.</div>
+              </div>
+            </div>
+
+            <h2 style={{ fontSize: 24, fontWeight: 900, color: C.darkGreen, marginBottom: 20 }}>Agenda Pemilihan Terbuka 📋</h2>
+
+            {votings.length === 0 ? (
+              <div style={{ textAlign: "center", padding: "60px 20px", background: C.white, borderRadius: 20, border: `1px dashed ${C.lightGreen}` }}>
+                <div style={{ fontSize: 40, marginBottom: 12 }}>📭</div>
+                <div style={{ color: C.lightGreen, fontWeight: 700, fontSize: 15 }}>Tidak ada agenda pemilihan yang aktif saat ini.</div>
+              </div>
+            ) : votings.map(v => {
+              const { tipe, text } = parseJudul(v.judul);
+              return (
+                <div key={v.id} onClick={() => bukaBilik(v)} style={{ background: C.white, borderRadius: 20, padding: "28px 32px", marginBottom: 16, display: "flex", alignItems: "center", justifyContent: "space-between", border: `1px solid rgba(45,90,64,.12)`, boxShadow: "0 8px 20px rgba(0,0,0,.04)", cursor: "pointer", transition: "all .2s" }}>
+                  <div>
+                    <span style={{ background: tipe === "PEMILU" ? "rgba(45,90,64,.1)" : "rgba(184,148,63,.1)", color: tipe === "PEMILU" ? C.green : C.gold, padding: "5px 12px", borderRadius: 8, fontSize: 11, fontWeight: 900, letterSpacing: ".05em" }}>
+                      {tipe === "PEMILU" ? "🗳️ KOTAK PEMILU" : "⚖️ MUSYAWARAH"}
+                    </span>
+                    <h3 style={{ margin: "12px 0 6px", fontSize: 20, fontWeight: 900, color: C.darkGreen }}>{text}</h3>
+                    <div style={{ fontSize: 14, color: C.lightGreen, fontWeight: 600 }}>{v.deskripsi || "Silakan masuk dan berikan suara Anda."}</div>
+                  </div>
+                  <div style={{ width: 44, height: 44, background: C.cream, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: C.green, fontWeight: 900, fontSize: 18, flexShrink: 0, marginLeft: 20 }}>→</div>
+                </div>
+              );
+            })}
+          </>
+        )}
+
+        {/* ===== BILIK: Verifikasi NFC ===== */}
+        {activeVoting && !terverifikasi && (
+          <div style={{ maxWidth: 560, margin: "0 auto", background: C.white, borderRadius: 28, padding: 48, boxShadow: "0 20px 50px rgba(0,0,0,.08)", textAlign: "center", animation: "zoomIn .3s ease" }}>
+            <div style={{ fontSize: 52, marginBottom: 16 }}>🏛️</div>
+            <h2 style={{ margin: "0 0 8px", fontSize: 24, fontWeight: 900, color: C.darkGreen }}>{parseJudul(activeVoting.judul).text}</h2>
+            <p style={{ color: C.lightGreen, fontSize: 14, lineHeight: 1.7, margin: "0 0 36px" }}>
+              Anda memasuki Bilik Suara Resmi. Untuk menjaga keadilan pemilihan, <b>hanya warga terdaftar (DPT) berusia 18+ tahun</b> yang dapat memberikan suara menggunakan <b>Kartu Warga NFC Ciburial</b>.
+            </p>
+
+            {!scanning ? (
+              <>
+                <button onClick={startNFC} style={{ width: "100%", padding: "20px", background: C.green, color: "white", border: "none", borderRadius: 18, fontSize: 17, fontWeight: 900, cursor: "pointer", boxShadow: `0 10px 25px rgba(45,90,64,.3)`, marginBottom: 20 }}>
+                  <span style={{ fontSize: 22, display: "block", marginBottom: 6 }}>💳</span>
+                  Tempelkan Kartu Warga (Tap NFC)
+                </button>
+                <button onClick={() => setActiveVoting(null)} style={{ color: C.lightGreen, background: "transparent", border: "none", fontWeight: 700, fontSize: 14, cursor: "pointer" }}>← Kembali ke Daftar Agenda</button>
+              </>
+            ) : (
+              <div style={{ padding: "40px 20px", background: "rgba(45,90,64,.05)", borderRadius: 24, border: `2px dashed ${C.green}` }}>
+                <div style={{ width: 80, height: 80, background: C.green, borderRadius: "50%", margin: "0 auto 20px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 30, animation: "pulse 1.5s infinite", boxShadow: `0 0 30px rgba(45,90,64,.4)` }}>📡</div>
+                <div style={{ fontWeight: 800, fontSize: 17, color: C.green, marginBottom: 8 }}>Menunggu Pindaian NFC...</div>
+                <div style={{ fontSize: 14, color: C.lightGreen, lineHeight: 1.6 }}>Dekatkan Kartu DPT Ciburial ke punggung handphone atau tablet petugas TPS.</div>
+                <button onClick={stopNFC} style={{ marginTop: 20, padding: "10px 24px", background: "transparent", color: C.red, border: `1px solid ${C.red}`, borderRadius: 99, fontSize: 13, fontWeight: 800, cursor: "pointer" }}>⏹ Batalkan</button>
+              </div>
+            )}
+
+            <div style={{ marginTop: 24, fontSize: 12, color: C.lightGreen, background: C.cream, borderRadius: 12, padding: "12px 16px", fontWeight: 600, lineHeight: 1.6 }}>
+              🔒 Identitas Anda digunakan <b>hanya</b> untuk pengecekan Hak Pilih (anti coblos ganda). Suara Anda terekam secara anonim dan tidak dapat dilacak.
+            </div>
           </div>
         )}
 
-        {/* SKENARIO 3: Bilik Pencoblosan Sesungguhnya */}
-        {activeVoting && verifikasiSukses && activeData && (
-          <div style={{width:"100%",maxWidth:1000,animation:"slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)"}}>
-            
-            <div style={{textAlign:"center",marginBottom:24}}>
-              {(() => {
-                const { tipe, text } = parseJudul(activeData.judul);
-                return (
-                  <>
-                    <h2 style={{fontSize:40,fontWeight:900,color:Colors.bgDarkGreen,marginBottom:16,letterSpacing:"-0.02em"}}>{text}</h2>
-                    <p style={{color:Colors.greenLight,fontSize:18,maxWidth:700,margin:"0 auto"}}>{activeData.deskripsi}</p>
-                    {tipe === "PEMILU" ? (
-                      <div style={{display:"inline-block",background:"rgba(45,90,64,0.1)",color:Colors.greenPrimary,padding:"8px 24px",borderRadius:99,fontSize:13,fontWeight:900,letterSpacing:"0.1em",marginTop:24,border:`1px solid rgba(45,90,64,0.2)`}}>🧑‍💼 FORMAT: SURAT SUARA PEMILU KANDIDAT B BERGAMBAR</div>
-                    ) : (
-                      <div style={{display:"inline-block",background:"rgba(184,148,63,0.1)",color:Colors.goldAccent,padding:"8px 24px",borderRadius:99,fontSize:13,fontWeight:900,letterSpacing:"0.1em",marginTop:24,border:`1px solid rgba(184,148,63,0.2)`}}>⚖️ FORMAT: SURAT KEPUTUSAN MUSYAWARAH RW</div>
-                    )}
-                  </>
-                )
-              })()}
+        {/* ===== BILIK: Layar Pencoblosan ===== */}
+        {activeVoting && terverifikasi && (
+          <div style={{ animation: "slideUp .4s ease" }}>
+            <div style={{ textAlign: "center", marginBottom: 28 }}>
+              <h2 style={{ margin: "0 0 12px", fontSize: 34, fontWeight: 900, color: C.darkGreen }}>{parseJudul(activeVoting.judul).text}</h2>
+              <p style={{ color: C.lightGreen, fontSize: 16, maxWidth: 650, margin: "0 auto" }}>{activeVoting.deskripsi}</p>
+              <div style={{ display: "inline-block", marginTop: 16, background: "rgba(45,90,64,.1)", color: C.green, border: `1px solid rgba(45,90,64,.25)`, borderRadius: 99, padding: "8px 20px", fontSize: 12, fontWeight: 900, letterSpacing: ".08em" }}>
+                {tipeAktif?.tipe === "PEMILU" ? "🧑‍💼 SURAT SUARA PEMILU BERGAMBAR" : "⚖️ SURAT MUSYAWARAH RW — PILIH SATU OPSI"}
+              </div>
             </div>
 
-            <div style={{background:"rgba(45,90,64,0.05)", border:`1px solid rgba(45,90,64,0.2)`, padding:"20px", borderRadius:"16px", marginBottom:32, color:Colors.greenPrimary, textAlign:"left"}}>
-              <div style={{fontSize:16, fontWeight:900, marginBottom:8}}>💡 Himbauan Pencoblosan:</div>
-              <div style={{fontSize:14, lineHeight:1.6, fontWeight:600}}>Amati setiap pilihan atau kandidat dengan seksama. Setelah menekan tombol <b>COBLOS KANDIDAT</b> atau <b>Dukung Opsi Ini</b>, Anda akan diarahkan ke tahap Validasi Kunci Akhir. Pastikan Anda memilih dengan tepat!</div>
+            {/* Instruksi Singkat */}
+            <div style={{ background: "rgba(184,148,63,.08)", border: `1px solid rgba(184,148,63,.3)`, borderRadius: 14, padding: "16px 22px", marginBottom: 28, color: C.darkGreen }}>
+              <span style={{ fontWeight: 800, fontSize: 14 }}>📌 Petunjuk: </span>
+              <span style={{ fontSize: 14, lineHeight: 1.6 }}>Perhatikan setiap pilihan/kandidat. Tekan tombol <b>COBLOS</b> lalu konfirmasi pada tahap terakhir. Pilihan Anda bersifat <b>final & tidak dapat diubah</b>.</span>
             </div>
 
-            {/* Render Kandidat Dinamis */}
-            <div style={{
-              display:"grid", 
-              gridTemplateColumns: parseJudul(activeData.judul).tipe === "PEMILU" ? "repeat(auto-fit, minmax(280px, 1fr))" : "repeat(1, 1fr)", 
-              gap: 24
-            }}>
-              {(pilihanMap[activeVoting]||[]).map((p) => {
-                const isPemilu = parseJudul(activeData.judul).tipe === "PEMILU";
-                const { nama, foto } = parseKandidat(p.teks);
-                
-                // Deteksi Pilihan Kosong/Netral
-                const isGolput = nama.toLowerCase().includes("golput") || nama.toLowerCase().includes("kosong");
-                const isNetral = nama.toLowerCase().includes("netral") || nama.toLowerCase().includes("abstain");
-
-                // Layout Pemilihan (Kartu Vertikal Dgn Frame Foto Besar)
-                if(isPemilu) {
+            {aktivPilihan.length === 0 ? (
+              <div style={{ textAlign: "center", padding: "40px", background: C.white, borderRadius: 20, color: C.lightGreen, fontWeight: 700 }}>
+                Memuat daftar pilihan...
+              </div>
+            ) : tipeAktif?.tipe === "PEMILU" ? (
+              /* LAYOUT PEMILU - Kartu Grid Foto */
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 24 }}>
+                {aktivPilihan.map(p => {
+                  const { nama, foto } = parseKandidat(p.teks);
+                  const isSpecial = nama.toLowerCase().includes("golput") || nama.toLowerCase().includes("kosong") || nama.toLowerCase().includes("netral") || nama.toLowerCase().includes("abstain");
                   return (
-                    <div key={p.id} onClick={() => setKonfirmasiSuara(p)} style={{background:"white",border:`2px solid ${isGolput?Colors.bgCreme:isNetral?Colors.bgCreme:Colors.greenPrimary}`,borderRadius:32,overflow:"hidden",cursor:"pointer",transition:"all 0.2s",boxShadow:"0 15px 35px rgba(0,0,0,0.08)"}}>
-                      <div style={{height:300,background:Colors.bgCreme,position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                    <div key={p.id} style={{ background: C.white, borderRadius: 24, overflow: "hidden", boxShadow: "0 12px 30px rgba(0,0,0,.08)", border: `2px solid ${isSpecial ? "#e0dccc" : C.green}` }}>
+                      <div style={{ height: 260, background: C.cream, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
                         {foto ? (
-                          <img src={foto} alt={nama} style={{width:"100%",height:"100%",objectFit:"cover"}} />
+                          <img src={foto} alt={nama} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                         ) : (
-                          <div style={{fontSize:isGolput||isNetral?80:120,filter:"grayscale(1) opacity(0.2)"}}>{isGolput?"⬜":isNetral?"➖":"👤"}</div>
+                          <div style={{ fontSize: isSpecial ? 70 : 100, opacity: 0.25 }}>{isSpecial ? "🫙" : "👤"}</div>
                         )}
-                        <div style={{position:"absolute",inset:0,background:"linear-gradient(to top, rgba(255,255,255,0.9), transparent)"}}/>
+                        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(255,255,255,.95) 0%, transparent 60%)" }} />
                       </div>
-                      <div style={{padding:"24px 32px",textAlign:"center",marginTop:-40,position:"relative",zIndex:2}}>
-                        <div style={{fontSize:24,fontWeight:900,color:Colors.bgDarkGreen,marginBottom:16,textShadow:"0 2px 4px white"}}>{nama}</div>
-                        <button style={{width:"100%",padding:"16px",borderRadius:16,background:Colors.bgCreme,color:Colors.greenPrimary,border:`2px dashed ${Colors.greenPrimary}`,fontSize:15,fontWeight:900,letterSpacing:"0.05em",cursor:"pointer"}}>COBLOS KANDIDAT</button>
+                      <div style={{ padding: "16px 28px 24px", textAlign: "center", marginTop: -30, position: "relative" }}>
+                        <div style={{ fontSize: 20, fontWeight: 900, color: C.darkGreen, marginBottom: 14 }}>{nama}</div>
+                        <button onClick={() => setKonfirmasi(p)} style={{ width: "100%", padding: "14px", background: isSpecial ? C.cream : C.green, color: isSpecial ? C.lightGreen : "white", border: isSpecial ? `2px dashed ${C.lightGreen}` : "none", borderRadius: 14, fontSize: 15, fontWeight: 900, cursor: "pointer", boxShadow: isSpecial ? "none" : "0 6px 16px rgba(45,90,64,.25)" }}>
+                          {isSpecial ? "Pilih Opsi Ini" : "✅ COBLOS KANDIDAT"}
+                        </button>
                       </div>
                     </div>
                   );
-                }
-
-                // Layout Musyawarah (Balok Horisontal Formal)
-                return (
-                  <div key={p.id} onClick={() => setKonfirmasiSuara(p)} style={{background:"white",border:`2px solid ${isNetral?Colors.bgCreme:Colors.greenPrimary}`,borderRadius:24,padding:"32px 40px",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"space-between",boxShadow:"0 10px 25px rgba(0,0,0,0.05)",transition:"all 0.2s"}}>
-                    <div style={{display:"flex",alignItems:"center",gap:24}}>
-                      <div style={{width:60,height:60,borderRadius:"50%",background:Colors.bgCreme,display:"flex",alignItems:"center",justifyContent:"center",fontSize:24}}>{isNetral?"⚖️":nama.toLowerCase().includes("tidak")?"❌":"✅"}</div>
-                      <div style={{fontSize:24,fontWeight:900,color:Colors.bgDarkGreen}}>{nama}</div>
+                })}
+              </div>
+            ) : (
+              /* LAYOUT MUSYAWARAH - Kartu Horizontal */
+              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                {aktivPilihan.map(p => {
+                  const { nama } = parseKandidat(p.teks);
+                  const isSetuju = nama.toLowerCase().includes("setuju") && !nama.toLowerCase().includes("tidak");
+                  const isTolak = nama.toLowerCase().includes("tidak") || nama.toLowerCase().includes("tolak");
+                  const isNetral = nama.toLowerCase().includes("netral") || nama.toLowerCase().includes("abstain");
+                  const isGolput = nama.toLowerCase().includes("golput") || nama.toLowerCase().includes("kosong");
+                  const emoji = isSetuju ? "✅" : isTolak ? "❌" : isNetral ? "⚖️" : isGolput ? "🫙" : "📌";
+                  return (
+                    <div key={p.id} onClick={() => setKonfirmasi(p)} style={{ background: C.white, borderRadius: 20, padding: "28px 36px", display: "flex", alignItems: "center", justifyContent: "space-between", border: `2px solid ${isSetuju ? C.green : isTolak ? C.red : "#e0dccc"}`, boxShadow: "0 8px 20px rgba(0,0,0,.05)", cursor: "pointer", transition: "all .2s" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+                        <div style={{ width: 56, height: 56, borderRadius: "50%", background: C.cream, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24 }}>{emoji}</div>
+                        <div style={{ fontSize: 22, fontWeight: 900, color: C.darkGreen }}>{nama}</div>
+                      </div>
+                      <button style={{ padding: "14px 28px", background: isSetuju ? C.green : isTolak ? C.red : C.darkGreen, color: "white", border: "none", borderRadius: 14, fontSize: 15, fontWeight: 900, cursor: "pointer", boxShadow: "0 6px 16px rgba(0,0,0,.15)" }}>
+                        Dukung Opsi Ini
+                      </button>
                     </div>
-                    <button style={{padding:"16px 32px",borderRadius:16,background:Colors.greenPrimary,color:"white",border:"none",fontSize:16,fontWeight:900,cursor:"pointer",boxShadow:`0 8px 20px rgba(45,90,64,0.2)`}}>Dukung Opsi Ini</button>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
       </main>
 
       <style>{`
-        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.1); } }
-        @keyframes zoomIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-        @keyframes slideDown { from { opacity: 0; transform: translate(-50%, -20px); } to { opacity: 1; transform: translate(-50%, 0); } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.12)} }
+        @keyframes zoomIn { from{opacity:0;transform:scale(.9)} to{opacity:1;transform:scale(1)} }
+        @keyframes slideDown { from{opacity:0;transform:translate(-50%,-20px)} to{opacity:1;transform:translate(-50%,0)} }
+        @keyframes slideUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
       `}</style>
     </div>
   );
