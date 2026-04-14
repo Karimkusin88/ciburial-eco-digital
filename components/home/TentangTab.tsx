@@ -8,6 +8,7 @@ const CuacaSholatWidget = dynamic(() => import("@/components/CuacaSholatWidget")
 interface TentangTabProps {
   onNavigate: (t: TabType) => void;
   testimoni?: Testimoni[];
+  onPaymentSuccess?: (total: number, isMkt: boolean, orderId: string, payType: string) => void;
 }
 
 // ─── STRUKTUR ORGANISASI ─────────────────────────────────────────────────
@@ -34,24 +35,25 @@ const divisi = [
   { icon: "📢", nama: "Public Relations", full: "Humas & Transparansi Publik", tugas: "Dokumentasi, laporan dana, komunikasi CSR" },
 ];
 
-export default function TentangTab({ onNavigate, testimoni = [] }: TentangTabProps) {
+export default function TentangTab({ onNavigate, testimoni = [], onPaymentSuccess }: TentangTabProps) {
   const [loadingDonasi, setLoadingDonasi] = useState(false);
 
   const bayarDonasi = async () => {
-    const raw = window.prompt("Berapa nominal donasi yang ingin disalurkan? (Contoh: 50000)\nMinimal: Rp 10.000", "50000");
+    const raw = window.prompt("Berapa nominal donasi yang ingin disalurkan? (Contoh: 50000)\nMinimal: Rp 5.000", "50000");
     if (!raw) return;
     const qty = parseInt(raw.replace(/[^0-9]/g, ''), 10);
-    if (isNaN(qty) || qty < 10000) {
-      alert("Nominal tidak valid atau kurang dari minimal Rp 10.000");
+    if (isNaN(qty) || qty < 5000) {
+      alert("Nominal tidak valid atau kurang dari minimal Rp 5.000");
       return;
     }
     setLoadingDonasi(true);
+    const orderId = `DONASI-${Date.now()}`;
     try {
       const res = await fetch("/api/midtrans/tokenize", {
         method: "POST",
         headers: { "Content-type": "application/json" },
         body: JSON.stringify({ 
-          order_id: `DONASI-${Date.now()}`,
+          order_id: orderId,
           gross_amount: qty, 
           item_details: [{ id: "dn-custom", price: qty, quantity: 1, name: "Donasi Ciburial Eco-Digital" }]
         })
@@ -59,7 +61,10 @@ export default function TentangTab({ onNavigate, testimoni = [] }: TentangTabPro
       const data = await res.json();
       if (data.token && (window as any).snap) {
         (window as any).snap.pay(data.token, {
-          onSuccess: function(r:any){ alert("Donasi sukses diterima! Dana langsung terdata di transparansi."); },
+          onSuccess: function(r:any){ 
+            alert("Donasi sukses diterima! Dana langsung terdata di transparansi."); 
+            if (onPaymentSuccess) onPaymentSuccess(qty, false, orderId, r.payment_type || "Midtrans");
+          },
           onPending: function(r:any){ alert("Menunggu status pembayaran donasi."); },
           onError: function(r:any){ alert("Pembayaran gagal."); }
         });

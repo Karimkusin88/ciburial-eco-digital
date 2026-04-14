@@ -8,6 +8,7 @@ interface MarketplaceTabProps {
   dataLoad: boolean;
   checkout: boolean;
   setCheckout: (val: boolean) => void;
+  onPaymentSuccess?: (total: number, isMkt: boolean, orderId: string, payType: string) => void;
 }
 
 // Data kategori yang lebih umum ala e-commerce
@@ -28,7 +29,7 @@ interface CartItem extends Produk {
   qty: number;
 }
 
-export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout, setCheckout }: MarketplaceTabProps) {
+export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout, setCheckout, onPaymentSuccess }: MarketplaceTabProps) {
   const [loadingSnap, setLoadingSnap] = useState(false);
   const [search, setSearch] = useState("");
   const [activeKat, setActiveKat] = useState("Semua");
@@ -116,6 +117,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
     if (cart.length === 0) return alert("Keranjang kosong bro!");
     
     setLoadingSnap(true);
+    const orderId = `MKT-${Date.now()}`;
     try {
       // Bikin format detail item buat Midtrans
       const itemDetails = cart.map((item) => ({
@@ -129,7 +131,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
         method: "POST",
         headers: { "Content-type": "application/json" },
         body: JSON.stringify({
-          order_id: `MKT-${Date.now()}`,
+          order_id: orderId,
           gross_amount: totalCartPrice,
           item_details: itemDetails
         })
@@ -138,9 +140,11 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
       if (data.token && (window as any).snap) {
         (window as any).snap.pay(data.token, {
           onSuccess: function (r: any) { 
-            alert("Pembayaran sukses! 🎉"); 
+            alert("Pembayaran sukses! Terima kasih sudah berbelanja di Ciburial Marketplace. 🎉"); 
             setCart([]); // Kosongin keranjang kalau sukses
             setShowCart(false);
+            setCheckout(false); 
+            if (onPaymentSuccess) onPaymentSuccess(totalCartPrice, true, orderId, r.payment_type || "Midtrans");
           },
           onPending: function (r: any) { alert("Menunggu konfirmasi pembayaran Anda."); },
           onError: function (r: any) { alert("Pembayaran gagal. Silakan coba lagi."); }

@@ -28,10 +28,14 @@ export async function POST(req: Request) {
         jumlah: parseFloat(data.gross_amount),
       };
 
-      const { error } = await supabase.from('transaksi').insert(payload);
-      if (error) throw error;
-      
-      console.log(`Auto-Sync Success: Added Rp ${data.gross_amount} to Supabase`);
+      const { data: exist } = await supabase.from('transaksi').select('id').like('keterangan', `%${data.order_id}%`).maybeSingle();
+      if (!exist) {
+        const { error } = await supabase.from('transaksi').insert(payload);
+        if (error) throw error;
+        console.log(`Auto-Sync Success: Added Rp ${data.gross_amount} to Supabase`);
+      } else {
+        console.log(`Auto-Sync Skipped: Transaction ${data.order_id} already exists`);
+      }
     }
 
     return NextResponse.json({ status: "success" });

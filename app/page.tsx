@@ -61,6 +61,22 @@ export default function Home() {
     setCheckout(false); 
   };
 
+  const handlePaymentSuccess = async (total: number, isMkt: boolean, orderId: string, payType: string) => {
+    const payload = {
+      tanggal: new Date().toISOString().split("T")[0],
+      keterangan: `Pembayaran ${isMkt ? "Produk" : "Donasi"} (ID: ${orderId}) via ${payType}`,
+      kategori: isMkt ? "Marketplace" : "Donasi Online",
+      tipe: "masuk",
+      jumlah: total,
+    };
+    
+    // Optimistic update
+    setTransaksi((prev) => [{ ...payload, id: crypto.randomUUID() } as Transaksi, ...prev]);
+
+    // Insert directly (webhook also checks for duplicates to prevent double counting)
+    await supabase.from("transaksi").insert(payload);
+  };
+
   // keuangan
   const totMasuk = transaksi.filter(t => t.tipe === "masuk").reduce((s, t) => s + t.jumlah, 0);
   const totKeluar = transaksi.filter(t => t.tipe === "keluar").reduce((s, t) => s + t.jumlah, 0);
@@ -72,7 +88,7 @@ export default function Home() {
       <Navbar tab={tab} checkout={checkout} scrolled={scrolled} onNavigate={go} />
 
       {tab === "tentang" && !checkout && (
-        <TentangTab onNavigate={go} testimoni={testimoni} />
+        <TentangTab onNavigate={go} testimoni={testimoni} onPaymentSuccess={handlePaymentSuccess} />
       )}
 
       {tab === "kegiatan" && (
@@ -100,6 +116,7 @@ export default function Home() {
           dataLoad={dataLoad} 
           checkout={checkout} 
           setCheckout={setCheckout} 
+          onPaymentSuccess={handlePaymentSuccess}
         />
       )}
 
