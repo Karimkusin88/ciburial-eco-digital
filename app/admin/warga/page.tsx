@@ -177,7 +177,7 @@ export default function AdminWargaPage(){
           <span style={{color:"#c8bfaa"}}>|</span>
           <div>
             <div style={{fontWeight:800,fontSize:15,color:"#1a2e1f"}}>👥 Data Warga</div>
-            <div style={{fontSize:10,color:"#7a9a7e",textTransform:"uppercase",letterSpacing:"0.08em"}}>{kkList.length} KK · {Object.values(anggotaMap).flat().length} Jiwa</div>
+            <div style={{fontSize:10,color:"#7a9a7e",textTransform:"uppercase",letterSpacing:"0.08em"}}>{kkList.length} KK · {kkList.length + Object.values(anggotaMap).flat().filter(a=>a.hubungan!=="kepala").length} Jiwa</div>
           </div>
         </div>
         <button onClick={()=>{setFormKK(emptyKK);setEditKKId(null);setShowFormKK(!showFormKK);setActiveKK(null);}} style={{background:"#2d5a40",color:"white",border:"none",borderRadius:10,padding:"8px 16px",fontSize:13,fontWeight:600,cursor:"pointer"}}>
@@ -223,7 +223,7 @@ export default function AdminWargaPage(){
 
         {/* Stats */}
         <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12,marginBottom:20}}>
-          {[{i:"🏠",v:kkList.length,l:"Total KK"},{i:"👥",v:Object.values(anggotaMap).flat().length,l:"Total Jiwa"},{i:"✅",v:kkList.filter(k=>k.golongan_zakat==="muzakki").length,l:"Muzakki"},{i:"🤲",v:kkList.filter(k=>k.golongan_zakat==="mustahiq").length,l:"Mustahiq"}].map(s=>(
+          {[{i:"🏠",v:kkList.length,l:"Total KK"},{i:"👥",v:kkList.length + Object.values(anggotaMap).flat().filter(a=>a.hubungan!=="kepala").length,l:"Total Jiwa"},{i:"✅",v:kkList.filter(k=>k.golongan_zakat==="muzakki").length,l:"Muzakki"},{i:"🤲",v:kkList.filter(k=>k.golongan_zakat==="mustahiq").length,l:"Mustahiq"}].map(s=>(
             <div key={s.l} style={{background:"white",borderRadius:14,padding:"14px 16px",border:"1px solid rgba(45,90,64,0.1)",boxShadow:"0 1px 6px rgba(0,0,0,0.04)"}}>
               <div style={{fontSize:20,marginBottom:4}}>{s.i}</div>
               <div style={{fontSize:22,fontWeight:900,color:"#2d5a40"}}>{s.v}</div>
