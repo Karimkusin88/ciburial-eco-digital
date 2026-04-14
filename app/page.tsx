@@ -10,6 +10,7 @@ import ProposalTab from "@/components/home/ProposalTab";
 import TransparansiTab from "@/components/home/TransparansiTab";
 import MarketplaceTab from "@/components/home/MarketplaceTab";
 import Footer from "@/components/home/Footer";
+import CommunityDashboard from "@/components/home/CommunityDashboard";
 
 export default function Home() {
   const [tab, setTab] = useState<TabType>("tentang");
@@ -89,6 +90,7 @@ export default function Home() {
 
       {tab === "tentang" && !checkout && (
         <TentangTab onNavigate={go} testimoni={testimoni} onPaymentSuccess={handlePaymentSuccess} />
+        <CommunityDashboard />
       )}
 
       {tab === "kegiatan" && (
