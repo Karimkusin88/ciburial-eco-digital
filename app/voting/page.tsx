@@ -37,19 +37,24 @@ export default function VotingPage() {
 
   async function fetchAll() {
     if (!isSupabaseReady()) return;
-    const [vReq, angReq, kkReq] = await Promise.all([
+    const [vReq, angReq, kkReq, pilReq] = await Promise.all([
       supabase.from("voting").select("*").eq("status", "aktif").order("created_at", { ascending: false }),
       supabase.from("anggota_kk").select("id, kk_id, nama, nfc_id, tgl_lahir, keluarga(rt)"),
-      supabase.from("keluarga").select("id, kepala_keluarga, nfc_id, rt, tgl_lahir_kepala")
+      supabase.from("keluarga").select("id, kepala_keluarga, nfc_id, rt, tgl_lahir_kepala"),
+      supabase.from("pilihan_voting").select("*")
     ]);
     
     if (vReq.data) {
       setVotings(vReq.data);
       const pm: Record<string, Pilihan[]> = {};
-      await Promise.all(vReq.data.map(async (v) => {
-        const { data: p } = await supabase.from("pilihan_voting").select("*").eq("voting_id", v.id).order("id", { ascending: true });
-        if (p) pm[v.id] = p;
-      }));
+      if (pilReq.data) {
+        // Grouping without db-side order constraints that might cause silent fails
+        const sortedPilihan = [...(pilReq.data as Pilihan[])].sort((a,b) => String(a.id).localeCompare(String(b.id)));
+        sortedPilihan.forEach((p) => {
+          if (!pm[p.voting_id]) pm[p.voting_id] = [];
+          pm[p.voting_id].push(p);
+        });
+      }
       setPilihanMap(pm);
     }
     
@@ -195,7 +200,7 @@ export default function VotingPage() {
         <div style={{display:"flex",alignItems:"center",gap:24}}>
           <div style={{width:60,height:60,background:Colors.greenPrimary,borderRadius:16,display:"flex",alignItems:"center",justifyContent:"center",fontSize:32,boxShadow:`0 0 20px rgba(45,90,64,0.2)`}}>🗳️</div>
           <div>
-            <div style={{fontSize:11,color:Colors.greenPrimary,letterSpacing:"0.3em",fontWeight:900,marginBottom:4}}>PANITIA PEMILIHAN KAMPUNG CIBURIAL RW 08</div>
+            <div style={{fontSize:11,color:Colors.greenPrimary,letterSpacing:"0.3em",fontWeight:900,marginBottom:4}}>KOMISI PEMILIHAN KAMPUNG (KPK) CIBURIAL RW 08</div>
             <h1 style={{margin:0,fontSize:26,fontWeight:900,color:Colors.bgDarkGreen,letterSpacing:"-0.02em"}}>Bilik Suara Pintar Digital</h1>
           </div>
         </div>
@@ -220,7 +225,7 @@ export default function VotingPage() {
           <div style={{background:"white",border:`1px solid ${Colors.greenLight}`,padding:48,borderRadius:32,maxWidth:500,width:"100%",textAlign:"center",boxShadow:"0 25px 50px -12px rgba(0,0,0,0.5)",animation:"zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)"}}>
             <div style={{fontSize:40,marginBottom:16}}>🔒</div>
             <h2 style={{margin:"0 0 8px",fontSize:24,color:Colors.bgDarkGreen,fontWeight:900}}>Kunci Pilihan Sah Anda?</h2>
-            <p style={{margin:"0 0 32px",color:Colors.greenLight,fontSize:15,lineHeight:1.6}}>Keputusan yang telah disetujui, dienkripsi sepenuhnya, dan tidak dapat dibatalkan atau diubah oleh siapapun.</p>
+            <p style={{margin:"0 0 32px",color:Colors.greenLight,fontSize:15,lineHeight:1.6}}>Keputusan yang telah disetujui, dienkripsi sepenuhnya, dan tidak dapat dibatalkan atau diubah oleh siapapun. Pastikan ini adalah pilihan terbaik dari Anda pribadi.</p>
             
             <div style={{background:Colors.bgCreme,padding:"24px",borderRadius:24,border:`1px solid rgba(45,90,64,0.1)`,marginBottom:32}}>
               <div style={{fontSize:11,color:Colors.greenLight,fontWeight:800,letterSpacing:"0.1em",marginBottom:8}}>PILIHAN TERCATAT:</div>
@@ -228,7 +233,7 @@ export default function VotingPage() {
             </div>
 
             <div style={{display:"flex",gap:16}}>
-              <button onClick={()=>setKonfirmasiSuara(null)} style={{flex:1,padding:"18px",background:"transparent",color:Colors.greenLight,border:`2px solid rgba(45,90,64,0.2)`,borderRadius:16,fontSize:16,fontWeight:800,cursor:"pointer"}}>Batal & Ubah</button>
+              <button onClick={()=>setKonfirmasiSuara(null)} style={{flex:1,padding:"18px",background:"transparent",color:Colors.greenLight,border:`2px solid rgba(45,90,64,0.2)`,borderRadius:16,fontSize:16,fontWeight:800,cursor:"pointer"}}>Koreksi Ulang</button>
               <button 
                 onClick={kirimSuara} disabled={loading==="submit"}
                 style={{flex:1.5,padding:"18px",background:Colors.greenPrimary,color:"white",border:"none",borderRadius:16,fontSize:16,fontWeight:800,cursor:loading?"not-allowed":"pointer",boxShadow:`0 10px 20px rgba(45,90,64,0.3)`}}>
@@ -245,16 +250,22 @@ export default function VotingPage() {
         {/* SKENARIO 1: Belum Pilih Agenda */}
         {!activeVoting && (
           <div style={{maxWidth:800,width:"100%"}}>
+            
+            <div style={{background:Colors.bgDarkGreen, borderLeft:`6px solid ${Colors.goldAccent}`, padding:"24px", borderRadius:"16px", marginBottom:32, boxShadow:"0 5px 15px rgba(0,0,0,0.05)"}}>
+              <h3 style={{color:Colors.goldAccent, margin:"0 0 8px 0", fontSize:18, fontWeight:900}}>Pesan Komisi Pemilihan Kampung (KPK)</h3>
+              <p style={{color:Colors.textLight, margin:0, fontSize:15, lineHeight:1.6}}>Selamat datang para pemilih! Suara Anda adalah fondasi masa depan Kampung Ciburial. Gunakan hak pilih Anda dengan <b>LUBER</b> (Langsung, Umum, Bebas, Rahasia) dan <b>JURDIL</b> (Jujur & Adil). Masa depan RW 08 berada di tangan kita bersama!</p>
+            </div>
+
             <div style={{textAlign:"center",marginBottom:40}}>
-              <h2 style={{fontSize:32,fontWeight:900,color:Colors.bgDarkGreen,marginBottom:12}}>Agenda Terbuka Hari Ini</h2>
-              <p style={{color:Colors.greenLight,fontSize:16}}>Pilih sesi bilik pemungutan suara resmi yang akan Anda masuki.</p>
+              <h2 style={{fontSize:32,fontWeight:900,color:Colors.bgDarkGreen,marginBottom:12}}>Agenda Pemilihan Terbuka</h2>
+              <p style={{color:Colors.greenLight,fontSize:16}}>Pilih bilik pemungutan suara resmi di bawah ini yang akan Anda masuki.</p>
             </div>
             
             <div style={{display:"grid",gap:20}}>
               {votings.length===0 ? (
                 <div style={{padding:"60px 20px",textAlign:"center",background:"white",borderRadius:24,border:`1px dashed ${Colors.greenLight}`,boxShadow:"0 10px 30px rgba(0,0,0,0.05)"}}>
                   <div style={{fontSize:40,marginBottom:16}}>📭</div>
-                  <div style={{fontSize:16,color:Colors.greenLight,fontWeight:600}}>Tidak ada agenda pemungutan suara yang aktif menjaring aspirasi.</div>
+                  <div style={{fontSize:16,color:Colors.greenLight,fontWeight:600}}>Tidak ada agenda pemungutan suara yang aktif/dibuka saat ini.</div>
                 </div>
               ) : votings.map(v => {
                 const { tipe, text } = parseJudul(v.judul);
@@ -262,10 +273,10 @@ export default function VotingPage() {
                   <div key={v.id} onClick={()=>setActiveVoting(v.id)} style={{background:"white",padding:"32px 40px",borderRadius:24,border:`1px solid rgba(45,90,64,0.1)`,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"space-between",boxShadow:"0 10px 30px rgba(0,0,0,0.05)",transition:"all 0.2s"}}>
                     <div>
                       <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:12}}>
-                        <span style={{background:tipe==="PEMILU"?"rgba(45,90,64,0.1)":"rgba(184,148,63,0.1)",color:tipe==="PEMILU"?Colors.greenPrimary:Colors.goldAccent,padding:"6px 12px",borderRadius:8,fontSize:11,fontWeight:900,letterSpacing:"0.1em"}}>{tipe==="PEMILU"?"KOTAK PEMILU":"JAJAK PENDAPAT (MUSYAWARAH)"}</span>
+                        <span style={{background:tipe==="PEMILU"?"rgba(45,90,64,0.1)":"rgba(184,148,63,0.1)",color:tipe==="PEMILU"?Colors.greenPrimary:Colors.goldAccent,padding:"6px 12px",borderRadius:8,fontSize:11,fontWeight:900,letterSpacing:"0.1em"}}>{tipe==="PEMILU"?"KOTAK PEMILU DPT":"JAJAK PENDAPAT (MUSYAWARAH)"}</span>
                       </div>
                       <h3 style={{margin:"0 0 8px",color:Colors.bgDarkGreen,fontSize:22,fontWeight:900}}>{text}</h3>
-                      <p style={{margin:0,color:Colors.greenLight,fontSize:14,maxWidth:500,lineHeight:1.6}}>{v.deskripsi || "Tanpa deskripsi resmi."}</p>
+                      <p style={{margin:0,color:Colors.greenLight,fontSize:14,maxWidth:500,lineHeight:1.6}}>{v.deskripsi || "Tanpa deskripsi resmi tambahan."}</p>
                     </div>
                     <div style={{width:50,height:50,background:Colors.bgCreme,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",color:Colors.greenPrimary,fontSize:20,fontWeight:900}}>→</div>
                   </div>
@@ -278,27 +289,27 @@ export default function VotingPage() {
         {/* SKENARIO 2: Otorisasi NFC Sahaja */}
         {activeVoting && !verifikasiSukses && (
           <div style={{maxWidth:600,width:"100%",background:"white",padding:48,borderRadius:32,border:`1px solid rgba(45,90,64,0.1)`,boxShadow:"0 20px 50px rgba(0,0,0,0.08)",textAlign:"center",animation:"zoomIn 0.3s ease-out"}}>
-            <h2 style={{margin:"0 0 12px",fontSize:28,fontWeight:900,color:Colors.bgDarkGreen}}>Otorisasi DPT</h2>
-            <p style={{margin:"0 0 40px",fontSize:15,color:Colors.greenLight,lineHeight:1.6}}>Sistem mendeteksi bahwa hak pilih untuk agenda ini mewajibkan usia peserta minimum <b>18 Tahun (+1 Hari)</b> pada waktu setempat.</p>
+            <h2 style={{margin:"0 0 12px",fontSize:28,fontWeight:900,color:Colors.bgDarkGreen}}>Otorisasi Daftar Pemilih Tetap (DPT)</h2>
+            <p style={{margin:"0 0 40px",fontSize:15,color:Colors.greenLight,lineHeight:1.6}}>Sistem mendeteksi bahwa hak pilih untuk agenda ini mewajibkan usia peserta minimum <b>18 Tahun (+1 Hari)</b>. Harap siapkan Kartu Warga E-KTP Ciburial Anda.</p>
             
             <div style={{display:"flex",flexDirection:"column",gap:20}}>
               {/* Scan NFC Button */}
               {!scanning && (
                 <button onClick={startNfcScan} style={{padding:"24px",background:Colors.greenPrimary,color:"white",border:"none",borderRadius:24,fontSize:18,fontWeight:900,cursor:"pointer",boxShadow:`0 10px 25px rgba(45,90,64,0.3)`}}>
-                  <span style={{fontSize:24,display:"block",marginBottom:8}}>💳</span> Pindai Kartu Warga Terdaftar
+                  <span style={{fontSize:24,display:"block",marginBottom:8}}>💳</span> Pindai Kartu Warga Terdaftar (Tap E-KTP)
                 </button>
               )}
               {scanning && (
                 <div style={{padding:"40px 24px",background:"rgba(45,90,64,0.05)",border:`2px dashed ${Colors.greenPrimary}`,borderRadius:24}}>
                   <div style={{width:80,height:80,background:Colors.greenPrimary,borderRadius:"50%",margin:"0 auto 20px",display:"flex",alignItems:"center",justifyContent:"center",fontSize:32,animation:"pulse 1.5s infinite",boxShadow:`0 0 30px rgba(45,90,64,0.4)`}}>📡</div>
                   <div style={{fontSize:18,fontWeight:800,color:Colors.greenPrimary,marginBottom:8}}>Menunggu Pindaian...</div>
-                  <div style={{fontSize:14,color:Colors.greenLight}}>Tempelkan Kartu DPT Warga Kampung Ciburial ke zona NFC.</div>
+                  <div style={{fontSize:14,color:Colors.greenLight}}>Tempelkan Kartu DPT Warga Kampung Ciburial ke zona NFC (Punggung Handphone).</div>
                   <button onClick={stopNfcScan} style={{marginTop:24,padding:"10px 24px",background:"transparent",color:Colors.redAlert,border:`1px solid ${Colors.redAlert}`,borderRadius:99,fontSize:14,fontWeight:800,cursor:"pointer"}}>Batalkan Pindai</button>
                 </div>
               )}
               
               <div style={{marginTop:20,fontSize:13,color:Colors.greenLight,background:Colors.bgCreme,padding:"12px 16px",borderRadius:12,fontWeight:600}}>
-                💡 Hanya pemilik kartu NFC Anggota (E-KTP Ciburial) dengan usia 18+ yang berhak memberikan suara. (Login Manual dihilangkan demi keadilan sistem).
+                💡 Prinsip Rahasia & Aman: Identitas Anda hanya digunakan untuk mengecek Hak Pilih (mencegah pencoblosan ganda). Suara Anda terekam secara anonim.
               </div>
             </div>
           </div>
@@ -308,21 +319,26 @@ export default function VotingPage() {
         {activeVoting && verifikasiSukses && activeData && (
           <div style={{width:"100%",maxWidth:1000,animation:"slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)"}}>
             
-            <div style={{textAlign:"center",marginBottom:40}}>
+            <div style={{textAlign:"center",marginBottom:24}}>
               {(() => {
                 const { tipe, text } = parseJudul(activeData.judul);
                 return (
                   <>
                     <h2 style={{fontSize:40,fontWeight:900,color:Colors.bgDarkGreen,marginBottom:16,letterSpacing:"-0.02em"}}>{text}</h2>
-                    <p style={{color:Colors.greenLight,fontSize:18,maxWidth:700,margin:"0 auto"}}>{activeData.deskripsi || "Silakan memberikan suara secara Luber dan Jurdil."}</p>
+                    <p style={{color:Colors.greenLight,fontSize:18,maxWidth:700,margin:"0 auto"}}>{activeData.deskripsi}</p>
                     {tipe === "PEMILU" ? (
                       <div style={{display:"inline-block",background:"rgba(45,90,64,0.1)",color:Colors.greenPrimary,padding:"8px 24px",borderRadius:99,fontSize:13,fontWeight:900,letterSpacing:"0.1em",marginTop:24,border:`1px solid rgba(45,90,64,0.2)`}}>🧑‍💼 FORMAT: SURAT SUARA PEMILU KANDIDAT B BERGAMBAR</div>
                     ) : (
-                      <div style={{display:"inline-block",background:"rgba(184,148,63,0.1)",color:Colors.goldAccent,padding:"8px 24px",borderRadius:99,fontSize:13,fontWeight:900,letterSpacing:"0.1em",marginTop:24,border:`1px solid rgba(184,148,63,0.2)`}}>⚖️ FORMAT: SURAT KEPUTUSAN MUSYAWARAH</div>
+                      <div style={{display:"inline-block",background:"rgba(184,148,63,0.1)",color:Colors.goldAccent,padding:"8px 24px",borderRadius:99,fontSize:13,fontWeight:900,letterSpacing:"0.1em",marginTop:24,border:`1px solid rgba(184,148,63,0.2)`}}>⚖️ FORMAT: SURAT KEPUTUSAN MUSYAWARAH RW</div>
                     )}
                   </>
                 )
               })()}
+            </div>
+
+            <div style={{background:"rgba(45,90,64,0.05)", border:`1px solid rgba(45,90,64,0.2)`, padding:"20px", borderRadius:"16px", marginBottom:32, color:Colors.greenPrimary, textAlign:"left"}}>
+              <div style={{fontSize:16, fontWeight:900, marginBottom:8}}>💡 Himbauan Pencoblosan:</div>
+              <div style={{fontSize:14, lineHeight:1.6, fontWeight:600}}>Amati setiap pilihan atau kandidat dengan seksama. Setelah menekan tombol <b>COBLOS KANDIDAT</b> atau <b>Dukung Opsi Ini</b>, Anda akan diarahkan ke tahap Validasi Kunci Akhir. Pastikan Anda memilih dengan tepat!</div>
             </div>
 
             {/* Render Kandidat Dinamis */}
@@ -347,13 +363,13 @@ export default function VotingPage() {
                         {foto ? (
                           <img src={foto} alt={nama} style={{width:"100%",height:"100%",objectFit:"cover"}} />
                         ) : (
-                          <div style={{fontSize:isGolput||isNetral?80:120,filter:"grayscale(1) opacity(0.5)"}}>{isGolput?"⬜":isNetral?"➖":"👤"}</div>
+                          <div style={{fontSize:isGolput||isNetral?80:120,filter:"grayscale(1) opacity(0.2)"}}>{isGolput?"⬜":isNetral?"➖":"👤"}</div>
                         )}
                         <div style={{position:"absolute",inset:0,background:"linear-gradient(to top, rgba(255,255,255,0.9), transparent)"}}/>
                       </div>
                       <div style={{padding:"24px 32px",textAlign:"center",marginTop:-40,position:"relative",zIndex:2}}>
                         <div style={{fontSize:24,fontWeight:900,color:Colors.bgDarkGreen,marginBottom:16,textShadow:"0 2px 4px white"}}>{nama}</div>
-                        <button style={{width:"100%",padding:"16px",borderRadius:16,background:Colors.bgCreme,color:Colors.greenPrimary,border:`2px dashed ${Colors.greenPrimary}`,fontSize:15,fontWeight:900,letterSpacing:"0.05em",cursor:"pointer"}}>COBLOS KANDIDAT INI</button>
+                        <button style={{width:"100%",padding:"16px",borderRadius:16,background:Colors.bgCreme,color:Colors.greenPrimary,border:`2px dashed ${Colors.greenPrimary}`,fontSize:15,fontWeight:900,letterSpacing:"0.05em",cursor:"pointer"}}>COBLOS KANDIDAT</button>
                       </div>
                     </div>
                   );
