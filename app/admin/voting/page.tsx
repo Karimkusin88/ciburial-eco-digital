@@ -79,10 +79,20 @@ export default function AdminVotingPage() {
     const { data:v, error } = await supabase.from("voting").insert(payloadForm).select().single();
     if(error||!v){ showToast("Gagal Dibuat: "+error?.message, "error"); setLoading(false); return; }
     
-    // Insert array of opsi
-    await supabase.from("pilihan_voting").insert(kandidatTeks.map(teks=>({voting_id:v.id, teks, jumlah_vote:0})));
+    // Insert array of opsi — CEK ERROR dengan benar
+    const { error: errPilihan } = await supabase.from("pilihan_voting").insert(
+      kandidatTeks.map(teks=>({voting_id:v.id, teks, jumlah_vote:0}))
+    );
     
-    showToast("✅ Agenda E-Voting berhasil dideploy!", "success");
+    if(errPilihan) {
+      // Rollback: hapus voting yang sudah dibuat karena pilihan gagal
+      await supabase.from("voting").delete().eq("id", v.id);
+      showToast(`❌ GAGAL SIMPAN KANDIDAT: ${errPilihan.message} | Code: ${errPilihan.code}`, "error");
+      setLoading(false);
+      return;
+    }
+    
+    showToast("✅ Agenda E-Voting berhasil dideploy!");
     setForm(emptyForm); 
     setOpsi([{id:1,teks:"",foto:""},{id:2,teks:"",foto:""}]); 
     setInklusiGolput(false); setInklusiNetral(false);
