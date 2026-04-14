@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
-interface KK { id:string; no_kk:string; kepala_keluarga:string; alamat:string; rt:string; rw:string; no_wa:string; nfc_id:string; status:string; golongan_zakat:string; kategori_mustahiq:string; }
+interface KK { id:string; no_kk:string; kepala_keluarga:string; alamat:string; rt:string; rw:string; no_wa:string; nfc_id:string; status:string; golongan_zakat:string; kategori_mustahiq:string; pekerjaan_kepala:string; tgl_lahir_kepala:string; }
 interface Anggota { id:string; kk_id:string; nama:string; nik:string; tgl_lahir:string; jenis_kelamin:string; hubungan:string; no_wa:string; pekerjaan:string; saldo_poin:number; nfc_id:string; golongan_zakat:string; kategori_mustahiq:string; }
 
 const PEKERJAAN = [
@@ -35,7 +35,7 @@ const KATEGORI_MUSTAHIQ = [
   {v:"ibnu_sabil",l:"Ibnu Sabil — Musafir terlantar"},
 ];
 
-const emptyKK = {no_kk:"",kepala_keluarga:"",alamat:"",rt:"01",rw:"01",no_wa:"",nfc_id:"",status:"tetap",golongan_zakat:"netral",kategori_mustahiq:""};
+const emptyKK = {no_kk:"",kepala_keluarga:"",alamat:"",rt:"01",rw:"01",no_wa:"",nfc_id:"",status:"tetap",golongan_zakat:"netral",kategori_mustahiq:"",pekerjaan_kepala:"tidak_bekerja",tgl_lahir_kepala:""};
 const emptyAnggota = {kk_id:"",nama:"",nik:"",tgl_lahir:"",jenis_kelamin:"L",hubungan:"anak",no_wa:"",pekerjaan:"tidak_bekerja",nfc_id:"",golongan_zakat:"netral",kategori_mustahiq:""};
 
 function hitungUmur(tgl:string){if(!tgl)return"";const now=new Date(),lahir=new Date(tgl),bulan=(now.getFullYear()-lahir.getFullYear())*12+(now.getMonth()-lahir.getMonth());return bulan<24?`${bulan} bln`:`${Math.floor(bulan/12)} thn`;}
@@ -81,11 +81,41 @@ export default function AdminWargaPage(){
   async function simpanKK(){
     if(!formKK.no_kk||!formKK.kepala_keluarga)return showToast("❌ No KK & nama wajib!",false);
     setLoading(true);
-    const{error}=editKKId
-      ?await supabase.from("keluarga").update(formKK).eq("id",editKKId)
-      :await supabase.from("keluarga").insert(formKK);
-    if(error)showToast(`❌ ${error.message}`,false);
-    else{showToast(editKKId?"✅ KK diupdate!":"✅ KK ditambahkan!");setFormKK(emptyKK);setEditKKId(null);setShowFormKK(false);}
+
+    if(editKKId){
+      // Update KK existing
+      const{error}=await supabase.from("keluarga").update(formKK).eq("id",editKKId);
+      if(error){showToast(`❌ ${error.message}`,false);setLoading(false);return;}
+      // Update anggota kepala juga kalau ada
+      await supabase.from("anggota_kk").update({
+        nama:formKK.kepala_keluarga,
+        no_wa:formKK.no_wa||null,
+        pekerjaan:formKK.pekerjaan_kepala||"tidak_bekerja",
+        tgl_lahir:formKK.tgl_lahir_kepala||null,
+        nfc_id:formKK.nfc_id||null,
+      }).eq("kk_id",editKKId).eq("hubungan","kepala");
+      showToast("✅ KK diupdate!");
+    } else {
+      // Insert KK baru
+      const{data:kkBaru,error}=await supabase.from("keluarga").insert(formKK).select().single();
+      if(error){showToast(`❌ ${error.message}`,false);setLoading(false);return;}
+      // Auto-insert kepala keluarga ke tabel anggota_kk
+      await supabase.from("anggota_kk").insert({
+        kk_id: kkBaru.id,
+        nama: formKK.kepala_keluarga,
+        hubungan: "kepala",
+        jenis_kelamin: "L",
+        no_wa: formKK.no_wa||null,
+        pekerjaan: formKK.pekerjaan_kepala||"tidak_bekerja",
+        tgl_lahir: formKK.tgl_lahir_kepala||null,
+        nfc_id: formKK.nfc_id||null,
+        saldo_poin: 0,
+        golongan_zakat: formKK.golongan_zakat||"netral",
+      });
+      showToast("✅ KK ditambahkan! Kepala KK otomatis masuk daftar anggota.");
+    }
+
+    setFormKK(emptyKK);setEditKKId(null);setShowFormKK(false);
     setLoading(false);fetchAll();
   }
 
@@ -97,7 +127,7 @@ export default function AdminWargaPage(){
   }
 
   function editKK(kk:KK){
-    setFormKK({no_kk:kk.no_kk,kepala_keluarga:kk.kepala_keluarga,alamat:kk.alamat||"",rt:kk.rt,rw:kk.rw,no_wa:kk.no_wa||"",nfc_id:kk.nfc_id||"",status:kk.status,golongan_zakat:kk.golongan_zakat||"netral",kategori_mustahiq:kk.kategori_mustahiq||""});
+    setFormKK({no_kk:kk.no_kk,kepala_keluarga:kk.kepala_keluarga,alamat:kk.alamat||"",rt:kk.rt,rw:kk.rw,no_wa:kk.no_wa||"",nfc_id:kk.nfc_id||"",status:kk.status,golongan_zakat:kk.golongan_zakat||"netral",kategori_mustahiq:kk.kategori_mustahiq||"",pekerjaan_kepala:kk.pekerjaan_kepala||"tidak_bekerja",tgl_lahir_kepala:kk.tgl_lahir_kepala||""});
     setEditKKId(kk.id);setShowFormKK(true);window.scrollTo({top:0,behavior:"smooth"});
   }
 
@@ -168,7 +198,20 @@ export default function AdminWargaPage(){
               <div style={{gridColumn:"1/-1"}}><label style={LS}>Alamat</label><input value={formKK.alamat} onChange={e=>setFormKK({...formKK,alamat:e.target.value})} placeholder="Alamat lengkap" style={IS}/></div>
               <div><label style={LS}>RT</label><select value={formKK.rt} onChange={e=>setFormKK({...formKK,rt:e.target.value})} style={IS}>{["01","02","03","04","05"].map(v=><option key={v} value={v}>RT {v}</option>)}</select></div>
               <div><label style={LS}>Status</label><select value={formKK.status} onChange={e=>setFormKK({...formKK,status:e.target.value})} style={IS}><option value="tetap">Warga Tetap</option><option value="pendatang">Pendatang</option><option value="perantau">Perantau</option></select></div>
+              <div><label style={LS}>Pekerjaan Kepala KK</label><select value={formKK.pekerjaan_kepala} onChange={e=>setFormKK({...formKK,pekerjaan_kepala:e.target.value})} style={IS}>{PEKERJAAN.map(p=><option key={p.v} value={p.v}>{p.l}</option>)}</select></div>
+              <div><label style={LS}>Tgl Lahir Kepala KK</label><input type="date" value={formKK.tgl_lahir_kepala} onChange={e=>setFormKK({...formKK,tgl_lahir_kepala:e.target.value})} style={IS}/></div>
               <div><label style={LS}>Golongan Zakat</label><select value={formKK.golongan_zakat} onChange={e=>setFormKK({...formKK,golongan_zakat:e.target.value})} style={IS}>{GOLONGAN_ZAKAT.map(g=><option key={g.v} value={g.v}>{g.l}</option>)}</select></div>
+              {/* Auto-suggest hint */}
+              {formKK.pekerjaan_kepala&&["pns","tni_polri","wiraswasta"].includes(formKK.pekerjaan_kepala)&&formKK.golongan_zakat==="netral"&&(
+                <div style={{gridColumn:"1/-1",padding:"8px 12px",background:"rgba(45,90,64,0.07)",borderRadius:10,fontSize:12,color:"#2d5a40"}}>
+                  💡 <strong>Saran:</strong> Pekerjaan {PEKERJAAN.find(p=>p.v===formKK.pekerjaan_kepala)?.l} biasanya termasuk <strong>Muzakki</strong> (wajib bayar zakat).
+                </div>
+              )}
+              {formKK.pekerjaan_kepala&&["buruh","petani","tidak_bekerja","nelayan","guru_honorer"].includes(formKK.pekerjaan_kepala)&&formKK.golongan_zakat==="netral"&&(
+                <div style={{gridColumn:"1/-1",padding:"8px 12px",background:"rgba(184,148,63,0.08)",borderRadius:10,fontSize:12,color:"#b8943f"}}>
+                  💡 <strong>Saran:</strong> Pekerjaan {PEKERJAAN.find(p=>p.v===formKK.pekerjaan_kepala)?.l} perlu dikaji — kemungkinan termasuk <strong>Mustahiq</strong>.
+                </div>
+              )}
               {formKK.golongan_zakat==="mustahiq"&&<div><label style={LS}>Kategori Mustahiq</label><select value={formKK.kategori_mustahiq} onChange={e=>setFormKK({...formKK,kategori_mustahiq:e.target.value})} style={IS}><option value="">-- Pilih --</option>{KATEGORI_MUSTAHIQ.map(k=><option key={k.v} value={k.v}>{k.l}</option>)}</select></div>}
             </div>
             <div style={{display:"flex",gap:10,marginTop:16}}>
@@ -209,6 +252,7 @@ export default function AdminWargaPage(){
                   <div style={{flex:1}}>
                     <div style={{fontWeight:700,fontSize:14,color:"#1a2e1f"}}>{kk.kepala_keluarga}</div>
                     <div style={{fontSize:12,color:"#7a9a7e",marginTop:2}}>RT {kk.rt} · {jml} jiwa{kk.no_wa&&" · 📱"}{kk.nfc_id&&" · 💳"}</div>
+                    {kk.pekerjaan_kepala&&kk.pekerjaan_kepala!=="tidak_bekerja"&&<div style={{fontSize:11,color:"#a8b5a9"}}>{PEKERJAAN.find(p=>p.v===kk.pekerjaan_kepala)?.l||kk.pekerjaan_kepala}</div>}
                   </div>
                   <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:4}}>
                     <div style={{background:SC[kk.status]+"15",color:SC[kk.status],border:`1px solid ${SC[kk.status]}30`,borderRadius:20,padding:"2px 8px",fontSize:10,fontWeight:600}}>{kk.status}</div>
