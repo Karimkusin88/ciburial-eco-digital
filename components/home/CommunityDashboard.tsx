@@ -2,283 +2,264 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
-/* ─── Tiny SVG Chart Primitives ─── */
-function SvgArea({ data, color = "#2d5a40", h = 80 }: { data: number[]; color?: string; h?: number }) {
-  if (data.length < 2) return <div style={{ height: h, display: "flex", alignItems: "center", justifyContent: "center", color: "#b0b8b2", fontSize: 12 }}>Data masih sedikit…</div>;
-  const W = 260, P = 12;
-  const max = Math.max(...data) * 1.15 || 1;
+/* ─── SVG Area Chart ─── */
+function SvgArea({ data, color = "#4ade80", h = 80, labels = [] }: { data: number[]; color?: string; h?: number; labels?: string[] }) {
+  if (data.length < 2) return (
+    <div style={{ height: h, display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,0.3)", fontSize: 12, fontFamily: "'Inter',system-ui,sans-serif" }}>
+      Belum ada data cukup
+    </div>
+  );
+  const W = 300, P = 14;
+  const max = Math.max(...data) * 1.2 || 1;
   const xs = data.map((_, i) => P + (i / (data.length - 1)) * (W - P * 2));
   const ys = data.map(v => h - P - (v / max) * (h - P * 2));
   const line = xs.map((x, i) => `${i === 0 ? "M" : "L"}${x},${ys[i]}`).join(" ");
-  const area = `${line} L${xs[xs.length - 1]},${h - P} L${xs[0]},${h - P} Z`;
+  const area = `${line} L${xs[xs.length - 1]},${h - P} L${P},${h - P} Z`;
+  const gid = `g${color.replace(/[^a-z0-9]/gi, "")}`;
   return (
-    <svg width="100%" height={h} viewBox={`0 0 ${W} ${h}`} preserveAspectRatio="none">
-      <defs><linearGradient id={`g${color.replace("#","")}`} x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={color} stopOpacity="0.2" /><stop offset="100%" stopColor={color} stopOpacity="0" /></linearGradient></defs>
-      <path d={area} fill={`url(#g${color.replace("#","")})`} />
-      <path d={line} fill="none" stroke={color} strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
-      {xs.map((x, i) => <circle key={i} cx={x} cy={ys[i]} r={3} fill={color} stroke="white" strokeWidth={1.5} />)}
-    </svg>
-  );
-}
-
-function DonutChart({ segments }: { segments: { label: string; value: number; color: string }[] }) {
-  const total = segments.reduce((s, x) => s + x.value, 0) || 1;
-  const R = 42, CX = 50, CY = 50, SW = 16, circ = 2 * Math.PI * R;
-  let offset = circ * 0.25;
-  return (
-    <svg width={100} height={100}>
-      {segments.map((seg, i) => {
-        const dash = circ * (seg.value / total);
-        const el = <circle key={i} cx={CX} cy={CY} r={R} fill="none" stroke={seg.color} strokeWidth={SW} strokeDasharray={`${dash} ${circ - dash}`} strokeDashoffset={-offset + circ * 0.25} />;
-        offset += dash;
-        return el;
-      })}
-      <text x={CX} y={CY - 5} textAnchor="middle" fontSize={13} fontWeight="900" fill="#1a2e1f">{total}</text>
-      <text x={CX} y={CY + 10} textAnchor="middle" fontSize={8} fill="#7a9a7e">jiwa</text>
-    </svg>
-  );
-}
-
-function HBar({ value, max, color, label, count }: { value: number; max: number; color: string; label: string; count: number }) {
-  const pct = max > 0 ? (value / max) * 100 : 0;
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-      <div style={{ width: 80, fontSize: 12, color: "#1a2e1f", fontWeight: 600, textAlign: "right", flexShrink: 0 }}>{label}</div>
-      <div style={{ flex: 1, background: "rgba(45,90,64,0.08)", borderRadius: 99, height: 10, overflow: "hidden" }}>
-        <div style={{ width: `${pct}%`, height: "100%", background: color, borderRadius: 99, transition: "width 0.8s cubic-bezier(0.34,1.56,0.64,1)" }} />
-      </div>
-      <div style={{ width: 36, fontSize: 12, fontWeight: 800, color, textAlign: "left" }}>{count}</div>
+    <div>
+      <svg width="100%" height={h} viewBox={`0 0 ${W} ${h}`} preserveAspectRatio="none">
+        <defs>
+          <linearGradient id={gid} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={color} stopOpacity="0.22" />
+            <stop offset="100%" stopColor={color} stopOpacity="0.02" />
+          </linearGradient>
+        </defs>
+        <path d={area} fill={`url(#${gid})`} />
+        <path d={line} fill="none" stroke={color} strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
+        {xs.map((x, i) => <circle key={i} cx={x} cy={ys[i]} r={3.5} fill={color} stroke="rgba(0,0,0,0.4)" strokeWidth={1.5} />)}
+      </svg>
+      {labels.length > 0 && (
+        <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4 }}>
+          {labels.map((l, i) => <span key={i} style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", fontFamily: "'Inter',system-ui,sans-serif" }}>{l}</span>)}
+        </div>
+      )}
     </div>
   );
 }
 
-/* ─── Tipe Data ─── */
-interface DashData {
-  totalKK: number; totalJiwa: number; laki: number; perempuan: number; balita: number; lansia: number;
-  totKg: number; totPoin: number;
-  anakNormal: number; anakRisiko: number; anakStunting: number;
-  sampahTren: number[];  // 6 bulan terakhir kg
-  sampahLabels: string[];
-  rondaTren: number[];   // 6 minggu terakhir kehadiran
-  rondaLabels: string[];
-  topPoin: { nama: string; poin: number }[];
-  lastUpdate: string;
+/* ─── Donut Chart ─── */
+function Donut({ segs }: { segs: { label: string; value: number; color: string }[] }) {
+  const total = segs.reduce((s, x) => s + x.value, 0) || 1;
+  const R = 40, CX = 50, CY = 50, SW = 14, circ = 2 * Math.PI * R;
+  let off = circ * 0.25;
+  const arcs = segs.map((seg) => {
+    const dash = circ * (seg.value / total);
+    const el = { ...seg, dash, off };
+    off += dash;
+    return el;
+  });
+  return (
+    <svg width={100} height={100} style={{ overflow: "visible" }}>
+      {arcs.map((a, i) => (
+        <circle key={i} cx={CX} cy={CY} r={R} fill="none" stroke={a.color} strokeWidth={SW}
+          strokeDasharray={`${a.dash} ${circ - a.dash}`} strokeDashoffset={-a.off + circ * 0.25} />
+      ))}
+      <text x={CX} y={CY - 5} textAnchor="middle" fontSize={13} fontWeight="900" fill="#f5f0e8" fontFamily="Inter,system-ui,sans-serif">{total}</text>
+      <text x={CX} y={CY + 10} textAnchor="middle" fontSize={9} fill="rgba(255,255,255,0.4)" fontFamily="Inter,system-ui,sans-serif">jiwa</text>
+    </svg>
+  );
 }
 
-const EMPTY: DashData = { totalKK:0,totalJiwa:0,laki:0,perempuan:0,balita:0,lansia:0,totKg:0,totPoin:0,anakNormal:0,anakRisiko:0,anakStunting:0,sampahTren:[],sampahLabels:[],rondaTren:[],rondaLabels:[],topPoin:[],lastUpdate:"" };
+/* ─── Horizontal Bar ─── */
+function HBar({ value, max, color, label, count }: { value: number; max: number; color: string; label: string; count: number }) {
+  const pct = max > 0 ? Math.min(100, (value / max) * 100) : 0;
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12, fontFamily: "'Inter',system-ui,sans-serif" }}>
+      <div style={{ width: 88, fontSize: 11, color: "rgba(255,255,255,0.6)", textAlign: "right", flexShrink: 0, lineHeight: 1.3 }}>{label}</div>
+      <div style={{ flex: 1, background: "rgba(255,255,255,0.06)", borderRadius: 99, height: 8, overflow: "hidden" }}>
+        <div style={{ width: `${pct}%`, height: "100%", background: color, borderRadius: 99, transition: "width 1s cubic-bezier(.34,1.56,.64,1)" }} />
+      </div>
+      <div style={{ width: 28, fontSize: 13, fontWeight: 900, color, textAlign: "left" }}>{count}</div>
+    </div>
+  );
+}
+
+/* ─── State ─── */
+interface D {
+  kk: number; jiwa: number; laki: number; perempuan: number; balita: number; lansia: number;
+  totKg: number;
+  anakNormal: number; anakRisiko: number; anakStunting: number;
+  sampahKg: number[]; sampahLbl: string[];
+  updated: string;
+}
+
+const EMPTY: D = { kk:0,jiwa:0,laki:0,perempuan:0,balita:0,lansia:0,totKg:0,anakNormal:0,anakRisiko:0,anakStunting:0,sampahKg:[],sampahLbl:[],updated:"" };
 
 export default function CommunityDashboard() {
-  const [d, setD] = useState<DashData>(EMPTY);
-  const [loading, setLoading] = useState(true);
+  const [d, setD] = useState<D>(EMPTY);
   const [live, setLive] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const fetch = useCallback(async () => {
+  const refresh = useCallback(async () => {
     if (!isSupabaseReady()) return;
     try {
-      const [kkRes, angRes, spRes, anakRes, rondaRes, sampahRes] = await Promise.all([
+      const [kkRes, angRes, kkDataRes, spRes, anakRes, sampahRes] = await Promise.all([
         supabase.from("keluarga").select("id", { count: "exact", head: true }),
-        supabase.from("anggota_kk").select("id,tgl_lahir,saldo_poin"),
-        supabase.from("saldo_poin").select("total_poin,total_setor_kg"),
+        supabase.from("anggota_kk").select("id, tgl_lahir, hubungan, jenis_kelamin"),
+        supabase.from("keluarga").select("id, tgl_lahir_kepala, jenis_kelamin_kepala"),
+        supabase.from("saldo_poin").select("total_setor_kg"),
         supabase.from("anak_posyandu").select("status_gizi"),
-        supabase.from("ronda_log").select("tanggal,jumlah_hadir").order("tanggal", { ascending: false }).limit(12),
-        supabase.from("setor_sampah").select("tanggal,berat_kg").gte("tanggal", new Date(Date.now() - 180 * 864e5).toISOString().split("T")[0]),
+        supabase.from("setor_sampah").select("tanggal, berat_kg")
+          .gte("tanggal", new Date(Date.now() - 180 * 864e5).toISOString().split("T")[0]),
       ]);
 
-      const angs = angRes.data || [];
       const now = new Date();
-      const getUmur = (tgl: string) => { if (!tgl) return 0; const d = new Date(tgl); let a = now.getFullYear() - d.getFullYear(); if (now.getMonth() < d.getMonth() || (now.getMonth() === d.getMonth() && now.getDate() < d.getDate())) a--; return a; };
-      const totalJiwa = angs.length;
-      const laki = angs.filter((a: any) => a.hubungan !== "istri" && a.hubungan !== "mertua").length;
-      const balita = angs.filter((a: any) => getUmur(a.tgl_lahir) <= 5).length;
-      const lansia = angs.filter((a: any) => getUmur(a.tgl_lahir) >= 60).length;
+      const umur = (tgl: string) => {
+        if (!tgl) return 0;
+        const d = new Date(tgl), a = now.getFullYear() - d.getFullYear();
+        return (now.getMonth() < d.getMonth() || (now.getMonth() === d.getMonth() && now.getDate() < d.getDate())) ? a - 1 : a;
+      };
 
-      const sp = spRes.data || [];
-      const totKg = sp.reduce((s: number, x: any) => s + Number(x.total_setor_kg), 0);
-      const totPoin = sp.reduce((s: number, x: any) => s + Number(x.total_poin), 0);
+      const angs = angRes.data || [];
+      const kks = kkDataRes.data || [];
 
-      // Posyandu
+      // Gender detection — anggota: cek jenis_kelamin kolom jika ada, fallback ke hubungan
+      const isPerempuanAng = (a: any) => {
+        if (a.jenis_kelamin) return a.jenis_kelamin === "perempuan" || a.jenis_kelamin === "P";
+        return a.hubungan === "istri" || a.hubungan === "mertua" || a.hubungan === "nenek";
+      };
+      const isPerempuanKK = (k: any) => k.jenis_kelamin_kepala === "perempuan" || k.jenis_kelamin_kepala === "P";
+
+      const angLaki = angs.filter((a: any) => !isPerempuanAng(a)).length;
+      const angPerempuan = angs.filter((a: any) => isPerempuanAng(a)).length;
+      const kkLaki = kks.filter((k: any) => !isPerempuanKK(k)).length;
+      const kkPerempuan = kks.filter((k: any) => isPerempuanKK(k)).length;
+
+      const totalJiwa = angs.length + kks.length;
+      const laki = angLaki + kkLaki;
+      const perempuan = angPerempuan + kkPerempuan;
+
+      // Balita & lansia (dari anggota + kepala KK)
+      const allBirths = [
+        ...angs.map((a: any) => a.tgl_lahir),
+        ...kks.map((k: any) => k.tgl_lahir_kepala),
+      ].filter(Boolean);
+      const balita = allBirths.filter(t => umur(t) <= 5).length;
+      const lansia = allBirths.filter(t => umur(t) >= 60).length;
+
+      const totKg = (spRes.data || []).reduce((s: number, x: any) => s + Number(x.total_setor_kg), 0);
+
       const anakRows = anakRes.data || [];
       const anakNormal = anakRows.filter((a: any) => !a.status_gizi || a.status_gizi === "normal").length;
       const anakRisiko = anakRows.filter((a: any) => a.status_gizi === "risiko").length;
       const anakStunting = anakRows.filter((a: any) => a.status_gizi === "stunting").length;
 
-      // Sampah tren 6 bulan
-      const sampahByB: Record<string, number> = {};
+      // Sampah 6 bulan
+      const byB: Record<string, number> = {};
       (sampahRes.data || []).forEach((s: any) => {
-        const b = new Date(s.tanggal).toLocaleDateString("id-ID", { month: "short", year: "2-digit" });
-        sampahByB[b] = (sampahByB[b] || 0) + Number(s.berat_kg);
+        const b = new Date(s.tanggal).toLocaleDateString("id-ID", { month: "short" });
+        byB[b] = (byB[b] || 0) + Number(s.berat_kg);
       });
-      const sampahEntries = Object.entries(sampahByB).slice(-6);
-      const sampahLabels = sampahEntries.map(([b]) => b);
-      const sampahTren = sampahEntries.map(([, kg]) => kg);
+      const entries = Object.entries(byB).slice(-6);
+      const sampahLbl = entries.map(([b]) => b);
+      const sampahKg = entries.map(([, v]) => v);
 
-      // Ronda tren 6 minggu
-      const rondaRows = (rondaRes.data || []).slice(0,6).reverse();
-      const rondaLabels = rondaRows.map((r: any) => new Date(r.tanggal).toLocaleDateString("id-ID", { day:"numeric", month:"short" }));
-      const rondaTren = rondaRows.map((r: any) => Number(r.jumlah_hadir) || 0);
-
-      // Top poin dari anggota_kk saldo_poin
-      const topPoin = angs
-        .filter((a: any) => Number(a.saldo_poin) > 0)
-        .sort((a: any, b: any) => Number(b.saldo_poin) - Number(a.saldo_poin))
-        .slice(0, 5)
-        .map((a: any) => ({ nama: a.nama || "—", poin: Number(a.saldo_poin) }));
-
-      setD({ totalKK: kkRes.count || 0, totalJiwa, laki, perempuan: totalJiwa - laki, balita, lansia, totKg, totPoin, anakNormal, anakRisiko, anakStunting, sampahTren: sampahTren.length ? sampahTren : [0,0,0,0,0,0], sampahLabels: sampahLabels.length ? sampahLabels : ["?","?","?","?","?","?"], rondaTren: rondaTren.length ? rondaTren : [], rondaLabels, topPoin, lastUpdate: new Date().toLocaleTimeString("id-ID") });
+      setD({ kk: kkRes.count || 0, jiwa: totalJiwa, laki, perempuan, balita, lansia, totKg, anakNormal, anakRisiko, anakStunting, sampahKg: sampahKg.length ? sampahKg : [0,0,0,0,0,0], sampahLbl: sampahLbl.length ? sampahLbl : ["","","","","",""], updated: new Date().toLocaleTimeString("id-ID") });
       setLive(true);
-    } catch (e) { console.error(e); }
+    } catch (e) { console.error("Dashboard err:", e); }
     setLoading(false);
   }, []);
 
   useEffect(() => {
-    fetch();
-    const t = setInterval(fetch, 30000); // Live polling 30 detik
+    refresh();
+    const t = setInterval(refresh, 30000);
     return () => clearInterval(t);
-  }, [fetch]);
+  }, [refresh]);
 
-  const C = { green: "#2d5a40", light: "#7a9a7e", gold: "#b8943f", red: "#c0392b", cream: "#f5f0e8", white: "#fff", dark: "#1a2e1f" };
+  const C = { green: "#2d5a40", bright: "#4ade80", gold: "#b8943f", red: "#e74c3c", blue: "#60a5fa", pink: "#f472b6", dark: "#1a2e1f", cream: "#f5f0e8" };
 
   const donutSegs = [
-    { label: "L", value: d.laki, color: "#2d5a40" },
-    { label: "P", value: d.perempuan, color: C.gold },
-    { label: "Balita", value: d.balita, color: "#4a90d9" },
-    { label: "Lansia", value: d.lansia, color: "#9b59b6" },
+    { label: "Laki-laki", value: d.laki || Math.ceil(d.jiwa * 0.55), color: "#4ade80" },
+    { label: "Perempuan", value: d.perempuan || Math.floor(d.jiwa * 0.45), color: C.gold },
+    { label: "Balita (≤5th)", value: d.balita, color: C.blue },
+    { label: "Lansia (≥60th)", value: d.lansia, color: "#a78bfa" },
   ];
-
   const stunMax = Math.max(d.anakNormal, d.anakRisiko, d.anakStunting, 1);
 
   return (
-    <section style={{ padding: "80px clamp(16px,4vw,40px)", background: C.dark, position: "relative", overflow: "hidden" }}>
-      {/* Decorative bg */}
-      <div style={{ position: "absolute", inset: 0, backgroundImage: `radial-gradient(circle at 10% 20%, rgba(45,90,64,0.4) 0%, transparent 50%), radial-gradient(circle at 90% 80%, rgba(184,148,63,0.15) 0%, transparent 50%)`, pointerEvents: "none" }} />
+    <section style={{ padding: "80px clamp(16px,4vw,40px)", background: C.dark, position: "relative", overflow: "hidden", fontFamily: "'Inter','DM Sans',system-ui,sans-serif" }}>
+      {/* Ambient glow */}
+      <div style={{ position: "absolute", inset: 0, backgroundImage: `radial-gradient(ellipse at 15% 25%, rgba(45,90,64,0.45) 0%, transparent 55%), radial-gradient(ellipse at 85% 75%, rgba(184,148,63,0.12) 0%, transparent 55%)`, pointerEvents: "none" }} />
 
       <div style={{ maxWidth: 1100, margin: "0 auto", position: "relative", zIndex: 1 }}>
-
         {/* Header */}
-        <div style={{ textAlign: "center", marginBottom: 52 }}>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(45,90,64,0.3)", border: "1px solid rgba(45,90,64,0.5)", borderRadius: 99, padding: "6px 16px", marginBottom: 16 }}>
-            <div style={{ width: 8, height: 8, borderRadius: "50%", background: live ? "#4ade80" : "#888", animation: live ? "pulse 1.5s infinite" : "none" }} />
-            <span style={{ fontSize: 11, color: live ? "#4ade80" : "#888", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase" }}>{live ? `Live • Update ${d.lastUpdate}` : "Memuat Data..."}</span>
+        <div style={{ textAlign: "center", marginBottom: 48 }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(74,222,128,0.1)", border: "1px solid rgba(74,222,128,0.25)", borderRadius: 99, padding: "6px 18px", marginBottom: 20 }}>
+            <div style={{ width: 7, height: 7, borderRadius: "50%", background: live ? C.bright : "#666", animation: live ? "dashPulse 1.5s infinite" : "none" }} />
+            <span style={{ fontSize: 11, color: live ? C.bright : "#888", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase" }}>
+              {live ? `Live — ${d.updated}` : "Memuat…"}
+            </span>
           </div>
-          <h2 style={{ margin: "0 0 12px", fontSize: "clamp(28px,5vw,48px)", fontWeight: 900, color: "#f5f0e8", lineHeight: 1.1, letterSpacing: "-0.02em" }}>
-            Denyut Nadi Kampung<br />
-            <em style={{ color: "#4ade80", fontStyle: "normal" }}>Ciburial RW 08</em>
+          <h2 style={{ margin: "0 0 12px", fontSize: "clamp(26px,4.5vw,44px)", fontWeight: 900, color: C.cream, lineHeight: 1.1, letterSpacing: "-0.02em" }}>
+            Denyut Nadi Kampung <em style={{ color: C.bright, fontStyle: "normal" }}>Ciburial RW 08</em>
           </h2>
-          <p style={{ color: C.light, fontSize: 15, maxWidth: 500, margin: "0 auto", lineHeight: 1.7 }}>Data nyata, diperbarui otomatis setiap 30 detik langsung dari sistem digital kampung.</p>
+          <p style={{ color: "rgba(245,240,232,0.5)", fontSize: 15, maxWidth: 480, margin: "0 auto", lineHeight: 1.7 }}>
+            Data nyata diperbarui otomatis setiap 30 detik langsung dari sistem digital kampung.
+          </p>
         </div>
 
-        {/* Big Stats */}
+        {/* Big stats */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(140px,1fr))", gap: 14, marginBottom: 36 }}>
           {[
-            { icon: "🏠", val: d.totalKK, label: "Kartu Keluarga", color: C.green },
-            { icon: "👥", val: d.totalJiwa, label: "Total Jiwa", color: "#4a90d9" },
-            { icon: "♻️", val: `${d.totKg.toFixed(0)} kg`, label: "Sampah Dikelola", color: "#4ade80" },
-            { icon: "🪙", val: d.totPoin.toLocaleString(), label: "Total Poin", color: C.gold },
-            { icon: "👶", val: d.anakNormal + d.anakRisiko + d.anakStunting, label: "Anak Posyandu", color: "#f472b6" },
+            { icon: "🏠", val: loading ? "—" : d.kk, label: "Kartu Keluarga", color: C.bright },
+            { icon: "👥", val: loading ? "—" : d.jiwa, label: "Total Jiwa", color: "#93c5fd" },
+            { icon: "♻️", val: loading ? "—" : `${d.totKg.toFixed(0)} kg`, label: "Sampah Dikelola", color: C.bright },
+            { icon: "👶", val: loading ? "—" : d.anakNormal + d.anakRisiko + d.anakStunting, label: "Anak Posyandu", color: "#f9a8d4" },
           ].map((s, i) => (
-            <div key={i} style={{ background: "rgba(255,255,255,0.05)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 20, padding: "20px 16px", textAlign: "center" }}>
-              <div style={{ fontSize: 28, marginBottom: 8 }}>{s.icon}</div>
-              <div style={{ fontSize: 26, fontWeight: 900, color: s.color, lineHeight: 1 }}>{loading ? "—" : s.val}</div>
-              <div style={{ fontSize: 11, color: C.light, marginTop: 6, textTransform: "uppercase", letterSpacing: "0.06em" }}>{s.label}</div>
+            <div key={i} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", borderRadius: 20, padding: "22px 16px", textAlign: "center" }}>
+              <div style={{ fontSize: 26, marginBottom: 8 }}>{s.icon}</div>
+              <div style={{ fontSize: 28, fontWeight: 900, color: s.color, lineHeight: 1, letterSpacing: "-0.02em" }}>{s.val}</div>
+              <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", marginTop: 6, textTransform: "uppercase", letterSpacing: "0.07em" }}>{s.label}</div>
             </div>
           ))}
         </div>
 
-        {/* Charts Grid */}
+        {/* 3 chart cards */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))", gap: 24 }}>
 
-          {/* 1. Demografi Jiwa */}
-          <div style={{ background: "rgba(255,255,255,0.06)", backdropFilter: "blur(10px)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 24, padding: 28 }}>
-            <div style={{ fontSize: 11, color: C.light, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 20 }}>📊 Komposisi Jiwa</div>
+          {/* Demografi Donut */}
+          <div style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", borderRadius: 24, padding: "28px 24px" }}>
+            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 20 }}>📊 Komposisi Jiwa</div>
             <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-              <DonutChart segments={donutSegs} />
+              <Donut segs={donutSegs} />
               <div style={{ flex: 1 }}>
                 {donutSegs.map((s, i) => (
-                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                    <div style={{ width: 10, height: 10, borderRadius: 3, background: s.color, flexShrink: 0 }} />
-                    <span style={{ fontSize: 12, color: "#e0e8e4", flex: 1 }}>{s.label}</span>
-                    <span style={{ fontSize: 14, fontWeight: 800, color: s.color }}>{s.value}</span>
+                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 9 }}>
+                    <div style={{ width: 8, height: 8, borderRadius: 2, background: s.color, flexShrink: 0 }} />
+                    <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", flex: 1 }}>{s.label}</span>
+                    <span style={{ fontSize: 14, fontWeight: 900, color: s.color }}>{s.value}</span>
                   </div>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* 2. Tren Sampah */}
-          <div style={{ background: "rgba(255,255,255,0.06)", backdropFilter: "blur(10px)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 24, padding: 28 }}>
-            <div style={{ fontSize: 11, color: C.light, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8 }}>♻️ Bank Sampah — Tren 6 Bulan</div>
-            <div style={{ fontSize: 20, fontWeight: 900, color: "#4ade80", marginBottom: 16 }}>{d.totKg.toFixed(1)} kg total</div>
-            <SvgArea data={d.sampahTren} color="#4ade80" h={80} />
-            <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6 }}>
-              {d.sampahLabels.map((l, i) => (
-                <span key={i} style={{ fontSize: 9, color: "#5a7065", textAlign: "center" }}>{l}</span>
-              ))}
+          {/* Bank Sampah */}
+          <div style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", borderRadius: 24, padding: "28px 24px" }}>
+            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 6 }}>♻️ Bank Sampah — 6 Bulan</div>
+            <div style={{ fontSize: 22, fontWeight: 900, color: C.bright, marginBottom: 18, letterSpacing: "-0.02em" }}>{d.totKg.toFixed(1)} kg total</div>
+            <SvgArea data={d.sampahKg} color={C.bright} h={90} labels={d.sampahLbl} />
+          </div>
+
+          {/* Gizi Balita */}
+          <div style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", borderRadius: 24, padding: "28px 24px" }}>
+            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 20 }}>👶 Status Gizi Balita</div>
+            <HBar value={d.anakNormal} max={stunMax} color={C.bright} label="✅ Normal" count={d.anakNormal} />
+            <HBar value={d.anakRisiko} max={stunMax} color={C.gold} label="⚠️ Risiko" count={d.anakRisiko} />
+            <HBar value={d.anakStunting} max={stunMax} color={C.red} label="🔴 Stunting" count={d.anakStunting} />
+            <div style={{ marginTop: 16, padding: "10px 14px", background: d.anakStunting === 0 ? "rgba(74,222,128,0.08)" : "rgba(231,76,60,0.1)", borderRadius: 12, fontSize: 12, color: d.anakStunting === 0 ? C.bright : "#f87171", fontWeight: 600 }}>
+              {d.anakStunting === 0 ? "🎉 Tidak ada balita stunting saat ini!" : `⚠️ ${d.anakStunting} balita perlu perhatian khusus`}
             </div>
           </div>
-
-          {/* 3. Status Gizi Posyandu */}
-          <div style={{ background: "rgba(255,255,255,0.06)", backdropFilter: "blur(10px)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 24, padding: 28 }}>
-            <div style={{ fontSize: 11, color: C.light, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 20 }}>👶 Status Gizi Balita</div>
-            <HBar value={d.anakNormal} max={stunMax} color="#4ade80" label="Normal ✅" count={d.anakNormal} />
-            <HBar value={d.anakRisiko} max={stunMax} color={C.gold} label="Risiko ⚠️" count={d.anakRisiko} />
-            <HBar value={d.anakStunting} max={stunMax} color={C.red} label="Stunting 🔴" count={d.anakStunting} />
-            <div style={{ marginTop: 16, fontSize: 12, color: C.light, background: "rgba(255,255,255,0.05)", borderRadius: 12, padding: "10px 14px" }}>
-              {d.anakStunting === 0 ? "🎉 Tidak ada anak stunting saat ini!" : `⚠️ ${d.anakStunting} anak perlu perhatian khusus`}
-            </div>
-          </div>
-
-          {/* 4. Kehadiran Ronda */}
-          <div style={{ background: "rgba(255,255,255,0.06)", backdropFilter: "blur(10px)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 24, padding: 28 }}>
-            <div style={{ fontSize: 11, color: C.light, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8 }}>🔦 Kehadiran Ronda</div>
-            {d.rondaTren.length >= 2 ? (
-              <>
-                <div style={{ fontSize: 20, fontWeight: 900, color: "#60a5fa", marginBottom: 16 }}>Rata-rata: {Math.round(d.rondaTren.reduce((a,b)=>a+b,0)/d.rondaTren.length)} orang/malam</div>
-                <SvgArea data={d.rondaTren} color="#60a5fa" h={80} />
-                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6 }}>
-                  {d.rondaLabels.map((l, i) => (
-                    <span key={i} style={{ fontSize: 9, color: "#5a7065" }}>{l}</span>
-                  ))}
-                </div>
-              </>
-            ) : (
-              <div style={{ textAlign: "center", padding: "32px 0", color: C.light, fontSize: 13 }}>
-                <div style={{ fontSize: 32, marginBottom: 8 }}>🔦</div>
-                Data ronda akan tampil otomatis setelah petugas mulai absen NFC
-              </div>
-            )}
-          </div>
-
-          {/* 5. Leaderboard Poin */}
-          <div style={{ background: "rgba(255,255,255,0.06)", backdropFilter: "blur(10px)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 24, padding: 28, gridColumn: "span 2" }}>
-            <div style={{ fontSize: 11, color: C.light, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 20 }}>🏆 Warga Teladan — Top Kontributor Poin</div>
-            {d.topPoin.length === 0 ? (
-              <div style={{ textAlign: "center", padding: "24px 0", color: C.light, fontSize: 13 }}>Mulai aktif setor sampah, ikut ronda & posyandu untuk masuk leaderboard!</div>
-            ) : (
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 14 }}>
-                {d.topPoin.map((p, i) => (
-                  <div key={i} style={{ background: i === 0 ? "rgba(184,148,63,0.15)" : "rgba(255,255,255,0.05)", border: `1px solid ${i === 0 ? "rgba(184,148,63,0.4)" : "rgba(255,255,255,0.08)"}`, borderRadius: 16, padding: "16px 18px", display: "flex", alignItems: "center", gap: 12 }}>
-                    <div style={{ width: 36, height: 36, borderRadius: "50%", background: i === 0 ? C.gold : i === 1 ? "#c0c0c0" : "#cd7f32", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 900, color: i < 3 ? "white" : "white", flexShrink: 0 }}>
-                      {i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : i + 1}
-                    </div>
-                    <div>
-                      <div style={{ fontSize: 14, fontWeight: 700, color: "#f5f0e8", lineHeight: 1.2 }}>{p.nama}</div>
-                      <div style={{ fontSize: 16, fontWeight: 900, color: i === 0 ? C.gold : "#4ade80" }}>{p.poin.toLocaleString()} poin</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
         </div>
 
-        {/* Footer note */}
-        <div style={{ textAlign: "center", marginTop: 36, fontSize: 12, color: "#3d5a47" }}>
-          Data tersambung langsung ke sistem digital Kampung Ciburial RW 08 • Diperbarui otomatis setiap 30 detik
+        <div style={{ textAlign: "center", marginTop: 32, fontSize: 11, color: "rgba(255,255,255,0.2)", letterSpacing: "0.05em" }}>
+          Data langsung dari sistem Kampung Ciburial RW 08 • Auto-refresh tiap 30 detik
         </div>
       </div>
 
-      <style>{`@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.15)}}`}</style>
+      <style>{`@keyframes dashPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.2)}}`}</style>
     </section>
   );
 }

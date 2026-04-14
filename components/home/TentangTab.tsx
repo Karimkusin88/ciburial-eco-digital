@@ -1,7 +1,8 @@
 "use client";
 import dynamic from "next/dynamic";
 import { TabType, Testimoni } from "./types";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 const CuacaSholatWidget = dynamic(() => import("@/components/CuacaSholatWidget"), { ssr: false });
 
@@ -37,6 +38,18 @@ const divisi = [
 
 export default function TentangTab({ onNavigate, testimoni = [], onPaymentSuccess }: TentangTabProps) {
   const [loadingDonasi, setLoadingDonasi] = useState(false);
+  const [totalJiwa, setTotalJiwa] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!isSupabaseReady()) return;
+    (async () => {
+      const [kkRes, angRes] = await Promise.all([
+        supabase.from("keluarga").select("id", { count: "exact", head: true }),
+        supabase.from("anggota_kk").select("id", { count: "exact", head: true }),
+      ]);
+      setTotalJiwa((kkRes.count || 0) + (angRes.count || 0));
+    })();
+  }, []);
 
   const bayarDonasi = async () => {
     const raw = window.prompt("Berapa nominal donasi yang ingin disalurkan? (Contoh: 50000)\nMinimal: Rp 5.000", "50000");
@@ -133,7 +146,7 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
       <section className="sec" style={{ background: "var(--cw)", padding: "clamp(40px,6vw,68px) clamp(16px,4vw,32px)" }}>
         <div style={{ maxWidth: 1320, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(130px,1fr))", gap: 2 }}>
           {[
-            { v: "450", l: "Jiwa", s: "Total Populasi" },
+            { v: totalJiwa !== null ? totalJiwa.toLocaleString() : "450", l: "Jiwa", s: "Total Populasi" },
             { v: "3", l: "RT", s: "Rukun Tetangga" },
             { v: "55%", l: "Pemuda/Pemudi", s: "Gen. Penerus" },
             { v: "5", l: "Divisi", s: "Tim Lapangan" },
@@ -189,7 +202,7 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
           <div style={{ textAlign: "center", marginBottom: 56 }}>
             <div className="dl dlc" />
             <h2 className="fnt" style={{ fontSize: "clamp(30px,5vw,54px)", fontWeight: 300, color: "var(--cr)", letterSpacing: "-.02em" }}>Keluarga Besar Ciburial</h2>
-            <p style={{ color: "rgba(250,248,243,.45)", fontSize: 14, marginTop: 10, maxWidth: 400, margin: "10px auto 0" }}>Pemuda mendominasi — 55% dari 450 jiwa. Mereka adalah modal utama quantum leap Ciburial.</p>
+            <p style={{ color: "rgba(250,248,243,.45)", fontSize: 14, marginTop: 10, maxWidth: 400, margin: "10px auto 0" }}>Pemuda mendominasi komunitas dari total <strong>{totalJiwa !== null ? totalJiwa.toLocaleString() : "450"} jiwa</strong>. Mereka adalah modal utama quantum leap Ciburial.</p>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(230px,1fr))", gap: 18 }}>
             {[{ l: "Pemuda/Pemudi (Penerus)", pct: 55, c: "var(--go)" }, { l: "Lansia (Sesepuh)", pct: 45, c: "rgba(250,248,243,.28)" }].map((item, i) => (
