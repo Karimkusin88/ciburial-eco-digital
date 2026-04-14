@@ -60,4 +60,15 @@ export const supabase = isSupabaseReady()
    CREATE POLICY "anon_write_produk"    ON produk    FOR ALL USING (true) WITH CHECK (true);
    CREATE POLICY "anon_write_transaksi" ON transaksi FOR ALL USING (true) WITH CHECK (true);
 
+   -- ===== VOTING (WAJIB: Jalankan di Supabase SQL Editor) =====
+   ALTER TABLE voting         ENABLE ROW LEVEL SECURITY;
+   ALTER TABLE pilihan_voting ENABLE ROW LEVEL SECURITY;
+   ALTER TABLE vote_record    ENABLE ROW LEVEL SECURITY;
+   CREATE POLICY "public_read_voting"         ON voting         FOR SELECT USING (true);
+   CREATE POLICY "public_read_pilihan_voting" ON pilihan_voting FOR SELECT USING (true);
+   CREATE POLICY "public_read_vote_record"    ON vote_record    FOR SELECT USING (true);
+   CREATE POLICY "anon_write_voting"         ON voting         FOR ALL USING (true) WITH CHECK (true);
+   CREATE POLICY "anon_write_pilihan_voting" ON pilihan_voting FOR ALL USING (true) WITH CHECK (true);
+   CREATE POLICY "anon_write_vote_record"    ON vote_record    FOR ALL USING (true) WITH CHECK (true);
+
 ══════════════════════════════════════════════════════ */

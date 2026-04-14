@@ -53,6 +53,7 @@ export default function VotingPage() {
   const [terverifikasi, setTerverifikasi] = useState<Pemilih | null>(null);
   const [konfirmasi, setKonfirmasi] = useState<Pilihan | null>(null);
   const [loading, setLoading] = useState(false);
+  const [fetchError, setFetchError] = useState<string|null>(null);
   const [toast, setToast] = useState({ msg: "", type: "info" });
   const [slideIdx, setSlideIdx] = useState(0);
 
@@ -98,16 +99,28 @@ export default function VotingPage() {
     });
   }, []);
 
-  // Fetch pilihan LAZILY ketika user Pilih agenda — ini fix utamanya!
+  // Fetch pilihan LAZILY ketika user Pilih agenda
   async function bukaBilik(v: Voting) {
     setActiveVoting(v);
     setAktivPilihan([]);
+    setFetchError(null);
     setTerverifikasi(null);
     setKonfirmasi(null);
 
-    const { data, error } = await supabase.from("pilihan_voting").select("*").eq("voting_id", v.id).order("id");
-    if (error) console.error("Gagal load pilihan:", error.message);
-    setAktivPilihan(data ?? []);
+    try {
+      const { data, error } = await supabase.from("pilihan_voting").select("*").eq("voting_id", v.id);
+      if (error) {
+        setFetchError(`Supabase Error: ${error.message} (kode: ${error.code})`);
+        return;
+      }
+      if (!data || data.length === 0) {
+        setFetchError("DATA KOSONG — Kemungkinan RLS (Row Level Security) Supabase memblokir akses. Jalankan SQL di bawah di Supabase → SQL Editor");
+        return;
+      }
+      setAktivPilihan(data);
+    } catch (e: any) {
+      setFetchError(`Koneksi error: ${e?.message ?? e}`);
+    }
   }
 
   // NFC
@@ -328,8 +341,29 @@ export default function VotingPage() {
             </div>
 
             {aktivPilihan.length === 0 ? (
-              <div style={{ textAlign: "center", padding: "40px", background: C.white, borderRadius: 20, color: C.lightGreen, fontWeight: 700 }}>
-                Memuat daftar pilihan...
+              <div style={{ textAlign: "center", padding: "32px", background: C.white, borderRadius: 20, border: `2px solid ${fetchError ? C.red : "#e0dccc"}` }}>
+                {fetchError ? (
+                  <>
+                    <div style={{ fontSize: 30, marginBottom: 12 }}>🚨</div>
+                    <div style={{ fontWeight: 900, fontSize: 16, color: C.red, marginBottom: 12 }}>Gagal Memuat Data Pilihan!</div>
+                    <div style={{ fontSize: 13, color: "#666", marginBottom: 20, padding: "12px", background: "#fff0f0", borderRadius: 10, fontFamily: "monospace", wordBreak: "break-word" }}>{fetchError}</div>
+                    <div style={{ textAlign: "left", background: C.darkGreen, borderRadius: 12, padding: "16px", color: "#c8ffd4", fontSize: 12, fontFamily: "monospace", lineHeight: 1.8 }}>
+                      <div style={{ color: C.gold, fontWeight: 900, marginBottom: 8, fontFamily: "Inter" }}>🔧 SOLUSI: Jalankan SQL ini di Supabase → SQL Editor:</div>
+                      <div>ALTER TABLE voting ENABLE ROW LEVEL SECURITY;</div>
+                      <div>ALTER TABLE pilihan_voting ENABLE ROW LEVEL SECURITY;</div>
+                      <div>ALTER TABLE vote_record ENABLE ROW LEVEL SECURITY;</div>
+                      <div>CREATE POLICY "pub_r_v" ON voting FOR SELECT USING (true);</div>
+                      <div>CREATE POLICY "pub_r_pv" ON pilihan_voting FOR SELECT USING (true);</div>
+                      <div>CREATE POLICY "pub_r_vr" ON vote_record FOR SELECT USING (true);</div>
+                      <div>CREATE POLICY "pub_w_v" ON voting FOR ALL USING (true) WITH CHECK (true);</div>
+                      <div>CREATE POLICY "pub_w_pv" ON pilihan_voting FOR ALL USING (true) WITH CHECK (true);</div>
+                      <div>CREATE POLICY "pub_w_vr" ON vote_record FOR ALL USING (true) WITH CHECK (true);</div>
+                    </div>
+                    <button onClick={() => bukaBilik(activeVoting!)} style={{ marginTop: 16, padding: "12px 24px", background: C.green, color: "white", border: "none", borderRadius: 12, fontWeight: 800, fontSize: 14, cursor: "pointer" }}>🔄 Coba Muat Ulang</button>
+                  </>
+                ) : (
+                  <div style={{ color: C.lightGreen, fontWeight: 700 }}>⏳ Memuat daftar pilihan...</div>
+                )}
               </div>
             ) : tipeAktif?.tipe === "PEMILU" ? (
               /* LAYOUT PEMILU - Kartu Grid Foto */
