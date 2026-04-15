@@ -43,11 +43,9 @@ export default function LiveVotingBroadcast() {
   const [lastUpdate, setLast] = useState("");
   const [live, setLive] = useState(false);
   const [activeIdx, setActiveIdx] = useState(0);
-  const [tick, setTick] = useState(0); // For clock
-
-  // Live clock
+  // Live clock — re-render setiap detik
   useEffect(() => {
-    const t = setInterval(() => setTick(x => x + 1), 1000);
+    const t = setInterval(() => setTotalDPT(prev => prev), 1000);
     return () => clearInterval(t);
   }, []);
   const now = new Date();
@@ -229,56 +227,51 @@ export default function LiveVotingBroadcast() {
                   const col = CANDS[i % CANDS.length];
 
                   return (
-                    <div key={p.id} style={{ background: C.white, borderRadius: 24, overflow: "hidden", boxShadow: isLeading ? `0 16px 50px ${col}25, 0 4px 20px rgba(0,0,0,0.08)` : "0 4px 20px rgba(0,0,0,0.08)", border: isLeading ? `3px solid ${col}` : `1px solid ${C.border}`, transition: "all 0.5s ease", position: "relative" }}>
+                    <div key={p.id} style={{ borderRadius: 24, overflow: "hidden", boxShadow: isLeading ? `0 20px 60px ${col}30, 0 4px 20px rgba(0,0,0,0.12)` : "0 4px 20px rgba(0,0,0,0.08)", border: isLeading ? `3px solid ${col}` : `1px solid ${C.border}`, transition: "all 0.5s ease", position: "relative", background: "#111" }}>
 
                       {/* Rank badge */}
+                      <div style={{ position: "absolute", top: 16, left: 16, zIndex: 5, background: col, color: "#fff", borderRadius: 10, padding: "6px 14px", fontSize: 13, fontWeight: 900, letterSpacing: "0.06em", boxShadow: "0 4px 12px rgba(0,0,0,0.35)" }}>
+                        {isLeading ? "🏆" : `#${i+1}`} Nomor {i + 1}
+                      </div>
                       {isLeading && (
-                        <div style={{ position: "absolute", top: 16, right: 16, zIndex: 5, background: col, color: "#fff", borderRadius: 99, padding: "5px 14px", fontSize: 11, fontWeight: 900, letterSpacing: "0.1em", boxShadow: "0 4px 12px rgba(0,0,0,0.3)" }}>
-                          🏆 UNGGUL
+                        <div style={{ position: "absolute", top: 16, right: 16, zIndex: 5, background: "#DC2626", color: "#fff", borderRadius: 99, padding: "5px 14px", fontSize: 11, fontWeight: 900, letterSpacing: "0.12em", boxShadow: "0 4px 12px rgba(0,0,0,0.3)", animation: "blink 2s infinite" }}>
+                          UNGGUL
                         </div>
                       )}
 
-                      {/* Photo */}
-                      <div style={{ position: "relative", background: C.bgDeep, height: "clamp(180px,25vh,300px)" }}>
+                      {/* FULL PHOTO — fills the card, all info overlaid inside */}
+                      <div style={{ position: "relative", height: "clamp(360px,48vh,580px)" }}>
                         {foto ? (
-                          <img src={foto} alt={nama} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }} />
+                          <img src={foto} alt={nama} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }} />
                         ) : (
-                          <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "clamp(70px,12vw,130px)", opacity: 0.12, userSelect: "none" }}>
+                          <div style={{ width: "100%", height: "100%", background: C.bgDeep, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "clamp(80px,14vw,160px)", opacity: 0.15, userSelect: "none" }}>
                             {isGolput ? "🫙" : "👤"}
                           </div>
                         )}
-                        {/* Overlay gradient */}
-                        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "55%", backgroundImage: `linear-gradient(to top, ${C.white}, transparent)` }} />
-                        {/* Nomor urut */}
-                        <div style={{ position: "absolute", bottom: 16, left: 20, zIndex: 3 }}>
-                          <div style={{ background: col, color: "#fff", borderRadius: 10, padding: "6px 14px", fontSize: 12, fontWeight: 900, letterSpacing: "0.06em" }}>
-                            Nomor {i + 1}
+
+                        {/* LOWER-THIRD OVERLAY — nama + % + bar + suara */}
+                        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, backgroundImage: `linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.7) 50%, transparent 100%)`, padding: "60px 22px 22px", zIndex: 3 }}>
+                          {/* Nama */}
+                          <div style={{ fontSize: "clamp(18px,2.5vw,30px)", fontWeight: 900, color: "#fff", fontFamily: "var(--font-cormorant,'Cormorant Garamond'),serif", lineHeight: 1.15, marginBottom: 10, textShadow: "0 2px 8px rgba(0,0,0,0.8)" }}>
+                            {nama}
                           </div>
-                        </div>
-                      </div>
 
-                      {/* Content */}
-                      <div style={{ padding: "20px 24px 28px", position: "relative" }}>
-                        <div style={{ fontSize: "clamp(18px,2.5vw,28px)", fontWeight: 900, color: C.text, fontFamily: "var(--font-cormorant,'Cormorant Garamond'),serif", lineHeight: 1.15, marginBottom: 18 }}>
-                          {nama}
-                        </div>
-
-                        {/* Big % */}
-                        <div style={{ display: "flex", alignItems: "baseline", gap: 4, marginBottom: 12 }}>
-                          <span style={{ fontSize: "clamp(48px,7vw,90px)", fontWeight: 900, color: col, fontFamily: "var(--font-cormorant,'Cormorant Garamond'),serif", lineHeight: 1 }}>{perc}</span>
-                          <span style={{ fontSize: "clamp(22px,3vw,38px)", fontWeight: 700, color: col }}>%</span>
-                        </div>
-
-                        {/* Progress bar */}
-                        <div style={{ height: 12, background: C.bgDeep, borderRadius: 99, overflow: "hidden", marginBottom: 10 }}>
-                          <div style={{ height: "100%", width: `${perc}%`, background: col, borderRadius: 99, transition: "width 1.5s cubic-bezier(0.22,1,0.36,1)", position: "relative" }}>
-                            {/* Animated shimmer on bar */}
-                            <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%)", backgroundSize: "200% 100%", animation: "shimmer 2.5s ease-in-out infinite" }} />
+                          {/* % Besar */}
+                          <div style={{ display: "flex", alignItems: "baseline", gap: 3, marginBottom: 10 }}>
+                            <span style={{ fontSize: "clamp(42px,6vw,76px)", fontWeight: 900, color: col, fontFamily: "var(--font-cormorant,'Cormorant Garamond'),serif", lineHeight: 1, textShadow: `0 0 20px ${col}80` }}>{perc}</span>
+                            <span style={{ fontSize: "clamp(20px,3vw,34px)", fontWeight: 700, color: col, textShadow: `0 0 12px ${col}80` }}>%</span>
                           </div>
-                        </div>
 
-                        <div style={{ fontSize: 13, color: C.textSub, fontWeight: 700 }}>
-                          {p.jumlah_vote.toLocaleString("id-ID")} suara diterima
+                          {/* Progress bar */}
+                          <div style={{ height: 8, background: "rgba(255,255,255,0.15)", borderRadius: 99, overflow: "hidden", marginBottom: 8 }}>
+                            <div style={{ height: "100%", width: `${perc}%`, background: col, borderRadius: 99, transition: "width 1.5s cubic-bezier(0.22,1,0.36,1)", position: "relative" }}>
+                              <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.5) 50%, transparent 100%)", backgroundSize: "200% 100%", animation: "shimmer 2.5s ease-in-out infinite" }} />
+                            </div>
+                          </div>
+
+                          <div style={{ fontSize: 13, color: "rgba(255,255,255,0.6)", fontWeight: 700 }}>
+                            {p.jumlah_vote.toLocaleString("id-ID")} suara diterima
+                          </div>
                         </div>
                       </div>
                     </div>

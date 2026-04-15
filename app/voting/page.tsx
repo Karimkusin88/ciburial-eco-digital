@@ -292,7 +292,7 @@ export default function VotingPage() {
             {/* ===== LIVE RESULTS BUTTON ===== */}
             <div style={{ background: C.darkGreen, borderRadius: 20, padding: "24px 28px", marginTop: 28, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
               <div>
-                <div style={{ fontSize: 13, fontWeight: 900, color: C.gold, letterSpacing: "0.1em", marginBottom: 4 }}>📺 LAYAR BESAR / PAPAN PUBLIK</div>
+                <div style={{ fontSize: 13, fontWeight: 900, color: C.gold, letterSpacing: "0.1em", marginBottom: 4 }}>📺 PAPAN PUBLIK</div>
                 <div style={{ fontSize: 15, fontWeight: 700, color: "white" }}>Tampilkan Hasil Voting Live Real-time</div>
                 <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", marginTop: 4 }}>Otomatis update</div>
               </div>
