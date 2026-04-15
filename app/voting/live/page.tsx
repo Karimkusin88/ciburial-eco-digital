@@ -18,43 +18,50 @@ function pct(votes: number, total: number) {
   return total > 0 ? Math.round((votes / total) * 100) : 0;
 }
 
-export default function LiveVotingPage() {
+export default function LiveVotingBroadcast() {
   const [votings, setVotings]   = useState<Voting[]>([]);
   const [pilihan, setPilihan]   = useState<Record<string, Pilihan[]>>({});
+  const [totalDPT, setTotalDPT] = useState(0); // Buat nampilin target persentase kehadiran
   const [lastUpdate, setLast]   = useState("");
   const [live, setLive]         = useState(false);
   const [activeIdx, setActiveIdx] = useState(0);
 
-  const COLORS = ["#4ade80","#60a5fa","#f59e0b","#f472b6","#a78bfa","#34d399","#fb923c","#e879f9"];
-  const MEDAL = ["🥇","🥈","🥉"];
+  // Tema ala TV Berita (Red, Navy, Gold, White)
+  const COLORS = ["#ef4444", "#3b82f6", "#f59e0b", "#10b981", "#8b5cf6", "#f43f5e", "#0ea5e9"];
 
   const refresh = useCallback(async () => {
     if (!isSupabaseReady()) return;
-    const { data: vs } = await supabase
-      .from("voting").select("*").eq("status", "aktif").order("created_at");
-    if (!vs?.length) { setVotings([]); setLive(true); setLast(new Date().toLocaleTimeString("id-ID")); return; }
-    setVotings(vs);
+    try {
+      const [vsRes, dptRes] = await Promise.all([
+        supabase.from("voting").select("*").eq("status", "aktif").order("created_at"),
+        supabase.from("anggota_kk").select("*", { count: "exact", head: true }).not("nfc_id", "is", null) // Estimasi DPT (punya NFC)
+      ]);
 
-    const allPilihan: Record<string, Pilihan[]> = {};
-    await Promise.all(vs.map(async (v: Voting) => {
-      const { data } = await supabase.from("pilihan_voting").select("*").eq("voting_id", v.id);
-      allPilihan[v.id] = (data || []).sort((a: Pilihan, b: Pilihan) => b.jumlah_vote - a.jumlah_vote);
-    }));
-    setPilihan(allPilihan);
-    setLive(true);
-    setLast(new Date().toLocaleTimeString("id-ID"));
+      const vs = vsRes.data || [];
+      if (!vs.length) { setVotings([]); setLive(true); setLast(new Date().toLocaleTimeString("id-ID")); return; }
+      setVotings(vs);
+      if (dptRes.count) setTotalDPT(dptRes.count);
+
+      const allPilihan: Record<string, Pilihan[]> = {};
+      await Promise.all(vs.map(async (v: Voting) => {
+        const { data } = await supabase.from("pilihan_voting").select("*").eq("voting_id", v.id);
+        allPilihan[v.id] = (data || []).sort((a: Pilihan, b: Pilihan) => b.jumlah_vote - a.jumlah_vote);
+      }));
+      setPilihan(allPilihan);
+      setLive(true);
+      setLast(new Date().toLocaleTimeString("id-ID"));
+    } catch (e) {}
   }, []);
 
   useEffect(() => {
     refresh();
-    const t = setInterval(refresh, 10000); // Auto-refresh tiap 10 detik
+    const t = setInterval(refresh, 5000); // 5 detik biar bener-bener kayak TV live
     return () => clearInterval(t);
   }, [refresh]);
 
-  // Auto-rotate agenda jika lebih dari 1
   useEffect(() => {
     if (votings.length <= 1) return;
-    const t = setInterval(() => setActiveIdx(i => (i + 1) % votings.length), 15000);
+    const t = setInterval(() => setActiveIdx(i => (i + 1) % votings.length), 20000);
     return () => clearInterval(t);
   }, [votings.length]);
 
@@ -64,149 +71,178 @@ export default function LiveVotingPage() {
   const parsed = activeVoting ? parseJudul(activeVoting.judul) : null;
   const isPemilu = parsed?.tipe === "PEMILU";
 
+  // Data palsu untuk DPT jika di DB belum ada nfc_id
+  const dptDisplay = totalDPT > 0 ? totalDPT : 350; 
+  const partisipasi = pct(totalVotes, dptDisplay);
+
   return (
-    <div style={{ minHeight: "100vh", background: "#0a1a0f", color: "#f5f0e8", fontFamily: "var(--font-dm-sans,'DM Sans'),system-ui,sans-serif", display: "flex", flexDirection: "column" }}>
+    <div style={{ minHeight: "100vh", background: "#060b19", color: "#fff", fontFamily: "'Inter','DM Sans',sans-serif", display: "flex", flexDirection: "column", overflow: "hidden", position: "relative" }}>
+      
+      {/* BACKGROUND ELEMENTS (Map & Radial) */}
+      <div style={{ position: "fixed", inset: 0, background: "radial-gradient(ellipse at 50% -20%, #17365d 0%, #060b19 70%)", zIndex: 0 }} />
+      <div style={{ position: "fixed", inset: 0, opacity: 0.04, backgroundImage: "radial-gradient(#fff 1px, transparent 1px)", backgroundSize: "30px 30px", zIndex: 0 }} />
+      <div style={{ position: "fixed", inset: 0, opacity: 0.05, backgroundImage: "url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Indonesia_-_location_map.svg/1000px-Indonesia_-_location_map.svg.png')", backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat", zIndex: 0, filter: "invert(1) grayscale(1)" }} />
 
-      {/* Background */}
-      <div style={{ position: "fixed", inset: 0, backgroundImage: `radial-gradient(ellipse at 20% 20%, rgba(45,90,64,0.35) 0%, transparent 60%), radial-gradient(ellipse at 80% 80%, rgba(184,148,63,0.12) 0%, transparent 60%)`, pointerEvents: "none" }} />
-
-      {/* TOP BAR */}
-      <header style={{ position: "sticky", top: 0, zIndex: 50, background: "rgba(10,26,15,0.95)", backdropFilter: "blur(12px)", borderBottom: "1px solid rgba(74,222,128,0.15)", padding: "16px clamp(16px,3vw,40px)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <div style={{ fontSize: "clamp(18px,3vw,28px)", fontWeight: 900, color: "#4ade80", fontFamily: "var(--font-cormorant,'Cormorant Garamond'),serif", letterSpacing: "-0.02em" }}>
-            🌿 KPU Digital Ciburial RW 08
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 6, background: "rgba(74,222,128,0.12)", border: "1px solid rgba(74,222,128,0.25)", borderRadius: 99, padding: "5px 14px" }}>
-            <div style={{ width: 7, height: 7, borderRadius: "50%", background: live ? "#4ade80" : "#666", animation: live ? "dashPulse 1.5s infinite" : "none" }} />
-            <span style={{ fontSize: 11, color: "#4ade80", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" }}>{live ? `Live — ${lastUpdate}` : "Terhubung…"}</span>
-          </div>
+      {/* TOP HEADER BROADCAST */}
+      <header style={{ position: "relative", zIndex: 10, display: "flex" }}>
+        <div style={{ background: "#dc2626", color: "white", padding: "16px 32px", fontWeight: 900, fontSize: "clamp(18px,2vw,24px)", letterSpacing: "0.1em", display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{ width: 12, height: 12, background: "#fff", borderRadius: "50%", animation: "flash 1s infinite" }} />
+          LIVE REPORT
         </div>
-        <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>
-          🔄 Auto-refresh tiap 10 detik
+        <div style={{ flex: 1, background: "linear-gradient(90deg, #1e3a8a 0%, #0f172a 100%)", padding: "16px 32px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
+            <span style={{ fontSize: "clamp(20px,2.5vw,32px)", fontWeight: 900, fontFamily: "var(--font-cormorant,'Cormorant Garamond'),serif", color: "#f8fafc" }}>PEMILU DIGITAL</span>
+            <span style={{ fontSize: 14, color: "#94a3b8", fontWeight: 700, letterSpacing: "0.2em" }}>CIBURIAL RW 08</span>
+          </div>
+          <div style={{ textAlign: "right", fontFamily: "monospace", fontSize: 16, color: "#38bdf8", fontWeight: 900, letterSpacing: "0.1em" }}>
+            UPDATE: {lastUpdate}
+          </div>
         </div>
       </header>
 
-      <main style={{ flex: 1, padding: "clamp(24px,4vw,48px) clamp(16px,4vw,40px)", position: "relative", zIndex: 1, maxWidth: 1400, margin: "0 auto", width: "100%" }}>
+      <main style={{ flex: 1, position: "relative", zIndex: 1, display: "flex", flexDirection: "column", padding: "clamp(20px,4vw,40px)" }}>
 
-        {/* Tidak ada voting aktif */}
-        {!activeVoting && live && (
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "60vh", gap: 20 }}>
-            <div style={{ fontSize: 80 }}>🗳️</div>
-            <h1 style={{ fontSize: "clamp(24px,4vw,48px)", fontWeight: 300, color: "#f5f0e8", fontFamily: "var(--font-cormorant,'Cormorant Garamond'),serif", textAlign: "center" }}>
-              Belum ada voting aktif<br /><em style={{ color: "#4ade80" }}>saat ini</em>
-            </h1>
-            <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 16, textAlign: "center" }}>Administrator akan mengaktifkan agenda voting sebentar lagi.</p>
+        {!activeVoting && live ? (
+          <div style={{ margin: "auto", textAlign: "center" }}>
+            <div style={{ fontSize: 100, marginBottom: 20 }}>📶</div>
+            <h1 style={{ fontSize: 48, fontWeight: 900, color: "#94a3b8" }}>Standby Transmission...</h1>
           </div>
-        )}
-
-        {/* Tab agenda */}
-        {votings.length > 1 && (
-          <div style={{ display: "flex", gap: 10, marginBottom: 28, flexWrap: "wrap" }}>
-            {votings.map((v, i) => {
-              const p = parseJudul(v.judul);
-              return (
-                <button key={v.id} onClick={() => setActiveIdx(i)}
-                  style={{ padding: "10px 20px", borderRadius: 12, fontSize: 13, fontWeight: 700, border: `2px solid ${i === activeIdx ? "#4ade80" : "rgba(255,255,255,0.1)"}`, background: i === activeIdx ? "rgba(74,222,128,0.12)" : "transparent", color: i === activeIdx ? "#4ade80" : "rgba(255,255,255,0.5)", cursor: "pointer", transition: "all 0.2s" }}>
-                  {p.tipe === "PEMILU" ? "🗳️" : "⚖️"} {p.text}
-                </button>
-              );
-            })}
-          </div>
-        )}
-
-        {activeVoting && (
-          <div>
-            {/* Judul voting */}
-            <div style={{ textAlign: "center", marginBottom: 40 }}>
-              <div style={{ display: "inline-block", background: isPemilu ? "rgba(74,222,128,0.12)" : "rgba(184,148,63,0.12)", border: `1px solid ${isPemilu ? "rgba(74,222,128,0.3)" : "rgba(184,148,63,0.3)"}`, borderRadius: 99, padding: "6px 18px", fontSize: 12, fontWeight: 800, letterSpacing: "0.12em", color: isPemilu ? "#4ade80" : "#b8943f", marginBottom: 16 }}>
-                {isPemilu ? "🗳️ PEMILIHAN DIGITAL" : "⚖️ MUSYAWARAH DIGITAL"}
+        ) : activeVoting && (
+          <>
+            {/* PANEL INFO & STATS */}
+            <div style={{ display: "flex", gap: "20px", marginBottom: "clamp(20px,4vw,40px)", flexWrap: "wrap" }}>
+              {/* Judul Panel */}
+              <div style={{ flex: "2 1 500px", background: "rgba(255,255,255,0.03)", borderLeft: "6px solid #38bdf8", padding: "30px", backdropFilter: "blur(10px)" }}>
+                <div style={{ color: "#38bdf8", fontWeight: 900, letterSpacing: "0.15em", fontSize: 14, marginBottom: 8, textTransform: "uppercase" }}>{isPemilu ? "Hasil Perolehan Suara" : "Keputusan Musyawarah"}</div>
+                <h2 style={{ margin: 0, fontSize: "clamp(32px,4vw,56px)", fontWeight: 900, lineHeight: 1.1, fontFamily: "var(--font-cormorant,'Cormorant Garamond'),serif", textShadow: "0 4px 20px rgba(0,0,0,0.5)" }}>
+                  {parsed?.text}
+                </h2>
+                {activeVoting.deskripsi && <div style={{ marginTop: 12, fontSize: 18, color: "#cbd5e1" }}>{activeVoting.deskripsi}</div>}
               </div>
-              <h1 style={{ margin: "0 0 8px", fontSize: "clamp(28px,5vw,64px)", fontWeight: 300, color: "#f5f0e8", fontFamily: "var(--font-cormorant,'Cormorant Garamond'),serif", letterSpacing: "-0.02em", lineHeight: 1.1 }}>
-                {parsed?.text}
-              </h1>
-              {activeVoting.deskripsi && <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 16 }}>{activeVoting.deskripsi}</p>}
-              <div style={{ marginTop: 16, fontSize: 20, fontWeight: 900, color: "#f5f0e8" }}>
-                <span style={{ fontFamily: "var(--font-cormorant,'Cormorant Garamond'),serif", fontSize: "clamp(28px,4vw,48px)", fontWeight: 300 }}>{totalVotes}</span>
-                <span style={{ fontSize: 14, color: "rgba(255,255,255,0.4)", marginLeft: 8 }}>suara masuk</span>
+
+              {/* Data Panel */}
+              <div style={{ flex: "1 1 300px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                <div style={{ background: "rgba(15,23,42,0.8)", border: "1px solid rgba(255,255,255,0.1)", padding: 20, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                  <div style={{ fontSize: 12, color: "#94a3b8", fontWeight: 800, textTransform: "uppercase" }}>Suara Masuk</div>
+                  <div style={{ fontSize: "clamp(40px,4vw,56px)", fontWeight: 900, color: "#f1f5f9", fontFamily: "monospace", margin: "4px 0", lineHeight: 1 }}>{totalVotes}</div>
+                  <div style={{ fontSize: 12, color: "#f59e0b", fontWeight: 700 }}>DARI ~{dptDisplay} DPT</div>
+                </div>
+                <div style={{ background: "rgba(15,23,42,0.8)", border: "1px solid rgba(255,255,255,0.1)", padding: 20, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                  <div style={{ fontSize: 12, color: "#94a3b8", fontWeight: 800, textTransform: "uppercase" }}>Partisipasi</div>
+                  <div style={{ fontSize: "clamp(40px,4vw,56px)", fontWeight: 900, color: "#10b981", margin: "4px 0", lineHeight: 1 }}>{partisipasi}%</div>
+                  <div style={{ width: "100%", height: 6, background: "rgba(255,255,255,0.1)" }}>
+                    <div style={{ width: `${partisipasi}%`, height: "100%", background: "#10b981", transition: "width 1s ease" }} />
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Hasil Voting */}
-            {activePilihan.length === 0 ? (
-              <div style={{ textAlign: "center", padding: 48, color: "rgba(255,255,255,0.3)", fontSize: 18 }}>Menunggu suara masuk…</div>
-            ) : isPemilu ? (
-              /* PEMILU — Card Grid Besar */
-              <div style={{ display: "grid", gridTemplateColumns: `repeat(auto-fit,minmax(clamp(220px,28vw,340px),1fr))`, gap: 24 }}>
+            {/* HASIL KANDIDAT */}
+            {isPemilu ? (
+              <div style={{ display: "grid", gridTemplateColumns: `repeat(auto-fit, minmax(280px, 1fr))`, gap: "clamp(16px,2vw,24px)" }}>
                 {activePilihan.map((p, i) => {
                   const { nama, foto } = parseKandidat(p.teks);
                   const perc = pct(p.jumlah_vote, totalVotes);
-                  const isGolput = nama.toLowerCase().includes("golput") || nama.toLowerCase().includes("kosong") || nama.toLowerCase().includes("netral");
-                  const isLeading = i === 0 && p.jumlah_vote > 0;
+                  const isGolput = nama.toLowerCase().includes("golput") || nama.toLowerCase().includes("kosong");
+                  const rankPos = i + 1;
+                  const c = COLORS[i % COLORS.length];
+
                   return (
-                    <div key={p.id} style={{ background: isLeading ? "rgba(74,222,128,0.08)" : "rgba(255,255,255,0.04)", border: `2px solid ${isLeading ? "#4ade80" : "rgba(255,255,255,0.1)"}`, borderRadius: 28, overflow: "hidden", position: "relative", transition: "transform 0.3s" }}>
-                      {isLeading && <div style={{ position: "absolute", top: 12, right: 12, background: "#4ade80", color: "#0a1a0f", borderRadius: 99, padding: "4px 12px", fontSize: 11, fontWeight: 900 }}>UNGGUL</div>}
-                      {/* Foto */}
-                      <div style={{ height: "clamp(140px,22vw,260px)", background: "rgba(255,255,255,0.03)", display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
+                    <div key={p.id} style={{ background: "linear-gradient(180deg, rgba(30,41,59,0.9) 0%, rgba(15,23,42,0.95) 100%)", borderTop: `4px solid ${c}`, position: "relative", boxShadow: `0 10px 40px ${c}20`, overflow: "hidden" }}>
+                      
+                      {/* Photo Header */}
+                      <div style={{ height: "clamp(180px,25vh,300px)", position: "relative", background: "#0f172a" }}>
                         {foto ? (
-                          <img src={foto} alt={nama} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                          <img src={foto} alt={nama} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", opacity: 0.9 }} />
                         ) : (
-                          <div style={{ fontSize: "clamp(60px,10vw,120px)", opacity: 0.15 }}>{isGolput ? "🫙" : "👤"}</div>
+                          <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 100, opacity: 0.2 }}>{isGolput ? "🫙" : "👤"}</div>
                         )}
-                        <div style={{ position: "absolute", top: 12, left: 12, background: "rgba(0,0,0,0.6)", borderRadius: 12, padding: "4px 10px", fontSize: 13, fontWeight: 900, color: "white" }}>{MEDAL[i] || `#${i+1}`}</div>
-                      </div>
-                      {/* Info */}
-                      <div style={{ padding: "20px 24px" }}>
-                        <div style={{ fontSize: "clamp(16px,2.5vw,24px)", fontWeight: 900, color: "#f5f0e8", marginBottom: 16, fontFamily: "var(--font-cormorant,'Cormorant Garamond'),serif" }}>{nama}</div>
-                        {/* Progress bar */}
-                        <div style={{ background: "rgba(255,255,255,0.08)", borderRadius: 99, height: 10, overflow: "hidden", marginBottom: 8 }}>
-                          <div style={{ width: `${perc}%`, height: "100%", background: COLORS[i], borderRadius: 99, transition: "width 1.2s cubic-bezier(0.34,1.56,0.64,1)" }} />
-                        </div>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                          <span style={{ fontSize: "clamp(28px,5vw,56px)", fontWeight: 300, color: COLORS[i], fontFamily: "var(--font-cormorant,'Cormorant Garamond'),serif", lineHeight: 1 }}>{perc}%</span>
-                          <span style={{ fontSize: 14, color: "rgba(255,255,255,0.4)", fontWeight: 700 }}>{p.jumlah_vote} suara</span>
+                        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "60%", background: "linear-gradient(to top, #0f172a 0%, transparent 100%)" }} />
+                        
+                        {/* Rank Badge */}
+                        <div style={{ position: "absolute", top: 16, right: 16, background: c, color: "#fff", width: 44, height: 44, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, fontWeight: 900, boxShadow: "0 4px 12px rgba(0,0,0,0.5)" }}>
+                          {rankPos}
                         </div>
                       </div>
+
+                      {/* Content */}
+                      <div style={{ padding: "0 24px 24px", position: "relative", zIndex: 2, marginTop: -20, textAlign: "center" }}>
+                        <div style={{ fontSize: "clamp(24px,3vw,36px)", fontWeight: 900, fontFamily: "var(--font-cormorant,'Cormorant Garamond'),serif", color: "#fff", textShadow: "0 2px 10px rgba(0,0,0,0.8)" }}>
+                          {nama}
+                        </div>
+                        
+                        <div style={{ marginTop: 16, display: "flex", alignItems: "baseline", justifyContent: "center", gap: 8 }}>
+                          <span style={{ fontSize: "clamp(50px,6vw,80px)", fontWeight: 900, color: c, lineHeight: 0.9, letterSpacing: "-0.05em" }}>{perc}</span>
+                          <span style={{ fontSize: 32, fontWeight: 700, color: c }}>%</span>
+                        </div>
+                        
+                        <div style={{ fontSize: 18, color: "#94a3b8", fontWeight: 700, marginTop: 4 }}>
+                          {p.jumlah_vote.toLocaleString("id-ID")} SUARA
+                        </div>
+
+                        {/* Progress Bar TV Style */}
+                        <div style={{ height: 12, background: "rgba(0,0,0,0.5)", marginTop: 24, borderRadius: 2, overflow: "hidden", border: "1px solid rgba(255,255,255,0.1)" }}>
+                          <div style={{ height: "100%", width: `${perc}%`, background: c, transition: "width 1.5s cubic-bezier(0.22, 1, 0.36, 1)", position: "relative" }}>
+                            <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(45deg, rgba(255,255,255,0.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.15) 75%, transparent 75%, transparent)", backgroundSize: "20px 20px", animation: "moveStripes 1s linear infinite" }} />
+                          </div>
+                        </div>
+                      </div>
+
                     </div>
                   );
                 })}
               </div>
             ) : (
-              /* MUSYAWARAH — Horizontal bars besar */
-              <div style={{ display: "flex", flexDirection: "column", gap: 20, maxWidth: 800, margin: "0 auto" }}>
+              /* MUSYAWARAH BROADCAST STYLE */
+              <div style={{ maxWidth: 900, margin: "0 auto", width: "100%", display: "flex", flexDirection: "column", gap: 16 }}>
                 {activePilihan.map((p, i) => {
                   const { nama } = parseKandidat(p.teks);
                   const perc = pct(p.jumlah_vote, totalVotes);
                   const isSetuju = nama.toLowerCase().includes("setuju") && !nama.toLowerCase().includes("tidak");
                   const isTolak = nama.toLowerCase().includes("tidak") || nama.toLowerCase().includes("tolak");
-                  const col = isSetuju ? "#4ade80" : isTolak ? "#f87171" : "#b8943f";
+                  const c = isSetuju ? "#10b981" : isTolak ? "#ef4444" : "#f59e0b";
+                  
                   return (
-                    <div key={p.id} style={{ background: "rgba(255,255,255,0.05)", border: `2px solid ${col}30`, borderRadius: 24, padding: "clamp(20px,3vw,32px)" }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16, alignItems: "center" }}>
-                        <span style={{ fontSize: "clamp(20px,3vw,36px)", fontWeight: 900, color: col, fontFamily: "var(--font-cormorant,'Cormorant Garamond'),serif" }}>{nama}</span>
-                        <span style={{ fontSize: "clamp(16px,2.5vw,28px)", fontWeight: 700, color: "rgba(255,255,255,0.6)" }}>{p.jumlah_vote} suara</span>
-                      </div>
-                      <div style={{ background: "rgba(255,255,255,0.06)", borderRadius: 99, height: "clamp(14px,2vw,24px)", overflow: "hidden" }}>
-                        <div style={{ width: `${perc}%`, height: "100%", background: col, borderRadius: 99, transition: "width 1.5s cubic-bezier(0.34,1.56,0.64,1)", display: "flex", alignItems: "center", justifyContent: "flex-end", paddingRight: 12 }}>
-                          {perc > 10 && <span style={{ fontSize: 12, fontWeight: 900, color: "rgba(0,0,0,0.6)" }}>{perc}%</span>}
+                    <div key={p.id} style={{ display: "flex", alignItems: "stretch", background: "rgba(15,23,42,0.8)", border: `1px solid ${c}40` }}>
+                      <div style={{ width: 10, background: c }} />
+                      <div style={{ flex: 1, padding: "24px 32px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 16 }}>
+                          <div style={{ fontSize: "clamp(24px,3vw,36px)", fontWeight: 900, color: "#fff", textTransform: "uppercase" }}>{nama}</div>
+                          <div style={{ textAlign: "right" }}>
+                            <span style={{ fontSize: "clamp(36px,4vw,56px)", fontWeight: 900, color: c, lineHeight: 1 }}>{perc}%</span>
+                            <div style={{ fontSize: 14, color: "#94a3b8", fontWeight: 700 }}>{p.jumlah_vote} SUARA</div>
+                          </div>
+                        </div>
+                        <div style={{ height: 16, background: "rgba(0,0,0,0.5)", borderRadius: 2, overflow: "hidden" }}>
+                          <div style={{ height: "100%", width: `${perc}%`, background: c, transition: "width 1s ease", backgroundImage: "linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.1) 75%, transparent 75%, transparent)", backgroundSize: "20px 20px", animation: "moveStripes 1s linear infinite" }} />
                         </div>
                       </div>
-                      <div style={{ fontSize: 32, fontWeight: 300, color: col, marginTop: 10, fontFamily: "var(--font-cormorant,'Cormorant Garamond'),serif" }}>{perc}%</div>
                     </div>
                   );
                 })}
               </div>
             )}
-          </div>
+          </>
         )}
       </main>
 
-      {/* FOOTER */}
-      <footer style={{ borderTop: "1px solid rgba(255,255,255,0.06)", padding: "16px clamp(16px,3vw,40px)", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 12, color: "rgba(255,255,255,0.25)", position: "relative", zIndex: 1 }}>
-        <span>🔒 Sistem Pemungutan Suara Digital Terenkripsi — Kampung Ciburial RW 08</span>
-        <span>Data diperbarui tiap 10 detik secara otomatis</span>
+      {/* TICKER NEWS BAWAH */}
+      <footer style={{ position: "relative", zIndex: 10, background: "#0f172a", borderTop: "2px solid #38bdf8", overflow: "hidden", display: "flex", alignItems: "stretch", height: 50 }}>
+        <div style={{ background: "#38bdf8", color: "#0f172a", fontWeight: 900, padding: "0 24px", display: "flex", alignItems: "center", fontSize: 16, letterSpacing: "0.1em", zIndex: 2, boxShadow: "4px 0 10px rgba(0,0,0,0.5)" }}>
+          INFO KPU
+        </div>
+        <div style={{ flex: 1, display: "flex", alignItems: "center", overflow: "hidden", position: "relative" }}>
+          <div className="ticker-text" style={{ whiteSpace: "nowrap", fontSize: 18, color: "#f8fafc", fontWeight: 700, paddingLeft: "100%", animation: "ticker 25s linear infinite" }}>
+            <span style={{ color: "#38bdf8" }}>▪</span> Pemilihan Digital Kampung Ciburial RW 08 sedang berlangsung secara Real-Time. <span style={{ color: "#38bdf8", marginLeft: 40 }}>▪</span> Segera kunjungi Bilik Suara di TPS terdekat atau akses Pos Digital Warga. <span style={{ color: "#38bdf8", marginLeft: 40 }}>▪</span> Gunakan Kartu Warga berbasis NFC Anda untuk memilih. <span style={{ color: "#38bdf8", marginLeft: 40 }}>▪</span> Suara dijamin rahasia, langsung, dan bebas dari manipulasi (Full Encrypted). <span style={{ color: "#38bdf8", marginLeft: 40 }}>▪</span> Hasil ini adalah hasil resmi KPU Tingkat RW.
+          </div>
+        </div>
       </footer>
 
-      <style>{`@keyframes dashPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}`}</style>
+      <style>{`
+        @keyframes flash { 0%,100%{opacity:1} 50%{opacity:0.2} }
+        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-150%); } }
+        @keyframes moveStripes { 0% { background-position: 0 0; } 100% { background-position: 20px 20px; } }
+      `}</style>
     </div>
   );
 }
