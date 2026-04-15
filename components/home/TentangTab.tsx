@@ -5,6 +5,8 @@ import { useState, useEffect } from "react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 const CuacaSholatWidget = dynamic(() => import("@/components/CuacaSholatWidget"), { ssr: false });
+import CommunityDashboard from "@/components/home/CommunityDashboard";
+
 
 interface TentangTabProps {
   onNavigate: (t: TabType) => void;
@@ -161,6 +163,9 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
           ))}
         </div>
       </section>
+
+      {/* DENYUT NADI — Live Community Dashboard */}
+      <CommunityDashboard />
 
       {/* VISI MISI */}
       <section className="sec" style={{ padding: "clamp(48px,8vw,104px) clamp(16px,4vw,32px)", background: "var(--cr)" }}>
