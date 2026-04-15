@@ -94,68 +94,60 @@ export default function CommunityDashboard() {
   const refresh = useCallback(async () => {
     if (!isSupabaseReady()) return;
     try {
-      const [kkRes, angRes, kkDataRes, spRes, anakRes, sampahRes] = await Promise.all([
-        supabase.from("keluarga").select("id", { count: "exact", head: true }),
+      const [kkRes, angRes, spRes, anakRes, sampahRes] = await Promise.all([
+        supabase.from("keluarga").select("id, tgl_lahir_kepala"),
         supabase.from("anggota_kk").select("id, tgl_lahir, hubungan, jenis_kelamin"),
-        supabase.from("keluarga").select("id, tgl_lahir_kepala, jenis_kelamin_kepala"),
         supabase.from("saldo_poin").select("total_setor_kg"),
         supabase.from("anak_posyandu").select("status_gizi"),
         supabase.from("setor_sampah").select("tanggal, berat_kg")
           .gte("tanggal", new Date(Date.now() - 180 * 864e5).toISOString().split("T")[0]),
       ]);
 
+      const kks  = kkRes.data  || [];
+      const angs = angRes.data || [];
+
+      const totalJiwa = kks.length + angs.length;
+
       const now = new Date();
       const umur = (tgl: string) => {
-        if (!tgl) return 0;
+        if (!tgl) return -1;
         const d = new Date(tgl), a = now.getFullYear() - d.getFullYear();
         return (now.getMonth() < d.getMonth() || (now.getMonth() === d.getMonth() && now.getDate() < d.getDate())) ? a - 1 : a;
       };
 
-      const angs = angRes.data || [];
-      const kks = kkDataRes.data || [];
-
-      // Gender detection — anggota: cek jenis_kelamin kolom jika ada, fallback ke hubungan
-      const isPerempuanAng = (a: any) => {
-        if (a.jenis_kelamin) return a.jenis_kelamin === "perempuan" || a.jenis_kelamin === "P";
+      const isP = (a: any) => {
+        if (a.jenis_kelamin) return a.jenis_kelamin === "perempuan" || a.jenis_kelamin === "P" || a.jenis_kelamin === "p";
         return a.hubungan === "istri" || a.hubungan === "mertua" || a.hubungan === "nenek";
       };
-      const isPerempuanKK = (k: any) => k.jenis_kelamin_kepala === "perempuan" || k.jenis_kelamin_kepala === "P";
 
-      const angLaki = angs.filter((a: any) => !isPerempuanAng(a)).length;
-      const angPerempuan = angs.filter((a: any) => isPerempuanAng(a)).length;
-      const kkLaki = kks.filter((k: any) => !isPerempuanKK(k)).length;
-      const kkPerempuan = kks.filter((k: any) => isPerempuanKK(k)).length;
+      const perempuan = angs.filter((a: any) => isP(a)).length;
+      const laki = totalJiwa - perempuan;
 
-      const totalJiwa = angs.length + kks.length;
-      const laki = angLaki + kkLaki;
-      const perempuan = angPerempuan + kkPerempuan;
-
-      // Balita & lansia (dari anggota + kepala KK)
-      const allBirths = [
-        ...angs.map((a: any) => a.tgl_lahir),
-        ...kks.map((k: any) => k.tgl_lahir_kepala),
-      ].filter(Boolean);
-      const balita = allBirths.filter(t => umur(t) <= 5).length;
-      const lansia = allBirths.filter(t => umur(t) >= 60).length;
+      const allTgl = [...angs.map((a: any) => a.tgl_lahir), ...kks.map((k: any) => k.tgl_lahir_kepala)].filter(Boolean);
+      const balita = allTgl.filter(t => { const u = umur(t); return u >= 0 && u <= 5; }).length;
+      const lansia = allTgl.filter(t => umur(t) >= 60).length;
 
       const totKg = (spRes.data || []).reduce((s: number, x: any) => s + Number(x.total_setor_kg), 0);
 
       const anakRows = anakRes.data || [];
-      const anakNormal = anakRows.filter((a: any) => !a.status_gizi || a.status_gizi === "normal").length;
-      const anakRisiko = anakRows.filter((a: any) => a.status_gizi === "risiko").length;
+      const anakNormal   = anakRows.filter((a: any) => !a.status_gizi || a.status_gizi === "normal").length;
+      const anakRisiko   = anakRows.filter((a: any) => a.status_gizi === "risiko").length;
       const anakStunting = anakRows.filter((a: any) => a.status_gizi === "stunting").length;
 
-      // Sampah 6 bulan
       const byB: Record<string, number> = {};
       (sampahRes.data || []).forEach((s: any) => {
         const b = new Date(s.tanggal).toLocaleDateString("id-ID", { month: "short" });
         byB[b] = (byB[b] || 0) + Number(s.berat_kg);
       });
       const entries = Object.entries(byB).slice(-6);
-      const sampahLbl = entries.map(([b]) => b);
-      const sampahKg = entries.map(([, v]) => v);
 
-      setD({ kk: kkRes.count || 0, jiwa: totalJiwa, laki, perempuan, balita, lansia, totKg, anakNormal, anakRisiko, anakStunting, sampahKg: sampahKg.length ? sampahKg : [0,0,0,0,0,0], sampahLbl: sampahLbl.length ? sampahLbl : ["","","","","",""], updated: new Date().toLocaleTimeString("id-ID") });
+      setD({
+        kk: kks.length, jiwa: totalJiwa, laki, perempuan, balita, lansia,
+        totKg, anakNormal, anakRisiko, anakStunting,
+        sampahKg: entries.length ? entries.map(([,v]) => v) : [0,0,0,0,0,0],
+        sampahLbl: entries.length ? entries.map(([b]) => b) : ["","","","","",""],
+        updated: new Date().toLocaleTimeString("id-ID"),
+      });
       setLive(true);
     } catch (e) { console.error("Dashboard err:", e); }
     setLoading(false);
@@ -178,7 +170,7 @@ export default function CommunityDashboard() {
   const stunMax = Math.max(d.anakNormal, d.anakRisiko, d.anakStunting, 1);
 
   return (
-    <section style={{ padding: "80px clamp(16px,4vw,40px)", background: C.dark, position: "relative", overflow: "hidden", fontFamily: "'Inter','DM Sans',system-ui,sans-serif" }}>
+    <section style={{ padding: "80px clamp(16px,4vw,40px)", background: "#1a2e1f", position: "relative", overflow: "hidden", fontFamily: "var(--font-dm-sans,'DM Sans'),sans-serif" }}>
       {/* Ambient glow */}
       <div style={{ position: "absolute", inset: 0, backgroundImage: `radial-gradient(ellipse at 15% 25%, rgba(45,90,64,0.45) 0%, transparent 55%), radial-gradient(ellipse at 85% 75%, rgba(184,148,63,0.12) 0%, transparent 55%)`, pointerEvents: "none" }} />
 
@@ -191,8 +183,8 @@ export default function CommunityDashboard() {
               {live ? `Live — ${d.updated}` : "Memuat…"}
             </span>
           </div>
-          <h2 style={{ margin: "0 0 12px", fontSize: "clamp(26px,4.5vw,44px)", fontWeight: 900, color: C.cream, lineHeight: 1.1, letterSpacing: "-0.02em" }}>
-            Denyut Nadi Kampung <em style={{ color: C.bright, fontStyle: "normal" }}>Ciburial RW 08</em>
+          <h2 style={{ margin: "0 0 12px", fontSize: "clamp(26px,4.5vw,44px)", fontWeight: 300, color: "#f5f0e8", lineHeight: 1.1, letterSpacing: "-0.025em", fontFamily: "var(--font-cormorant,'Cormorant Garamond'),serif" }}>
+            Denyut Nadi Kampung <em style={{ color: "#4ade80", fontStyle: "italic" }}>Ciburial RW 08</em>
           </h2>
           <p style={{ color: "rgba(245,240,232,0.5)", fontSize: 15, maxWidth: 480, margin: "0 auto", lineHeight: 1.7 }}>
             Data nyata diperbarui otomatis setiap 30 detik langsung dari sistem digital kampung.
@@ -209,7 +201,7 @@ export default function CommunityDashboard() {
           ].map((s, i) => (
             <div key={i} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", borderRadius: 20, padding: "22px 16px", textAlign: "center" }}>
               <div style={{ fontSize: 26, marginBottom: 8 }}>{s.icon}</div>
-              <div style={{ fontSize: 28, fontWeight: 900, color: s.color, lineHeight: 1, letterSpacing: "-0.02em" }}>{s.val}</div>
+              <div style={{ fontSize: 30, fontWeight: 300, color: s.color, lineHeight: 1, letterSpacing: "-0.01em", fontFamily: "var(--font-cormorant,'Cormorant Garamond'),serif" }}>{s.val}</div>
               <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", marginTop: 6, textTransform: "uppercase", letterSpacing: "0.07em" }}>{s.label}</div>
             </div>
           ))}
