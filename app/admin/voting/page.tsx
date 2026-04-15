@@ -28,6 +28,24 @@ export default function AdminVotingPage() {
   const [toast,      setToast]      = useState({msg:"", type:"info"});
   const [tab,        setTab]        = useState<"daftar"|"buat">("daftar");
   const [expandId,   setExpandId]   = useState<string|null>(null);
+  const [uploadingId, setUploadingId] = useState<number|null>(null);
+
+  async function uploadFoto(opsiId: number, file: File) {
+    setUploadingId(opsiId);
+    try {
+      const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+      const path = `kandidat/${Date.now()}_${opsiId}.${ext}`;
+      const { error } = await supabase.storage
+        .from("foto-kandidat")
+        .upload(path, file, { upsert: true, contentType: file.type });
+      if (error) throw error;
+      const { data: urlData } = supabase.storage.from("foto-kandidat").getPublicUrl(path);
+      ubahOpsi(opsiId, "foto", urlData.publicUrl);
+    } catch (e: any) {
+      showToast("Upload gagal: " + (e?.message || "Coba lagi"), "error");
+    }
+    setUploadingId(null);
+  }
 
   const showToast = (msg:string, type:"success"|"error"|"info"="info") => { setToast({msg,type}); setTimeout(()=>setToast({msg:"",type:"info"}),4000); };
 
@@ -220,8 +238,29 @@ export default function AdminVotingPage() {
                       <input value={o.teks} onChange={e=>ubahOpsi(o.id,"teks",e.target.value)} placeholder={tipe==="PEMILU"?"Nama Lengkap Kandidat":"Teks Opsi (Setuju/Tolak dsb)"} 
                         style={{width:"100%",padding:"12px 14px",borderRadius:8,border:"1px solid #CBD5E1",fontSize:14,fontWeight:600,outline:"none"}}/>
                       {tipe==="PEMILU"&&(
-                        <input value={o.foto} onChange={e=>ubahOpsi(o.id,"foto",e.target.value)} placeholder="Tautan URL Foto (Opsional: https://...)" 
-                          style={{width:"100%",padding:"10px 14px",borderRadius:8,border:"1px solid #CBD5E1",fontSize:13,outline:"none",background:"white"}}/>
+                        <div style={{display:"flex",gap:10,alignItems:"flex-start"}}>
+                          {/* Preview thumbnail */}
+                          <label htmlFor={`foto-${o.id}`} style={{flexShrink:0,cursor:uploadingId===o.id?"wait":"pointer",position:"relative"}}>
+                            <div style={{width:64,height:64,borderRadius:10,overflow:"hidden",border:"2px dashed #CBD5E1",background:"#F1F5F9",display:"flex",alignItems:"center",justifyContent:"center",fontSize:26,transition:"border-color 0.2s"}}
+                              onMouseEnter={e=>(e.currentTarget.style.borderColor="#3B82F6")}
+                              onMouseLeave={e=>(e.currentTarget.style.borderColor="#CBD5E1")}>
+                              {uploadingId===o.id ? (
+                                <div style={{fontSize:12,color:"#3B82F6",fontWeight:800,textAlign:"center",lineHeight:1.3}}>⏳<br/>Upload...</div>
+                              ) : o.foto ? (
+                                <img src={o.foto} alt="" style={{width:"100%",height:"100%",objectFit:"cover"}} onError={e=>{(e.target as HTMLImageElement).style.display="none";}} />
+                              ) : "📷"}
+                            </div>
+                            <div style={{fontSize:9,color:"#94A3B8",fontWeight:700,textAlign:"center",marginTop:3,letterSpacing:"0.05em"}}>TAP GALERI</div>
+                            <input id={`foto-${o.id}`} type="file" accept="image/*" style={{display:"none"}}
+                              onChange={e=>{ const f=e.target.files?.[0]; if(f) uploadFoto(o.id, f); e.target.value=""; }} />
+                          </label>
+                          <div style={{flex:1}}>
+                            <div style={{fontSize:11,color:"#64748B",fontWeight:700,marginBottom:4}}>Foto Kandidat</div>
+                            <input value={o.foto} onChange={e=>ubahOpsi(o.id,"foto",e.target.value)} placeholder="atau paste URL foto..." 
+                              style={{width:"100%",padding:"8px 12px",borderRadius:8,border:"1px solid #CBD5E1",fontSize:12,outline:"none",background:"white",color:"#475569"}}/>
+                            {o.foto && <div style={{fontSize:11,color:"#10B981",fontWeight:700,marginTop:4}}>✅ Foto siap digunakan</div>}
+                          </div>
+                        </div>
                       )}
                     </div>
                     {opsi.length>2&&<button onClick={()=>hapusOpsi(o.id)} style={{background:"#FEE2E2",color:"#EF4444",border:"none",borderRadius:8,width:36,height:36,fontSize:14,cursor:"pointer",fontWeight:800,flexShrink:0}}>✕</button>}
