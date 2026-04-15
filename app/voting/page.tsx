@@ -53,7 +53,7 @@ export default function VotingPage() {
   const [terverifikasi, setTerverifikasi] = useState<Pemilih | null>(null);
   const [konfirmasi, setKonfirmasi] = useState<Pilihan | null>(null);
   const [loading, setLoading] = useState(false);
-  const [fetchError, setFetchError] = useState<string|null>(null);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [toast, setToast] = useState({ msg: "", type: "info" });
   const [slideIdx, setSlideIdx] = useState(0);
 
@@ -294,7 +294,7 @@ export default function VotingPage() {
               <div>
                 <div style={{ fontSize: 13, fontWeight: 900, color: C.gold, letterSpacing: "0.1em", marginBottom: 4 }}>📺 LAYAR BESAR / PAPAN PUBLIK</div>
                 <div style={{ fontSize: 15, fontWeight: 700, color: "white" }}>Tampilkan Hasil Voting Live Real-time</div>
-                <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", marginTop: 4 }}>Otomatis update tiap 10 detik — cocok untuk monitor/proyektor</div>
+                <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", marginTop: 4 }}>Otomatis update</div>
               </div>
               <a href="/voting/live" target="_blank" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "14px 24px", background: C.gold, color: "#1a2e1f", borderRadius: 14, fontWeight: 900, fontSize: 14, textDecoration: "none", flexShrink: 0, boxShadow: "0 6px 20px rgba(184,148,63,0.4)", transition: "all 0.2s" }}>
                 🔴 Buka Live Results →
@@ -316,7 +316,7 @@ export default function VotingPage() {
                   "Konfirmasi pilihan pada layar berikutnya — FINAL!",
                 ].map((s, i) => (
                   <div key={i} style={{ display: "flex", gap: 10, marginBottom: 8, alignItems: "flex-start" }}>
-                    <div style={{ width: 22, height: 22, background: C.green, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "white", fontWeight: 900, flexShrink: 0, marginTop: 1 }}>{i+1}</div>
+                    <div style={{ width: 22, height: 22, background: C.green, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "white", fontWeight: 900, flexShrink: 0, marginTop: 1 }}>{i + 1}</div>
                     <span style={{ fontSize: 13, color: "#5a4a40", lineHeight: 1.5 }}>{s}</span>
                   </div>
                 ))}
@@ -350,7 +350,7 @@ export default function VotingPage() {
                   "Satu warga hanya bisa memilih SATU kali",
                   "Identitas pemilih tidak terhubung ke pilihan (anonim)",
                   "Tidak ada admin yang bisa mengubah hasil suara",
-                  "Semua data tersimpan di server terverifikasi Supabase",
+                  "Semua data tersimpan di server terverifikasi",
                 ].map((s, i) => (
                   <div key={i} style={{ display: "flex", gap: 8, marginBottom: 8, alignItems: "flex-start" }}>
                     <span style={{ color: C.gold, fontWeight: 900, flexShrink: 0, marginTop: 1 }}>✓</span>
