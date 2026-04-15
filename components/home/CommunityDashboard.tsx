@@ -103,10 +103,11 @@ export default function CommunityDashboard() {
           .gte("tanggal", new Date(Date.now() - 180 * 864e5).toISOString().split("T")[0]),
       ]);
 
-      const kks  = kkRes.data  || [];
-      const angs = angRes.data || [];
+      const kks  = kkRes.data  || []; // KK records (untuk count KK & tgl lahir kepala)
+      const angs = angRes.data || []; // anggota_kk — SUDAH include kepala (hubungan='kepala')
 
-      const totalJiwa = kks.length + angs.length;
+      // Total jiwa = hanya anggota_kk saja (kepala sudah ada di dalamnya)
+      const totalJiwa = angs.length;
 
       const now = new Date();
       const umur = (tgl: string) => {

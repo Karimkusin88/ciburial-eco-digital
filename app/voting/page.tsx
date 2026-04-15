@@ -288,6 +288,77 @@ export default function VotingPage() {
                 </div>
               );
             })}
+
+            {/* ===== LIVE RESULTS BUTTON ===== */}
+            <div style={{ background: C.darkGreen, borderRadius: 20, padding: "24px 28px", marginTop: 28, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 900, color: C.gold, letterSpacing: "0.1em", marginBottom: 4 }}>📺 LAYAR BESAR / PAPAN PUBLIK</div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: "white" }}>Tampilkan Hasil Voting Live Real-time</div>
+                <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", marginTop: 4 }}>Otomatis update tiap 10 detik — cocok untuk monitor/proyektor</div>
+              </div>
+              <a href="/voting/live" target="_blank" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "14px 24px", background: C.gold, color: "#1a2e1f", borderRadius: 14, fontWeight: 900, fontSize: 14, textDecoration: "none", flexShrink: 0, boxShadow: "0 6px 20px rgba(184,148,63,0.4)", transition: "all 0.2s" }}>
+                🔴 Buka Live Results →
+              </a>
+            </div>
+
+            {/* ===== INFO SECTION ===== */}
+            <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: 18 }}>
+
+              {/* Cara voting */}
+              <div style={{ background: C.white, borderRadius: 20, padding: "24px 28px", border: `1px solid rgba(45,90,64,.1)` }}>
+                <div style={{ fontSize: 22, marginBottom: 12 }}>📋</div>
+                <div style={{ fontSize: 14, fontWeight: 900, color: C.darkGreen, marginBottom: 12 }}>Cara Menggunakan Bilik Suara Digital</div>
+                {[
+                  "Pilih agenda pemilihan yang aktif",
+                  "Tempelkan Kartu Warga NFC ke HP petugas",
+                  "Sistem verifikasi identitas & umur (18+)",
+                  "Pilih kandidat/opsi yang Anda yakini",
+                  "Konfirmasi pilihan pada layar berikutnya — FINAL!",
+                ].map((s, i) => (
+                  <div key={i} style={{ display: "flex", gap: 10, marginBottom: 8, alignItems: "flex-start" }}>
+                    <div style={{ width: 22, height: 22, background: C.green, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "white", fontWeight: 900, flexShrink: 0, marginTop: 1 }}>{i+1}</div>
+                    <span style={{ fontSize: 13, color: "#5a4a40", lineHeight: 1.5 }}>{s}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Cara dapat kartu */}
+              <div style={{ background: C.white, borderRadius: 20, padding: "24px 28px", border: `1px solid rgba(45,90,64,.1)` }}>
+                <div style={{ fontSize: 22, marginBottom: 12 }}>💳</div>
+                <div style={{ fontSize: 14, fontWeight: 900, color: C.darkGreen, marginBottom: 12 }}>Belum Punya Kartu Warga Digital?</div>
+                <div style={{ fontSize: 13, color: "#5a4a40", lineHeight: 1.7, marginBottom: 12 }}>
+                  Kartu Warga NFC Ciburial diterbitkan untuk seluruh warga RW 08 yang terdaftar. Ambil di:
+                </div>
+                {[
+                  { icon: "🏠", text: "Ketua RT masing-masing (RT 01, 02, 03)" },
+                  { icon: "📍", text: "Pos Digital Warga RW 08" },
+                  { icon: "📧", text: "Daftar via Email: ciburial.smarthub@gmail.com" },
+                ].map((x, i) => (
+                  <div key={i} style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 8, padding: "8px 12px", background: "rgba(45,90,64,0.05)", borderRadius: 10 }}>
+                    <span style={{ fontSize: 16 }}>{x.icon}</span>
+                    <span style={{ fontSize: 12, color: C.darkGreen, fontWeight: 600 }}>{x.text}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Jaminan keamanan */}
+              <div style={{ background: C.darkGreen, borderRadius: 20, padding: "24px 28px" }}>
+                <div style={{ fontSize: 22, marginBottom: 12 }}>🔒</div>
+                <div style={{ fontSize: 14, fontWeight: 900, color: C.gold, marginBottom: 12 }}>Pemilihan Digital Tidak Bisa Dimanipulasi</div>
+                {[
+                  "Suara direkam langsung ke database terenkripsi",
+                  "Satu warga hanya bisa memilih SATU kali",
+                  "Identitas pemilih tidak terhubung ke pilihan (anonim)",
+                  "Tidak ada admin yang bisa mengubah hasil suara",
+                  "Semua data tersimpan di server terverifikasi Supabase",
+                ].map((s, i) => (
+                  <div key={i} style={{ display: "flex", gap: 8, marginBottom: 8, alignItems: "flex-start" }}>
+                    <span style={{ color: C.gold, fontWeight: 900, flexShrink: 0, marginTop: 1 }}>✓</span>
+                    <span style={{ fontSize: 12, color: "rgba(255,255,255,0.75)", lineHeight: 1.5 }}>{s}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </>
         )}
 
