@@ -100,13 +100,7 @@ export default function Home() {
       )}
 
       {tab === "transparansi" && (
-        <TransparansiTab 
-          transaksi={transaksi} 
-          totMasuk={totMasuk} 
-          totKeluar={totKeluar} 
-          saldo={saldo} 
-          totTarget={totTarget} 
-        />
+        <TransparansiTab />
       )}
 
       {tab === "marketplace" && (
