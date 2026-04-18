@@ -114,7 +114,7 @@ export default function AdminPage() {
     if (isSupabaseReady()) {
       const [kk, ang, sp, anak, imun, rp] = await Promise.all([
         supabase.from("keluarga").select("id,rt,golongan_zakat"),
-        supabase.from("anggota_kk").select("id,nama,tgl_lahir,hubungan,saldo_poin"),
+        supabase.from("anggota_kk").select("id,nama,tgl_lahir,hubungan,saldo_poin,jenis_kelamin"),
         supabase.from("saldo_poin").select("total_poin,total_setor_kg"),
         supabase.from("anak_posyandu").select("id", {count:"exact",head:true}),
         supabase.from("imunisasi").select("status"),
@@ -122,7 +122,17 @@ export default function AdminPage() {
       ]);
       const allAng = ang.data || [];
       const totalJiwa = allAng.length;
-      const laki = allAng.filter((a:any) => a.hubungan !== "istri" && a.hubungan !== "mertua").length;
+      // Cek jenis_kelamin (bisa "L"/"P"/"laki-laki"/"perempuan"), fallback ke hubungan jika kosong
+      const isPerempuan = (a: any) => {
+        if (a.jenis_kelamin) {
+          const jk = a.jenis_kelamin.toLowerCase();
+          return jk === "perempuan" || jk === "p";
+        }
+        // fallback: hubungan yang secara konvensi perempuan
+        return a.hubungan === "istri" || a.hubungan === "mertua" || a.hubungan === "nenek";
+      };
+      const perempuanCount = allAng.filter((a: any) => isPerempuan(a)).length;
+      const laki = totalJiwa - perempuanCount;
       const totKg = (sp.data||[]).reduce((s:number,x:any)=>s+Number(x.total_setor_kg),0);
       const totPoin = (sp.data||[]).reduce((s:number,x:any)=>s+Number(x.total_poin),0);
       const imunSudah = (imun.data||[]).filter((i:any)=>i.status==="sudah").length;

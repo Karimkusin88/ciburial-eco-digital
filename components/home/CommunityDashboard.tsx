@@ -124,9 +124,11 @@ export default function CommunityDashboard() {
       const perempuan = angs.filter((a: any) => isP(a)).length;
       const laki = totalJiwa - perempuan;
 
-      const allTgl = [...angs.map((a: any) => a.tgl_lahir), ...kks.map((k: any) => k.tgl_lahir_kepala)].filter(Boolean);
-      const balita = allTgl.filter(t => { const u = umur(t); return u >= 0 && u <= 5; }).length;
-      const lansia = allTgl.filter(t => umur(t) >= 60).length;
+      // Hanya dari anggota_kk — kepala KK sudah termasuk di dalamnya (hubungan='kepala')
+      // Jangan gabungkan tgl_lahir_kepala dari keluarga karena akan double-count
+      const allTgl = angs.map((a: any) => a.tgl_lahir).filter(Boolean);
+      const balita = allTgl.filter((t: string) => { const u = umur(t); return u >= 0 && u <= 5; }).length;
+      const lansia = allTgl.filter((t: string) => umur(t) >= 60).length;
 
       const totKg = (spRes.data || []).reduce((s: number, x: any) => s + Number(x.total_setor_kg), 0);
 
@@ -163,8 +165,8 @@ export default function CommunityDashboard() {
   const C = { green: "#2d5a40", bright: "#4ade80", gold: "#b8943f", red: "#e74c3c", blue: "#60a5fa", pink: "#f472b6", dark: "#1a2e1f", cream: "#f5f0e8" };
 
   const donutSegs = [
-    { label: "Laki-laki", value: d.laki || Math.ceil(d.jiwa * 0.55), color: "#4ade80" },
-    { label: "Perempuan", value: d.perempuan || Math.floor(d.jiwa * 0.45), color: C.gold },
+    { label: "Laki-laki", value: d.laki, color: "#4ade80" },
+    { label: "Perempuan", value: d.perempuan, color: C.gold },
     { label: "Balita (≤5th)", value: d.balita, color: C.blue },
     { label: "Lansia (≥60th)", value: d.lansia, color: "#a78bfa" },
   ];

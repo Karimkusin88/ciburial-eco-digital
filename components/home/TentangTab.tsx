@@ -45,11 +45,10 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
   useEffect(() => {
     if (!isSupabaseReady()) return;
     (async () => {
-      const [kkRes, angRes] = await Promise.all([
-        supabase.from("keluarga").select("id", { count: "exact", head: true }),
-        supabase.from("anggota_kk").select("id", { count: "exact", head: true }),
-      ]);
-      setTotalJiwa((kkRes.count || 0) + (angRes.count || 0));
+      // Total jiwa = anggota_kk saja (kepala keluarga sudah termasuk di dalamnya)
+      // Tabel "keluarga" adalah data KK, bukan jiwa — jangan dijumlahkan
+      const angRes = await supabase.from("anggota_kk").select("id", { count: "exact", head: true });
+      setTotalJiwa(angRes.count || 0);
     })();
   }, []);
 
