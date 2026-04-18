@@ -8,43 +8,10 @@ interface Absensi { id:string; jadwal_id:string; kk_id:string; nama:string; wakt
 const POIN_RONDA = 30;
 const JAM_RONDA = "21:00";
 
-// ── Motif Batik Sunda SVG (ornamen kujang & liris) ───────────────────────
-function MotifBatik({ opacity = 0.04 }: { opacity?: number }) {
+// ── Motif Digital Grid / Eco-Tech ─────────────────────────────────────────
+function CyberGrid({ opacity = 0.05 }: { opacity?: number }) {
   return (
-    <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none", opacity }} aria-hidden>
-      <defs>
-        <pattern id="batik" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
-          {/* Motif liris / tumpal sederhana */}
-          <path d="M40 0 L80 40 L40 80 L0 40 Z" fill="none" stroke="#B8943F" strokeWidth="0.8"/>
-          <path d="M40 10 L70 40 L40 70 L10 40 Z" fill="none" stroke="#2D5A40" strokeWidth="0.5"/>
-          <circle cx="40" cy="40" r="4" fill="#B8943F" opacity="0.6"/>
-          <circle cx="40" cy="40" r="1.5" fill="#2D5A40"/>
-          {/* Sudut kecil */}
-          <path d="M0 0 L10 0 L0 10 Z" fill="#B8943F" opacity="0.3"/>
-          <path d="M80 0 L80 10 L70 0 Z" fill="#B8943F" opacity="0.3"/>
-          <path d="M0 80 L10 80 L0 70 Z" fill="#B8943F" opacity="0.3"/>
-          <path d="M80 80 L70 80 L80 70 Z" fill="#B8943F" opacity="0.3"/>
-        </pattern>
-      </defs>
-      <rect width="100%" height="100%" fill="url(#batik)"/>
-    </svg>
-  );
-}
-
-// ── Ikon Kujang SVG ──────────────────────────────────────────────────────
-function KujangIcon({ size = 32, color = "#B8943F" }: { size?: number; color?: string }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 100 100" fill="none" aria-label="Kujang">
-      {/* Gagang */}
-      <path d="M15 85 L30 65 L35 70 Z" fill={color} opacity="0.8"/>
-      {/* Bilah utama kujang */}
-      <path d="M30 65 L85 25 Q90 20 88 28 L55 55 Q50 60 45 58 L35 70 Z" fill={color}/>
-      {/* Lekukan khas kujang */}
-      <path d="M55 55 Q70 45 75 35 L68 38 Q60 50 55 55Z" fill="#1a2e1f" opacity="0.4"/>
-      {/* Lubang kujang */}
-      <circle cx="65" cy="38" r="4" fill="#1a2e1f" opacity="0.5"/>
-      <circle cx="72" cy="33" r="2.5" fill="#1a2e1f" opacity="0.4"/>
-    </svg>
+    <div style={{ position: "absolute", inset: 0, pointerEvents: "none", opacity, zIndex: 0, backgroundSize: "40px 40px", backgroundImage: "linear-gradient(to right, #4ade80 1px, transparent 1px), linear-gradient(to bottom, #4ade80 1px, transparent 1px)" }} aria-hidden />
   );
 }
 
@@ -57,7 +24,7 @@ export default function AdminRondaPage() {
   const [anggotaList, setAnggotaList] = useState<any[]>([]);
   const [tanggalAktif, setTanggalAktif] = useState<string>("");
   const [jadwalAktif, setJadwalAktif] = useState<string | null>(null);
-  const [tabSub, setTabSub] = useState<"hadir" | "scan">("hadir");
+  const [tabSub, setTabSub] = useState<"panduan" | "hadir" | "scan">("panduan");
   const [scanning, setScanning] = useState(false);
   const [lastScan, setLastScan] = useState<{ nama: string; poin: number } | null>(null);
   const [manualKK, setManualKK] = useState("");
@@ -100,7 +67,7 @@ export default function AdminRondaPage() {
     const existing = jadwal.find(j => j.tanggal === tglStr);
     if (existing) {
       setJadwalAktif(existing.id);
-      setTabSub("hadir");
+      setTabSub("scan");
       return;
     }
     // Buat jadwal baru otomatis — 1 sektor (RW 08, tidak perlu pilih RT)
@@ -108,21 +75,21 @@ export default function AdminRondaPage() {
       tanggal: tglStr, rt: "RW08", jam_mulai: JAM_RONDA,
     }).select().single();
     if (error) return tampilPesan(`❌ Gagal membuat jadwal: ${error.message}`, false);
-    tampilPesan("✅ Jadwal ronda malam ini berhasil dibuat!");
+    tampilPesan("✅ Jadwal ronda untuk sektor RW 08 berhasil dibuat!");
     await muatSemua();
     setJadwalAktif(data.id);
-    setTabSub("hadir");
+    setTabSub("scan");
   }
 
   // ── Catat kehadiran + poin ────────────────────────────────────────────────
-  async function catatKehadiran(kkId: string, metode: string) {
+  async function catatKehadiran(kkId: string, metode: "nfc" | "manual" | "cctv") {
     const currentJadwal = jadwalAktifRef.current;
-    if (!currentJadwal) return tampilPesan("⚠️ Pilih tanggal ronda terlebih dahulu!", false);
+    if (!currentJadwal) return tampilPesan("⚠️ Anda harus memilih tanggal di kalender terlebih dahulu!", false);
 
     const kk = kkListRef.current.find(k => k.id === kkId || k.nfc_id === kkId);
     const anggota = anggotaListRef.current.find(a => a.kk_id === (kk?.id || kkId) || a.nfc_id === kkId);
 
-    if (!kk && !anggota) return tampilPesan("⛔ Kartu warga tidak dikenali!", false);
+    if (!kk && !anggota) return tampilPesan("⛔ Kartu warga atau data tidak dikenali!", false);
 
     const nama = kk?.kepala_keluarga || anggota?.nama || "Tidak Diketahui";
     const realKKId = kk?.id || anggota?.kk_id;
@@ -132,7 +99,7 @@ export default function AdminRondaPage() {
     const { data: cekAbsen } = await supabase.from("absensi_ronda")
       .select("id").eq("jadwal_id", currentJadwal).eq("kk_id", realKKId).limit(1);
     if (cekAbsen && cekAbsen.length > 0)
-      return tampilPesan(`⚠️ ${nama} sudah tercatat hadir malam ini!`, false);
+      return tampilPesan(`⚠️ Warga bernama ${nama} sudah tercatat hadir malam ini!`, false);
 
     await supabase.from("absensi_ronda").insert({
       jadwal_id: currentJadwal, kk_id: realKKId, nama, metode, status: "hadir",
@@ -145,36 +112,36 @@ export default function AdminRondaPage() {
       await supabase.from("riwayat_poin").insert({
         anggota_id: anggota.id, kk_id: realKKId,
         jumlah: POIN_RONDA, jenis: "masuk", sumber: "ronda",
-        keterangan: `Ronda Digital Ciburial RW 08 — ${new Date(tanggalAktif).toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}`,
+        keterangan: `Ronda Digital RW 08 — ${new Date(tanggalAktif).toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}`,
       });
       poinDitambah = POIN_RONDA;
     }
 
     setLastScan({ nama, poin: poinDitambah });
-    tampilPesan(`🟢 ${nama} berhasil dicatat hadir!${poinDitambah > 0 ? ` +${poinDitambah} poin` : ""}`);
+    tampilPesan(`🟢 Bapak/Ibu ${nama} berhasil absen! Reward +${poinDitambah} XP terkirim.`);
     muatSemua();
   }
 
   // ── NFC ──────────────────────────────────────────────────────────────────
   async function aktifkanNFC() {
-    if (!("NDEFReader" in window)) return tampilPesan("⚠️ NFC tidak tersedia. Gunakan Chrome Android.", false);
+    if (!("NDEFReader" in window)) return tampilPesan("⚠️ NFC tidak tersedia. Fitur ini membutuhkan HP Android dengan fitur NFC menyala.", false);
     try {
       const ndef = new (window as any).NDEFReader();
       nfcRef.current = ndef;
       await ndef.scan();
       setScanning(true);
-      tampilPesan("📡 Pemindai NFC aktif! Dekatkan kartu warga...");
+      tampilPesan("📡 Pemindai NFC aktif! Silakan tempelkan kartu pintar warga ke punggung HP.");
       ndef.addEventListener("reading", ({ serialNumber }: any) => {
         const nfcId = serialNumber.replace(/:/g, "").toUpperCase();
         catatKehadiran(nfcId, "nfc");
       });
-    } catch { tampilPesan("⛔ Gagal mengaktifkan NFC.", false); }
+    } catch { tampilPesan("⛔ HP Anda gagal mengaktifkan NFC.", false); }
   }
 
   function matikanNFC() {
     nfcRef.current?.stop?.();
     setScanning(false);
-    tampilPesan("Pemindai NFC dinonaktifkan.");
+    tampilPesan("Pemindai NFC telah dinonaktifkan.");
   }
 
   // ── Kalender ─────────────────────────────────────────────────────────────
@@ -192,296 +159,287 @@ export default function AdminRondaPage() {
 
   const absensiAktif = absensi.filter(a => a.jadwal_id === jadwalAktif);
 
-  // Warna & style sistem
+  // Tema Warna Eco-Digital CCTV
   const C = {
-    hijau: "#2D5A40", terang: "#4ade80", emas: "#B8943F", emasTerang: "#D4AC5A",
-    krem: "#FAF8F3", gelap: "#1a2e1f", coklat: "#6B4F3A",
+    utama: "#0f1f15",          // Gelap background
+    panel: "rgba(16,36,25,0.7)", // Panel transparan hijau gelap
+    border: "rgba(74,222,128,0.2)",
+    hijau: "#4ade80",          // Hijau neon digital
+    hijauTua: "#2D5A40",       // Hijau hutan
+    emas: "#b8943f",           // Aksen
+    teksTerang: "#f5f0e8",
+    teksGrey: "rgba(245,240,232,0.6)",
+    merahAlert: "#ef4444"
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: `linear-gradient(160deg, #1a2e1f 0%, #0e1f13 60%, #1a2012 100%)`, fontFamily: "var(--font-dm-sans,'DM Sans',system-ui,sans-serif)", color: C.krem, position: "relative", overflow: "hidden" }}>
-      {/* Latar motif batik global */}
-      <MotifBatik opacity={0.035} />
+    <div style={{ minHeight: "100vh", background: C.utama, fontFamily: "'Inter', system-ui, sans-serif", color: C.teksTerang, position: "relative", overflow: "hidden" }}>
+      <CyberGrid />
+      <div style={{ position: "fixed", top: "10%", left: "50%", transform: "translateX(-50%)", width: "80%", height: 300, background: "radial-gradient(ellipse, rgba(74,222,128,0.06) 0%, transparent 60%)", pointerEvents: "none", zIndex: 0 }} />
 
-      {/* Cahaya ambient hijau & emas */}
-      <div style={{ position: "fixed", top: -200, left: "50%", transform: "translateX(-50%)", width: 700, height: 500, background: "radial-gradient(ellipse, rgba(45,90,64,0.3) 0%, transparent 70%)", pointerEvents: "none", zIndex: 0 }} />
-      <div style={{ position: "fixed", bottom: -100, right: -100, width: 400, height: 400, background: "radial-gradient(ellipse, rgba(184,148,63,0.12) 0%, transparent 70%)", pointerEvents: "none", zIndex: 0 }} />
-
-      {/* Notifikasi */}
+      {/* Pesan Alert */}
       {toast.msg && (
-        <div style={{ position: "fixed", top: 24, left: "50%", transform: "translateX(-50%)", background: toast.ok ? "#2D5A40" : "#7f1d1d", color: "white", padding: "12px 28px", borderRadius: 99, zIndex: 9999, fontSize: 14, fontWeight: 700, boxShadow: "0 8px 32px rgba(0,0,0,0.5)", border: `1px solid ${toast.ok ? "rgba(74,222,128,0.4)" : "rgba(248,113,113,0.4)"}`, whiteSpace: "nowrap", maxWidth: "90vw" }}>
+        <div style={{ position: "fixed", top: 24, left: "50%", transform: "translateX(-50%)", background: toast.ok ? C.hijauTua : C.merahAlert, color: "white", padding: "14px 32px", borderRadius: 12, zIndex: 9999, fontSize: 13, fontWeight: 700, boxShadow: "0 10px 40px rgba(0,0,0,0.6)", border: `1px solid ${toast.ok ? C.hijau : "#fca5a5"}` }}>
           {toast.msg}
         </div>
       )}
 
       {/* ── Header ── */}
-      <header style={{ background: "rgba(26,46,31,0.85)", backdropFilter: "blur(16px)", borderBottom: "1px solid rgba(184,148,63,0.25)", padding: "0 24px", height: 64, position: "sticky", top: 0, zIndex: 40, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <header style={{ background: "rgba(15,31,21,0.9)", backdropFilter: "blur(20px)", borderBottom: `1px solid ${C.border}`, padding: "0 24px", height: 68, position: "sticky", top: 0, zIndex: 40, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <a href="/admin" style={{ color: "rgba(250,248,243,.5)", textDecoration: "none", fontSize: 12, fontWeight: 600, letterSpacing: ".06em" }}>← Kembali</a>
-          <div style={{ width: 1, height: 24, background: "rgba(184,148,63,.3)" }} />
-          <KujangIcon size={28} color={C.emas} />
-          <div>
-            <div style={{ fontWeight: 800, fontSize: 15, color: C.krem, letterSpacing: ".02em" }}>Ronda Digital Ciburial</div>
-            <div style={{ fontSize: 9, fontWeight: 700, color: C.emas, letterSpacing: ".18em", textTransform: "uppercase" }}>RW 08 · Satu Sektor · Satu Jiwa</div>
+          <a href="/admin" style={{ color: C.teksGrey, textDecoration: "none", fontSize: 13, fontWeight: 600, padding: "6px 12px", background: "rgba(255,255,255,0.05)", borderRadius: 8 }}>← Kembali ke Dashboard</a>
+          <div style={{ width: 1, height: 24, background: C.border }} />
+          <div style={{ fontWeight: 800, fontSize: 16, color: C.hijau, letterSpacing: ".02em", display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ fontSize: 20 }}>👁️</span> Ciburial Command Center
           </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <div style={{ background: "rgba(184,148,63,0.12)", border: "1px solid rgba(184,148,63,0.3)", borderRadius: 99, padding: "5px 14px", fontSize: 11, fontWeight: 700, color: C.emas }}>
-            +{POIN_RONDA} poin / hadir
+          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, fontWeight: 800, color: C.merahAlert, background: "rgba(239,68,68,0.1)", padding: "4px 12px", borderRadius: 99, border: "1px solid rgba(239,68,68,0.3)" }}>
+            <div style={{ width: 8, height: 8, borderRadius: "50%", background: C.merahAlert, animation: "rekam 1.5s infinite" }} />
+            CCTV REC
           </div>
-          <div style={{ width: 8, height: 8, borderRadius: "50%", background: C.terang, boxShadow: `0 0 8px ${C.terang}`, animation: "nadiPulse 2s infinite" }} />
+          <div style={{ background: "rgba(74,222,128,0.1)", border: `1px solid ${C.hijau}`, borderRadius: 12, padding: "6px 16px", fontSize: 12, fontWeight: 800, color: C.hijau }}>
+            XP {POIN_RONDA} / Hadir
+          </div>
         </div>
       </header>
 
-      <div style={{ maxWidth: 1060, margin: "0 auto", padding: "32px 20px 60px", position: "relative", zIndex: 1 }}>
+      <div style={{ maxWidth: 1140, margin: "0 auto", padding: "32px 20px 80px", position: "relative", zIndex: 1 }}>
 
-        {/* ── Spanduk atas ── */}
         <div style={{ textAlign: "center", marginBottom: 36 }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 18, marginBottom: 12 }}>
-            <div style={{ flex: 1, height: 1, background: "linear-gradient(90deg, transparent, rgba(184,148,63,0.4))" }} />
-            <KujangIcon size={36} color={C.emas} />
-            <div style={{ flex: 1, height: 1, background: "linear-gradient(90deg, rgba(184,148,63,0.4), transparent)" }} />
-          </div>
-          <h1 style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: "clamp(28px,5vw,48px)", fontWeight: 300, color: C.krem, letterSpacing: "-.02em", margin: "0 0 8px" }}>
-            Ronda Digital <em style={{ color: C.emasTerang }}>Ciburial RW 08</em>
+          <h1 style={{ fontSize: "clamp(24px,4vw,40px)", fontWeight: 900, color: C.teksTerang, letterSpacing: "-.02em", margin: "0 0 10px" }}>
+            Sistem Keamanan Pintar <span style={{ color: C.hijau }}>RW 08 Ciburial</span>
           </h1>
-          <p style={{ fontSize: 13, color: "rgba(250,248,243,.45)", lineHeight: 1.7 }}>
-            Klik tanggal pada kalender → jadwal otomatis terbuat · Absen warga langsung tercatat
+          <p style={{ fontSize: 14, color: C.teksGrey, maxWidth: 600, margin: "0 auto", lineHeight: 1.6 }}>
+            Pantau kehadiran ronda secara real-time yang terintegrasi dengan jaringan CCTV Desa. Otomatisasi data dan distribusi poin ramah lingkungan.
           </p>
         </div>
 
-        {/* ── Grid utama: Kalender + Panel kanan ── */}
-        <div style={{ display: "grid", gridTemplateColumns: "minmax(300px,480px) 1fr", gap: 24, alignItems: "start" }}>
-
-          {/* ══ KALENDER ══ */}
-          <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(184,148,63,0.2)", borderRadius: 24, overflow: "hidden", position: "relative" }}>
-            <MotifBatik opacity={0.06} />
-
-            {/* Navigasi bulan */}
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "20px 22px 16px", position: "relative" }}>
-              <button onClick={bulanSebelum} style={{ background: "rgba(184,148,63,0.1)", border: "1px solid rgba(184,148,63,0.25)", borderRadius: 10, padding: "7px 14px", color: C.emas, cursor: "pointer", fontSize: 14, fontWeight: 700 }}>‹</button>
-              <div style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 15, fontWeight: 800, color: C.krem, letterSpacing: ".02em" }}>{namaBulan}</div>
-                <div style={{ fontSize: 10, color: "rgba(250,248,243,.35)", letterSpacing: ".12em", textTransform: "uppercase", marginTop: 2 }}>Kalender Ronda Harian</div>
+        <div style={{ display: "grid", gridTemplateColumns: "minmax(320px, 400px) 1fr", gap: 24, alignItems: "start" }}>
+          
+          {/* ══ KOLOM KIRI: KALENDER ══ */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+            <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 20, padding: 24, boxShadow: "0 10px 30px rgba(0,0,0,0.3)" }}>
+              <div style={{ fontSize: 11, fontWeight: 800, color: C.hijau, letterSpacing: ".1em", textTransform: "uppercase", marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
+                <span>🗓️</span> Jadwal Ronda
               </div>
-              <button onClick={bulanBerikut} style={{ background: "rgba(184,148,63,0.1)", border: "1px solid rgba(184,148,63,0.25)", borderRadius: 10, padding: "7px 14px", color: C.emas, cursor: "pointer", fontSize: 14, fontWeight: 700 }}>›</button>
+
+              {/* Navigasi bulan */}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+                <button onClick={bulanSebelum} style={{ background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 8, padding: "8px 14px", color: C.teksTerang, cursor: "pointer", fontWeight: 700 }}>‹</button>
+                <div style={{ fontSize: 16, fontWeight: 800, color: C.teksTerang }}>{namaBulan}</div>
+                <button onClick={bulanBerikut} style={{ background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 8, padding: "8px 14px", color: C.teksTerang, cursor: "pointer", fontWeight: 700 }}>›</button>
+              </div>
+
+              {/* Grid hari */}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: 4 }}>
+                {["Min","Sen","Sel","Rab","Kam","Jum","Sab"].map(h => (
+                  <div key={h} style={{ textAlign: "center", fontSize: 10, fontWeight: 800, color: C.teksGrey, padding: "4px 0", textTransform: "uppercase" }}>{h}</div>
+                ))}
+                {Array.from({ length: hariPertama === 0 ? 6 : hariPertama - 1 }).map((_, i) => <div key={`e${i}`} />)}
+                {Array.from({ length: jumlahHari }, (_, i) => {
+                  const tgl = i + 1;
+                  const tglStr = `${bulanAktif.y}-${String(bulanAktif.m + 1).padStart(2, "0")}-${String(tgl).padStart(2, "0")}`;
+                  const sudahAda = tglJadwal.has(tglStr);
+                  const jumlahHadir = tglAbsensi[tglStr] || 0;
+                  const isHariIni = tglStr === hariIni;
+                  const isAktif = tglStr === tanggalAktif;
+
+                  return (
+                    <button key={tgl} onClick={() => buatAtauAktifkanJadwal(tglStr)}
+                      style={{
+                        aspectRatio: "1", borderRadius: 10,
+                        border: isAktif ? `2px solid ${C.hijau}` : isHariIni ? `1px dashed ${C.hijau}` : "1px solid rgba(255,255,255,0.05)",
+                        background: isAktif ? "rgba(74,222,128,0.15)" : sudahAda ? "rgba(74,222,128,0.05)" : "rgba(0,0,0,0.2)",
+                        color: isAktif ? C.hijau : sudahAda ? C.hijau : C.teksTerang,
+                        cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                        fontSize: 13, fontWeight: sudahAda || isAktif ? 800 : 500, transition: "all .15s",
+                      }}>
+                      <span>{tgl}</span>
+                      {sudahAda && <span style={{ fontSize: 9, color: C.hijau, marginTop: 2 }}>{jumlahHadir} {jumlahHadir > 0 ? "✓" : "-"}</span>}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
-            {/* Nama hari */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", padding: "0 14px", marginBottom: 6 }}>
-              {["Min","Sen","Sel","Rab","Kam","Jum","Sab"].map(h => (
-                <div key={h} style={{ textAlign: "center", fontSize: 9, fontWeight: 800, color: "rgba(250,248,243,.3)", letterSpacing: ".1em", paddingBottom: 6, textTransform: "uppercase" }}>{h}</div>
-              ))}
-            </div>
-
-            {/* Grid tanggal */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: 4, padding: "0 14px 18px" }}>
-              {/* Sel kosong sebelum hari pertama */}
-              {Array.from({ length: hariPertama === 0 ? 6 : hariPertama - 1 }).map((_, i) => <div key={`e${i}`} />)}
-              {Array.from({ length: jumlahHari }, (_, i) => {
-                const tgl = i + 1;
-                const tglStr = `${bulanAktif.y}-${String(bulanAktif.m + 1).padStart(2, "0")}-${String(tgl).padStart(2, "0")}`;
-                const sudahAda = tglJadwal.has(tglStr);
-                const jumlahHadir = tglAbsensi[tglStr] || 0;
-                const isHariIni = tglStr === hariIni;
-                const isAktif = tglStr === tanggalAktif;
-                const isMasaDepan = tglStr > hariIni;
-
-                return (
-                  <button key={tgl} onClick={() => buatAtauAktifkanJadwal(tglStr)}
-                    title={sudahAda ? `${jumlahHadir} warga hadir` : isMasaDepan ? "Klik untuk buat jadwal" : "Klik untuk buat jadwal"}
-                    style={{
-                      aspectRatio: "1", borderRadius: 10, border: isAktif ? `2px solid ${C.emas}` : sudahAda ? "1px solid rgba(74,222,128,0.4)" : isHariIni ? `1px solid ${C.emas}` : "1px solid transparent",
-                      background: isAktif ? "rgba(184,148,63,0.25)" : sudahAda ? "rgba(45,90,64,0.5)" : isHariIni ? "rgba(184,148,63,0.12)" : "rgba(255,255,255,0.03)",
-                      color: isAktif ? C.emasTerang : sudahAda ? C.terang : isHariIni ? C.emas : isMasaDepan ? "rgba(250,248,243,.3)" : "rgba(250,248,243,.65)",
-                      cursor: "pointer", fontSize: 12, fontWeight: sudahAda || isAktif ? 800 : 500,
-                      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 1,
-                      transition: "all .18s", position: "relative", padding: 0,
-                    }}
-                    onMouseEnter={e => { e.currentTarget.style.background = isAktif ? "rgba(184,148,63,0.3)" : "rgba(184,148,63,0.1)"; }}
-                    onMouseLeave={e => { e.currentTarget.style.background = isAktif ? "rgba(184,148,63,0.25)" : sudahAda ? "rgba(45,90,64,0.5)" : isHariIni ? "rgba(184,148,63,0.12)" : "rgba(255,255,255,0.03)"; }}
-                  >
-                    <span style={{ fontSize: 12, lineHeight: 1 }}>{tgl}</span>
-                    {sudahAda && <span style={{ fontSize: 7, color: C.terang, lineHeight: 1 }}>{jumlahHadir}✓</span>}
-                    {isHariIni && !sudahAda && <span style={{ width: 4, height: 4, borderRadius: "50%", background: C.emas, display: "block" }} />}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Legenda */}
-            <div style={{ borderTop: "1px solid rgba(184,148,63,0.15)", padding: "14px 20px", display: "flex", flexWrap: "wrap", gap: 14 }}>
-              {[
-                { warna: "rgba(45,90,64,0.5)", garis: "rgba(74,222,128,0.4)", label: "Sudah ronda" },
-                { warna: "rgba(184,148,63,0.12)", garis: C.emas, label: "Hari ini" },
-                { warna: "rgba(184,148,63,0.25)", garis: C.emas, label: "Dipilih" },
-              ].map(l => (
-                <div key={l.label} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                  <div style={{ width: 14, height: 14, borderRadius: 4, background: l.warna, border: `1px solid ${l.garis}` }} />
-                  <span style={{ fontSize: 10, color: "rgba(250,248,243,.45)" }}>{l.label}</span>
+            {/* Statistik Panel */}
+            <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 20, padding: 20 }}>
+              <div style={{ fontSize: 11, fontWeight: 800, color: C.hijau, letterSpacing: ".1em", textTransform: "uppercase", marginBottom: 12 }}>📊 Analisis Data Ronda</div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <div style={{ background: "rgba(0,0,0,0.4)", borderRadius: 12, padding: "16px", border: "1px solid rgba(255,255,255,0.05)" }}>
+                  <div style={{ fontSize: 24, fontWeight: 900, color: C.hijau }}>{absensi.length}</div>
+                  <div style={{ fontSize: 10, color: C.teksGrey, textTransform: "uppercase", letterSpacing: ".05em" }}>Total Kehadiran</div>
                 </div>
-              ))}
+                <div style={{ background: "rgba(0,0,0,0.4)", borderRadius: 12, padding: "16px", border: "1px solid rgba(255,255,255,0.05)" }}>
+                  <div style={{ fontSize: 24, fontWeight: 900, color: C.emas }}>{absensi.length * POIN_RONDA}</div>
+                  <div style={{ fontSize: 10, color: C.teksGrey, textTransform: "uppercase", letterSpacing: ".05em" }}>XP Didistribusikan</div>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* ══ PANEL KANAN ══ */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-
-            {/* Jika belum pilih tanggal */}
-            {!tanggalAktif && (
-              <div style={{ background: "rgba(255,255,255,0.03)", border: "1px dashed rgba(184,148,63,0.3)", borderRadius: 24, padding: "48px 28px", textAlign: "center" }}>
-                <KujangIcon size={48} color={C.emas} />
-                <div style={{ fontSize: 16, fontWeight: 700, color: "rgba(250,248,243,.5)", marginTop: 16, marginBottom: 8 }}>Pilih Tanggal Ronda</div>
-                <div style={{ fontSize: 13, color: "rgba(250,248,243,.3)", lineHeight: 1.7 }}>Klik tanggal pada kalender untuk memulai atau melihat daftar hadir ronda malam.</div>
+          {/* ══ KOLOM KANAN: PANEL KONTROL ══ */}
+          <div>
+            {!tanggalAktif ? (
+              <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 24, padding: "60px 40px", textAlign: "center", height: "100%", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                <div style={{ fontSize: 60, marginBottom: 20 }}>📡</div>
+                <div style={{ fontSize: 20, fontWeight: 800, color: C.hijau, marginBottom: 12 }}>Sistem Menunggu Input</div>
+                <div style={{ fontSize: 14, color: C.teksGrey, lineHeight: 1.6, maxWidth: 300, margin: "0 auto" }}>
+                  Silakan pilih tanggal pada kalender di samping untuk mulai memantau absensi CCTV dan mencatat kehadiran warga.
+                </div>
               </div>
-            )}
-
-            {tanggalAktif && (
-              <>
-                {/* Info tanggal aktif */}
-                <div style={{ background: "rgba(184,148,63,0.08)", border: "1px solid rgba(184,148,63,0.3)", borderRadius: 18, padding: "18px 22px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                {/* Header Aktif */}
+                <div style={{ background: "rgba(74,222,128,0.05)", border: `1px solid ${C.hijau}`, borderRadius: 20, padding: "20px 24px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <div>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: C.emas, letterSpacing: ".12em", textTransform: "uppercase", marginBottom: 4 }}>Jadwal Ronda Aktif</div>
-                    <div style={{ fontSize: 16, fontWeight: 800, color: C.krem }}>
-                      {new Date(tanggalAktif + "T00:00:00").toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+                    <div style={{ fontSize: 11, fontWeight: 800, color: C.hijau, letterSpacing: ".1em", textTransform: "uppercase" }}>Status Operasional: Siaga</div>
+                    <div style={{ fontSize: 18, fontWeight: 900, color: C.teksTerang, marginTop: 4 }}>
+                      Monitor RW 08 — {new Date(tanggalAktif).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}
                     </div>
-                    <div style={{ fontSize: 12, color: "rgba(250,248,243,.5)", marginTop: 3 }}>Mulai pukul {JAM_RONDA} WIB · Satu Sektor RW 08</div>
                   </div>
-                  <div style={{ textAlign: "center" }}>
-                    <div style={{ fontSize: 32, fontWeight: 300, color: C.terang, lineHeight: 1 }}>{absensiAktif.length}</div>
-                    <div style={{ fontSize: 10, color: "rgba(250,248,243,.4)", textTransform: "uppercase", letterSpacing: ".08em" }}>warga hadir</div>
+                  <div style={{ background: C.utama, padding: "8px 16px", borderRadius: 12, border: `1px solid ${C.border}`, textAlign: "center" }}>
+                    <div style={{ fontSize: 24, fontWeight: 900, color: C.hijau, lineHeight: 1 }}>{absensiAktif.length}</div>
+                    <div style={{ fontSize: 10, color: C.teksGrey, textTransform: "uppercase", marginTop: 2 }}>Terpantau</div>
                   </div>
                 </div>
 
-                {/* Sub-tab */}
-                <div style={{ display: "flex", gap: 6, background: "rgba(255,255,255,0.04)", padding: 4, borderRadius: 14, border: "1px solid rgba(255,255,255,0.07)" }}>
-                  {([["hadir", "📋 Daftar Hadir"], ["scan", "📡 Absen Warga"]] as const).map(([k, l]) => (
-                    <button key={k} onClick={() => setTabSub(k)} style={{
-                      flex: 1, padding: "10px", borderRadius: 10, fontSize: 13, fontWeight: 700, border: "none", cursor: "pointer", transition: "all .2s",
-                      background: tabSub === k ? C.hijau : "transparent",
-                      color: tabSub === k ? C.terang : "rgba(250,248,243,.4)",
-                    }}>{l}</button>
+                {/* Tabs Kanan */}
+                <div style={{ display: "flex", gap: 8 }}>
+                  {[
+                    { id: "panduan" as const, label: "📖 Panduan Sistem" },
+                    { id: "scan" as const, label: "📷 Perekaman Hadir" },
+                    { id: "hadir" as const, label: "📋 Log Kehadiran" }
+                  ].map(t => (
+                    <button key={t.id} onClick={() => setTabSub(t.id)} style={{
+                      flex: 1, padding: "12px", borderRadius: 14, fontSize: 13, fontWeight: 800, cursor: "pointer", transition: "all .2s",
+                      background: tabSub === t.id ? C.hijauTua : C.panel,
+                      color: tabSub === t.id ? C.teksTerang : C.teksGrey,
+                      border: tabSub === t.id ? `1px solid ${C.hijau}` : `1px solid ${C.border}`
+                    }}>
+                      {t.label}
+                    </button>
                   ))}
                 </div>
 
-                {/* ── Tab: Daftar Hadir ── */}
-                {tabSub === "hadir" && (
-                  <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 20, overflow: "hidden" }}>
-                    <div style={{ padding: "16px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <span style={{ fontSize: 11, fontWeight: 800, color: "rgba(250,248,243,.4)", textTransform: "uppercase", letterSpacing: ".1em" }}>Roster Warga Hadir</span>
-                      <span style={{ background: "rgba(74,222,128,0.12)", border: "1px solid rgba(74,222,128,0.25)", borderRadius: 99, padding: "3px 12px", fontSize: 12, fontWeight: 700, color: C.terang }}>{absensiAktif.length} hadir</span>
-                    </div>
-                    <div style={{ maxHeight: 360, overflowY: "auto" }}>
-                      {absensiAktif.length === 0 ? (
-                        <div style={{ padding: "40px", textAlign: "center", color: "rgba(250,248,243,.25)", fontSize: 13 }}>
-                          <div style={{ fontSize: 32, marginBottom: 12 }}>🔦</div>
-                          Belum ada warga yang dicatat hadir malam ini
+                {/* TAB: PANDUAN */}
+                {tabSub === "panduan" && (
+                  <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 20, padding: 28 }}>
+                    <h3 style={{ fontSize: 16, fontWeight: 800, color: C.hijau, marginBottom: 20 }}>Cara Menggunakan Sistem Absensi</h3>
+                    
+                    <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                      <div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
+                        <div style={{ width: 32, height: 32, borderRadius: "50%", background: "rgba(74,222,128,0.2)", color: C.hijau, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, flexShrink: 0 }}>1</div>
+                        <div>
+                          <div style={{ fontSize: 15, fontWeight: 700, color: C.teksTerang, marginBottom: 4 }}>Pilih Tanggal di Kalender</div>
+                          <div style={{ fontSize: 13, color: C.teksGrey, lineHeight: 1.6 }}>Klik angka tanggal pada kalender di sebelah kiri. Jika jadwal belum ada, sistem akan otomatis membuatkannya untuk sektor RW 08.</div>
                         </div>
-                      ) : absensiAktif.map((a, i) => (
-                        <div key={a.id} style={{ display: "flex", alignItems: "center", gap: 14, padding: "13px 20px", borderBottom: i < absensiAktif.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
-                          <div style={{ width: 36, height: 36, borderRadius: 10, background: a.metode === "nfc" ? "rgba(74,222,128,0.12)" : "rgba(184,148,63,0.12)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }}>
-                            {a.metode === "nfc" ? "📡" : "✍️"}
-                          </div>
-                          <div style={{ flex: 1 }}>
-                            <div style={{ fontSize: 14, fontWeight: 700, color: C.krem }}>{a.nama}</div>
-                            <div style={{ fontSize: 11, color: "rgba(250,248,243,.4)" }}>
-                              {new Date(a.waktu_tap).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })} WIB ·{" "}
-                              {a.metode === "nfc" ? "Pindai NFC" : "Input Manual"}
-                            </div>
-                          </div>
-                          <span style={{ fontSize: 13, fontWeight: 800, color: C.terang }}>+{POIN_RONDA}</span>
-                        </div>
-                      ))}
-                    </div>
-                    {absensiAktif.length > 0 && (
-                      <div style={{ padding: "12px 20px", borderTop: "1px solid rgba(255,255,255,0.06)", display: "flex", justifyContent: "flex-end" }}>
-                        <span style={{ fontSize: 12, fontWeight: 700, color: C.emas }}>Total poin terdistribusi: {absensiAktif.length * POIN_RONDA} poin</span>
                       </div>
-                    )}
+                      <div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
+                        <div style={{ width: 32, height: 32, borderRadius: "50%", background: "rgba(74,222,128,0.2)", color: C.hijau, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, flexShrink: 0 }}>2</div>
+                        <div>
+                          <div style={{ fontSize: 15, fontWeight: 700, color: C.teksTerang, marginBottom: 4 }}>Perekaman / Absen Warga</div>
+                          <div style={{ fontSize: 13, color: C.teksGrey, lineHeight: 1.6 }}>Buka tab <strong>Perekaman Hadir</strong>. Anda dapat menyentuhkan Kartu Pintar (NFC) warga ke bagian belakang HP yang mendukung, ATAU memilih nama warga secara manual dari daftar.</div>
+                        </div>
+                      </div>
+                      <div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
+                        <div style={{ width: 32, height: 32, borderRadius: "50%", background: "rgba(74,222,128,0.2)", color: C.hijau, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, flexShrink: 0 }}>3</div>
+                        <div>
+                          <div style={{ fontSize: 15, fontWeight: 700, color: C.teksTerang, marginBottom: 4 }}>Mulai Patroli & Pantau CCTV</div>
+                          <div style={{ fontSize: 13, color: C.teksGrey, lineHeight: 1.6 }}>Warga yang sudah absen akan terlihat di tab <strong>Log Kehadiran</strong> dan otomatis mendapatkan +30 poin. Kamera CCTV di titik strategis akan merekam pergerakan di area ronda.</div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 )}
 
-                {/* ── Tab: Absen Warga ── */}
+                {/* TAB: SCAN/ABSEN */}
                 {tabSub === "scan" && (
-                  <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-
-                    {/* Input Manual */}
-                    <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 20, padding: "22px" }}>
-                      <div style={{ fontSize: 11, fontWeight: 800, color: "rgba(250,248,243,.4)", textTransform: "uppercase", letterSpacing: ".1em", marginBottom: 14 }}>✍️ Absen Manual</div>
-                      <select value={manualKK} onChange={e => setManualKK(e.target.value)}
-                        style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", fontSize: 14, background: "rgba(0,0,0,0.3)", color: C.krem, outline: "none", marginBottom: 12 }}>
-                        <option value="">-- Pilih nama kepala keluarga --</option>
-                        {kkList.map(k => <option key={k.id} value={k.id}>{k.kepala_keluarga} (RT {k.rt})</option>)}
-                      </select>
-                      <button onClick={() => { if (manualKK) { catatKehadiran(manualKK, "manual"); setManualKK(""); } }}
-                        disabled={!manualKK}
-                        style={{ width: "100%", background: manualKK ? C.hijau : "rgba(255,255,255,0.05)", color: manualKK ? C.terang : "rgba(255,255,255,.3)", border: "none", borderRadius: 12, padding: "12px", fontSize: 13, fontWeight: 700, cursor: manualKK ? "pointer" : "not-allowed", transition: "all .2s" }}>
-                        Catat Hadir →
-                      </button>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 20 }}>
+                    {/* Dummy CCTV Feed Representasi */}
+                    <div style={{ background: "#000", border: `1px solid ${C.border}`, borderRadius: 20, padding: 16, display: "flex", alignItems: "flex-end", height: 260, position: "relative", overflow: "hidden", backgroundImage: "url('https://images.unsplash.com/photo-1558000143-a60d1b9136ca?q=80&w=800&auto=format&fit=crop')", backgroundSize: "cover", backgroundPosition: "center" }}>
+                      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.9), transparent)", zIndex: 1 }} />
+                      <div style={{ position: "absolute", top: 16, right: 16, color: C.teksTerang, fontSize: 12, fontWeight: 700, background: "rgba(0,0,0,0.6)", padding: "4px 8px", borderRadius: 6, zIndex: 2, display: "flex", alignItems: "center", gap: 6 }}>
+                        <span style={{ width: 6, height: 6, background: C.merahAlert, borderRadius: "50%", animation: "rekam 1s infinite" }} /> CAM-01 POS UTAMA
+                      </div>
+                      
+                      <div style={{ position: "relative", zIndex: 2, width: "100%", display: "flex", gap: 12 }}>
+                        <div style={{ flex: 1 }}>
+                          <label style={{ fontSize: 11, fontWeight: 800, color: C.hijau, textTransform: "uppercase", display: "block", marginBottom: 8 }}>Identifikasi Manual</label>
+                          <select value={manualKK} onChange={e => setManualKK(e.target.value)}
+                            style={{ width: "100%", padding: "12px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.2)", fontSize: 13, background: "rgba(0,0,0,0.6)", color: "white", outline: "none", backdropFilter: "blur(5px)" }}>
+                            <option value="">Pilih data warga...</option>
+                            {kkList.map(k => <option key={k.id} value={k.id}>{k.kepala_keluarga} (RT {k.rt})</option>)}
+                          </select>
+                        </div>
+                        <button onClick={() => { if (manualKK) { catatKehadiran(manualKK, "manual"); setManualKK(""); } }}
+                          disabled={!manualKK}
+                          style={{ alignSelf: "flex-end", background: manualKK ? C.hijau : "rgba(255,255,255,0.1)", color: manualKK ? "#000" : "rgba(255,255,255,0.4)", border: "none", borderRadius: 10, padding: "0 24px", height: 42, fontSize: 13, fontWeight: 800, cursor: manualKK ? "pointer" : "not-allowed" }}>
+                          Sahkan Hadir
+                        </button>
+                      </div>
                     </div>
 
-                    {/* NFC Scanner */}
-                    <div style={{ background: "rgba(255,255,255,0.04)", border: `1px solid ${scanning ? "rgba(74,222,128,0.4)" : "rgba(255,255,255,0.08)"}`, borderRadius: 20, padding: "24px", textAlign: "center", position: "relative", overflow: "hidden", transition: "border-color .3s" }}>
-                      <MotifBatik opacity={0.08} />
-                      <div style={{ fontSize: 11, fontWeight: 800, color: "rgba(250,248,243,.4)", textTransform: "uppercase", letterSpacing: ".1em", marginBottom: 20 }}>📡 Pindai NFC</div>
-
-                      {/* Lingkaran radar */}
-                      <div style={{ position: "relative", width: 140, height: 140, borderRadius: "50%", margin: "0 auto 24px", border: `2px solid ${scanning ? "rgba(74,222,128,0.5)" : "rgba(255,255,255,0.1)"}`, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: scanning ? "0 0 30px rgba(74,222,128,0.2)" : "none", transition: "all .3s" }}>
-                        <div style={{ position: "absolute", inset: 16, borderRadius: "50%", border: `1px solid ${scanning ? "rgba(74,222,128,0.25)" : "rgba(255,255,255,0.05)"}` }} />
-                        <div style={{ position: "absolute", inset: 32, borderRadius: "50%", border: `1px solid ${scanning ? "rgba(74,222,128,0.15)" : "rgba(255,255,255,0.03)"}` }} />
-                        {scanning && <div style={{ position: "absolute", top: "50%", left: "50%", width: "50%", height: 2, background: "linear-gradient(90deg,transparent,rgba(74,222,128,0.8))", transformOrigin: "0 0", animation: "putarRadar 2s linear infinite" }} />}
-                        <div style={{ fontSize: 44, position: "relative", zIndex: 2, filter: scanning ? "drop-shadow(0 0 10px rgba(74,222,128,0.6))" : "none", animation: scanning ? "nadiPulse 2s infinite" : "none" }}>
-                          {scanning ? "📡" : "🛡️"}
-                        </div>
+                    {/* Scanner NFC */}
+                    <div style={{ background: C.panel, border: `1px solid ${scanning ? C.hijau : C.border}`, borderRadius: 20, padding: 24, textAlign: "center", transition: "all .3s" }}>
+                      <div style={{ fontSize: 13, fontWeight: 800, color: C.teksTerang, marginBottom: 16 }}>Sensor Kartu Pintar NFC</div>
+                      <div style={{ position: "relative", width: 80, height: 80, borderRadius: "50%", margin: "0 auto 16px", border: `2px solid ${scanning ? C.hijau : "rgba(255,255,255,0.1)"}`, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: scanning ? `0 0 30px ${C.hijau}40` : "none" }}>
+                        <div style={{ fontSize: 32, filter: scanning ? `drop-shadow(0 0 10px ${C.hijau})` : "none" }}>💳</div>
                       </div>
-
+                      
                       {lastScan && (
-                        <div style={{ background: "rgba(74,222,128,0.08)", border: "1px solid rgba(74,222,128,0.25)", borderRadius: 14, padding: "14px 18px", marginBottom: 16 }}>
-                          <div style={{ fontSize: 10, fontWeight: 800, color: C.terang, letterSpacing: ".1em", marginBottom: 6 }}>✅ BERHASIL TERCATAT</div>
-                          <div style={{ fontSize: 16, fontWeight: 800, color: C.krem }}>{lastScan.nama}</div>
-                          {lastScan.poin > 0 && <div style={{ fontSize: 12, color: C.terang, marginTop: 4 }}>+{lastScan.poin} poin telah diberikan</div>}
+                        <div style={{ background: "rgba(74,222,128,0.1)", border: `1px solid ${C.border}`, borderRadius: 12, padding: "12px", marginBottom: 16 }}>
+                          <div style={{ fontSize: 14, fontWeight: 800, color: C.teksTerang }}>{lastScan.nama} Teridentifikasi</div>
+                          <div style={{ fontSize: 12, color: C.hijau, marginTop: 4 }}>Akses masuk diizinkan, +{lastScan.poin} XP</div>
                         </div>
                       )}
 
                       <button onClick={scanning ? matikanNFC : aktifkanNFC}
-                        style={{ width: "100%", background: scanning ? "rgba(248,113,113,0.1)" : "rgba(74,222,128,0.15)", color: scanning ? "#f87171" : C.terang, border: scanning ? "1px solid rgba(248,113,113,0.3)" : "1px solid rgba(74,222,128,0.3)", borderRadius: 14, padding: "14px", fontSize: 14, fontWeight: 700, cursor: "pointer", transition: "all .2s", letterSpacing: ".02em" }}>
-                        {scanning ? "⏹ Matikan Pemindai" : "▶ Aktifkan Pemindai NFC"}
+                        style={{ width: "100%", background: scanning ? "rgba(239,68,68,0.1)" : "rgba(74,222,128,0.1)", color: scanning ? C.merahAlert : C.hijau, border: `1px solid ${scanning ? "rgba(239,68,68,0.3)" : C.border}`, borderRadius: 10, padding: "12px", fontSize: 13, fontWeight: 800, cursor: "pointer", transition: "all .2s" }}>
+                        {scanning ? "⏹ Matikan Scanner NFC" : "▶ Hubungkan Scanner NFC Hp"}
                       </button>
-                      <div style={{ fontSize: 10, color: "rgba(250,248,243,.25)", marginTop: 8 }}>Butuh Chrome Android + NFC aktif</div>
                     </div>
                   </div>
                 )}
-              </>
-            )}
 
-            {/* ── Statistik keseluruhan ── */}
-            <div style={{ background: "rgba(184,148,63,0.06)", border: "1px solid rgba(184,148,63,0.2)", borderRadius: 20, padding: "20px 22px", position: "relative", overflow: "hidden" }}>
-              <MotifBatik opacity={0.07} />
-              <div style={{ fontSize: 11, fontWeight: 800, color: C.emas, letterSpacing: ".1em", textTransform: "uppercase", marginBottom: 16 }}>📊 Rekap Ronda RW 08</div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 12, position: "relative" }}>
-                {[
-                  { angka: jadwal.length, label: "Malam Ronda" },
-                  { angka: absensi.length, label: "Total Hadir" },
-                  { angka: absensi.length * POIN_RONDA, label: "Poin Disebar" },
-                ].map((s, i) => (
-                  <div key={i} style={{ textAlign: "center", padding: "14px 8px", background: "rgba(255,255,255,0.04)", borderRadius: 14 }}>
-                    <div style={{ fontSize: 24, fontWeight: 300, color: C.emasTerang, fontFamily: "'Cormorant Garamond',serif", lineHeight: 1 }}>{s.angka.toLocaleString("id-ID")}</div>
-                    <div style={{ fontSize: 9, color: "rgba(250,248,243,.4)", textTransform: "uppercase", letterSpacing: ".08em", marginTop: 4 }}>{s.label}</div>
+                {/* TAB: LOG KEHADIRAN */}
+                {tabSub === "hadir" && (
+                  <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 20, overflow: "hidden" }}>
+                    <div style={{ padding: "16px 20px", background: "rgba(0,0,0,0.3)", borderBottom: `1px solid ${C.border}`, display: "flex", justifyContent: "space-between" }}>
+                      <span style={{ fontSize: 12, fontWeight: 800, color: C.teksTerang }}>Daftar Personel Hadir</span>
+                      <span style={{ fontSize: 12, color: C.hijau }}>Total XP: {absensiAktif.length * POIN_RONDA}</span>
+                    </div>
+                    <div style={{ maxHeight: 400, overflowY: "auto" }}>
+                      {absensiAktif.length === 0 ? (
+                        <div style={{ padding: "40px", textAlign: "center", color: C.teksGrey, fontSize: 13 }}>
+                          Belum ada personel yang merekam kehadiran malam ini.
+                        </div>
+                      ) : absensiAktif.map((a, i) => (
+                        <div key={a.id} style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 20px", borderBottom: i < absensiAktif.length - 1 ? `1px solid ${C.border}` : "none" }}>
+                          <div style={{ fontSize: 18, background: "rgba(255,255,255,0.05)", width: 40, height: 40, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            {a.metode === "nfc" ? "💳" : "⌨️"}
+                          </div>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontSize: 14, fontWeight: 800, color: C.teksTerang }}>{a.nama}</div>
+                            <div style={{ fontSize: 11, color: C.teksGrey, marginTop: 4 }}>
+                              Dironda sejak {new Date(a.waktu_tap).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })} WIB
+                            </div>
+                          </div>
+                          <div style={{ color: C.hijau, fontSize: 12, fontWeight: 800 }}>+{POIN_RONDA} XP</div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                ))}
+                )}
               </div>
-            </div>
-
+            )}
           </div>
         </div>
       </div>
 
       <style>{`
-        @keyframes nadiPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.6;transform:scale(1.15)} }
-        @keyframes putarRadar { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-        ::-webkit-scrollbar{width:5px}
-        ::-webkit-scrollbar-track{background:rgba(26,46,31,.5)}
-        ::-webkit-scrollbar-thumb{background:rgba(184,148,63,.4);border-radius:10px}
+        @keyframes rekam { 0%,100%{opacity:1} 50%{opacity:.3} }
       `}</style>
     </div>
   );
