@@ -39,7 +39,7 @@ function SvgArea({ data, color = "#4ade80", h = 80, labels = [] }: { data: numbe
 }
 
 /* ─── Donut Chart ─── */
-function Donut({ segs }: { segs: { label: string; value: number; color: string }[] }) {
+function Donut({ segs, jiwa }: { segs: { label: string; value: number; color: string }[]; jiwa: number }) {
   const total = segs.reduce((s, x) => s + x.value, 0) || 1;
   const R = 40, CX = 50, CY = 50, SW = 14, circ = 2 * Math.PI * R;
   let off = circ * 0.25;
@@ -55,7 +55,8 @@ function Donut({ segs }: { segs: { label: string; value: number; color: string }
         <circle key={i} cx={CX} cy={CY} r={R} fill="none" stroke={a.color} strokeWidth={SW}
           strokeDasharray={`${a.dash} ${circ - a.dash}`} strokeDashoffset={-a.off + circ * 0.25} />
       ))}
-      <text x={CX} y={CY - 5} textAnchor="middle" fontSize={13} fontWeight="900" fill="#f5f0e8" fontFamily="Inter,system-ui,sans-serif">{total}</text>
+      {/* Center menampilkan total jiwa, bukan sum segment (balita/lansia adalah subset dari jiwa) */}
+      <text x={CX} y={CY - 5} textAnchor="middle" fontSize={13} fontWeight="900" fill="#f5f0e8" fontFamily="Inter,system-ui,sans-serif">{jiwa}</text>
       <text x={CX} y={CY + 10} textAnchor="middle" fontSize={9} fill="rgba(255,255,255,0.4)" fontFamily="Inter,system-ui,sans-serif">jiwa</text>
     </svg>
   );
@@ -217,7 +218,7 @@ export default function CommunityDashboard() {
           <div style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", borderRadius: 24, padding: "28px 24px" }}>
             <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 20 }}>📊 Komposisi Jiwa</div>
             <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-              <Donut segs={donutSegs} />
+              <Donut segs={donutSegs} jiwa={d.jiwa} />
               <div style={{ flex: 1 }}>
                 {donutSegs.map((s, i) => (
                   <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 9 }}>
