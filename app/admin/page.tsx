@@ -25,7 +25,30 @@ const KAT_OPTIONS = [
   { value: "update-kampung",label: "📍 Update Kampung" },
 ];
 
-const TRANSAKSI_KAT = ["Donasi Warga","Donasi Online","Donasi Institusi","Donasi Perantau","Smart PJU","Internet Desa","Learning Hub","Bank Sampah","DKM","Marketplace","Operasional"];
+// Kategori MASUK — untuk sumber pemasukan
+const KAT_MASUK = [
+  "Donasi Warga",
+  "Donasi Online",
+  "Donasi Institusi",
+  "Donasi Perantau",
+  "Infak / Sedekah DKM",
+  "Marketplace",
+  "Bank Sampah",
+  "Lainnya",
+];
+// Kategori KELUAR — HARUS SAMA PERSIS dengan label ALOKASI di types.ts
+// agar chart distribusi pengeluaran di Transparansi Dana terpetakan dengan benar
+const KAT_KELUAR = [
+  "Balai Serba Guna & Ruang Publik",
+  "Smart Farming & Peternakan Modern",
+  "Learning Hub",
+  "Smart PJU & Keamanan",
+  "Jaringan Internet (RT/RW Net)",
+  "Operasional Digital & Eco-Waste",
+  "DKM / Masjid",
+  "Lainnya",
+];
+
 
 function openGmailNotif(t: Transaksi) {
   const tipe = t.tipe === "masuk" ? "📈 PEMASUKAN" : "📉 PENGELUARAN";
@@ -833,7 +856,11 @@ export default function AdminPage() {
                   <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Tipe *</label>
                   <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:6 }}>
                     {(["masuk","keluar"] as const).map(t => (
-                      <button key={t} onClick={() => setTForm(f => ({...f, tipe:t}))} style={{
+                      <button key={t} onClick={() => setTForm(f => ({
+                        ...f,
+                        tipe: t,
+                        kategori: t === "masuk" ? KAT_MASUK[0] : KAT_KELUAR[0],
+                      }))} style={{
                         padding:"11px 8px", borderRadius:10, fontSize:12, fontWeight:700, border:"1px solid #E5E0D8", cursor:"pointer", transition:"all .2s",
                         background: tForm.tipe === t ? (t === "masuk" ? "#E8F5EE" : "#FDF0F0") : "#FFFEF9",
                         color: tForm.tipe === t ? (t === "masuk" ? "#1C6B3A" : "#8B2020") : "#9A8C85",
@@ -847,8 +874,11 @@ export default function AdminPage() {
                 <div>
                   <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Kategori</label>
                   <select className="field" value={tForm.kategori} onChange={e => setTForm({...tForm, kategori:e.target.value})}>
-                    {TRANSAKSI_KAT.map(k => <option key={k}>{k}</option>)}
+                    <optgroup label="━━ Kategori">
+                      {(tForm.tipe === "masuk" ? KAT_MASUK : KAT_KELUAR).map(k => <option key={k}>{k}</option>)}
+                    </optgroup>
                   </select>
+
                 </div>
                 <div>
                   <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Jumlah (Rp) *</label>
