@@ -163,6 +163,38 @@ export default function AdminWargaPage(){
     showToast("🗑️ Anggota dihapus");fetchAll();
   }
 
+  // Sinkronisasi: cari KK yang belum punya kepala di anggota_kk, lalu insert
+  async function sinkronisasiKepala(){
+    if(!confirm(`Sinkronisasi kepala KK?\n\nFitur ini akan menambahkan entri kepala ke tabel anggota_kk untuk KK yang belum memilikinya (data lama).\n\nLanjutkan?`))return;
+    setLoading(true);
+    let ditambahkan=0;
+    for(const kk of kkList){
+      const sudahAda=(anggotaMap[kk.id]||[]).some(a=>a.hubungan==="kepala");
+      if(!sudahAda){
+        await supabase.from("anggota_kk").insert({
+          kk_id: kk.id,
+          nama: kk.kepala_keluarga,
+          hubungan: "kepala",
+          jenis_kelamin: "L",
+          no_wa: kk.no_wa||null,
+          pekerjaan: kk.pekerjaan_kepala||"tidak_bekerja",
+          tgl_lahir: kk.tgl_lahir_kepala||null,
+          nfc_id: kk.nfc_id||null,
+          saldo_poin: 0,
+          golongan_zakat: kk.golongan_zakat||"netral",
+        });
+        ditambahkan++;
+      }
+    }
+    setLoading(false);
+    if(ditambahkan>0){
+      showToast(`✅ ${ditambahkan} kepala KK berhasil disinkronisasi ke anggota!`);
+      fetchAll();
+    } else {
+      showToast(`✔️ Semua KK sudah punya kepala. Tidak ada yang perlu disinkronisasi.`);
+    }
+  }
+
   const filtered=kkList.filter(k=>k.kepala_keluarga.toLowerCase().includes(search.toLowerCase())||k.no_kk.includes(search)||k.rt.includes(search));
   const activeKKData=kkList.find(k=>k.id===activeKK);
   const activeAnggota=activeKK?(anggotaMap[activeKK]||[]):[];
@@ -180,9 +212,21 @@ export default function AdminWargaPage(){
             <div style={{fontSize:10,color:"#7a9a7e",textTransform:"uppercase",letterSpacing:"0.08em"}}>{kkList.length} KK · {Object.values(anggotaMap).flat().length} Jiwa</div>
           </div>
         </div>
-        <button onClick={()=>{setFormKK(emptyKK);setEditKKId(null);setShowFormKK(!showFormKK);setActiveKK(null);}} style={{background:"#2d5a40",color:"white",border:"none",borderRadius:10,padding:"8px 16px",fontSize:13,fontWeight:600,cursor:"pointer"}}>
-          {showFormKK?"✕ Tutup":"+ Tambah KK"}
-        </button>
+        <div style={{display:"flex",gap:8,alignItems:"center"}}>
+          {/* Tombol sinkronisasi — tampil jika ada KK yang belum punya kepala di anggota_kk */}
+          {kkList.some(k=>!(anggotaMap[k.id]||[]).some(a=>a.hubungan==="kepala"))&&(
+            <button onClick={sinkronisasiKepala} disabled={loading}
+              style={{background:"#b8943f",color:"white",border:"none",borderRadius:10,padding:"8px 14px",fontSize:12,fontWeight:700,cursor:loading?"not-allowed":"pointer",display:"flex",alignItems:"center",gap:6}}>
+              🔄 Sinkronisasi Kepala KK
+              <span style={{background:"rgba(255,255,255,0.25)",borderRadius:99,padding:"1px 7px",fontSize:11}}>
+                {kkList.filter(k=>!(anggotaMap[k.id]||[]).some(a=>a.hubungan==="kepala")).length}
+              </span>
+            </button>
+          )}
+          <button onClick={()=>{setFormKK(emptyKK);setEditKKId(null);setShowFormKK(!showFormKK);setActiveKK(null);}} style={{background:"#2d5a40",color:"white",border:"none",borderRadius:10,padding:"8px 16px",fontSize:13,fontWeight:600,cursor:"pointer"}}>
+            {showFormKK?"✕ Tutup":"+ Tambah KK"}
+          </button>
+        </div>
       </header>
 
       <div style={{maxWidth:1000,margin:"0 auto",padding:"20px 16px"}}>
