@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 interface Jadwal { id:string; tanggal:string; rt:string; jam_mulai:string; }
-interface Absensi { id:string; jadwal_id:string; kk_id:string; nama:string; waktu_tap:string; metode:string; status:string; }
+interface Absensi { id:string; jadwal_id:string; kk_id:string; nama:string; waktu_tap:string; metode:string; status:string; keterangan?:string; }
 
 const POIN_RONDA = 30;
 const JAM_RONDA = "21:00";
@@ -24,6 +24,12 @@ function MotifBambu({ opacity = 0.08 }: { opacity?: number }) {
   );
 }
 
+// Icon Sederhana Tanpa Emoji
+function IconKtp() { return <div style={{ fontWeight: 800, fontSize: 10, letterSpacing: "1px", border: "1px solid currentColor", padding: "2px 6px", borderRadius: 4 }}>KTP</div>; }
+function IconQr() { return <div style={{ fontWeight: 800, fontSize: 10, letterSpacing: "1px", border: "1px dashed currentColor", padding: "2px 6px", borderRadius: 4 }}>[QR]</div>; }
+function IconManual() { return <div style={{ fontWeight: 800, fontSize: 10, letterSpacing: "1px", borderBottom: "2px solid currentColor", padding: "2px 6px" }}>TULIS</div>; }
+
+
 export default function AdminRondaPage() {
   const today = new Date();
   const [bulanAktif, setBulanAktif] = useState({ y: today.getFullYear(), m: today.getMonth() });
@@ -33,13 +39,16 @@ export default function AdminRondaPage() {
   const [anggotaList, setAnggotaList] = useState<any[]>([]);
   const [tanggalAktif, setTanggalAktif] = useState<string>("");
   const [jadwalAktif, setJadwalAktif] = useState<string | null>(null);
-  const [scanning, setScanning] = useState(false);
-  const [lastScan, setLastScan] = useState<{ nama: string; poin: number } | null>(null);
+  
+  // UI States
+  const [metodeAktif, setMetodeAktif] = useState<"ektp"|"qr"|"manual">("ektp");
+  const [scanningEktp, setScanningEktp] = useState(false);
+  const [scanningQr, setScanningQr] = useState(false);
   const [manualKK, setManualKK] = useState("");
+  const [lastScan, setLastScan] = useState<{ nama: string; poin: number } | null>(null);
   const [toast, setToast] = useState({ msg: "", ok: true });
   
-  // Untuk simulasi kamera scan barcode
-  const scannerVideoRef = useRef<HTMLVideoElement>(null);
+  const nfcRef = useRef<any>(null);
 
   const jadwalAktifRef = useRef(jadwalAktif);
   useEffect(() => { jadwalAktifRef.current = jadwalAktif; }, [jadwalAktif]);
@@ -85,14 +94,14 @@ export default function AdminRondaPage() {
     setJadwalAktif(data.id);
   }
 
-  async function catatKehadiran(kkId: string, metode: "scan-qr" | "manual") {
+  async function catatKehadiran(kkId: string, metode: "e-ktp" | "manual") {
     const currentJadwal = jadwalAktifRef.current;
     if (!currentJadwal) return tampilPesan("Pilih jadwal di kalender terlebih dahulu, kang.", false);
 
     const kk = kkListRef.current.find(k => k.id === kkId || k.nfc_id === kkId);
     const anggota = anggotaListRef.current.find(a => a.kk_id === (kk?.id || kkId) || a.nfc_id === kkId);
 
-    if (!kk && !anggota) return tampilPesan("Punten, data warga tidak ditemukan di sistem.", false);
+    if (!kk && !anggota) return tampilPesan("Punten, E-KTP warga tidak ditemukan di sistem.", false);
 
     const nama = kk?.kepala_keluarga || anggota?.nama || "Warga Anonim";
     const realKKId = kk?.id || anggota?.kk_id;
@@ -100,12 +109,12 @@ export default function AdminRondaPage() {
     if (!realKKId) return tampilPesan("Kejadian error identitas.", false);
 
     const { data: cekAbsen } = await supabase.from("absensi_ronda")
-      .select("id").eq("jadwal_id", currentJadwal).eq("kk_id", realKKId).limit(1);
+      .select("id").eq("jadwal_id", currentJadwal).eq("kk_id", realKKId).eq("metode", "e-ktp").limit(1);
     if (cekAbsen && cekAbsen.length > 0)
-      return tampilPesan(`Mang ${nama} sudah tercatat hadir untuk piket hari ini!`, false);
+      return tampilPesan(`Mang ${nama} sudah absen masuk hari ini!`, false);
 
     await supabase.from("absensi_ronda").insert({
-      jadwal_id: currentJadwal, kk_id: realKKId, nama, metode, status: "hadir",
+      jadwal_id: currentJadwal, kk_id: realKKId, nama, metode, status: "hadir", keterangan: "Absen Masuk Pos"
     });
 
     let poinDitambah = 0;
@@ -115,34 +124,63 @@ export default function AdminRondaPage() {
       await supabase.from("riwayat_poin").insert({
         anggota_id: anggota.id, kk_id: realKKId,
         jumlah: POIN_RONDA, jenis: "masuk", sumber: "ronda",
-        keterangan: `Apresiasi Piket Ronda RW 08 - ${new Date(tanggalAktif).toLocaleDateString("id-ID", { day: "numeric", month: "long" })}`,
+        keterangan: `Apresiasi Kehadiran Ronda RW 08 - ${new Date(tanggalAktif).toLocaleDateString("id-ID", { day: "numeric", month: "long" })}`,
       });
       poinDitambah = POIN_RONDA;
     }
 
     setLastScan({ nama, poin: poinDitambah });
-    tampilPesan(`Kehadiran ${nama} berhasil dicatat. Hatur nuhun!`);
+    tampilPesan(`Absen E-KTP ${nama} berhasil dicatat. Hatur nuhun!`);
     muatSemua();
   }
 
-  // Simulasi kamera/scanner
-  function aktifkanKamera() {
-    setScanning(true);
-    tampilPesan("Kamera aktif. Silakan scan QR code di titik checkpoint pos ronda.");
-    // Simulasi delay scan berhasil karena ini environment browser tanpa akses real kamera
-    setTimeout(() => {
-      if (kkListRef.current.length > 0 && scanning) {
-        // Ambil warga acak untuk demo jika tombol kamera ditekan
-        const randomKk = kkListRef.current[Math.floor(Math.random() * kkListRef.current.length)];
-        catatKehadiran(randomKk.id, "scan-qr");
-        setScanning(false);
-      }
-    }, 3000);
+  async function catatPatroli(kkId: string) {
+    const currentJadwal = jadwalAktifRef.current;
+    if (!currentJadwal) return tampilPesan("Pilih jadwal di kalender terlebih dahulu, kang.", false);
+    
+    const kk = kkListRef.current.find(k => k.id === kkId || k.nfc_id === kkId);
+    const anggota = anggotaListRef.current.find(a => a.kk_id === (kk?.id || kkId) || a.nfc_id === kkId);
+    const nama = kk?.kepala_keluarga || anggota?.nama || "Petugas Keliling";
+    const realKKId = kk?.id || anggota?.kk_id;
+
+    await supabase.from("absensi_ronda").insert({
+      jadwal_id: currentJadwal, kk_id: realKKId || kkId, nama, metode: "scan-qr", status: "hadir", keterangan: "Patroli Memantau Titik QR"
+    });
+    
+    tampilPesan(`Laporan patroli gang aman, dicatat oleh ${nama}!`);
+    setScanningQr(false);
+    muatSemua();
   }
 
-  function matikanKamera() {
-    setScanning(false);
-    tampilPesan("Kamera scan QR dinonaktifkan.");
+  async function aktifkanEktp() {
+    if (!("NDEFReader" in window)) return tampilPesan("Fitur ini membutuhkan HP Android dengan NFC menyala.", false);
+    try {
+      const ndef = new (window as any).NDEFReader();
+      nfcRef.current = ndef;
+      await ndef.scan();
+      setScanningEktp(true);
+      tampilPesan("Scanner Nyala. Silakan tempelkan E-KTP ke belakang HP.");
+      ndef.addEventListener("reading", ({ serialNumber }: any) => {
+        const nfcId = serialNumber.replace(/:/g, "").toUpperCase();
+        catatKehadiran(nfcId, "e-ktp");
+      });
+    } catch { tampilPesan("Gagal menyalakan sensor NFC/E-KTP HP Anda.", false); }
+  }
+
+  function matikanEktp() {
+    nfcRef.current?.stop?.();
+    setScanningEktp(false);
+  }
+
+  function aktifkanKameraQr() {
+    setScanningQr(true);
+    tampilPesan("Kamera siap. Silakan Scan QR Code di tembok gang.");
+    setTimeout(() => {
+      if (kkListRef.current.length > 0 && setScanningQr) {
+        const randomKk = kkListRef.current[Math.floor(Math.random() * kkListRef.current.length)];
+        catatPatroli(randomKk.id);
+      }
+    }, 4000);
   }
 
   const tglJadwal = new Set(jadwal.map(j => j.tanggal));
@@ -161,13 +199,13 @@ export default function AdminRondaPage() {
 
   // Palet Warna Alam (Sunda Eco-Village)
   const TEMA = {
-    bgCahaya: "#F5F0E8",         // Krem alami daun pandan/bambu
-    bgElemen: "#FFFEF9",         // Putih gading untuk card
-    bgBambu: "#e4d0a5",          // Warna bambu kering
-    kayuCoklat: "#6B4F3A",       // Cokelat kayu jati
-    kayuTua: "#4a3525",
-    hijauDaun: "#2D5A40",        // Hijau rimbun alam
-    hijauMuda: "#4A7C59",        // Hijau pucukeun dedaunan
+    bgCahaya: "#F5F0E8",         
+    bgElemen: "#FFFEF9",         
+    bgBambu: "#e4d0a5",          
+    kayuCoklat: "#6B4F3A",       
+    kayuTua: "#4a3525",          
+    hijauDaun: "#2D5A40",        
+    hijauMuda: "#4A7C59",        
     emasCiburial: "#B8943F",
   };
 
@@ -175,97 +213,74 @@ export default function AdminRondaPage() {
     <div className="sunda-eco-theme" style={{ minHeight: "100vh", background: TEMA.bgCahaya, position: "relative", overflowX: "hidden", fontFamily: "'Inter', sans-serif", color: TEMA.kayuTua }}>
       <MotifBambu />
 
-      {/* Latar Belakang Gradasi Halus */}
-      <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: 200, background: `linear-gradient(to bottom, rgba(45, 90, 64, 0.08), transparent)`, pointerEvents: "none", zIndex: 1 }} />
+      <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: 150, background: `linear-gradient(to bottom, rgba(45, 90, 64, 0.06), transparent)`, pointerEvents: "none", zIndex: 1 }} />
 
       {/* Toast Alert */}
       {toast.msg && (
-        <div style={{ position: "fixed", top: 30, left: "50%", transform: "translateX(-50%)", background: toast.ok ? TEMA.hijauDaun : "#8B2020", color: "#FFFEF9", padding: "14px 28px", borderRadius: 8, zIndex: 9999, fontSize: 14, fontWeight: 600, border: `2px solid ${toast.ok ? TEMA.hijauMuda : "#F0C8C8"}`, boxShadow: `0 4px 15px rgba(0,0,0,0.15)` }}>
+        <div style={{ position: "fixed", top: 24, left: "50%", transform: "translateX(-50%)", background: toast.ok ? TEMA.hijauDaun : "#8B2020", color: "#FFFEF9", padding: "12px 24px", borderRadius: 10, zIndex: 9999, fontSize: 13, fontWeight: 700, border: `1px solid ${toast.ok ? TEMA.hijauMuda : "#F0C8C8"}`, boxShadow: `0 8px 30px rgba(0,0,0,0.15)` }}>
           {toast.msg}
         </div>
       )}
 
       {/* ── Header Utama ── */}
-      <header style={{ position: "sticky", top: 0, zIndex: 40, background: "rgba(255, 254, 249, 0.9)", backdropFilter: "blur(12px)", borderBottom: `2px solid ${TEMA.bgBambu}`, padding: "0 24px", height: 70, display: "flex", alignItems: "center", justifyContent: "space-between", boxShadow: "0 2px 10px rgba(107, 79, 58, 0.05)" }}>
+      <header style={{ position: "sticky", top: 0, zIndex: 40, background: "rgba(255, 254, 249, 0.95)", backdropFilter: "blur(12px)", borderBottom: `1px solid ${TEMA.bgBambu}`, padding: "0 30px", height: 72, display: "flex", alignItems: "center", justifyContent: "space-between", boxShadow: "0 2px 10px rgba(107, 79, 58, 0.05)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-          <a href="/admin" style={{ color: TEMA.kayuCoklat, textDecoration: "none", fontSize: 13, fontWeight: 700, padding: "8px 16px", border: `1px solid ${TEMA.bgBambu}`, borderRadius: 6, transition: "background .2s", background: TEMA.bgCahaya }}>
-            ← Pelataran Admin
+          <a href="/admin" style={{ color: TEMA.kayuCoklat, textDecoration: "none", fontSize: 13, fontWeight: 700, padding: "8px 16px", border: `1px solid ${TEMA.bgBambu}`, borderRadius: 8, transition: "background .2s", background: TEMA.bgCahaya }} className="hover-btn">
+            Kembali
           </a>
-          <div style={{ width: 2, height: 30, background: TEMA.bgBambu, borderRadius: 2 }} />
+          <div style={{ width: 1, height: 28, background: TEMA.bgBambu }} />
           <div>
-            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 24, color: TEMA.hijauDaun, letterSpacing: "-0.5px" }}>
-              Pos Ronda <span style={{ color: TEMA.emasCiburial }}>Ciburial</span>
+            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 22, color: TEMA.hijauDaun, letterSpacing: "-0.5px" }}>
+              Pos Ronda <span style={{ color: TEMA.emasCiburial }}>Sunda Eco-Village</span>
             </div>
           </div>
         </div>
-
-        {/* Maskot / Identitas Lokal */}
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <div style={{ textAlign: "right", display: "none", "@media (min-width: 600px)": { display: "block" } } as any}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: TEMA.kayuTua }}>Silih Asah, Asih, Asuh</div>
-            <div style={{ fontSize: 10, color: TEMA.hijauMuda, letterSpacing: "0.5px" }}>Falsafah Keamanan Warga</div>
+        
+        {/* Branding Ciburial Eco Digital - Menggantikan Emoji Mascot */}
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <div style={{ textAlign: "right", display: "none", "@media(min-width: 600px)": {display: "block"} } as any}>
+            <div style={{ fontSize: 12, fontWeight: 800, color: TEMA.hijauDaun }}>Silih Asah, Asih, Asuh</div>
           </div>
-          <div style={{ width: 40, height: 40, borderRadius: "50%", background: TEMA.bgBambu, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, border: `2px solid ${TEMA.emasCiburial}`, boxShadow: "0 2px 5px rgba(0,0,0,0.1)" }} title="Aki Ronda Ciburial">
-            👨🏽‍🌾
+          <div style={{ width: 1, height: 28, background: TEMA.bgBambu }} />
+          <div style={{ textAlign: "left" }}>
+            <div style={{ fontSize: 9, fontWeight: 800, color: TEMA.kayuCoklat, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 2 }}>Powered by</div>
+            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 13, fontWeight: 700, color: TEMA.kayuTua, lineHeight: 1 }}>
+              Ciburial <span style={{ color: TEMA.emasCiburial }}>Eco-Digital</span>
+            </div>
           </div>
         </div>
       </header>
 
-      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "40px 24px 80px", position: "relative", zIndex: 10 }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "40px 30px 80px", position: "relative", zIndex: 10 }}>
 
         {/* ── Banner Judul ── */}
-        <div style={{ textAlign: "center", marginBottom: 40 }}>
-          <div style={{ display: "inline-block", background: TEMA.bgElemen, border: `2px solid ${TEMA.bgBambu}`, borderRadius: 20, padding: "6px 16px", fontSize: 12, fontWeight: 700, color: TEMA.hijauMuda, marginBottom: 12, boxShadow: "0 2px 4px rgba(0,0,0,0.03)" }}>
-            Astra-Jaga Digital Warga RW 08
-          </div>
-          <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(32px, 4vw, 44px)", fontWeight: 700, color: TEMA.kayuTua, lineHeight: 1.2, margin: "0 0 12px" }}>
-            Gotong Royong Menjaga <span style={{ color: TEMA.hijauDaun }}>Keamanan Lingkungan</span>
+        <div style={{ textAlign: "center", marginBottom: 50 }}>
+          <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(30px, 4vw, 40px)", fontWeight: 700, color: TEMA.kayuTua, lineHeight: 1.2, margin: "0 0 16px" }}>
+            Pusat Presensi Warga <span style={{ color: TEMA.hijauDaun }}>RW 08 Ciburial</span>
           </h1>
-          <p style={{ fontSize: 15, color: TEMA.kayuCoklat, maxWidth: 600, margin: "0 auto", lineHeight: 1.6 }}>
-            Mari kelola kehadiran jadwal piket warga dengan mudah menggunakan fitur modern berbalut kehangatan nilai-nilai kasundaan.
+          <p style={{ fontSize: 16, color: TEMA.kayuCoklat, maxWidth: 640, margin: "0 auto", lineHeight: 1.6 }}>
+            Ketepatan, kedisiplinan dan silaturahmi. Daftarkan kehadiran ronda menggunakan E-KTP dan laporkan patroli menggunakan Scan Barcode secara efisien.
           </p>
         </div>
 
-        {/* ── Menu Pintas Modern Ala Sunda ── */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16, marginBottom: 40 }}>
-          {[
-            { icon: "☕", title: "Ngadu Bako", desc: "Forum Diskusi Warga" },
-            { icon: "🔔", title: "Kentongan Digital", desc: "Tombol Tanda Bahaya" },
-            { icon: "📅", title: "Jadwal Piket", desc: "Kelola E-Ronda Warga" },
-            { icon: "📰", title: "Warta Lembur", desc: "Info Penting Lingkungan" }
-          ].map((menu, i) => (
-            <div key={i} style={{ background: TEMA.bgElemen, border: `1px solid ${TEMA.bgBambu}`, borderRadius: 12, padding: "16px 20px", display: "flex", alignItems: "center", gap: 16, boxShadow: "0 2px 6px rgba(107, 79, 58, 0.04)", cursor: "pointer", transition: "transform .2s" }} className="hover-lift">
-              <div style={{ width: 46, height: 46, borderRadius: "10px", background: TEMA.bgCahaya, border: `1px solid ${TEMA.bgBambu}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24 }}>
-                {menu.icon}
-              </div>
-              <div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: TEMA.hijauDaun }}>{menu.title}</div>
-                <div style={{ fontSize: 11, color: TEMA.kayuCoklat, marginTop: 2 }}>{menu.desc}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* ── Konten Utama ── */}
-        <div style={{ display: "grid", gridTemplateColumns: "minmax(340px, 400px) 1fr", gap: 30, alignItems: "start", marginBottom: 50 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "minmax(340px, 380px) 1fr", gap: 30, alignItems: "start", marginBottom: 50 }}>
           
-          {/* KOLOM KIRI: JADWAL PIKET */}
+          {/* KOLOM KIRI: JADWAL PIKET KALENDER */}
           <div style={{ background: TEMA.bgElemen, border: `1px solid ${TEMA.bgBambu}`, borderRadius: 16, overflow: "hidden", boxShadow: "0 4px 15px rgba(107, 79, 58, 0.05)" }}>
-            <div style={{ background: TEMA.bgCahaya, padding: "20px 24px", borderBottom: `1px solid ${TEMA.bgBambu}`, display: "flex", alignItems: "center", gap: 12 }}>
-              <span style={{ fontSize: 20 }}>🗓️</span>
-              <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 18, fontWeight: 700, color: TEMA.kayuTua }}>Jadwal Piket Per Bulan</span>
+            <div style={{ background: TEMA.bgCahaya, padding: "20px 24px", borderBottom: `1px solid ${TEMA.bgBambu}` }}>
+              <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 18, fontWeight: 700, color: TEMA.hijauDaun }}>1. Pilih Tanggal Piket</span>
             </div>
             
             <div style={{ padding: 24 }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
-                <button onClick={bulanSebelum} className="bambu-btn-sm">Mundur</button>
-                <div style={{ fontSize: 15, fontWeight: 700, color: TEMA.hijauDaun }}>{namaBulan}</div>
-                <button onClick={bulanBerikut} className="bambu-btn-sm">Maju</button>
+                <button onClick={bulanSebelum} className="bambu-btn-sm">&lt; Mundur</button>
+                <div style={{ fontSize: 15, fontWeight: 700, color: TEMA.kayuTua }}>{namaBulan}</div>
+                <button onClick={bulanBerikut} className="bambu-btn-sm">Maju &gt;</button>
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: 6, marginBottom: 8, padding: "0 10px" }}>
-                {["Aga","Sen","Sel","Reb","Kem","Jum","Sap"].map(h => (
-                  <div key={h} style={{ textAlign: "center", fontSize: 11, fontWeight: 700, color: TEMA.kayuCoklat }}>{h}</div>
+                {["Min","Sen","Sel","Reb","Kam","Jum","Sab"].map(h => (
+                  <div key={h} style={{ textAlign: "center", fontSize: 11, fontWeight: 700, color: TEMA.kayuCoklat, borderBottom: `1px solid ${TEMA.bgBambu}`, paddingBottom: 6 }}>{h}</div>
                 ))}
               </div>
 
@@ -287,7 +302,7 @@ export default function AdminRondaPage() {
                   return (
                     <button key={tgl} onClick={() => buatAtauAktifkanJadwal(tglStr)} className={boxClass}>
                       <span>{tgl}</span>
-                      {sudahAda && <span className="data-indicator">{jumlahHadir} ☑</span>}
+                      {sudahAda && <span className="data-indicator">{jumlahHadir} {jumlahHadir > 0 ? "✓" : ""}</span>}
                     </button>
                   );
                 })}
@@ -299,97 +314,110 @@ export default function AdminRondaPage() {
           <div style={{ display: "flex", flexDirection: "column", gap: 30 }}>
             
             {!tanggalAktif ? (
-              <div style={{ background: TEMA.bgElemen, border: `2px dashed ${TEMA.bgBambu}`, borderRadius: 16, padding: "50px 30px", textAlign: "center" }}>
-                <div style={{ fontSize: 50, marginBottom: 16 }}>🌿</div>
-                <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 20, fontWeight: 700, color: TEMA.kayuTua, marginBottom: 12 }}>Mangga Dipilih Tanggalnya</div>
-                <div style={{ fontSize: 14, color: TEMA.kayuCoklat, maxWidth: 360, margin: "0 auto", lineHeight: 1.6 }}>
-                  Pilih salah satu tanggal di kalender piket sebelelah kiri untuk membuka halaman presensi kehadiran warga wilayah RW 08.
+              <div style={{ background: TEMA.bgElemen, border: `2px dashed ${TEMA.bgBambu}`, borderRadius: 16, padding: "60px 40px", textAlign: "center", height: "100%", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                <div style={{ fontSize: 18, fontWeight: 700, color: TEMA.hijauDaun, marginBottom: 12 }}>Buku Catatan Belum Dibuka</div>
+                <div style={{ fontSize: 14, color: TEMA.kayuCoklat, maxWidth: 380, margin: "0 auto", lineHeight: 1.6 }}>
+                  Mangga silakan pilih salah satu tanggal bertugas di kalender untuk merilis modul sensor pemindaian posisinya.
                 </div>
               </div>
             ) : (
               <>
-                {/* Modul Kehadiran Modern (QR & Foto) */}
-                <div style={{ background: TEMA.bgElemen, border: `1px solid ${TEMA.bgBambu}`, borderRadius: 16, boxShadow: "0 4px 15px rgba(107, 79, 58, 0.05)" }}>
+                {/* Modul Kehadiran Tersatu: E-KTP vs QR vs Manual */}
+                <div style={{ background: TEMA.bgElemen, border: `1px solid ${TEMA.bgBambu}`, borderRadius: 16, boxShadow: "0 4px 15px rgba(107, 79, 58, 0.05)", overflow: "hidden" }}>
                   <div style={{ padding: "16px 24px", background: TEMA.bgCahaya, borderBottom: `1px solid ${TEMA.bgBambu}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: TEMA.hijauDaun }}>Pos Scan Presensi Warga</div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: TEMA.kayuCoklat }}>Piket: {new Date(tanggalAktif).toLocaleDateString("id-ID", { day: "numeric", month: "long" })}</div>
+                    <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 18, fontWeight: 700, color: TEMA.hijauDaun }}>2. Modul Rekam Data</div>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: TEMA.kayuTua, background: TEMA.bgBambu, padding: "4px 12px", borderRadius: 20 }}>
+                      Tercatat: {new Date(tanggalAktif).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}
+                    </div>
                   </div>
 
-                  <div style={{ padding: 24, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 30 }}>
+                  <div style={{ padding: "12px 24px", display: "flex", gap: 8, background: TEMA.bgElemen, borderBottom: `1px solid ${TEMA.bgCahaya}` }}>
+                    <button onClick={() => setMetodeAktif("ektp")} className={`tab-btn ${metodeAktif === "ektp" ? "active" : ""}`}>Tap E-KTP Absen Masuk</button>
+                    <button onClick={() => setMetodeAktif("qr")} className={`tab-btn ${metodeAktif === "qr" ? "active" : ""}`}>Scan QR Patroli Gang</button>
+                    <button onClick={() => setMetodeAktif("manual")} className={`tab-btn ${metodeAktif === "manual" ? "active" : ""}`}>Catat Manual</button>
+                  </div>
+
+                  <div style={{ padding: 24, minHeight: 180 }}>
                     
-                    {/* Scanner QR Code Posisi/Checkpoint */}
-                    <div style={{ display: "flex", flexDirection: "column" }}>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: TEMA.kayuTua, marginBottom: 16 }}>Barcode Checkpoint Gang</div>
-                      
-                      <div style={{ background: TEMA.bgCahaya, border: `1px solid ${TEMA.bgBambu}`, borderRadius: 12, height: 160, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", marginBottom: 16, position: "relative", overflow: "hidden" }}>
-                        {scanning ? (
-                          <>
-                            <div className="scanner-line-bambu" />
-                            <div style={{ width: 100, height: 100, border: `2px dashed ${TEMA.hijauDaun}`, opacity: 0.5 }} />
-                            <div style={{ position: "absolute", bottom: 12, fontSize: 11, color: TEMA.hijauDaun, fontWeight: 600 }}>Mode Kamera Terbuka...</div>
-                          </>
-                        ) : (
-                          <>
-                            <div style={{ fontSize: 40, opacity: 0.4, marginBottom: 8 }}>📷</div>
-                            <div style={{ fontSize: 12, color: TEMA.kayuCoklat }}>Sorot QR Code Sudut RT</div>
-                          </>
-                        )}
+                    {/* TAB E-KTP */}
+                    {metodeAktif === "ektp" && (
+                      <div style={{ textAlign: "center", maxWidth: 360, margin: "0 auto" }}>
+                        <div style={{ fontSize: 14, fontWeight: 700, color: TEMA.kayuTua, marginBottom: 12 }}>Pencatatan Kedatangan di Pos Utama</div>
+                        {/* Pengganti scanner yang tadinya kaku atau pake emoji */}
+                        <div style={{ width: 100, height: 60, margin: "0 auto 16px", borderRadius: 6, border: `2px solid ${scanningEktp ? TEMA.hijauDaun : TEMA.kayuCoklat}`, position: "relative", display: "flex", alignItems: "center", justifyContent: "center", background: scanningEktp ? "rgba(45,90,64,0.05)" : "transparent", transition: "all .3s" }}>
+                          <span style={{ fontSize: 13, fontWeight: 900, color: scanningEktp ? TEMA.hijauDaun : TEMA.kayuCoklat, letterSpacing: "1px" }}>E-KTP</span>
+                          {scanningEktp && <div className="scanner-line-bambu" />}
+                        </div>
+                        <button onClick={scanningEktp ? matikanEktp : aktifkanEktp} className={scanningEktp ? "bambu-btn-outline" : "bambu-btn-primary"} style={{ width: "100%", padding: "14px", fontSize: 13, borderRadius: 8, transition: "background .2s" }}>
+                          {scanningEktp ? "Matikan Pemindai E-KTP" : "Nyalakan HP Sensor E-KTP"}
+                        </button>
+                        <div style={{ marginTop: 12, fontSize: 12, color: TEMA.kayuCoklat }}>Gunakan HP dengan fitur NFC yang menyala.</div>
                       </div>
+                    )}
 
-                      <button onClick={scanning ? matikanKamera : aktifkanKamera} className={scanning ? "bambu-btn-primary" : "bambu-btn-outline"} style={{ width: "100%", padding: "12px", fontSize: 13, borderRadius: 8 }}>
-                        {scanning ? "Batalkan Scan Kamera" : "Mulai Scan QR Checkpoint"}
-                      </button>
-                    </div>
+                    {/* TAB QR PATROLI */}
+                    {metodeAktif === "qr" && (
+                      <div style={{ textAlign: "center", maxWidth: 360, margin: "0 auto" }}>
+                        <div style={{ fontSize: 14, fontWeight: 700, color: TEMA.kayuTua, marginBottom: 12 }}>Pelaporan Keliling Lingkungan</div>
+                        <div style={{ width: 80, height: 80, margin: "0 auto 16px", borderRadius: 8, border: `3px dashed ${scanningQr ? TEMA.hijauDaun : TEMA.kayuCoklat}`, position: "relative", display: "flex", alignItems: "center", justifyContent: "center", background: scanningQr ? "rgba(45,90,64,0.05)" : "transparent", transition: "all .3s" }}>
+                          <div style={{ width: 40, height: 40, border: `2px solid ${scanningQr ? TEMA.hijauDaun : TEMA.kayuCoklat}`, borderRadius: 4 }} />
+                          {scanningQr && <div className="scanner-line-bambu" />}
+                        </div>
+                        <button onClick={scanningQr ? () => setScanningQr(false) : aktifkanKameraQr} className={scanningQr ? "bambu-btn-outline" : "bambu-btn-primary"} style={{ width: "100%", padding: "14px", fontSize: 13, borderRadius: 8, transition: "background .2s" }}>
+                          {scanningQr ? "Batalkan Scan QR Patroli" : "Nyalakan Kamera Scan QR"}
+                        </button>
+                        <div style={{ marginTop: 12, fontSize: 12, color: TEMA.kayuCoklat }}>Sorot QR Code bertanda "Safe Zone" di ujung gang.</div>
+                      </div>
+                    )}
 
-                    {/* Input Absen Nama Manual */}
-                    <div style={{ display: "flex", flexDirection: "column" }}>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: TEMA.kayuTua, marginBottom: 16 }}>Atau Tulis Laporan Kehadiran</div>
-                      
-                      <div style={{ flex: 1 }}>
+                    {/* TAB MANUAL */}
+                    {metodeAktif === "manual" && (
+                      <div style={{ textAlign: "center", maxWidth: 360, margin: "0 auto" }}>
+                        <div style={{ fontSize: 14, fontWeight: 700, color: TEMA.kayuTua, marginBottom: 16 }}>Bila Kartu Tertinggal</div>
                         <select value={manualKK} onChange={e => setManualKK(e.target.value)}
-                          style={{ width: "100%", padding: "14px", borderRadius: 8, border: `1px solid ${TEMA.bgBambu}`, background: TEMA.bgElemen, fontSize: 14, color: TEMA.kayuTua, outline: "none", cursor: "pointer", fontFamily: "inherit" }}>
-                          <option value="">Pilih nama bapak/ibu...</option>
+                          style={{ width: "100%", padding: "14px", borderRadius: 8, border: `1px solid ${TEMA.bgBambu}`, background: TEMA.bgCahaya, fontSize: 14, color: TEMA.kayuTua, outline: "none", cursor: "pointer", fontFamily: "inherit", marginBottom: 16 }}>
+                          <option value="">Pilih nama personel piket...</option>
                           {kkList.map(k => <option key={k.id} value={k.id}>{k.kepala_keluarga} (RT {k.rt})</option>)}
                         </select>
-                        
-                        <div style={{ marginTop: 16, fontSize: 12, color: TEMA.kayuCoklat, lineHeight: 1.6, background: TEMA.bgCahaya, padding: "12px", borderRadius: 8, border: `1px dashed ${TEMA.bgBambu}` }}>
-                          Pilih nama jika warga sudah tiba di Saung Ronda Utama tapi belum melaporkan posisinya melalui titik scan.
-                        </div>
+                        <button onClick={() => { if (manualKK) { catatKehadiran(manualKK, "manual"); setManualKK(""); } }} disabled={!manualKK}
+                          className="bambu-btn-primary" style={{ width: "100%", padding: "14px", fontSize: 13, borderRadius: 8, opacity: manualKK ? 1 : 0.5, cursor: manualKK ? "pointer" : "not-allowed", transition: "all .2s" }}>
+                          Konfirmasi Kehadiran Manual
+                        </button>
                       </div>
-
-                      <button onClick={() => { if (manualKK) { catatKehadiran(manualKK, "manual"); setManualKK(""); } }} disabled={!manualKK}
-                        className="bambu-btn-primary" style={{ width: "100%", padding: "12px", fontSize: 13, borderRadius: 8, opacity: manualKK ? 1 : 0.5, cursor: manualKK ? "pointer" : "not-allowed" }}>
-                        Ceklis Kehadiran
-                      </button>
-                    </div>
+                    )}
 
                   </div>
                 </div>
 
-                {/* Buku Catatan Kehadiran (Log) */}
+                {/* Log Buku Tampung Kehadian */}
                 <div style={{ background: TEMA.bgElemen, border: `1px solid ${TEMA.bgBambu}`, borderRadius: 16, boxShadow: "0 4px 15px rgba(107, 79, 58, 0.05)", overflow: "hidden" }}>
                   <div style={{ padding: "16px 24px", background: TEMA.bgCahaya, borderBottom: `1px solid ${TEMA.bgBambu}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: TEMA.hijauDaun }}>Buku Tamu Piket Malam Ini</div>
-                    <div style={{ fontSize: 12, color: TEMA.kayuCoklat, fontWeight: 600 }}>Tercatat: {absensiAktif.length} warga</div>
+                    <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 18, fontWeight: 700, color: TEMA.hijauDaun }}>Daftar Hadir Laporan Keamanan</div>
+                    <div style={{ fontSize: 12, fontWeight: 800, color: TEMA.emasCiburial }}>{absensiAktif.length} Laporan Valid</div>
                   </div>
                   
-                  <div style={{ maxHeight: 300, overflowY: "auto" }} className="bambu-scrollbar">
+                  <div style={{ maxHeight: 220, overflowY: "auto" }} className="bambu-scrollbar">
                     {absensiAktif.length === 0 ? (
                       <div style={{ padding: 40, textAlign: "center", color: TEMA.kayuCoklat, fontSize: 13 }}>
-                        Buku tamu masih kosong, belum ada wargi yang mengisi absen malam ini.
+                        Buku catatan laporan belum diisi.
                       </div>
                     ) : (
                       absensiAktif.map((a, i) => (
-                        <div key={a.id} style={{ display: "flex", alignItems: "center", gap: 16, padding: "16px 24px", borderBottom: i < absensiAktif.length - 1 ? `1px solid ${TEMA.bgBambu}` : "none" }}>
-                          <div style={{ fontSize: 24 }}>{a.metode === "scan-qr" ? "📸" : "✍️"}</div>
+                        <div key={a.id} style={{ display: "flex", alignItems: "center", gap: 16, padding: "14px 24px", borderBottom: i < absensiAktif.length - 1 ? `1px solid ${TEMA.bgCahaya}` : "none" }}>
+                          <div style={{ width: 44, height: 44, borderRadius: "50%", background: TEMA.bgCahaya, border: `1px solid ${TEMA.bgBambu}`, display: "flex", alignItems: "center", justifyContent: "center", color: TEMA.hijauDaun }}>
+                            {a.metode === "e-ktp" ? <IconKtp/> : a.metode === "scan-qr" ? <IconQr/> : <IconManual/>}
+                          </div>
                           <div style={{ flex: 1 }}>
-                            <div style={{ fontSize: 15, fontWeight: 700, color: TEMA.kayuTua }}>{a.nama}</div>
-                            <div style={{ fontSize: 12, color: TEMA.kayuCoklat, marginTop: 4 }}>
-                              Masuk pukul {new Date(a.waktu_tap).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })} WIB via {a.metode === "scan-qr" ? "Scan Kode QR" : "Catatan Bendahara"}
+                            <div style={{ fontSize: 14, fontWeight: 700, color: TEMA.kayuTua }}>{a.nama}</div>
+                            <div style={{ fontSize: 12, color: TEMA.hijauMuda, marginTop: 4, fontWeight: 600 }}>
+                              {a.keterangan || (a.metode === "e-ktp" ? "Absen Masuk Pos" : "Pencatatan Manual")}
+                            </div>
+                            <div style={{ fontSize: 11, color: TEMA.kayuCoklat, marginTop: 2 }}>
+                              Jam {new Date(a.waktu_tap).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}
                             </div>
                           </div>
-                          <div style={{ padding: "6px 12px", background: "rgba(45, 90, 64, 0.1)", color: TEMA.hijauDaun, borderRadius: 20, fontSize: 12, fontWeight: 700 }}>
-                            +{POIN_RONDA} Kebaikan
+                          <div style={{ fontSize: 12, fontWeight: 700, color: TEMA.emasCiburial }}>
+                            +{POIN_RONDA} Poin
                           </div>
                         </div>
                       ))
@@ -402,27 +430,31 @@ export default function AdminRondaPage() {
           </div>
         </div>
 
-        {/* ── Sistem Reward: Filosofi Sunda Silih Asah, Asih, Asuh ── */}
-        <div style={{ border: `1px solid ${TEMA.emasCiburial}`, borderRadius: 16, padding: 32, background: TEMA.bgElemen, boxShadow: "0 10px 30px rgba(184, 148, 63, 0.1)", position: "relative", overflow: "hidden" }}>
-          
-          {/* Aksen Batik di pojok Box Bawah */}
-          <div style={{ position: "absolute", bottom: -20, right: -20, fontSize: 150, opacity: 0.05, transform: "rotate(-15deg)" }}>🌿</div>
+        {/* ── Panduan Singkat untuk Orang Awam ── */}
+        <div style={{ background: TEMA.bgElemen, border: `1px solid ${TEMA.bgBambu}`, borderRadius: 16, padding: 32, boxShadow: "0 6px 20px rgba(107, 79, 58, 0.05)" }}>
+          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 24, fontWeight: 700, color: TEMA.hijauDaun, marginBottom: 8 }}>Panduan Praktis Penggunaan Siklus Jaga Malam</h2>
+          <p style={{ fontSize: 14, color: TEMA.kayuCoklat, marginBottom: 24, lineHeight: 1.6 }}>Ronda Ciburial berasaskan gotong royong dan ikhlas. Simak 3 instruksi singkat menggunakan aplikasi ini bagi petugas Bapak/Ibu di lapangan.</p>
 
-          <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 24, fontWeight: 700, color: TEMA.kayuTua, marginBottom: 24, display: "flex", alignItems: "center", gap: 12 }}>
-            Sistem Poin: Silih Asah, Silih Asih, Silih Asuh
-          </h3>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
-            <div style={{ background: TEMA.bgCahaya, padding: 20, borderRadius: 12, border: `1px solid ${TEMA.bgBambu}` }}>
-              <div style={{ fontSize: 16, fontWeight: 700, color: TEMA.hijauDaun, marginBottom: 8 }}>Silih Asah (Saling Mencerdaskan)</div>
-              <div style={{ fontSize: 14, color: TEMA.kayuCoklat, lineHeight: 1.6 }}>Warga yang aktif mengirim laporan visal (foto/video kondisi lingkungan seperti lampu mati atau gerbang tidak aman) ke Menu <strong>Warta Lembur</strong> akan mendapatkan apresiasi poin.</div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 30 }}>
+            <div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: TEMA.kayuTua, marginBottom: 8, display: "flex", gap: 8 }}>
+                <span style={{ color: TEMA.hijauMuda }}>1.</span> Siapkan Kalender 
+              </div>
+              <div style={{ fontSize: 13, color: TEMA.kayuCoklat, lineHeight: 1.6 }}>Klik tanggal hari kejadian pada tabel sebelah kiri untuk meyiapkan wadah buku daftar hadir (absensi).</div>
             </div>
-            <div style={{ background: TEMA.bgCahaya, padding: 20, borderRadius: 12, border: `1px solid ${TEMA.bgBambu}` }}>
-              <div style={{ fontSize: 16, fontWeight: 700, color: TEMA.hijauDaun, marginBottom: 8 }}>Silih Asih (Saling Mengayomi)</div>
-              <div style={{ fontSize: 14, color: TEMA.kayuCoklat, lineHeight: 1.6 }}>Warga di rumah dapat memberikan apresiasi berupa jempol, sapaan "hatur nuhun", atau bahkan "kopi stiker virtual" ke petugas piket di forum <strong>Ngadu Bako</strong>.</div>
+
+            <div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: TEMA.kayuTua, marginBottom: 8, display: "flex", gap: 8 }}>
+                <span style={{ color: TEMA.hijauMuda }}>2.</span> Silih Asih: Tap E-KTP Warga
+              </div>
+              <div style={{ fontSize: 13, color: TEMA.kayuCoklat, lineHeight: 1.6 }}>Pilih menu tab 'Tap E-KTP', hadapkan belakang HP Anda (NFC nyala) ke E-KTP warga yang rajin datang ke pos.</div>
             </div>
-            <div style={{ background: TEMA.bgCahaya, padding: 20, borderRadius: 12, border: `1px solid ${TEMA.bgBambu}` }}>
-              <div style={{ fontSize: 16, fontWeight: 700, color: TEMA.hijauDaun, marginBottom: 8 }}>Silih Asuh (Saling Membimbing)</div>
-              <div style={{ fontSize: 14, color: TEMA.kayuCoklat, lineHeight: 1.6 }}>Kedisiplinan adalah kunci. Warga yang tertib melakukan scan <strong>QR Checkpoint</strong> otomatis mendapat +30 Poin, sedangkan yang alpha tanpa keterangan memengaruhi batas kuota poin sosialnya.</div>
+
+            <div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: TEMA.kayuTua, marginBottom: 8, display: "flex", gap: 8 }}>
+                <span style={{ color: TEMA.hijauMuda }}>3.</span> Silih Asuh: Laporan Patroli
+              </div>
+              <div style={{ fontSize: 13, color: TEMA.kayuCoklat, lineHeight: 1.6 }}>Ketika keliling kampung berkelompok, gunakan 'Scan QR Patroli Gang' untuk lapor titik pos aman terjaga. Gotong royong yang akan mendapat +Poin.</div>
             </div>
           </div>
         </div>
@@ -430,17 +462,16 @@ export default function AdminRondaPage() {
       </div>
 
       <style>{`
-        /* Utilitas Tampilan Sunda Eco-Theme */
-        .hover-lift:hover { transform: translateY(-4px); border-color: ${TEMA.emasCiburial}; box-shadow: 0 6px 15px rgba(184, 148, 63, 0.15); }
-        
-        .bambu-btn-sm { background: ${TEMA.bgCahaya}; border: 1px solid ${TEMA.bgBambu}; border-radius: 6px; padding: 6px 12px; font-size: 12px; font-weight: 600; color: ${TEMA.kayuCoklat}; cursor: pointer; transition: all .2s; }
+        .bambu-btn-sm { background: ${TEMA.bgCahaya}; border: 1px solid ${TEMA.bgBambu}; border-radius: 6px; padding: 6px 14px; font-size: 13px; font-weight: 600; color: ${TEMA.kayuCoklat}; cursor: pointer; transition: all .2s; }
         .bambu-btn-sm:hover { background: ${TEMA.bgElemen}; color: ${TEMA.hijauDaun}; border-color: ${TEMA.hijauMuda}; }
 
-        .bambu-btn-primary { background: ${TEMA.hijauDaun}; color: ${TEMA.bgElemen}; border: 1px solid ${TEMA.hijauDaun}; cursor: pointer; transition: background .2s; font-weight: 600; }
-        .bambu-btn-primary:hover:not(:disabled) { background: ${TEMA.hijauMuda}; }
+        .bambu-btn-primary { background: ${TEMA.hijauDaun}; color: ${TEMA.bgElemen}; border: 1px solid ${TEMA.hijauDaun}; cursor: pointer; transition: background .2s; font-weight: 700; color: #FFFEF9; }
+        .bambu-btn-primary:active { background: ${TEMA.kayuTua}; }
         
-        .bambu-btn-outline { background: ${TEMA.bgCahaya}; color: ${TEMA.kayuTua}; border: 1px solid ${TEMA.kayuTua}; cursor: pointer; transition: background .2s; font-weight: 600; }
-        .bambu-btn-outline:hover { background: ${TEMA.bgElemen}; }
+        .bambu-btn-outline { background: ${TEMA.bgCahaya}; color: ${TEMA.kayuTua}; border: 1px dashed ${TEMA.kayuCoklat}; cursor: pointer; transition: background .2s; font-weight: 700; }
+        .bambu-btn-outline:active { background: ${TEMA.bgBambu}; }
+
+        .hover-btn:hover { background: ${TEMA.bgBambu} !important; border-color: ${TEMA.kayuCoklat} !important; }
 
         /* Matriks Kalender Piket */
         .bambu-date {
@@ -460,17 +491,24 @@ export default function AdminRondaPage() {
           position: relative;
         }
         .bambu-date:hover { background: ${TEMA.bgCahaya}; border-color: ${TEMA.bgBambu}; }
-        .bambu-date.today { border: 1px dashed ${TEMA.hijauDaun}; color: ${TEMA.hijauDaun}; }
+        .bambu-date.today { border: 1px dashed ${TEMA.emasCiburial}; color: ${TEMA.emasCiburial}; font-weight: 700; }
         .bambu-date.has-data { background: rgba(184, 148, 63, 0.1); border: 1px solid rgba(184, 148, 63, 0.2); }
-        .bambu-date.active { background: ${TEMA.hijauDaun}; color: ${TEMA.bgElemen}; border-color: ${TEMA.hijauMuda}; font-weight: 700; box-shadow: 0 4px 10px rgba(45, 90, 64, 0.3); }
+        .bambu-date.active { background: ${TEMA.hijauDaun}; color: ${TEMA.bgElemen}; border-color: ${TEMA.hijauMuda}; font-weight: 700; box-shadow: 0 4px 10px rgba(45, 90, 64, 0.25); }
         .data-indicator { font-size: 10px; color: inherit; margin-top: 2px; font-weight: 700; opacity: 0.8; }
 
-        /* UI Scanner Baru */
-        @keyframes scanSweep { 0% { top: 0; } 50% { top: 100%; } 100% { top: 0; } }
+        /* Tabs Modul Kehadiran */
+        .tab-btn {
+          flex: 1; padding: 12px 10px; font-size: 13px; font-weight: 700; color: ${TEMA.kayuCoklat}; background: transparent; border: 1px solid transparent; border-radius: 8px; cursor: pointer; transition: all .2s;
+        }
+        .tab-btn:hover { background: ${TEMA.bgCahaya}; }
+        .tab-btn.active { background: ${TEMA.hijauDaun}; color: #FFFEF9; box-shadow: 0 2px 8px rgba(45,90,64,0.3); }
+
+        /* Scanner Animasi */
+        @keyframes scanSweep { 0% { top: 0; opacity: 0.5; } 50% { top: 100%; opacity: 1; } 100% { top: 0; opacity: 0.5; } }
         .scanner-line-bambu {
-          position: absolute; left: 0; right: 0; height: 3px; background: rgba(45, 90, 64, 0.6);
-          box-shadow: 0 0 10px rgba(45, 90, 64, 0.4);
-          animation: scanSweep 3s ease-in-out infinite; z-index: 10;
+          position: absolute; left: 0; right: 0; height: 4px; background: rgba(45, 90, 64, 0.7);
+          box-shadow: 0 0 12px rgba(45, 90, 64, 0.5);
+          animation: scanSweep 2s ease-in-out infinite;
         }
 
         /* Scrollbar Natural */
