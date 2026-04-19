@@ -237,10 +237,10 @@ export default function TransparansiTab() {
         {/* KPI Cards - Heroic */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(210px,1fr))", gap: 18, marginBottom: 36 }}>
           {[
-            { label: "Total Masuk", val: fRp(totMasuk), icon: "📈", color: C.bright, bg: "linear-gradient(135deg,rgba(79,191,126,.08) 0%,rgba(47,143,78,.04) 100%)", border: "rgba(47,143,78,.2)" },
-            { label: "Total Keluar", val: fRp(totKeluar), icon: "📉", color: "#f87171", bg: "linear-gradient(135deg,rgba(248,113,113,.08) 0%,rgba(248,113,113,.02) 100%)", border: "rgba(248,113,113,.2)" },
-            { label: "Saldo Dana", val: fRp(saldo), icon: "💰", color: C.cream, bg: "linear-gradient(135deg,rgba(255,254,249,.8) 0%,rgba(232,245,238,.4) 100%)", border: "rgba(47,143,78,.15)" },
-            { label: "Target RAB", val: fRp(RAB_TARGET), icon: "🎯", color: C.gold, bg: "linear-gradient(135deg,rgba(184,148,63,.1) 0%,rgba(184,148,63,.04) 100%)", border: "rgba(184,148,63,.2)" },
+            { label: "Total Masuk", val: fRp(totMasuk), icon: "📈", color: "#1C3A2B", valColor: "#2F8F4E", bg: "linear-gradient(135deg,rgba(79,191,126,.08) 0%,rgba(47,143,78,.04) 100%)", border: "rgba(47,143,78,.2)" },
+            { label: "Total Keluar", val: fRp(totKeluar), icon: "📉", color: "#1C3A2B", valColor: "#B8472F", bg: "linear-gradient(135deg,rgba(248,113,113,.08) 0%,rgba(248,113,113,.02) 100%)", border: "rgba(248,113,113,.2)" },
+            { label: "Saldo Dana", val: fRp(saldo), icon: "💰", color: "#1C3A2B", valColor: "#2F8F4E", bg: "linear-gradient(135deg,rgba(255,254,249,.8) 0%,rgba(232,245,238,.4) 100%)", border: "rgba(47,143,78,.15)" },
+            { label: "Target RAB", val: fRp(RAB_TARGET), icon: "🎯", color: "#1C3A2B", valColor: "#9B7D4C", bg: "linear-gradient(135deg,rgba(184,148,63,.1) 0%,rgba(184,148,63,.04) 100%)", border: "rgba(184,148,63,.2)" },
           ].map((c, i) => (
             <div key={i} style={{ 
               background: c.bg, 
@@ -264,8 +264,8 @@ export default function TransparansiTab() {
             >
               <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: "#5A4A40", marginBottom: 12 }}>{c.label}</div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-                <div className="fnt" style={{ fontSize: "clamp(16px,2.5vw,24px)", fontWeight: 600, color: c.color, lineHeight: 1 }}>{c.val}</div>
-                <span style={{ fontSize: 24, opacity: 0.6 }}>{c.icon}</span>
+                <div className="fnt" style={{ fontSize: "clamp(16px,2.5vw,24px)", fontWeight: 700, color: c.valColor || c.color, lineHeight: 1 }}>{c.val}</div>
+                <span style={{ fontSize: 24, opacity: 0.7 }}>{c.icon}</span>
               </div>
             </div>
           ))}

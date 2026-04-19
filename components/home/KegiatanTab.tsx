@@ -12,46 +12,65 @@ export default function KegiatanTab({ kegiatan, dataLoad }: KegiatanTabProps) {
   const kegFil = fKat === "semua" ? kegiatan : kegiatan.filter(k => k.kategori === fKat);
 
   return (
-    <div className="pi" style={{ paddingTop: "clamp(48px,8vw,106px)", paddingBottom: "clamp(48px,8vw,106px)" }}>
+    <div className="pi" style={{ paddingTop: "clamp(60px,8vw,100px)", paddingBottom: "clamp(60px,8vw,100px)", background: "linear-gradient(135deg,rgba(250,248,243,.5) 0%,rgba(255,254,249,.8) 100%)", minHeight: "100vh" }}>
       <div style={{ maxWidth: 1320, margin: "0 auto", padding: "0 clamp(16px,3vw,28px)" }}>
 
-        <div style={{ marginBottom: 44, display: "flex", flexWrap: "wrap", alignItems: "flex-end", justifyContent: "space-between", gap: 20 }}>
-          <div>
-            <div className="dl" />
-            <h1 className="fnt" style={{ fontSize: "clamp(40px,7vw,84px)", fontWeight: 300, color: "var(--fo)", lineHeight: .95, letterSpacing: "-.03em" }}>Kegiatan<br /><em>Kampung</em></h1>
-          </div>
-          <p style={{ maxWidth: 320, fontSize: 14, lineHeight: 1.8, color: "var(--ts)" }}>Setiap momen yang menghidupkan Ciburial — dari perayaan hingga kemajuan nyata pembangunan desa.</p>
+        {/* Header - Heroic */}
+        <div style={{ marginBottom: 56, textAlign: "center" }}>
+          <div style={{ display: "inline-block", width: "44px", height: "3px", background: "linear-gradient(90deg, #2F8F4E, #4FBF7E)", borderRadius: "99px", boxShadow: "0 0 16px rgba(47,143,78,.4)", marginBottom: "24px" }} />
+          <h1 className="fnt" style={{ fontSize: "clamp(40px,7vw,72px)", fontWeight: 300, background: "linear-gradient(135deg,#1C3A2B,#2F8F4E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", lineHeight: 1.1, letterSpacing: "-.03em", marginBottom: 16 }}>
+            Kegiatan<br />Kampung
+          </h1>
+          <p style={{ maxWidth: 480, fontSize: 14, lineHeight: 1.8, color: "#5A4A40", fontWeight: 500, margin: "0 auto" }}>Setiap momen yang menghidupkan Ciburial — dari perayaan hingga kemajuan nyata pembangunan desa.</p>
         </div>
 
-        {/* Filter kategori */}
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 36 }}>
+        {/* Filter kategori - Heroic */}
+        <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 44, justifyContent: "center" }}>
           {[{ k: "semua", l: "✦ Semua" }, ...Object.entries(KAT_CFG).map(([k, v]) => ({ k, l: v.label }))].map(item => (
-            <button key={item.k} onClick={() => setFKat(item.k)} style={{ padding: "7px 16px", fontSize: 11, fontWeight: 700, letterSpacing: ".06em", border: "1px solid var(--bo)", borderRadius: 99, cursor: "pointer", transition: "all .2s", background: fKat === item.k ? "var(--fo)" : "var(--cw)", color: fKat === item.k ? "#fff" : "var(--ts)" }}>
+            <button key={item.k} onClick={() => setFKat(item.k)} style={{ padding: "11px 20px", fontSize: 12, fontWeight: 700, letterSpacing: ".06em", border: fKat === item.k ? "1.5px solid #2F8F4E" : "1.5px solid rgba(47,143,78,.2)", borderRadius: 10, cursor: "pointer", transition: "all 0.3s cubic-bezier(.22,1,.36,1)", background: fKat === item.k ? "linear-gradient(135deg,#2F8F4E,#4FBF7E)" : "rgba(255,254,249,.9)", color: fKat === item.k ? "#fff" : "#1C3A2B", transform: fKat === item.k ? "translateY(-2px)" : "translateY(0)", boxShadow: fKat === item.k ? "0 8px 16px rgba(47,143,78,.2)" : "0 2px 8px rgba(0,0,0,.04)" }}>
               {item.l}
             </button>
           ))}
         </div>
 
         {dataLoad && (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(270px,1fr))", gap: 18 }}>
-            {[1, 2, 3].map(i => <div key={i} className="sk" style={{ height: 220, borderRadius: 18 }} />)}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(280px,1fr))", gap: 20 }}>
+            {[1, 2, 3].map(i => <div key={i} className="sk" style={{ height: 240, borderRadius: 18, background: "linear-gradient(135deg,rgba(255,254,249,.8),rgba(250,248,243,.6))", border: "1.5px solid rgba(47,143,78,.1)" }} />)}
           </div>
         )}
 
         {!dataLoad && (
           kegFil.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "72px 20px", color: "var(--tm)" }}>
-              <div style={{ fontSize: 44, marginBottom: 14 }}>📅</div>
-              <div style={{ fontSize: 16, fontWeight: 600 }}>Belum ada kegiatan di kategori ini.</div>
-              <div style={{ fontSize: 13, marginTop: 8 }}>Admin dapat menambahkan melalui panel admin.</div>
+            <div style={{ textAlign: "center", padding: "80px 20px", color: "#5A4A40" }}>
+              <div style={{ fontSize: 56, marginBottom: 16 }}>📅</div>
+              <div style={{ fontSize: 18, fontWeight: 700, color: "#1C3A2B", marginBottom: 6 }}>Belum ada kegiatan di kategori ini.</div>
+              <div style={{ fontSize: 13, color: "#5A4A40" }}>Admin dapat menambahkan melalui panel admin.</div>
             </div>
           ) : (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(270px,1fr))", gap: 18 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(280px,1fr))", gap: 20 }}>
               {kegFil.map((k, i) => {
                 const kat = KAT_CFG[k.kategori] || { label: "📌 Lainnya", bg: "rgba(90,74,64,.08)", color: "#5A4A40" };
                 const d = new Date(k.tanggal);
                 return (
-                  <div key={k.id} className={`rv kc d${(i % 3) + 1}`} style={{ background: "var(--cw)", border: "1px solid var(--bo)", borderRadius: 18, overflow: "hidden" }}>
+                  <div key={k.id} className="keg-card" style={{ 
+                    background: "linear-gradient(135deg,rgba(255,254,249,.95),rgba(250,248,243,.85))", 
+                    border: "1.5px solid rgba(47,143,78,.12)", 
+                    borderRadius: 16, 
+                    overflow: "hidden",
+                    transition: "all 0.35s cubic-bezier(.22,1,.36,1)",
+                    cursor: "pointer",
+                    boxShadow: "0 4px 12px rgba(0,0,0,.04)"
+                  }}
+                  onMouseEnter={e => {
+                    const el = e.currentTarget as HTMLElement;
+                    el.style.transform = "translateY(-8px) scale(1.01)";
+                    el.style.boxShadow = "0 16px 36px rgba(47,143,78,.15)";
+                  }}
+                  onMouseLeave={e => {
+                    const el = e.currentTarget as HTMLElement;
+                    el.style.transform = "translateY(0) scale(1)";
+                    el.style.boxShadow = "0 4px 12px rgba(0,0,0,.04)";
+                  }}>
                     {k.foto ? (
                       (k.foto.toLowerCase().includes(".mp4") || k.foto.toLowerCase().includes(".webm")) ? (
                         <video src={k.foto} autoPlay muted loop playsInline style={{ width: "100%", aspectRatio: "16/9", objectFit: "cover" }} />
@@ -59,20 +78,20 @@ export default function KegiatanTab({ kegiatan, dataLoad }: KegiatanTabProps) {
                         <img src={k.foto} alt={k.judul} style={{ width: "100%", aspectRatio: "16/9", objectFit: "cover" }} />
                       )
                     ) : (
-                      <div style={{ height: 5, background: kat.color }} />
+                      <div style={{ height: 140, background: `linear-gradient(135deg,${kat.color}30,${kat.color}10)`, borderBottom: `4px solid ${kat.color}` }} />
                     )}
-                    <div style={{ padding: "20px 22px" }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 11 }}>
-                        <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".06em", padding: "4px 11px", borderRadius: 99, background: kat.bg, color: kat.color }}>{kat.label}</span>
+                    <div style={{ padding: "22px 24px" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
+                        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".08em", padding: "6px 13px", borderRadius: 8, background: kat.bg, color: kat.color }}>{kat.label}</span>
                         <div style={{ textAlign: "right" }}>
-                          <div className="fnt" style={{ fontSize: 26, fontWeight: 300, color: "var(--fo)", lineHeight: 1 }}>{d.getDate()}</div>
-                          <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--tm)" }}>
+                          <div className="fnt" style={{ fontSize: 28, fontWeight: 300, color: "#2F8F4E", lineHeight: 1, marginBottom: 2 }}>{d.getDate()}</div>
+                          <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: "#5A4A40" }}>
                             {d.toLocaleDateString("id-ID", { month: "short" })} {d.getFullYear()}
                           </div>
                         </div>
                       </div>
-                      <h3 style={{ fontSize: 16, fontWeight: 700, color: "var(--tp)", marginBottom: 7, lineHeight: 1.3 }}>{k.judul}</h3>
-                      {k.deskripsi && <p style={{ fontSize: 12, lineHeight: 1.7, color: "var(--ts)" }}>{k.deskripsi}</p>}
+                      <h3 style={{ fontSize: 16, fontWeight: 700, color: "#1C3A2B", marginBottom: 9, lineHeight: 1.4 }}>{k.judul}</h3>
+                      {k.deskripsi && <p style={{ fontSize: 13, lineHeight: 1.6, color: "#5A4A40", marginBottom: 0 }}>{k.deskripsi}</p>}
                     </div>
                   </div>
                 );

@@ -261,22 +261,34 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
         </div>
       </section>
 
-      {/* DEMOGRAFI */}
-      <section className="sec" style={{ padding: "clamp(48px,8vw,104px) clamp(16px,4vw,32px)", background: "var(--fo)" }}>
+      {/* DEMOGRAFI - Keluarga Besar Ciburial (Heroic) */}
+      <section className="sec" style={{ padding: "clamp(60px,8vw,100px) clamp(16px,4vw,32px)", background: "linear-gradient(135deg,rgba(250,248,243,.95) 0%,rgba(232,245,238,.5) 100%)" }}>
         <div style={{ maxWidth: 1320, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 56 }}>
-            <div className="dl dlc" />
-            <h2 className="fnt" style={{ fontSize: "clamp(30px,5vw,54px)", fontWeight: 300, color: "var(--cr)", letterSpacing: "-.02em" }}>Keluarga Besar Ciburial</h2>
-            <p style={{ color: "rgba(250,248,243,.45)", fontSize: 14, marginTop: 10, maxWidth: 400, margin: "10px auto 0" }}>Pemuda mendominasi komunitas dari total <strong>{totalJiwa !== null ? totalJiwa.toLocaleString() : "450"} jiwa</strong>. Mereka adalah modal utama quantum leap Ciburial.</p>
+            <div style={{ display: "inline-block", width: "44px", height: "3px", background: "linear-gradient(90deg, #2F8F4E, #4FBF7E)", borderRadius: "99px", boxShadow: "0 0 16px rgba(47,143,78,.4)", marginBottom: "20px" }} />
+            <h2 className="fnt" style={{ fontSize: "clamp(32px,5vw,54px)", fontWeight: 300, background: "linear-gradient(135deg,#1C3A2B,#2F8F4E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", letterSpacing: "-.02em", marginBottom: 16 }}>Keluarga Besar Ciburial</h2>
+            <p style={{ color: "#5A4A40", fontSize: 14, marginTop: 0, maxWidth: 500, margin: "0 auto", fontWeight: 500, lineHeight: 1.8 }}>Pemuda mendominasi komunitas dari total <strong style={{ color: "#2F8F4E" }}>{totalJiwa !== null ? totalJiwa.toLocaleString() : "450"} jiwa</strong>. Mereka adalah modal utama quantum leap Ciburial.</p>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(230px,1fr))", gap: 18 }}>
-            {[{ l: "Pemuda/Pemudi (Penerus)", pct: 55, c: "var(--go)" }, { l: "Lansia (Sesepuh)", pct: 45, c: "rgba(250,248,243,.28)" }].map((item, i) => (
-              <div key={i} className={`rv pgw d${i + 1}`} style={{ padding: "32px", background: "rgba(255,255,255,.05)", borderRadius: 18, border: "1px solid rgba(255,255,255,.08)" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
-                  <span style={{ fontSize: 13, fontWeight: 600, color: "rgba(250,248,243,.62)" }}>{item.l}</span>
-                  <span className="fnt" style={{ fontSize: 30, fontWeight: 300, color: "var(--cr)", lineHeight: 1 }}>{item.pct}%</span>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: 20 }}>
+            {[{ l: "👶 Pemuda/Pemudi (Penerus)", pct: 55, c: "#2F8F4E", bg: "linear-gradient(135deg,rgba(79,191,126,.12),rgba(47,143,78,.06))" }, { l: "🧓 Lansia (Sesepuh)", pct: 45, c: "#9B7D4C", bg: "linear-gradient(135deg,rgba(184,148,63,.12),rgba(155,125,76,.06))" }].map((item, i) => (
+              <div key={i} className="dem-card" style={{ padding: "32px", background: item.bg, borderRadius: 16, border: `1.5px solid ${item.c}30`, transition: "all 0.35s cubic-bezier(.22,1,.36,1)", cursor: "pointer" }}
+                onMouseEnter={(e) => {
+                  const el = e.currentTarget as HTMLElement;
+                  el.style.transform = "translateY(-6px)";
+                  el.style.boxShadow = `0 12px 32px ${item.c}20`;
+                }}
+                onMouseLeave={(e) => {
+                  const el = e.currentTarget as HTMLElement;
+                  el.style.transform = "translateY(0)";
+                  el.style.boxShadow = "none";
+                }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20, alignItems: "flex-start" }}>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: "#1C3A2B", maxWidth: 160 }}>{item.l}</span>
+                  <span className="fnt" style={{ fontSize: 40, fontWeight: 300, color: item.c, lineHeight: 1 }}>{item.pct}%</span>
                 </div>
-                <div className="pg"><div className="pgf" style={{ background: item.c, width: `${item.pct}%` }} /></div>
+                <div style={{ background: "rgba(255,255,255,.4)", borderRadius: 99, height: 12, overflow: "hidden", boxShadow: "inset 0 1px 2px rgba(0,0,0,.05)" }}>
+                  <div style={{ background: `linear-gradient(90deg, ${item.c}, ${item.c}cc)`, width: `${item.pct}%`, height: "100%", borderRadius: 99, transition: "all 1.2s cubic-bezier(.22,1,.36,1)", boxShadow: `0 0 12px ${item.c}80` }} />
+                </div>
               </div>
             ))}
           </div>
