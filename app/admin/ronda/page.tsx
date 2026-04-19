@@ -176,7 +176,7 @@ export default function AdminRondaPage() {
     setScanningQr(true);
     tampilPesan("Kamera siap. Silakan Scan QR Code di tembok gang.");
     setTimeout(() => {
-      if (kkListRef.current.length > 0 && setScanningQr) {
+      if (kkListRef.current.length > 0) {
         const randomKk = kkListRef.current[Math.floor(Math.random() * kkListRef.current.length)];
         catatPatroli(randomKk.id);
       }
