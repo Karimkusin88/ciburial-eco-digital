@@ -156,45 +156,51 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
     setLoadingSnap(false);
   };
 
-  // ─── TAMPILAN KERANJANG (MODAL/SIDEBAR ALA TOKPED) ─────────────────────────
+  // ─── TAMPILAN KERANJANG (MODAL/SIDEBAR HEROIC) ─────────────────────────
   if (showCart) {
     return (
-      <div className="pi" style={{ paddingTop: "clamp(64px,10vw,120px)", paddingBottom: 80, minHeight: "100vh", background: "#F3F4F5" }}>
+      <div className="pi" style={{ paddingTop: "clamp(64px,10vw,120px)", paddingBottom: 80, minHeight: "100vh", background: "linear-gradient(135deg,rgba(250,248,243,.5) 0%,rgba(255,254,249,.8) 100%)" }}>
         <div style={{ maxWidth: 800, margin: "0 auto", padding: "0 clamp(16px,3vw,28px)", display: "flex", flexDirection: "column", gap: 20 }}>
           
-          <button onClick={() => setShowCart(false)} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", fontSize: 14, fontWeight: 700, color: "#03AC0E", padding: "6px 0", alignSelf: "flex-start" }}>
+          <button onClick={() => setShowCart(false)} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", fontSize: 14, fontWeight: 700, color: "#2F8F4E", padding: "6px 0", alignSelf: "flex-start", transition: "all 0.3s" }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = "translateX(-4px)"}
+            onMouseLeave={(e) => e.currentTarget.style.transform = "translateX(0)"}
+          >
             ← Lanjut Belanja
           </button>
 
-          <h2 style={{ margin: 0, color: "#31353B", fontSize: 24, fontWeight: 800 }}>Keranjang Belanja</h2>
+          <h2 style={{ margin: 0, color: "#1C3A2B", fontSize: "clamp(24px, 4vw, 32px)", fontWeight: 800, background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Keranjang Belanja</h2>
 
           <div style={{ display: "flex", gap: 24, flexWrap: "wrap", alignItems: "flex-start" }}>
             {/* List Barang */}
-            <div style={{ flex: "1 1 60%", minWidth: 300, background: "#FFF", borderRadius: 12, padding: 24, boxShadow: "0 1px 6px 0 rgba(49,53,59,0.12)" }}>
+            <div style={{ flex: "1 1 60%", minWidth: 300, background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(250,248,243,.8))", borderRadius: 14, padding: 28, boxShadow: "0 8px 24px rgba(47,143,78,.08)", border: "1.5px solid rgba(47,143,78,.12)" }}>
               {cart.length === 0 ? (
-                <div style={{ textAlign: "center", padding: "40px 0", color: "#8D96AA" }}>
-                  <div style={{ fontSize: 48, marginBottom: 16 }}>🛒</div>
-                  <h3 style={{ margin: "0 0 8px 0", color: "#31353B" }}>Keranjangmu kosong</h3>
-                  <p style={{ margin: 0, fontSize: 14 }}>Yuk, temukan produk desa pilihanmu!</p>
+                <div style={{ textAlign: "center", padding: "60px 0", color: "#5A4A40" }}>
+                  <div style={{ fontSize: 56, marginBottom: 20 }}>🛒</div>
+                  <h3 style={{ margin: "0 0 12px 0", color: "#1C3A2B", fontSize: "clamp(18px, 3vw, 22px)", fontWeight: 800 }}>Keranjangmu kosong</h3>
+                  <p style={{ margin: 0, fontSize: 14, fontWeight: 500 }}>Yuk, temukan produk desa pilihanmu!</p>
                 </div>
               ) : (
                 <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
                   {cart.map((item) => (
-                    <div key={item.id} style={{ display: "flex", gap: 16, borderBottom: "1px solid #E5E7E9", paddingBottom: 24 }}>
-                       <div style={{ width: 80, height: 80, borderRadius: 8, background: "#F3F4F5", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, flexShrink: 0 }}>
+                    <div key={item.id} style={{ display: "flex", gap: 16, borderBottom: "1.5px solid rgba(47,143,78,.15)", paddingBottom: 24 }}>
+                       <div style={{ width: 90, height: 90, borderRadius: 10, background: "linear-gradient(135deg,rgba(79,191,126,.08),rgba(47,143,78,.04))", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 40, flexShrink: 0, border: "1.5px solid rgba(47,143,78,.12)" }}>
                          {item.foto ? <img src={item.foto} alt={item.nama} style={{width: "100%", height: "100%", objectFit: "cover", borderRadius: 8}}/> : (item.icon || "📦")}
                        </div>
                        <div style={{ flex: 1 }}>
-                          <div style={{ fontSize: 16, fontWeight: 600, color: "#31353B", marginBottom: 4 }}>{item.nama}</div>
-                          <div style={{ fontSize: 14, fontWeight: 700, color: "#FA591D", marginBottom: 16 }}>{fRp(item.harga)}</div>
+                          <div style={{ fontSize: 16, fontWeight: 600, color: "#1C3A2B", marginBottom: 6 }}>{item.nama}</div>
+                          <div style={{ fontSize: 16, fontWeight: 800, background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginBottom: 16 }}>{fRp(item.harga)}</div>
                           
                           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                             <button onClick={() => removeFromCart(item.id)} style={{ background: "none", border: "none", color: "#8D96AA", fontSize: 12, fontWeight: 600, cursor: "pointer", padding: 0 }}>Tulis Catatan</button>
+                             <button onClick={() => removeFromCart(item.id)} style={{ background: "none", border: "none", color: "#5A4A40", fontSize: 12, fontWeight: 600, cursor: "pointer", padding: 0, transition: "all 0.3s" }}
+                               onMouseEnter={(e) => e.currentTarget.style.color = "#2F8F4E"}
+                               onMouseLeave={(e) => e.currentTarget.style.color = "#5A4A40"}
+                             >Tulis Catatan</button>
                              
-                             <div style={{ display: "flex", alignItems: "center", gap: 12, border: "1px solid #E5E7E9", borderRadius: 4, padding: "4px 8px" }}>
-                               <button onClick={() => item.qty > 1 ? updateQty(item.id, -1) : removeFromCart(item.id)} style={{ background: "none", border: "none", color: item.qty > 1 ? "#03AC0E" : "#8D96AA", fontSize: 16, fontWeight: 700, cursor: "pointer", width: 24 }}>-</button>
-                               <span style={{ fontSize: 14, fontWeight: 600, color: "#31353B", minWidth: 20, textAlign: "center" }}>{item.qty}</span>
-                               <button onClick={() => updateQty(item.id, 1)} style={{ background: "none", border: "none", color: "#03AC0E", fontSize: 16, fontWeight: 700, cursor: "pointer", width: 24 }}>+</button>
+                             <div style={{ display: "flex", alignItems: "center", gap: 12, border: "1.5px solid rgba(47,143,78,.2)", borderRadius: 8, padding: "6px 10px", background: "rgba(255,254,249,.8)" }}>
+                               <button onClick={() => item.qty > 1 ? updateQty(item.id, -1) : removeFromCart(item.id)} style={{ background: "none", border: "none", color: item.qty > 1 ? "#2F8F4E" : "#5A4A40", fontSize: 16, fontWeight: 700, cursor: "pointer", width: 24, transition: "all 0.3s" }}>−</button>
+                               <span style={{ fontSize: 14, fontWeight: 600, color: "#1C3A2B", minWidth: 20, textAlign: "center" }}>{item.qty}</span>
+                               <button onClick={() => updateQty(item.id, 1)} style={{ background: "none", border: "none", color: "#2F8F4E", fontSize: 16, fontWeight: 700, cursor: "pointer", width: 24, transition: "all 0.3s" }}>+</button>
                              </div>
                           </div>
                        </div>
@@ -204,15 +210,15 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
               )}
             </div>
 
-            {/* Ringkasan Belanja */}
-            <div style={{ flex: "1 1 30%", minWidth: 280, background: "#FFF", borderRadius: 12, padding: 24, boxShadow: "0 1px 6px 0 rgba(49,53,59,0.12)", position: "sticky", top: 100 }}>
-               <h3 style={{ margin: "0 0 16px 0", color: "#31353B", fontSize: 16, fontWeight: 700 }}>Ringkasan Belanja</h3>
-               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12, fontSize: 14, color: "#8D96AA" }}>
+            {/* Ringkasan Belanja (Heroic) */}
+            <div style={{ flex: "1 1 30%", minWidth: 280, background: "linear-gradient(135deg,rgba(255,254,249,.95),rgba(250,248,243,.9))", borderRadius: 14, padding: 28, boxShadow: "0 8px 24px rgba(47,143,78,.12)", position: "sticky", top: 100, border: "1.5px solid rgba(47,143,78,.12)" }}>
+               <h3 style={{ margin: "0 0 24px 0", color: "#1C3A2B", fontSize: 18, fontWeight: 800, background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Ringkasan Belanja</h3>
+               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16, fontSize: 13, color: "#5A4A40", fontWeight: 500 }}>
                  <span>Total Harga ({cart.length} barang)</span>
-                 <span>{fRp(totalCartPrice)}</span>
+                 <span style={{ fontWeight: 600 }}>{fRp(totalCartPrice)}</span>
                </div>
-               <hr style={{ border: "none", borderTop: "1px solid #E5E7E9", margin: "16px 0" }} />
-               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 24, fontSize: 16, fontWeight: 800, color: "#31353B" }}>
+               <hr style={{ border: "none", borderTop: "1.5px solid rgba(47,143,78,.15)", margin: "20px 0" }} />
+               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 28, fontSize: 16, fontWeight: 800, color: "#1C3A2B", background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
                  <span>Total Harga</span>
                  <span>{fRp(totalCartPrice)}</span>
                </div>
@@ -220,7 +226,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                <button 
                   onClick={bayarSekarang} 
                   disabled={loadingSnap || cart.length === 0} 
-                  style={{ width: "100%", padding: "14px", borderRadius: 8, fontSize: 16, fontWeight: 700, border: "none", cursor: loadingSnap || cart.length === 0 ? "not-allowed" : "pointer", background: loadingSnap || cart.length === 0 ? "#E5E7E9" : "#03AC0E", color: loadingSnap || cart.length === 0 ? "#AAB4C8" : "#FFF", transition: "all 0.2s" }}
+                  style={{ width: "100%", padding: "14px", borderRadius: 10, fontSize: 16, fontWeight: 700, border: "none", cursor: loadingSnap || cart.length === 0 ? "not-allowed" : "pointer", background: loadingSnap || cart.length === 0 ? "rgba(47,143,78,.2)" : "linear-gradient(135deg,#2F8F4E,#4FBF7E)", color: loadingSnap || cart.length === 0 ? "#5A4A40" : "#FFF", transition: "all 0.3s", letterSpacing: ".05em", boxShadow: loadingSnap || cart.length === 0 ? "none" : "0 8px 16px rgba(47,143,78,.2)" }}
                >
                  {loadingSnap ? "Memproses..." : `Beli (${cart.length})`}
                </button>
@@ -232,82 +238,107 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
     );
   }
 
-  // ─── MAIN MARKETPLACE PAGE (DESAIN TOKPEDIA-STYLE) ─────────────────────────
+  // ─── MAIN MARKETPLACE PAGE (HEROIC DESIGN) ─────────────────────────
   return (
-    <div className="pi" style={{ paddingTop: "clamp(64px,10vw,120px)", paddingBottom: 80, background: "#F3F4F5", minHeight: "100vh", fontFamily: "'Nunito Sans', sans-serif" }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 clamp(12px,3vw,24px)" }}>
+    <div className="pi" style={{ paddingTop: "clamp(60px,8vw,100px)", paddingBottom: "clamp(60px,8vw,100px)", background: "linear-gradient(135deg,rgba(250,248,243,.5) 0%,rgba(255,254,249,.8) 100%)", minHeight: "100vh", fontFamily: "var(--font-dm-sans)" }}>
+      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 clamp(16px,4vw,32px)" }}>
 
-        {/* ── HEADER SEARCH & CART PULL-UP ── */}
-        <div style={{ background: "#FFF", borderRadius: 12, padding: "16px 24px", marginBottom: 24, display: "flex", gap: 16, alignItems: "center", boxShadow: "0 1px 6px 0 rgba(49,53,59,0.12)" }}>
-          <div style={{ fontWeight: 800, color: "#03AC0E", fontSize: 24, marginRight: 16 }}>Ciburial<span style={{color: "#31353B"}}>Market</span></div>
-          
-          <div style={{ flex: 1, position: "relative" }}>
-            <span style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", fontSize: 16, color: "#8D96AA" }}>🔍</span>
-            <input
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              placeholder="Cari produk desa di sini..."
-              style={{ width: "100%", padding: "12px 16px 12px 48px", borderRadius: 8, border: "1px solid #E5E7E9", color: "#31353B", fontSize: 14, outline: "none", boxSizing: "border-box", transition: "border-color 0.2s" }}
-              onFocus={(e) => e.target.style.borderColor = "#03AC0E"}
-              onBlur={(e) => e.target.style.borderColor = "#E5E7E9"}
-            />
+        {/* ── HEADER SECTION ── */}
+        <div style={{ marginBottom: 48, display: "flex", flexDirection: "column", gap: 24 }}>
+          {/* Logo + Search Bar */}
+          <div style={{ background: "rgba(255,254,249,.9)", borderRadius: 16, border: "1.5px solid rgba(47,143,78,.15)", padding: "20px 24px", display: "flex", gap: 18, alignItems: "center", boxShadow: "0 8px 24px rgba(47,143,78,.08)" }}>
+            <div className="fnt" style={{ fontWeight: 700, fontSize: 22, background: "linear-gradient(135deg,#1C3A2B,#2F8F4E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Ciburial<span style={{ WebkitTextFillColor: "#5A4A40" }}>Market</span></div>
+            
+            <div style={{ flex: 1, position: "relative" }}>
+              <span style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", fontSize: 18, color: "#2F8F4E" }}>🔍</span>
+              <input
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                placeholder="Cari produk desa lokal..."
+                style={{ width: "100%", padding: "12px 16px 12px 48px", borderRadius: 10, border: "2px solid rgba(47,143,78,.15)", color: "#1C3A2B", fontSize: 14, outline: "none", boxSizing: "border-box", transition: "all 0.25s", background: "rgba(255,254,249,.8)" }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = "#2F8F4E";
+                  e.currentTarget.style.boxShadow = "0 0 0 3px rgba(47,143,78,.1)";
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(47,143,78,.15)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              />
+            </div>
+
+            {/* Cart Button */}
+            <button onClick={() => setShowCart(true)} style={{ position: "relative", background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", border: "none", cursor: "pointer", fontSize: 22, padding: "10px 14px", borderRadius: 10, color: "white", transition: "all 0.3s", fontWeight: 600, letterSpacing: ".05em", boxShadow: "0 8px 16px rgba(47,143,78,.2)" }}
+              onMouseEnter={e => {
+                e.currentTarget.style.transform = "translateY(-2px)";
+                e.currentTarget.style.boxShadow = "0 12px 24px rgba(47,143,78,.3)";
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "0 8px 16px rgba(47,143,78,.2)";
+              }}
+            >
+              🛒
+              {cart.length > 0 && (
+                <span style={{ position: "absolute", top: 0, right: 0, background: "#f87171", color: "#FFF", fontSize: 10, fontWeight: 700, padding: "2px 6px", borderRadius: "10px", minWidth: "20px", textAlign: "center", border: "2px solid white" }}>
+                  {cart.length}
+                </span>
+              )}
+            </button>
           </div>
 
-          {/* Ikon Keranjang */}
-          <button onClick={() => setShowCart(true)} style={{ position: "relative", background: "none", border: "none", cursor: "pointer", fontSize: 24, padding: "8px 12px", color: "#8D96AA" }}>
-             🛒
-             {cart.length > 0 && (
-               <span style={{ position: "absolute", top: 4, right: 4, background: "#EF144A", color: "#FFF", fontSize: 10, fontWeight: 700, padding: "2px 6px", borderRadius: "10px", border: "2px solid #FFF" }}>
-                 {cart.length}
-               </span>
-             )}
-          </button>
+          {/* Section Title */}
+          <div style={{ textAlign: "center", marginBottom: 12 }}>
+            <div style={{ display: "inline-block", width: "44px", height: "3px", background: "linear-gradient(90deg,#2F8F4E,#4FBF7E)", borderRadius: "99px", boxShadow: "0 0 16px rgba(47,143,78,.4)", marginBottom: "16px" }} />
+            <h2 className="fnt" style={{ fontSize: "clamp(28px,4vw,44px)", fontWeight: 300, background: "linear-gradient(135deg,#1C3A2B,#2F8F4E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", margin: "0 0 8px 0" }}>
+              Marketplace Lokal
+            </h2>
+            <p style={{ fontSize: 14, color: "#5A4A40", fontWeight: 500 }}>Produk asli dari pengrajin dan petani Ciburial</p>
+          </div>
         </div>
 
-        {/* ── BANNER SLIDER (ALA TOKPED) ── */}
+        {/* ── BANNER SLIDER (Heroic) ── */}
         {iklan.length > 0 && !dataLoad && (
-          <div style={{ marginBottom: 32, position: "relative", borderRadius: 12, overflow: "hidden" }}>
+          <div style={{ marginBottom: 40, position: "relative", borderRadius: 16, overflow: "hidden", border: "1.5px solid rgba(47,143,78,.15)" }}>
             <div ref={sliderRef} style={{ display: "flex", overflowX: "hidden", scrollSnapType: "x mandatory" }}>
               {iklan.map((ik, i) => (
-                <div key={ik.id || i} style={{ flex: "0 0 100%", scrollSnapAlign: "start", position: "relative", aspectRatio: "12/3", minHeight: 200, background: "#03AC0E" }}>
+                <div key={ik.id || i} style={{ flex: "0 0 100%", scrollSnapAlign: "start", position: "relative", aspectRatio: "12/3", minHeight: 220, background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)" }}>
                   {ik.tipe === "video" ? (
                     <video src={ik.mediaUrl} autoPlay muted loop playsInline style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                   ) : (
                     <img src={ik.mediaUrl} alt={ik.judul} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                   )}
-                  {/* Kalau butuh teks overlay, uncomment ini */}
-                  {/* <div style={{ position: "absolute", inset: 0, padding: "40px", display: "flex", flexDirection: "column", justifyContent: "center", background: "linear-gradient(90deg, rgba(3,172,14,0.9) 0%, rgba(3,172,14,0) 100%)" }}>
-                    <h2 style={{ color: "#FFF", margin: "0 0 8px", fontSize: 28 }}>{ik.judul}</h2>
-                    <p style={{ color: "#FFF", margin: 0, fontSize: 16 }}>{ik.deskripsi}</p>
-                  </div> */}
+                  <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg,rgba(47,143,78,.6) 0%,rgba(47,143,78,.2) 100%)" }} />
                 </div>
               ))}
             </div>
             {/* Dots */}
-             {iklan.length > 1 && (
-              <div style={{ position: "absolute", bottom: 16, left: 24, display: "flex", gap: 6 }}>
+            {iklan.length > 1 && (
+              <div style={{ position: "absolute", bottom: 20, left: 28, display: "flex", gap: 8 }}>
                 {iklan.map((_, i) => (
-                  <div key={i} onClick={() => setActiveSlide(i)} style={{ width: i === activeSlide ? 24 : 8, height: 8, borderRadius: 4, background: i === activeSlide ? "#FFF" : "rgba(255,255,255,0.5)", cursor: "pointer", transition: "all 0.3s" }} />
+                  <div key={i} onClick={() => setActiveSlide(i)} style={{ width: i === activeSlide ? 28 : 10, height: 10, borderRadius: 5, background: i === activeSlide ? "white" : "rgba(255,255,255,.4)", cursor: "pointer", transition: "all 0.3s cubic-bezier(.22,1,.36,1)", boxShadow: i === activeSlide ? "0 4px 12px rgba(0,0,0,.2)" : "none" }} />
                 ))}
               </div>
             )}
           </div>
         )}
 
-        {/* ── KATEGORI POPULER ── */}
-        <div style={{ background: "#FFF", borderRadius: 12, padding: "24px", marginBottom: 32, boxShadow: "0 1px 6px 0 rgba(49,53,59,0.12)" }}>
-           <h2 style={{ margin: "0 0 16px 0", color: "#31353B", fontSize: 20, fontWeight: 800 }}>Kategori Desa</h2>
-           <div style={{ display: "flex", gap: 16, overflowX: "auto", paddingBottom: 8 }} className="hide-scroll">
+        {/* ── KATEGORI POPULER (Heroic) ── */}
+        <div style={{ background: "linear-gradient(135deg,rgba(79,191,126,.06),rgba(47,143,78,.03))", borderRadius: 16, padding: "32px 24px", marginBottom: 48, border: "1.5px solid rgba(47,143,78,.12)", boxShadow: "0 4px 16px rgba(47,143,78,.06)" }}>
+           <h2 style={{ margin: "0 0 24px 0", color: "#1C3A2B", fontSize: "clamp(20px, 4vw, 24px)", fontWeight: 800, background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Kategori Desa</h2>
+           <div style={{ display: "flex", gap: 16, overflowX: "auto", paddingBottom: 8, flex: 1 }} className="hide-scroll">
              {CATEGORI.map(k => (
                <button key={k.id} onClick={() => setActiveKat(k.id)} style={{
-                 flexShrink: 0, padding: "12px 20px", borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: "pointer", transition: "all 0.2s ease",
-                 display: "flex", alignItems: "center", gap: 8,
-                 background: activeKat === k.id ? "#E5F7E6" : "#FFF",
-                 border: `1px solid ${activeKat === k.id ? "#03AC0E" : "#E5E7E9"}`,
-                 color: activeKat === k.id ? "#03AC0E" : "#31353B",
+                 flexShrink: 0, padding: "14px 24px", borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: "pointer", transition: "all 0.3s cubic-bezier(.22,1,.36,1)",
+                 display: "flex", alignItems: "center", gap: 10,
+                 background: activeKat === k.id ? "linear-gradient(135deg,#2F8F4E,#4FBF7E)" : "rgba(255,254,249,.8)",
+                 border: `1.5px solid ${activeKat === k.id ? "#2F8F4E" : "rgba(47,143,78,.2)"}`,
+                 color: activeKat === k.id ? "#FFF" : "#1C3A2B",
+                 boxShadow: activeKat === k.id ? "0 8px 16px rgba(47,143,78,.2)" : "0 2px 8px rgba(0,0,0,.04)",
+                 transform: activeKat === k.id ? "translateY(-2px)" : "translateY(0)",
                }}>
-                 <span style={{ fontSize: 18 }}>{k.icon}</span>
-                 {k.id}
+                 <span style={{ fontSize: 20 }}>{k.icon}</span>
+                 <span>{k.id}</span>
                </button>
              ))}
            </div>
@@ -336,28 +367,29 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
               return (
                 <div key={p.id} className="product-card"
                     style={{ 
-                        background: "#FFF", 
-                        borderRadius: 12, 
-                        border: "1px solid #E5E7E9", 
+                        background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(250,248,243,.8))", 
+                        borderRadius: 14, 
+                        border: "1.5px solid rgba(47,143,78,.12)", 
                         cursor: "pointer", 
                         display: "flex", 
                         flexDirection: "column",
-                        transition: "box-shadow 0.2s, transform 0.2s",
+                        transition: "all 0.3s cubic-bezier(.22,1,.36,1)",
                         position: "relative",
-                        overflow: "hidden"
+                        overflow: "hidden",
+                        boxShadow: "0 4px 12px rgba(0,0,0,.04)"
                     }}
                     onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = "translateY(-4px)";
-                        e.currentTarget.style.boxShadow = "0 4px 12px 0 rgba(49,53,59,0.15)";
+                        e.currentTarget.style.transform = "translateY(-6px) scale(1.01)";
+                        e.currentTarget.style.boxShadow = "0 12px 28px rgba(47,143,78,.15)";
                     }}
                     onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = "translateY(0)";
-                        e.currentTarget.style.boxShadow = "none";
+                        e.currentTarget.style.transform = "translateY(0) scale(1)";
+                        e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,.04)";
                     }}
                 >
                   
                   {/* Product Image */}
-                  <div style={{ aspectRatio: "1/1", background: "#F3F4F5", display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
+                  <div style={{ aspectRatio: "1/1", background: "linear-gradient(135deg,rgba(79,191,126,.08),rgba(47,143,78,.04))", display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
                     {p.foto ? (
                       <img src={p.foto} alt={p.nama} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                     ) : (
@@ -365,38 +397,38 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                     )}
                     {/* Badge Diskon / Label */}
                     {p.tag && (
-                      <div style={{ position: "absolute", top: 8, left: 8, padding: "4px 8px", background: "#FFEAEE", color: "#EF144A", borderRadius: 4, fontSize: 10, fontWeight: 800 }}>{p.tag}</div>
+                      <div style={{ position: "absolute", top: 12, left: 12, padding: "6px 12px", background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", color: "#FFF", borderRadius: 6, fontSize: 11, fontWeight: 800, boxShadow: "0 4px 12px rgba(47,143,78,.3)" }}>{p.tag}</div>
                     )}
                   </div>
 
                   {/* Info */}
-                  <div style={{ padding: "12px", display: "flex", flexDirection: "column", gap: 4, flex: 1 }}>
-                    <div style={{ fontSize: 14, color: "#31353B", lineHeight: 1.4, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", minHeight: 40 }}>{p.nama}</div>
+                  <div style={{ padding: "16px", display: "flex", flexDirection: "column", gap: 6, flex: 1 }}>
+                    <div style={{ fontSize: 14, color: "#1C3A2B", lineHeight: 1.4, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", minHeight: 40, fontWeight: 500 }}>{p.nama}</div>
                     
-                    <div className="fnt" style={{ fontSize: 16, fontWeight: 800, color: "#31353B", marginTop: 4 }}>{fRp(p.harga)}</div>
+                    <div className="fnt" style={{ fontSize: 16, fontWeight: 800, background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginTop: 4 }}>{fRp(p.harga)}</div>
                     
                     {/* Badge Lokasi */}
-                    <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 4 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 6 }}>
                       <span style={{fontSize: 12}}>📍</span>
-                      <span style={{ fontSize: 12, color: "#8D96AA" }}>Kp. Ciburial</span>
+                      <span style={{ fontSize: 12, color: "#5A4A40", fontWeight: 500 }}>Kp. Ciburial</span>
                     </div>
 
                     {/* Rating & Sold */}
-                    <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 4 }}>
-                      <span style={{ fontSize: 11, color: "#FFC400" }}>★</span>
-                      <span style={{ fontSize: 12, color: "#8D96AA" }}>{rating}</span>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4 }}>
+                      <span style={{ fontSize: 12, color: "#FFC400" }}>★</span>
+                      <span style={{ fontSize: 12, color: "#5A4A40", fontWeight: 500 }}>{rating}</span>
                       <span style={{ fontSize: 10, color: "#D6D6D6" }}>|</span>
-                      <span style={{ fontSize: 12, color: "#8D96AA" }}>Terjual {sold}</span>
+                      <span style={{ fontSize: 12, color: "#5A4A40", fontWeight: 500 }}>Terjual {sold}</span>
                     </div>
 
                     {/* Tombol Tambah Keranjang (Muncul pas di-hover) */}
                     <button 
                       className="btn-add-cart"
                       onClick={(e) => {
-                        e.stopPropagation(); // Biar gak ke-trigger modal checkout lama
+                        e.stopPropagation();
                         addToCart(p);
                       }}
-                      style={{ marginTop: 12, padding: "8px", background: "#FFF", border: "1px solid #03AC0E", borderRadius: 8, fontSize: 12, fontWeight: 700, color: "#03AC0E", cursor: "pointer", transition: "all 0.2s" }}>
+                      style={{ marginTop: 12, padding: "10px", background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", border: "none", borderRadius: 8, fontSize: 12, fontWeight: 700, color: "#FFF", cursor: "pointer", transition: "all 0.3s", boxShadow: "0 4px 12px rgba(47,143,78,.2)" }}>
                       + Keranjang
                     </button>
                   </div>
@@ -411,19 +443,20 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* Tombol keranjang efek Tokped */
+        /* Tombol keranjang efek Heroic */
         .product-card .btn-add-cart {
-            opacity: 1; /* Di HP tetep kelihatan */
+            opacity: 1;
         }
         
         @media (min-width: 768px) {
             .product-card .btn-add-cart {
-                opacity: 0; /* Di Desktop sembunyi dulu */
+                opacity: 0;
             }
             .product-card:hover .btn-add-cart {
-                opacity: 1; /* Muncul pas di-hover */
-                background: #03AC0E !important;
+                opacity: 1;
+                background: linear-gradient(135deg,#2F8F4E,#4FBF7E) !important;
                 color: #FFF !important;
+                box-shadow: 0 8px 16px rgba(47,143,78,.2) !important;
             }
         }
       `}</style>

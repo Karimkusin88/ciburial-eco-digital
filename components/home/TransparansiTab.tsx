@@ -206,86 +206,112 @@ export default function TransparansiTab() {
   const pctTarget = Math.min(100, (totMasuk / RAB_TARGET) * 100);
   const txFil     = fTipe === "semua" ? transaksi : transaksi.filter(t => t.tipe === fTipe);
 
-  // Style helpers
-  const C = { green: "#2d5a40", bright: "#4ade80", gold: "#b8943f", red: "#f87171", dark: "#1a2e1f", cream: "#f5f0e8" };
+  // Style helpers - Heroic colors
+  const C = { green: "#2F8F4E", bright: "#4FBF7E", gold: "#b8943f", red: "#f87171", dark: "#1C3A2B", cream: "#FAF8F3" };
   const card = (bg: string): React.CSSProperties => ({
-    background: bg, border: "1px solid rgba(255,255,255,0.09)",
-    borderRadius: 20, padding: "22px 20px",
+    background: bg, border: "1.5px solid rgba(47,143,78,.15)",
+    borderRadius: 16, padding: "24px 20px", transition: "all 0.35s cubic-bezier(.22,1,.36,1)", cursor: "pointer"
   });
 
   return (
-    <div className="pi" style={{ paddingTop: "clamp(48px,8vw,106px)", paddingBottom: "clamp(48px,8vw,106px)", background: C.dark, minHeight: "100vh" }}>
+    <div className="pi" style={{ paddingTop: "clamp(60px,8vw,100px)", paddingBottom: "clamp(60px,8vw,100px)", background: "linear-gradient(135deg,rgba(250,248,243,.5) 0%,rgba(255,254,249,.8) 100%)", minHeight: "100vh" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 clamp(16px,3vw,28px)" }}>
 
         {/* Header */}
-        <div style={{ textAlign: "center", marginBottom: 48 }}>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(74,222,128,0.1)", border: "1px solid rgba(74,222,128,0.2)", borderRadius: 99, padding: "5px 16px", marginBottom: 18 }}>
-            <div style={{ width: 7, height: 7, borderRadius: "50%", background: live ? C.bright : "#666", animation: live ? "dashPulse 1.5s infinite" : "none" }} />
-            <span style={{ fontSize: 10, fontWeight: 700, color: live ? C.bright : "#888", letterSpacing: ".14em", textTransform: "uppercase" }}>
-              {live ? `Live · ${updated}` : "Memuat…"}
+        <div style={{ textAlign: "center", marginBottom: 56 }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(79,191,126,.1)", border: "1.5px solid rgba(47,143,78,.2)", borderRadius: 99, padding: "6px 16px", marginBottom: 20 }}>
+            <div style={{ width: 8, height: 8, borderRadius: "50%", background: live ? C.bright : "#9A8C85", animation: live ? "pulse-glow 2s infinite" : "none", boxShadow: live ? "0 0 12px rgba(79,191,126,.6)" : "none" }} />
+            <span style={{ fontSize: 10, fontWeight: 700, color: live ? C.bright : "#9A8C85", letterSpacing: ".15em", textTransform: "uppercase" }}>
+              {live ? `🔴 Live · ${updated}` : "⏳ Memuat…"}
             </span>
           </div>
-          <h1 className="fnt" style={{ fontSize: "clamp(30px,5vw,58px)", fontWeight: 300, color: C.cream, lineHeight: 1.05, letterSpacing: "-.025em", marginBottom: 10 }}>
-            Transparansi<br /><em style={{ color: C.bright }}>Dana Kampung</em>
+          <div style={{ display: "inline-block", width: "44px", height: "3px", background: "linear-gradient(90deg, #2F8F4E, #4FBF7E)", borderRadius: "99px", boxShadow: "0 0 16px rgba(47,143,78,.4)", marginBottom: "20px" }} />
+          <h1 className="fnt" style={{ fontSize: "clamp(32px,5vw,56px)", fontWeight: 300, background: "linear-gradient(135deg,#1C3A2B,#2F8F4E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", lineHeight: 1.1, letterSpacing: "-.03em", marginBottom: 12 }}>
+            Transparansi<br />Dana Kampung
           </h1>
-          <p style={{ fontSize: 14, color: "rgba(245,240,232,.5)", lineHeight: 1.7, maxWidth: 400, margin: "0 auto" }}>
-            Setiap rupiah yang masuk dan keluar dicatat secara terbuka.<br />Data diperbarui otomatis secara real-time.
+          <p style={{ fontSize: 14, color: "#5A4A40", lineHeight: 1.8, maxWidth: 480, margin: "0 auto", fontWeight: 500 }}>
+            Setiap rupiah yang masuk dan keluar dicatat secara terbuka dengan integrasi blockchain Web3. Data diperbarui otomatis secara real-time.
           </p>
         </div>
 
-        {/* KPI Cards */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(190px,1fr))", gap: 14, marginBottom: 32 }}>
+        {/* KPI Cards - Heroic */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(210px,1fr))", gap: 18, marginBottom: 36 }}>
           {[
-            { label: "Total Masuk", val: fRp(totMasuk), icon: "↑", color: C.bright, bg: "rgba(74,222,128,0.1)" },
-            { label: "Total Keluar", val: fRp(totKeluar), icon: "↓", color: C.red, bg: "rgba(248,113,113,0.1)" },
-            { label: "Saldo Dana", val: fRp(saldo), icon: "◎", color: C.cream, bg: "rgba(255,255,255,0.06)" },
-            { label: "Target RAB", val: fRp(RAB_TARGET), icon: "◈", color: C.gold, bg: "rgba(184,148,63,0.1)" },
+            { label: "Total Masuk", val: fRp(totMasuk), icon: "📈", color: C.bright, bg: "linear-gradient(135deg,rgba(79,191,126,.08) 0%,rgba(47,143,78,.04) 100%)", border: "rgba(47,143,78,.2)" },
+            { label: "Total Keluar", val: fRp(totKeluar), icon: "📉", color: "#f87171", bg: "linear-gradient(135deg,rgba(248,113,113,.08) 0%,rgba(248,113,113,.02) 100%)", border: "rgba(248,113,113,.2)" },
+            { label: "Saldo Dana", val: fRp(saldo), icon: "💰", color: C.cream, bg: "linear-gradient(135deg,rgba(255,254,249,.8) 0%,rgba(232,245,238,.4) 100%)", border: "rgba(47,143,78,.15)" },
+            { label: "Target RAB", val: fRp(RAB_TARGET), icon: "🎯", color: C.gold, bg: "linear-gradient(135deg,rgba(184,148,63,.1) 0%,rgba(184,148,63,.04) 100%)", border: "rgba(184,148,63,.2)" },
           ].map((c, i) => (
-            <div key={i} style={{ ...card(c.bg), position: "relative", overflow: "hidden" }}>
-              <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: "rgba(255,255,255,.4)", marginBottom: 10 }}>{c.label}</div>
+            <div key={i} style={{ 
+              background: c.bg, 
+              border: `1.5px solid ${c.border}`,
+              borderRadius: 16, 
+              padding: "28px 22px", 
+              position: "relative", 
+              overflow: "hidden",
+              transition: "all 0.35s cubic-bezier(.22,1,.36,1)",
+              cursor: "pointer",
+              transform: "translateY(0)"
+            }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLElement).style.transform = "translateY(-6px)";
+              (e.currentTarget as HTMLElement).style.boxShadow = "0 18px 52px rgba(47,143,78,.12)";
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
+              (e.currentTarget as HTMLElement).style.boxShadow = "0 0 0 transparent";
+            }}
+            >
+              <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: "#5A4A40", marginBottom: 12 }}>{c.label}</div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-                <div className="fnt" style={{ fontSize: "clamp(14px,2vw,20px)", fontWeight: 600, color: c.color, lineHeight: 1 }}>{c.val}</div>
-                <span style={{ fontSize: 18, color: c.color, opacity: 0.5 }}>{c.icon}</span>
+                <div className="fnt" style={{ fontSize: "clamp(16px,2.5vw,24px)", fontWeight: 600, color: c.color, lineHeight: 1 }}>{c.val}</div>
+                <span style={{ fontSize: 24, opacity: 0.6 }}>{c.icon}</span>
               </div>
             </div>
           ))}
         </div>
 
-        {/* ── Progress RAB Global ── */}
-        <div style={{ ...card("rgba(255,255,255,0.04)"), marginBottom: 28 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 14, flexWrap: "wrap", gap: 8 }}>
+        {/* ── Progress RAB Global - Heroic ── */}
+        <div style={{ background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))", border: "1.5px solid rgba(47,143,78,.15)", borderRadius: 16, padding: "32px 28px", marginBottom: 32, transition: "all 0.35s ease" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 20, flexWrap: "wrap", gap: 16 }}>
             <div>
-              <div style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "rgba(255,255,255,.4)", marginBottom: 4 }}>🎯 Progress Pencapaian Target RAB Global</div>
-              <div style={{ fontSize: 13, color: "rgba(255,255,255,.6)" }}>
-                Terkumpul <strong style={{ color: C.bright }}>{fRp(totMasuk)}</strong> dari target <strong style={{ color: C.gold }}>{fRp(RAB_TARGET)}</strong>
+              <div style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "#2F8F4E", marginBottom: 6 }}>🎯 Target Global RAB 2026</div>
+              <div style={{ fontSize: 14, color: "#5A4A40", fontWeight: 500 }}>
+                Terkumpul <strong style={{ color: "#2F8F4E" }}>{fRp(totMasuk)}</strong> dari <strong>{fRp(RAB_TARGET)}</strong>
               </div>
             </div>
-            <div className="fnt" style={{ fontSize: 38, fontWeight: 300, color: C.bright, letterSpacing: "-.02em", lineHeight: 1 }}>
-              {pctTarget.toFixed(1)}<span style={{ fontSize: 18, opacity: 0.7 }}>%</span>
+            <div className="fnt" style={{ fontSize: "clamp(32px,5vw,48px)", fontWeight: 300, color: "#2F8F4E", letterSpacing: "-.02em", lineHeight: 1 }}>
+              {pctTarget.toFixed(1)}<span style={{ fontSize: "0.4em", opacity: 0.7 }}>%</span>
             </div>
           </div>
-          {/* Progress bar */}
-          <div style={{ background: "rgba(255,255,255,0.08)", borderRadius: 99, height: 12, overflow: "hidden", position: "relative" }}>
+          
+          {/* Progress bar with glow */}
+          <div style={{ background: "rgba(47,143,78,.1)", borderRadius: 99, height: 10, overflow: "hidden", position: "relative", marginBottom: 20, boxShadow: "inset 0 1px 3px rgba(47,143,78,.1)" }}>
             <div style={{
-              width: `${pctTarget}%`, height: "100%", borderRadius: 99,
-              background: `linear-gradient(90deg, ${C.green} 0%, ${C.bright} 100%)`,
-              transition: "width 1.2s cubic-bezier(.34,1.1,.64,1)",
-              boxShadow: `0 0 12px rgba(74,222,128,0.4)`,
+              width: `${pctTarget}%`, 
+              height: "100%", 
+              borderRadius: 99,
+              background: `linear-gradient(90deg, #2F8F4E 0%, #4FBF7E 100%)`,
+              transition: "width 1.2s cubic-bezier(.22,1,.36,1)",
+              boxShadow: `0 0 16px rgba(47,143,78,.5), inset 0 1px 2px rgba(255,255,255,.4)`,
             }} />
           </div>
+          
           {/* Milestones */}
-          <div style={{ display: "flex", justifyContent: "space-between", marginTop: 10 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20 }}>
             {[25, 50, 75, 100].map(m => (
-              <div key={m} style={{ textAlign: "center" }}>
-                <div style={{ width: 1, height: 6, background: "rgba(255,255,255,0.15)", margin: "0 auto 3px" }} />
-                <span style={{ fontSize: 9, color: pctTarget >= m ? C.bright : "rgba(255,255,255,.25)", fontWeight: 700 }}>{m}%</span>
+              <div key={m} style={{ textAlign: "center", flex: 1 }}>
+                <div style={{ width: "100%", height: 3, background: "rgba(47,143,78,.1)", margin: "0 auto 6px", borderRadius: 2 }} />
+                <span style={{ fontSize: 10, color: pctTarget >= m ? "#2F8F4E" : "#9A8C85", fontWeight: 700, letterSpacing: ".05em" }}>{m}%</span>
               </div>
             ))}
           </div>
-          {/* Sisa target */}
+          
+          {/* Sisa target info */}
           {totMasuk < RAB_TARGET && (
-            <div style={{ marginTop: 14, padding: "10px 14px", background: "rgba(184,148,63,0.08)", border: "1px solid rgba(184,148,63,0.18)", borderRadius: 12, fontSize: 12, color: C.gold }}>
-              💰 Masih perlu <strong>{fRp(RAB_TARGET - totMasuk)}</strong> lagi untuk mencapai target RAB Global
+            <div style={{ padding: "12px 16px", background: "linear-gradient(135deg,rgba(184,148,63,.1) 0%,rgba(184,148,63,.05) 100%)", border: "1.5px solid rgba(184,148,63,.2)", borderRadius: 12, fontSize: 13, color: "#2F8F4E", fontWeight: 500, display: "flex", alignItems: "center", gap: 10 }}>
+              <span>💪</span>
+              <span>Masih butuh <strong>{fRp(RAB_TARGET - totMasuk)}</strong> untuk target global</span>
             </div>
           )}
         </div>
