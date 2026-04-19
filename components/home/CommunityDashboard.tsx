@@ -3,9 +3,9 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 /* ─── SVG Area Chart ─── */
-function SvgArea({ data, color = "#4ade80", h = 80, labels = [] }: { data: number[]; color?: string; h?: number; labels?: string[] }) {
+function SvgArea({ data, color = "#2F8F4E", h = 80, labels = [] }: { data: number[]; color?: string; h?: number; labels?: string[] }) {
   if (data.length < 2) return (
-    <div style={{ height: h, display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,0.3)", fontSize: 12, fontFamily: "'Inter',system-ui,sans-serif" }}>
+    <div style={{ height: h, display: "flex", alignItems: "center", justifyContent: "center", color: "#5A4A40", fontSize: 12, fontFamily: "'Inter',system-ui,sans-serif" }}>
       Belum ada data cukup
     </div>
   );
@@ -30,8 +30,8 @@ function SvgArea({ data, color = "#4ade80", h = 80, labels = [] }: { data: numbe
         {xs.map((x, i) => <circle key={i} cx={x} cy={ys[i]} r={3.5} fill={color} stroke="rgba(0,0,0,0.4)" strokeWidth={1.5} />)}
       </svg>
       {labels.length > 0 && (
-        <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4 }}>
-          {labels.map((l, i) => <span key={i} style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", fontFamily: "'Inter',system-ui,sans-serif" }}>{l}</span>)}
+        <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6 }}>
+          {labels.map((l, i) => <span key={i} style={{ fontSize: 10, color: "#5A4A40", fontFamily: "'Inter',system-ui,sans-serif", fontWeight: 500 }}>{l}</span>)}
         </div>
       )}
     </div>
@@ -56,8 +56,8 @@ function Donut({ segs, jiwa }: { segs: { label: string; value: number; color: st
           strokeDasharray={`${a.dash} ${circ - a.dash}`} strokeDashoffset={-a.off + circ * 0.25} />
       ))}
       {/* Center menampilkan total jiwa, bukan sum segment (balita/lansia adalah subset dari jiwa) */}
-      <text x={CX} y={CY - 5} textAnchor="middle" fontSize={13} fontWeight="900" fill="#f5f0e8" fontFamily="Inter,system-ui,sans-serif">{jiwa}</text>
-      <text x={CX} y={CY + 10} textAnchor="middle" fontSize={9} fill="rgba(255,255,255,0.4)" fontFamily="Inter,system-ui,sans-serif">jiwa</text>
+      <text x={CX} y={CY - 5} textAnchor="middle" fontSize={13} fontWeight="900" fill="#1C3A2B" fontFamily="Inter,system-ui,sans-serif">{jiwa}</text>
+      <text x={CX} y={CY + 10} textAnchor="middle" fontSize={9} fill="#5A4A40" fontFamily="Inter,system-ui,sans-serif">jiwa</text>
     </svg>
   );
 }
@@ -66,12 +66,12 @@ function Donut({ segs, jiwa }: { segs: { label: string; value: number; color: st
 function HBar({ value, max, color, label, count }: { value: number; max: number; color: string; label: string; count: number }) {
   const pct = max > 0 ? Math.min(100, (value / max) * 100) : 0;
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12, fontFamily: "'Inter',system-ui,sans-serif" }}>
-      <div style={{ width: 88, fontSize: 11, color: "rgba(255,255,255,0.6)", textAlign: "right", flexShrink: 0, lineHeight: 1.3 }}>{label}</div>
-      <div style={{ flex: 1, background: "rgba(255,255,255,0.06)", borderRadius: 99, height: 8, overflow: "hidden" }}>
-        <div style={{ width: `${pct}%`, height: "100%", background: color, borderRadius: 99, transition: "width 1s cubic-bezier(.34,1.56,.64,1)" }} />
+    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14, fontFamily: "'Inter',system-ui,sans-serif" }}>
+      <div style={{ width: 110, fontSize: 12, color: "#1C3A2B", textAlign: "right", flexShrink: 0, lineHeight: 1.3, fontWeight: 500 }}>{label}</div>
+      <div style={{ flex: 1, background: "rgba(47,143,78,.08)", borderRadius: 99, height: 10, overflow: "hidden", boxShadow: "inset 0 1px 2px rgba(0,0,0,.02)" }}>
+        <div style={{ width: `${pct}%`, height: "100%", background: `linear-gradient(90deg, ${color}, ${color}dd)`, borderRadius: 99, transition: "width 1s cubic-bezier(.34,1.56,.64,1)", boxShadow: `0 0 8px ${color}60` }} />
       </div>
-      <div style={{ width: 28, fontSize: 13, fontWeight: 900, color, textAlign: "left" }}>{count}</div>
+      <div style={{ width: 32, fontSize: 14, fontWeight: 800, color, textAlign: "right" }}>{count}</div>
     </div>
   );
 }
@@ -163,7 +163,7 @@ export default function CommunityDashboard() {
     return () => clearInterval(t);
   }, [refresh]);
 
-  const C = { green: "#2d5a40", bright: "#4ade80", gold: "#b8943f", red: "#e74c3c", blue: "#60a5fa", pink: "#f472b6", dark: "#1a2e1f", cream: "#f5f0e8" };
+  const C = { green: "#2F8F4E", bright: "#4FBF7E", gold: "#9B7D4C", red: "#B8472F", blue: "#4FBF7E", pink: "#9B7D4C", dark: "#1C3A2B", cream: "#FAF8F3" };
 
   const donutSegs = [
     { label: "Laki-laki", value: d.laki, color: "#4ade80" },
@@ -174,39 +174,49 @@ export default function CommunityDashboard() {
   const stunMax = Math.max(d.anakNormal, d.anakRisiko, d.anakStunting, 1);
 
   return (
-    <section style={{ padding: "80px clamp(16px,4vw,40px)", background: "#1a2e1f", position: "relative", overflow: "hidden", fontFamily: "var(--font-dm-sans,'DM Sans'),sans-serif" }}>
-      {/* Ambient glow */}
-      <div style={{ position: "absolute", inset: 0, backgroundImage: `radial-gradient(ellipse at 15% 25%, rgba(45,90,64,0.45) 0%, transparent 55%), radial-gradient(ellipse at 85% 75%, rgba(184,148,63,0.12) 0%, transparent 55%)`, pointerEvents: "none" }} />
+    <section style={{ padding: "clamp(60px,8vw,100px) clamp(16px,4vw,40px)", background: "linear-gradient(135deg,rgba(255,254,249,.95) 0%,rgba(232,245,238,.6) 100%)", position: "relative", overflow: "hidden", fontFamily: "var(--font-dm-sans,'DM Sans'),sans-serif", borderTop: "1.5px solid rgba(47,143,78,.15)" }}>
+      {/* Ambient glow - Heroic */}
+      <div style={{ position: "absolute", inset: 0, backgroundImage: `radial-gradient(ellipse at 15% 25%, rgba(47,143,78,0.08) 0%, transparent 55%), radial-gradient(ellipse at 85% 75%, rgba(184,148,63,0.06) 0%, transparent 55%)`, pointerEvents: "none" }} />
 
       <div style={{ maxWidth: 1100, margin: "0 auto", position: "relative", zIndex: 1 }}>
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: 48 }}>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(74,222,128,0.1)", border: "1px solid rgba(74,222,128,0.25)", borderRadius: 99, padding: "6px 18px", marginBottom: 20 }}>
-            <div style={{ width: 7, height: 7, borderRadius: "50%", background: live ? C.bright : "#666", animation: live ? "dashPulse 1.5s infinite" : "none" }} />
-            <span style={{ fontSize: 11, color: live ? C.bright : "#888", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase" }}>
-              {live ? `Live — ${d.updated}` : "Memuat…"}
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(79,191,126,.1)", border: "1.5px solid rgba(47,143,78,.2)", borderRadius: 99, padding: "8px 18px", marginBottom: 20 }}>
+            <div style={{ width: 8, height: 8, borderRadius: "50%", background: live ? "#2F8F4E" : "#9A8C85", animation: live ? "pulse-glow 2s infinite" : "none", boxShadow: live ? "0 0 12px rgba(47,143,78,.6)" : "none" }} />
+            <span style={{ fontSize: 11, color: live ? "#2F8F4E" : "#9A8C85", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase" }}>
+              {live ? `🔴 Live — ${d.updated}` : "⏳ Memuat…"}
             </span>
           </div>
-          <h2 style={{ margin: "0 0 12px", fontSize: "clamp(26px,4.5vw,44px)", fontWeight: 300, color: "#f5f0e8", lineHeight: 1.1, letterSpacing: "-0.025em", fontFamily: "var(--font-cormorant,'Cormorant Garamond'),serif" }}>
-            Denyut Nadi Kampung <em style={{ color: "#4ade80", fontStyle: "italic" }}>Ciburial RW 08</em>
+          <h2 style={{ margin: "0 0 16px", fontSize: "clamp(32px,5vw,48px)", fontWeight: 300, background: "linear-gradient(135deg,#1C3A2B,#2F8F4E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", lineHeight: 1.1, letterSpacing: "-0.03em" }}>
+            Denyut Nadi Kampung <em style={{ background: "linear-gradient(135deg,#4FBF7E,#2F8F4E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontStyle: "italic" }}>Ciburial RW 08</em>
           </h2>
-          <p style={{ color: "rgba(245,240,232,0.5)", fontSize: 15, maxWidth: 480, margin: "0 auto", lineHeight: 1.7 }}>
+          <p style={{ color: "#5A4A40", fontSize: 14, maxWidth: 500, margin: "0 auto", lineHeight: 1.8, fontWeight: 500 }}>
             Data nyata diperbarui otomatis setiap 30 detik langsung dari sistem digital kampung.
           </p>
         </div>
 
         {/* Big stats */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(140px,1fr))", gap: 14, marginBottom: 36 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))", gap: 16, marginBottom: 44 }}>
           {[
-            { icon: "🏠", val: loading ? "—" : d.kk, label: "Kartu Keluarga", color: C.bright },
-            { icon: "👥", val: loading ? "—" : d.jiwa, label: "Total Jiwa", color: "#93c5fd" },
-            { icon: "♻️", val: loading ? "—" : `${d.totKg.toFixed(0)} kg`, label: "Sampah Dikelola", color: C.bright },
-            { icon: "👶", val: loading ? "—" : d.anakNormal + d.anakRisiko + d.anakStunting, label: "Anak Posyandu", color: "#f9a8d4" },
+            { icon: "🏠", val: loading ? "—" : d.kk, label: "Kartu Keluarga", color: "#2F8F4E" },
+            { icon: "👥", val: loading ? "—" : d.jiwa, label: "Total Jiwa", color: "#4FBF7E" },
+            { icon: "♻️", val: loading ? "—" : `${d.totKg.toFixed(0)} kg`, label: "Sampah Dikelola", color: "#2F8F4E" },
+            { icon: "👶", val: loading ? "—" : d.anakNormal + d.anakRisiko + d.anakStunting, label: "Anak Posyandu", color: "#9B7D4C" },
           ].map((s, i) => (
-            <div key={i} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", borderRadius: 20, padding: "22px 16px", textAlign: "center" }}>
-              <div style={{ fontSize: 26, marginBottom: 8 }}>{s.icon}</div>
-              <div style={{ fontSize: 30, fontWeight: 300, color: s.color, lineHeight: 1, letterSpacing: "-0.01em", fontFamily: "var(--font-cormorant,'Cormorant Garamond'),serif" }}>{s.val}</div>
-              <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", marginTop: 6, textTransform: "uppercase", letterSpacing: "0.07em" }}>{s.label}</div>
+            <div key={i} style={{ background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))", border: "1.5px solid rgba(47,143,78,.12)", borderRadius: 14, padding: "28px 20px", textAlign: "center", transition: "all 0.35s cubic-bezier(.22,1,.36,1)", cursor: "pointer" }}
+              onMouseEnter={(e) => {
+                const el = e.currentTarget as HTMLElement;
+                el.style.transform = "translateY(-6px)";
+                el.style.boxShadow = "0 12px 28px rgba(47,143,78,.12)";
+              }}
+              onMouseLeave={(e) => {
+                const el = e.currentTarget as HTMLElement;
+                el.style.transform = "translateY(0)";
+                el.style.boxShadow = "none";
+              }}>
+              <div style={{ fontSize: 28, marginBottom: 10 }}>{s.icon}</div>
+              <div style={{ fontSize: 32, fontWeight: 300, color: s.color, lineHeight: 1, letterSpacing: "-0.02em" }}>{s.val}</div>
+              <div style={{ fontSize: 11, color: "#5A4A40", marginTop: 8, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600 }}>{s.label}</div>
             </div>
           ))}
         </div>
@@ -215,16 +225,16 @@ export default function CommunityDashboard() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))", gap: 24 }}>
 
           {/* Demografi Donut */}
-          <div style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", borderRadius: 24, padding: "28px 24px" }}>
-            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 20 }}>📊 Komposisi Jiwa</div>
+          <div style={{ background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))", border: "1.5px solid rgba(47,143,78,.12)", borderRadius: 16, padding: "32px 28px", transition: "all 0.35s cubic-bezier(.22,1,.36,1)" }}>
+            <div style={{ fontSize: 12, color: "#2F8F4E", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 24 }}>📊 Komposisi Jiwa</div>
             <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
               <Donut segs={donutSegs} jiwa={d.jiwa} />
               <div style={{ flex: 1 }}>
                 {donutSegs.map((s, i) => (
-                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 9 }}>
-                    <div style={{ width: 8, height: 8, borderRadius: 2, background: s.color, flexShrink: 0 }} />
-                    <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", flex: 1 }}>{s.label}</span>
-                    <span style={{ fontSize: 14, fontWeight: 900, color: s.color }}>{s.value}</span>
+                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+                    <div style={{ width: 10, height: 10, borderRadius: 3, background: s.color, flexShrink: 0, boxShadow: `0 2px 8px ${s.color}40` }} />
+                    <span style={{ fontSize: 13, color: "#1C3A2B", flex: 1, fontWeight: 500 }}>{s.label}</span>
+                    <span style={{ fontSize: 14, fontWeight: 800, color: s.color }}>{s.value}</span>
                   </div>
                 ))}
               </div>
@@ -232,19 +242,19 @@ export default function CommunityDashboard() {
           </div>
 
           {/* Bank Sampah */}
-          <div style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", borderRadius: 24, padding: "28px 24px" }}>
-            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 6 }}>♻️ Bank Sampah — 6 Bulan</div>
-            <div style={{ fontSize: 22, fontWeight: 900, color: C.bright, marginBottom: 18, letterSpacing: "-0.02em" }}>{d.totKg.toFixed(1)} kg total</div>
+          <div style={{ background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))", border: "1.5px solid rgba(47,143,78,.12)", borderRadius: 16, padding: "32px 28px", transition: "all 0.35s cubic-bezier(.22,1,.36,1)" }}>
+            <div style={{ fontSize: 12, color: "#2F8F4E", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 8 }}>♻️ Bank Sampah — 6 Bulan</div>
+            <div style={{ fontSize: 28, fontWeight: 300, color: "#2F8F4E", marginBottom: 22, letterSpacing: "-0.02em" }}>{d.totKg.toFixed(1)} <span style={{ fontSize: "0.5em", opacity: 0.7 }}>kg</span></div>
             <SvgArea data={d.sampahKg} color={C.bright} h={90} labels={d.sampahLbl} />
           </div>
 
           {/* Gizi Balita */}
-          <div style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", borderRadius: 24, padding: "28px 24px" }}>
-            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 20 }}>👶 Status Gizi Balita</div>
+          <div style={{ background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))", border: "1.5px solid rgba(47,143,78,.12)", borderRadius: 16, padding: "32px 28px", transition: "all 0.35s cubic-bezier(.22,1,.36,1)" }}>
+            <div style={{ fontSize: 12, color: "#2F8F4E", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 24 }}>👶 Status Gizi Balita</div>
             <HBar value={d.anakNormal} max={stunMax} color={C.bright} label="✅ Normal" count={d.anakNormal} />
             <HBar value={d.anakRisiko} max={stunMax} color={C.gold} label="⚠️ Risiko" count={d.anakRisiko} />
             <HBar value={d.anakStunting} max={stunMax} color={C.red} label="🔴 Stunting" count={d.anakStunting} />
-            <div style={{ marginTop: 16, padding: "10px 14px", background: d.anakStunting === 0 ? "rgba(74,222,128,0.08)" : "rgba(231,76,60,0.1)", borderRadius: 12, fontSize: 12, color: d.anakStunting === 0 ? C.bright : "#f87171", fontWeight: 600 }}>
+            <div style={{ marginTop: 20, padding: "14px 16px", background: d.anakStunting === 0 ? "linear-gradient(135deg,rgba(79,191,126,.1),rgba(47,143,78,.05))" : "linear-gradient(135deg,rgba(248,113,113,.1),rgba(184,80,80,.05))", borderRadius: 12, fontSize: 13, border: d.anakStunting === 0 ? "1px solid rgba(47,143,78,.2)" : "1px solid rgba(248,113,113,.2)", color: d.anakStunting === 0 ? "#2F8F4E" : "#B8472F", fontWeight: 600 }}>
               {d.anakStunting === 0 ? "🎉 Tidak ada balita stunting saat ini!" : `⚠️ ${d.anakStunting} balita perlu perhatian khusus`}
             </div>
           </div>

@@ -262,7 +262,7 @@ export default function TransparansiTab() {
               (e.currentTarget as HTMLElement).style.boxShadow = "0 0 0 transparent";
             }}
             >
-              <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: "#5A4A40", marginBottom: 12 }}>{c.label}</div>
+              <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".1em", textTransform: "uppercase", color: "#1C3A2B", marginBottom: 12 }}>{c.label}</div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
                 <div className="fnt" style={{ fontSize: "clamp(16px,2.5vw,24px)", fontWeight: 700, color: c.valColor || c.color, lineHeight: 1 }}>{c.val}</div>
                 <span style={{ fontSize: 24, opacity: 0.7 }}>{c.icon}</span>
