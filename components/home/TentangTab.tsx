@@ -94,40 +94,83 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
   return (
     <div className="pi">
 
-      {/* HERO */}
-      <section className="hero-section" style={{ position: "relative", overflow: "hidden" }}>
-        <div style={{ position: "absolute", top: 0, right: 0, width: "42%", height: "100%", background: "linear-gradient(135deg,var(--fo) 0%,var(--fm) 60%,var(--fl) 100%)", clipPath: "polygon(18% 0%,100% 0%,100% 100%,0% 100%)", opacity: .055, pointerEvents: "none" }} />
-        <div style={{ position: "absolute", bottom: 0, left: 0, width: "100%", height: "35%", background: "linear-gradient(0deg,var(--cd) 0%,transparent 100%)", pointerEvents: "none" }} />
+      {/* HERO - HEROIC EDITION */}
+      <section className="hero-section" style={{ position: "relative", overflow: "hidden", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        {/* Background Animations */}
+        <div style={{ position: "absolute", bottom: "-30%", right: "-15%", width: "800px", height: "800px", background: "radial-gradient(circle,rgba(47,143,78,.25) 0%,transparent 70%)", borderRadius: "50%", animation: "float 30s ease-in-out infinite", zIndex: 0 }} />
+        <div style={{ position: "absolute", top: "-20%", left: "-10%", width: "600px", height: "600px", background: "radial-gradient(circle,rgba(184,148,63,.15) 0%,transparent 70%)", borderRadius: "50%", animation: "float 25s ease-in-out infinite reverse", zIndex: 0 }} />
+        
+        {/* Gradient Overlay */}
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg,rgba(28,58,43,.1) 0%,rgba(47,143,78,.05) 50%,transparent 100%)", pointerEvents: "none", zIndex: 1 }} />
 
-        <div className="hero-content">
-          <div className="h1" style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 28 }}>
-            <div style={{ width: 28, height: 1, background: "var(--go)", flexShrink: 0 }} />
-            <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--go)" }}>Kp. Ciburial, Garut — Est. 2026</span>
+        <div className="hero-content" style={{ position: "relative", zIndex: 2, maxWidth: 1000 }}>
+          {/* Badge */}
+          <div className="h1" style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 40, justifyContent: "center" }}>
+            <div style={{ width: 40, height: 3, background: "linear-gradient(90deg,#2F8F4E,#4FBF7E)", borderRadius: 99, boxShadow: "0 0 20px rgba(47,143,78,.4)" }} />
+            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".15em", textTransform: "uppercase", color: "#2F8F4E", background: "rgba(79,191,126,.1)", padding: "8px 16px", borderRadius: 99, border: "1px solid rgba(47,143,78,.2)" }}>🌍 Kp. Ciburial, Garut — Est. 2026</span>
+            <div style={{ width: 40, height: 3, background: "linear-gradient(90deg,#4FBF7E,#2F8F4E)", borderRadius: 99, boxShadow: "0 0 20px rgba(47,143,78,.4)" }} />
           </div>
 
-          <div style={{ maxWidth: 1320, margin: "0 auto", width: "100%" }}>
-            <div className="h2" style={{ marginBottom: 6 }}>
-              <span style={{ fontSize: 12, fontWeight: 600, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--em)" }}>Selamat Datang di</span>
+          {/* Content */}
+          <div style={{ maxWidth: 900, margin: "0 auto", width: "100%", textAlign: "center" }}>
+            <div className="h2" style={{ marginBottom: 12 }}>
+              <span style={{ fontSize: 13, fontWeight: 600, letterSpacing: ".15em", textTransform: "uppercase", color: "#4FBF7E", textShadow: "0 2px 8px rgba(47,143,78,.15)" }}>▼ Selamat Datang di ▼</span>
             </div>
-            <h1 className="fnt h3 hero-title" style={{ fontWeight: 300, lineHeight: .9, color: "var(--fo)", letterSpacing: "-.03em", marginBottom: 6 }}>Ciburial</h1>
-            <h2 className="fnt h4 hero-sub" style={{ fontWeight: 600, fontStyle: "italic", color: "var(--go)", letterSpacing: "-.02em", marginBottom: 10 }}>Eco-Digital Village</h2>
-            <div className="h5" style={{ marginBottom: 24 }}>
-              <p className="fnt" style={{ fontSize: "clamp(13px,2vw,18px)", fontWeight: 300, fontStyle: "italic", color: "var(--em)", letterSpacing: ".02em" }}>
+            
+            {/* Main Title */}
+            <h1 className="fnt h3 hero-title" style={{ fontWeight: 200, lineHeight: 0.95, color: "#1C3A2B", letterSpacing: "-.04em", marginBottom: 12, fontSize: "clamp(56px,12vw,140px)", textShadow: "0 12px 32px rgba(28,58,43,.15)" }}>
+              Ciburial
+            </h1>
+            
+            {/* Subtitle */}
+            <h2 className="fnt h4 hero-sub" style={{ fontWeight: 500, fontStyle: "italic", background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", letterSpacing: "-.02em", marginBottom: 0, fontSize: "clamp(28px,5vw,54px)", textShadow: "0 2px 8px rgba(47,143,78,.1)" }}>
+              Eco-Digital Village
+            </h2>
+            
+            {/* Divider */}
+            <div style={{ height: 3, background: "linear-gradient(90deg,transparent,#2F8F4E 25%,#4FBF7E 50%,#2F8F4E 75%,transparent)", margin: "28px auto", maxWidth: 200, boxShadow: "0 0 24px rgba(47,143,78,.2)" }} />
+            
+            {/* Tagline */}
+            <div className="h5" style={{ marginBottom: 32 }}>
+              <p className="fnt" style={{ fontSize: "clamp(14px,2.5vw,22px)", fontWeight: 300, fontStyle: "italic", color: "#5A4A40", letterSpacing: ".01em", lineHeight: 1.6, textShadow: "0 2px 4px rgba(28,58,43,.05)" }}>
                 Inovasi Desa Mandiri Berbasis Kearifan Lokal dan Teknologi Masa Depan
               </p>
             </div>
-            <div className="h5" style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
-              <p style={{ maxWidth: 480, fontSize: 15, fontWeight: 400, lineHeight: 1.8, color: "var(--ts)", marginBottom: 12 }}>
-                Memutus rantai ketertinggalan dengan digitalisasi hasil bumi, ekosistem sirkular, dan generasi muda yang melek teknologi — tanpa meninggalkan identitas kampung halaman.
+            
+            {/* Description */}
+            <div className="h5" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
+              <p style={{ maxWidth: 620, fontSize: "clamp(15px,2vw,18px)", fontWeight: 400, lineHeight: 1.9, color: "#5A4A40" }}>
+                Memutus rantai ketertinggalan dengan <strong style={{ color: "#2F8F4E", fontWeight: 600 }}>digitalisasi hasil bumi</strong>, <strong style={{ color: "#2F8F4E", fontWeight: 600 }}>ekosistem sirkular</strong>, dan <strong style={{ color: "#2F8F4E", fontWeight: 600 }}>generasi muda yang melek teknologi</strong> — tanpa meninggalkan identitas kampung halaman.
               </p>
-              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              
+              {/* Tags */}
+              <div style={{ display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "center" }}>
                 {["🌱 Pertanian Organik", "🐄 Peternakan Modern", "🎋 Kerajinan Bambu", "💡 Smart PJU", "♻️ Eco-Waste", "📚 Learning Hub", "🏛️ Balai Warga"].map(tag => (
-                  <span key={tag} style={{ padding: "6px 13px", fontSize: 11, fontWeight: 600, border: "1px solid var(--bo)", borderRadius: 99, color: "var(--ts)", background: "var(--cw)" }}>{tag}</span>
+                  <span key={tag} className="badge-heroic" style={{ padding: "8px 14px", fontSize: 11, fontWeight: 600, borderRadius: 99, color: "#1C3A2B", background: "linear-gradient(135deg,rgba(47,143,78,.08),rgba(79,191,126,.08))", border: "1.5px solid rgba(47,143,78,.2)", transition: "all .3s ease", cursor: "default" }}>{tag}</span>
                 ))}
               </div>
             </div>
           </div>
+
+          {/* CTA Button */}
+          <div style={{ marginTop: 52, display: "flex", justifyContent: "center", gap: 14 }}>
+            <button className="btn-heroic" onClick={() => onNavigate("tentang")} style={{ padding: "14px 32px", fontSize: 12, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", border: "none", borderRadius: 8, background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", color: "white", cursor: "pointer", boxShadow: "0 12px 32px rgba(47,143,78,.3)", transition: "all .35s cubic-bezier(.22,1,.36,1)" }} onMouseEnter={e => (e.currentTarget.style.transform = "translateY(-4px)", e.currentTarget.style.boxShadow = "0 16px 48px rgba(47,143,78,.4)")} onMouseLeave={e => (e.currentTarget.style.transform = "translateY(0)", e.currentTarget.style.boxShadow = "0 12px 32px rgba(47,143,78,.3)")}>
+              Jelajahi Sekarang ↓
+            </button>
+          </div>
         </div>
+
+        {/* Scroll Indicator */}
+        <div style={{ position: "absolute", bottom: 40, left: "50%", transform: "translateX(-50%)", zIndex: 2, animation: "bounce 2s ease-in-out infinite" }}>
+          <div style={{ fontSize: 24, animation: "bounce 2s ease-in-out infinite" }}>⬇</div>
+        </div>
+
+        <style>{`
+          @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+          }
+        `}</style>
       </section>
 
       {/* MARQUEE */}
@@ -143,38 +186,48 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
         </div>
       </div>
 
-      {/* STATS */}
-      <section className="sec" style={{ background: "var(--cw)", padding: "clamp(40px,6vw,68px) clamp(16px,4vw,32px)" }}>
-        <div style={{ maxWidth: 1320, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(130px,1fr))", gap: 2 }}>
+      {/* STATS - HEROIC */}
+      <section className="sec" style={{ background: "linear-gradient(135deg,rgba(79,191,126,.04) 0%,rgba(47,143,78,.02) 100%)", padding: "clamp(60px,8vw,100px) clamp(16px,4vw,32px)", borderTop: "2px solid rgba(47,143,78,.1)" }}>
+        <div style={{ maxWidth: 1320, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))", gap: 2 }}>
           {[
-            { v: totalJiwa !== null ? totalJiwa.toLocaleString() : "450", l: "Jiwa", s: "Total Populasi" },
-            { v: "3", l: "RT", s: "Rukun Tetangga" },
-            { v: "55%", l: "Pemuda/Pemudi", s: "Gen. Penerus" },
-            { v: "5", l: "Divisi", s: "Tim Lapangan" },
-            { v: "7", l: "Program", s: "Unggulan" },
-            { v: "250jt", l: "Target", s: "RAB Global Tahun 2026" },
+            { v: totalJiwa !== null ? totalJiwa.toLocaleString() : "450", l: "Jiwa", s: "Total Populasi", icon: "👥" },
+            { v: "3", l: "RT", s: "Rukun Tetangga", icon: "🏘️" },
+            { v: "55%", l: "Pemuda/Pemudi", s: "Gen. Penerus", icon: "⚡" },
+            { v: "5", l: "Divisi", s: "Tim Lapangan", icon: "🎯" },
+            { v: "7", l: "Program", s: "Unggulan", icon: "🚀" },
+            { v: "250jt", l: "Target", s: "RAB 2026", icon: "💰" },
           ].map((s, i) => (
-            <div key={i} className={`rv d${i + 1}`} style={{ padding: "40px 18px", textAlign: "center", borderRight: i < 5 ? "1px solid var(--bo)" : "none" }}>
-              <div className="fnt" style={{ fontSize: "clamp(30px,4vw,56px)", fontWeight: 300, color: "var(--fo)", lineHeight: 1 }}>{s.v}</div>
-              <div style={{ fontSize: 14, fontWeight: 600, color: "var(--ts)", marginTop: 4, marginBottom: 5 }}>{s.l}</div>
-              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--tm)" }}>{s.s}</div>
+            <div key={i} className={`rv d${i + 1}`} style={{ padding: "32px 18px", textAlign: "center", borderRight: i < 5 ? "1px solid rgba(47,143,78,.08)" : "none", position: "relative", transition: "all .3s ease", cursor: "pointer" }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLElement).style.transform = "translateY(-4px)";
+                (e.currentTarget as HTMLElement).style.background = "rgba(79,191,126,.08)";
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
+                (e.currentTarget as HTMLElement).style.background = "transparent";
+              }}
+            >
+              <div style={{ fontSize: 28, marginBottom: 10 }}>{s.icon}</div>
+              <div className="fnt" style={{ fontSize: "clamp(28px,4vw,52px)", fontWeight: 300, color: "#2F8F4E", lineHeight: 1, marginBottom: 8 }}>{s.v}</div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#5A4A40", marginBottom: 4 }}>{s.l}</div>
+              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#9A8C85" }}>{s.s}</div>
             </div>
           ))}
         </div>
       </section>
 
 
-      {/* VISI MISI */}
-      <section className="sec" style={{ padding: "clamp(48px,8vw,104px) clamp(16px,4vw,32px)", background: "var(--cr)" }}>
-        <div className="visi-wrap" style={{ maxWidth: 1320, margin: "0 auto", display: "flex", flexWrap: "wrap", gap: 52, alignItems: "flex-start" }}>
-          <div className="visi-left" style={{ flex: "0 0 270px" }}>
+      {/* VISI MISI - HEROIC */}
+      <section className="sec" style={{ padding: "clamp(60px,10vw,120px) clamp(16px,4vw,32px)", background: "linear-gradient(135deg,rgba(250,248,243,.5) 0%,rgba(255,254,249,.8) 100%)" }}>
+        <div className="visi-wrap" style={{ maxWidth: 1320, margin: "0 auto", display: "flex", flexWrap: "wrap", gap: 64, alignItems: "flex-start" }}>
+          <div className="visi-left" style={{ flex: "0 0 280px" }}>
             <div className="dl" />
-            <h2 className="fnt" style={{ fontSize: "clamp(30px,4vw,50px)", fontWeight: 300, color: "var(--fo)", lineHeight: 1.1, letterSpacing: "-.02em", marginBottom: 16 }}>Visi &<br />Misi Kami</h2>
-            <p style={{ fontSize: 14, lineHeight: 1.8, color: "var(--ts)", marginBottom: 20 }}>
-              Empat pilar yang menjadi cetak biru (<em>blueprint</em>) peradaban desa modern Ciburial — makmur, mandiri, tangguh, dan melek teknologi.
+            <h2 className="fnt" style={{ fontSize: "clamp(36px,5vw,56px)", fontWeight: 300, background: "linear-gradient(135deg,#1C3A2B,#2F8F4E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", lineHeight: 1.1, letterSpacing: "-.03em", marginBottom: 20 }}>Visi &<br />Misi Kami</h2>
+            <p style={{ fontSize: 14, lineHeight: 1.8, color: "#5A4A40", marginBottom: 24, fontWeight: 500 }}>
+              Empat pilar yang menjadi cetak biru (<em>blueprint</em>) peradaban desa modern Ciburial — <strong style={{ color: "#2F8F4E" }}>makmur, mandiri, tangguh</strong>, dan melek teknologi.
             </p>
           </div>
-          <div style={{ flex: 1, minWidth: 250, display: "flex", flexDirection: "column", gap: 8 }}>
+          <div style={{ flex: 1, minWidth: 260, display: "flex", flexDirection: "column", gap: 14 }}>
             {[
               { no: "01", icon: "💡", t: "Infrastruktur Cerdas", d: "Balai Serba Guna berkonsep hijau, Smart PJU, Jaringan CCTV, dan Internet Mandiri (Wi-Fi Kampung)." },
               { no: "02", icon: "📚", t: "SDM Unggul", d: "Laboratorium Komputer & Perpustakaan sebagai inkubator pemuda Ciburial yang melek teknologi." },
@@ -182,15 +235,25 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
               { no: "04", icon: "📊", t: "Tata Kelola Transparan", d: "Aliran dana kemakmuran terbuka secara real-time, dari fiat konvensional hingga aset kripto (Web3)." },
             ].map((v, i) => (
               <div key={i} className={`rv ch d${i + 1}`}
-                style={{ padding: "22px 26px", background: "var(--cw)", borderRadius: 15, border: "1px solid var(--bo)", display: "flex", gap: 16, alignItems: "flex-start" }}
-                onMouseEnter={e => (e.currentTarget.style.background = "var(--cd)")}
-                onMouseLeave={e => (e.currentTarget.style.background = "var(--cw)")}
+                style={{ padding: "24px 28px", background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.6))", borderRadius: 16, border: "1.5px solid rgba(47,143,78,.15)", display: "flex", gap: 18, alignItems: "flex-start", transition: "all .35s cubic-bezier(.22,1,.36,1)", cursor: "pointer" }}
+                onMouseEnter={e => {
+                  (e.currentTarget as HTMLElement).style.background = "linear-gradient(135deg,rgba(255,254,249,1),rgba(232,245,238,.8))";
+                  (e.currentTarget as HTMLElement).style.transform = "translateY(-6px)";
+                  (e.currentTarget as HTMLElement).style.boxShadow = "0 20px 60px rgba(47,143,78,.12)";
+                  (e.currentTarget as HTMLElement).style.borderColor = "rgba(47,143,78,.25)";
+                }}
+                onMouseLeave={e => {
+                  (e.currentTarget as HTMLElement).style.background = "linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.6))";
+                  (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
+                  (e.currentTarget as HTMLElement).style.boxShadow = "0 0 0 transparent";
+                  (e.currentTarget as HTMLElement).style.borderColor = "rgba(47,143,78,.15)";
+                }}
               >
-                <span className="fnt" style={{ fontSize: 12, fontWeight: 700, color: "var(--go)", minWidth: 22, paddingTop: 2 }}>{v.no}</span>
-                <span style={{ fontSize: 22 }}>{v.icon}</span>
+                <span className="fnt" style={{ fontSize: 13, fontWeight: 700, color: "#2F8F4E", minWidth: 28, paddingTop: 4 }}>{v.no}</span>
+                <span style={{ fontSize: 28 }}>{v.icon}</span>
                 <div>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: "var(--tp)", marginBottom: 4 }}>{v.t}</div>
-                  <div style={{ fontSize: 13, lineHeight: 1.7, color: "var(--ts)" }}>{v.d}</div>
+                  <div style={{ fontSize: 16, fontWeight: 700, color: "#1C3A2B", marginBottom: 6 }}>{v.t}</div>
+                  <div style={{ fontSize: 13, lineHeight: 1.7, color: "#5A4A40", fontWeight: 500 }}>{v.d}</div>
                 </div>
               </div>
             ))}
@@ -278,15 +341,28 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
 
           {/* 5 Divisi */}
           <div style={{ marginTop: 8 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--go)", marginBottom: 14 }}>D. 5 Divisi Operasional (Garda Depan)</div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(190px,1fr))", gap: 12 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "#2F8F4E", marginBottom: 20, background: "linear-gradient(90deg,transparent,#2F8F4E 50%,transparent)", backgroundSize: "100% 2px", backgroundPosition: "0 100%", backgroundRepeat: "no-repeat", paddingBottom: 12 }}>D. 5 Divisi Operasional (Garda Depan)</div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 16 }}>
               {divisi.map((d, i) => (
-                <div key={i} className={`div-card d${i + 1}`} style={{ background: "var(--cw)", border: "1px solid var(--bo)", borderRadius: 16, padding: "20px 16px" }}>
-                  <div style={{ fontSize: 28, marginBottom: 10 }}>{d.icon}</div>
-                  <div style={{ fontSize: 12, fontWeight: 800, color: "var(--fo)", marginBottom: 3, textTransform: "uppercase", letterSpacing: ".04em" }}>{d.nama}</div>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: "var(--ts)", marginBottom: 8 }}>{d.full}</div>
-                  <div style={{ fontSize: 11, lineHeight: 1.6, color: "var(--tm)" }}>{d.tugas}</div>
-                  <div style={{ marginTop: 12, fontSize: 10, fontWeight: 700, color: "var(--tm)", fontStyle: "italic" }}>Kepala: — Hasil Voting —</div>
+                <div key={i} className={`div-card card-heroic d${i + 1}`} style={{ background: "linear-gradient(135deg,rgba(255,254,249,.95),rgba(232,245,238,.5))", border: "1.5px solid rgba(47,143,78,.15)", borderRadius: 16, padding: "24px", transition: "all .35s cubic-bezier(.22,1,.36,1)", cursor: "pointer", position: "relative", overflow: "hidden" }}
+                  onMouseEnter={e => {
+                    (e.currentTarget as HTMLElement).style.background = "linear-gradient(135deg,rgba(255,254,249,1),rgba(232,245,238,.7))";
+                    (e.currentTarget as HTMLElement).style.transform = "translateY(-8px)";
+                    (e.currentTarget as HTMLElement).style.boxShadow = "0 20px 60px rgba(47,143,78,.12)";
+                    (e.currentTarget as HTMLElement).style.borderColor = "rgba(47,143,78,.3)";
+                  }}
+                  onMouseLeave={e => {
+                    (e.currentTarget as HTMLElement).style.background = "linear-gradient(135deg,rgba(255,254,249,.95),rgba(232,245,238,.5))";
+                    (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
+                    (e.currentTarget as HTMLElement).style.boxShadow = "0 0 0 transparent";
+                    (e.currentTarget as HTMLElement).style.borderColor = "rgba(47,143,78,.15)";
+                  }}
+                >
+                  <div style={{ fontSize: 36, marginBottom: 14, filter: "drop-shadow(0 4px 12px rgba(47,143,78,.1))" }}>{d.icon}</div>
+                  <div style={{ fontSize: 13, fontWeight: 800, color: "#1C3A2B", marginBottom: 4, textTransform: "uppercase", letterSpacing: ".04em", background: `linear-gradient(135deg,#2F8F4E,#4FBF7E)`, backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{d.nama}</div>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: "#5A4A40", marginBottom: 10, minHeight: 30 }}>{d.full}</div>
+                  <div style={{ fontSize: 12, lineHeight: 1.6, color: "#5A4A40", marginBottom: 14, paddingBottom: 14, borderBottom: "1px solid rgba(47,143,78,.1)" }}>{d.tugas}</div>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: "#2F8F4E", fontStyle: "italic", letterSpacing: ".05em" }}>👤 Lab: — Hasil Voting —</div>
                 </div>
               ))}
             </div>

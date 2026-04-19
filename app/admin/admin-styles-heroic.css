@@ -1,0 +1,418 @@
+/* ═══════════════════════════════════════════════════════════════
+   HEROIC DESIGN SYSTEM - Admin Dashboard Enhancements
+   Dramatic, powerful visuals with depth and energy
+   ════════════════════════════════════════════════════════════════ */
+
+/* HEROIC BUTTONS */
+.btn-heroic {
+  position: relative;
+  overflow: hidden;
+  padding: 14px 32px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  background: linear-gradient(135deg, #2F8F4E 0%, #4FBF7E 100%);
+  color: white;
+  box-shadow: 0 8px 24px rgba(47, 143, 78, 0.3);
+}
+
+.btn-heroic::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #4FBF7E 0%, #2F8F4E 100%);
+  transform: translateX(-100%);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 0;
+}
+
+.btn-heroic:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(47, 143, 78, 0.4);
+  letter-spacing: 0.08em;
+}
+
+.btn-heroic:hover::before {
+  transform: translateX(0);
+}
+
+.btn-heroic span {
+  position: relative;
+  z-index: 1;
+}
+
+/* HEROIC CARDS WITH DEPTH */
+.card-heroic {
+  background: rgba(255, 254, 249, 0.7);
+  border: 1.5px solid rgba(47, 143, 78, 0.15);
+  border-radius: 16px;
+  padding: 32px;
+  backdrop-filter: blur(10px);
+  transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-heroic::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(47, 143, 78, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  z-index: 0;
+  transition: all 0.6s ease;
+}
+
+.card-heroic:hover {
+  transform: translateY(-8px);
+  border-color: rgba(47, 143, 78, 0.3);
+  box-shadow: 0 20px 60px rgba(47, 143, 78, 0.15), inset 0 1px 12px rgba(47, 143, 78, 0.05);
+  background: rgba(255, 254, 249, 0.85);
+}
+
+.card-heroic:hover::before {
+  transform: translateY(-20px) scale(1.2);
+}
+
+.card-heroic > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* HEROIC SECTION HEADERS */
+.section-header-heroic {
+  position: relative;
+  margin-bottom: 48px;
+  padding-bottom: 24px;
+}
+
+.section-header-heroic::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 60px;
+  background: linear-gradient(90deg, #2F8F4E, #4FBF7E);
+  border-radius: 99px;
+  box-shadow: 0 0 16px rgba(47, 143, 78, 0.3);
+}
+
+.section-title-heroic {
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, #1C3A2B 0%, #2F8F4E 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 12px;
+}
+
+.section-subtitle-heroic {
+  font-size: 16px;
+  color: #5A4A40;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* HEROIC STAT BOXES */
+.stat-box-heroic {
+  background: linear-gradient(135deg, rgba(79, 191, 126, 0.08) 0%, rgba(47, 143, 78, 0.04) 100%);
+  border: 1.5px solid rgba(47, 143, 78, 0.2);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-box-heroic::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(47, 143, 78, 0.15) 0%, transparent 70%);
+  border-radius: 50%;
+  opacity: 0;
+  transition: all 0.6s ease;
+  z-index: 0;
+}
+
+.stat-box-heroic:hover {
+  transform: translateY(-6px) scale(1.02);
+  border-color: rgba(47, 143, 78, 0.4);
+  box-shadow: 0 16px 48px rgba(47, 143, 78, 0.12);
+  background: linear-gradient(135deg, rgba(79, 191, 126, 0.12) 0%, rgba(47, 143, 78, 0.08) 100%);
+}
+
+.stat-box-heroic:hover::before {
+  opacity: 1;
+  transform: translate(50%, 50%);
+}
+
+.stat-value-heroic {
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #2F8F4E;
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.stat-label-heroic {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #5A4A40;
+  margin-bottom: 4px;
+  position: relative;
+  z-index: 1;
+}
+
+.stat-desc-heroic {
+  font-size: 11px;
+  color: #9A8C85;
+  letter-spacing: 0.05em;
+  position: relative;
+  z-index: 1;
+}
+
+/* HEROIC BADGES */
+.badge-heroic {
+  display: inline-block;
+  background: linear-gradient(135deg, rgba(47, 143, 78, 0.1) 0%, rgba(79, 191, 126, 0.1) 100%);
+  border: 1.5px solid rgba(47, 143, 78, 0.25);
+  padding: 8px 16px;
+  border-radius: 99px;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: #1C3A2B;
+  transition: all 0.3s ease;
+}
+
+.badge-heroic:hover {
+  background: linear-gradient(135deg, rgba(47, 143, 78, 0.15) 0%, rgba(79, 191, 126, 0.15) 100%);
+  border-color: rgba(47, 143, 78, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(47, 143, 78, 0.1);
+}
+
+/* HEROIC GRADIENT BORDERS */
+.gradient-border-heroic {
+  position: relative;
+  border-radius: 12px;
+  padding: 24px;
+  background: linear-gradient(rgba(255, 254, 249, 0.9), rgba(255, 254, 249, 0.9)) padding-box,
+              linear-gradient(135deg, #2F8F4E, #4FBF7E) border-box;
+  border: 2px solid transparent;
+}
+
+/* HEROIC GLOW EFFECT */
+.glow-heroic {
+  position: relative;
+}
+
+.glow-heroic::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: radial-gradient(circle, rgba(47, 143, 78, 0.4) 0%, transparent 70%);
+  border-radius: 12px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.glow-heroic:hover::after {
+  opacity: 1;
+}
+
+/* HEROIC ANIMATIONS */
+@keyframes glow-pulse {
+  0% {
+    box-shadow: 0 0 20px rgba(47, 143, 78, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(47, 143, 78, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(47, 143, 78, 0.3);
+  }
+}
+
+@keyframes float-heroic {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+
+.pulse-glow-heroic {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+.float-heroic {
+  animation: float-heroic 4s ease-in-out infinite;
+}
+
+/* HEROIC TABLES */
+.table-heroic {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.table-heroic thead {
+  background: linear-gradient(135deg, rgba(47, 143, 78, 0.08) 0%, rgba(79, 191, 126, 0.08) 100%);
+}
+
+.table-heroic th {
+  padding: 16px;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #2F8F4E;
+  border-bottom: 2px solid rgba(47, 143, 78, 0.2);
+  text-align: left;
+}
+
+.table-heroic td {
+  padding: 16px;
+  border-bottom: 1px solid rgba(232, 245, 238, 0.8);
+  color: #5A4A40;
+  font-weight: 500;
+}
+
+.table-heroic tbody tr {
+  transition: all 0.25s ease;
+}
+
+.table-heroic tbody tr:hover {
+  background: rgba(79, 191, 126, 0.04);
+  transform: scale(1.01);
+}
+
+.table-heroic tbody tr:hover td {
+  border-bottom-color: rgba(47, 143, 78, 0.15);
+}
+
+/* HEROIC FORMS */
+.form-heroic {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group-heroic {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-label-heroic {
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.03em;
+  color: #1C3A2B;
+}
+
+.form-input-heroic {
+  padding: 12px 16px;
+  border: 2px solid rgba(47, 143, 78, 0.15);
+  border-radius: 8px;
+  background: rgba(255, 254, 249, 0.8);
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(4px);
+}
+
+.form-input-heroic:focus {
+  outline: none;
+  border-color: #2F8F4E;
+  box-shadow: 0 0 0 4px rgba(47, 143, 78, 0.1), inset 0 0 12px rgba(47, 143, 78, 0.05);
+  background: rgba(255, 254, 249, 0.95);
+}
+
+/* HEROIC MODALS/OVERLAYS */
+.modal-heroic-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 58, 43, 0.4);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+}
+
+.modal-heroic {
+  position: relative;
+  background: rgba(255, 254, 249, 0.98);
+  border-radius: 16px;
+  border: 1.5px solid rgba(47, 143, 78, 0.2);
+  box-shadow: 0 32px 96px rgba(28, 58, 43, 0.2);
+  animation: modal-enter 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes modal-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* RESPONSIVE ADJUSTMENTS */
+@media (max-width: 768px) {
+  .btn-heroic {
+    padding: 12px 24px;
+    font-size: 11px;
+  }
+
+  .card-heroic {
+    padding: 20px;
+  }
+
+  .section-title-heroic {
+    font-size: clamp(24px, 4vw, 40px);
+  }
+
+  .stat-value-heroic {
+    font-size: clamp(20px, 3vw, 32px);
+  }
+
+  .table-heroic th,
+  .table-heroic td {
+    padding: 12px;
+    font-size: 12px;
+  }
+}
