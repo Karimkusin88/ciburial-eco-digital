@@ -27,7 +27,7 @@ function DanaFlowChart({ transaksi }: { transaksi: Transaksi[] }) {
   const entries = Object.entries(byMonth).slice(-6);
   if (entries.length < 2) {
     return (
-      <div style={{ height: H, display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,.3)", fontSize: 13 }}>
+      <div style={{ height: H, display: "flex", alignItems: "center", justifyContent: "center", color: "#9A8C85", fontSize: 13 }}>
         Butuh min. 2 bulan data untuk chart
       </div>
     );
@@ -60,7 +60,7 @@ function DanaFlowChart({ transaksi }: { transaksi: Transaksi[] }) {
         {/* Grid lines */}
         {[0.25, 0.5, 0.75, 1].map(f => (
           <line key={f} x1={PX} y1={yFn(maxV * (1 - f))} x2={W - PX} y2={yFn(maxV * (1 - f))}
-            stroke="rgba(255,255,255,0.06)" strokeWidth={1} strokeDasharray="4 3" />
+            stroke="rgba(47,143,78,0.08)" strokeWidth={1} strokeDasharray="4 3" />
         ))}
         {/* Area masuk */}
         <path d={areaPath(masukPts)} fill="url(#gMasuk)" />
@@ -82,19 +82,19 @@ function DanaFlowChart({ transaksi }: { transaksi: Transaksi[] }) {
         {/* X labels */}
         {entries.map(([label], i) => (
           <text key={i} x={PX + i * xStep} y={H - 4} textAnchor="middle"
-            fontSize={9} fill="rgba(255,255,255,0.35)" fontFamily="Inter,system-ui,sans-serif">
+            fontSize={9} fill="rgba(47,143,78,0.45)" fontFamily="Inter,system-ui,sans-serif">
             {label}
           </text>
         ))}
         {/* Y label (max) */}
-        <text x={PX - 6} y={PY + 4} textAnchor="end" fontSize={8} fill="rgba(255,255,255,0.25)" fontFamily="Inter,system-ui,sans-serif">
+        <text x={PX - 6} y={PY + 4} textAnchor="end" fontSize={8} fill="rgba(47,143,78,0.35)" fontFamily="Inter,system-ui,sans-serif">
           {(maxV / 1e6).toFixed(1)}jt
         </text>
       </svg>
       {/* Legend */}
       <div style={{ display: "flex", gap: 20, justifyContent: "center", marginTop: 6 }}>
         {[{ color: "#4ade80", label: "Dana Masuk" }, { color: "#f87171", label: "Dana Keluar" }].map(l => (
-          <div key={l.label} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "rgba(255,255,255,0.55)" }}>
+          <div key={l.label} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#5A4A40" }}>
             <div style={{ width: 22, height: 2.5, background: l.color, borderRadius: 99 }} />
             {l.label}
           </div>
@@ -115,7 +115,7 @@ function AlokasiDonut({ transaksi }: { transaksi: Transaksi[] }) {
   const totalUsed = keluar.reduce((s, a) => s + a.used, 0);
   if (totalUsed === 0) {
     return (
-      <div style={{ height: 140, display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,.3)", fontSize: 13, textAlign: "center" }}>
+      <div style={{ height: 140, display: "flex", alignItems: "center", justifyContent: "center", color: "#9A8C85", fontSize: 13, textAlign: "center" }}>
         Belum ada pengeluaran<br />yang tercatat
       </div>
     );
@@ -135,17 +135,17 @@ function AlokasiDonut({ transaksi }: { transaksi: Transaksi[] }) {
     <div style={{ display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
       <svg width={140} height={140} style={{ flexShrink: 0, overflow: "visible" }}>
         {/* Track */}
-        <circle cx={CX} cy={CY} r={R} fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth={SW} />
+        <circle cx={CX} cy={CY} r={R} fill="none" stroke="rgba(47,143,78,0.08)" strokeWidth={SW} />
         {arcs.map((a, i) => (
           <circle key={i} cx={CX} cy={CY} r={R} fill="none" stroke={a.color} strokeWidth={SW}
             strokeDasharray={`${a.dash} ${circ - a.dash}`}
             strokeDashoffset={-a.off}
             style={{ transition: "stroke-dasharray 0.8s ease" }} />
         ))}
-        <text x={CX} y={CY - 6} textAnchor="middle" fontSize={12} fontWeight="900" fill="#f5f0e8" fontFamily="Inter,system-ui,sans-serif">
+        <text x={CX} y={CY - 6} textAnchor="middle" fontSize={12} fontWeight="900" fill="#1C3A2B" fontFamily="Inter,system-ui,sans-serif">
           {fRp(totalUsed).replace("Rp ", "")}
         </text>
-        <text x={CX} y={CY + 9} textAnchor="middle" fontSize={8} fill="rgba(255,255,255,0.4)" fontFamily="Inter,system-ui,sans-serif">
+        <text x={CX} y={CY + 9} textAnchor="middle" fontSize={8} fill="rgba(47,143,78,0.4)" fontFamily="Inter,system-ui,sans-serif">
           total keluar
         </text>
       </svg>
@@ -153,7 +153,7 @@ function AlokasiDonut({ transaksi }: { transaksi: Transaksi[] }) {
         {keluar.map((a, i) => (
           <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
             <div style={{ width: 8, height: 8, borderRadius: 2, background: a.color, flexShrink: 0 }} />
-            <span style={{ flex: 1, fontSize: 11, color: "rgba(255,255,255,0.6)", lineHeight: 1.3 }}>{a.label}</span>
+            <span style={{ flex: 1, fontSize: 11, color: "#5A4A40", lineHeight: 1.3 }}>{a.label}</span>
             <span style={{ fontSize: 12, fontWeight: 800, color: a.color, whiteSpace: "nowrap" }}>
               {Math.round((a.used / totalUsed) * 100)}%
             </span>
@@ -220,8 +220,8 @@ export default function TransparansiTab() {
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: 56 }}>
           <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(79,191,126,.1)", border: "1.5px solid rgba(47,143,78,.2)", borderRadius: 99, padding: "6px 16px", marginBottom: 20 }}>
-            <div style={{ width: 8, height: 8, borderRadius: "50%", background: live ? C.bright : "#9A8C85", animation: live ? "pulse-glow 2s infinite" : "none", boxShadow: live ? "0 0 12px rgba(79,191,126,.6)" : "none" }} />
-            <span style={{ fontSize: 10, fontWeight: 700, color: live ? C.bright : "#9A8C85", letterSpacing: ".15em", textTransform: "uppercase" }}>
+            <div style={{ width: 8, height: 8, borderRadius: "50%", background: live ? "#2F8F4E" : "#9A8C85", animation: live ? "pulse-glow 2s infinite" : "none", boxShadow: live ? "0 0 12px rgba(47,143,78,.6)" : "none" }} />
+            <span style={{ fontSize: 10, fontWeight: 700, color: live ? "#2F8F4E" : "#9A8C85", letterSpacing: ".15em", textTransform: "uppercase" }}>
               {live ? `🔴 Live · ${updated}` : "⏳ Memuat…"}
             </span>
           </div>
@@ -293,7 +293,7 @@ export default function TransparansiTab() {
               borderRadius: 99,
               background: `linear-gradient(90deg, #2F8F4E 0%, #4FBF7E 100%)`,
               transition: "width 1.2s cubic-bezier(.22,1,.36,1)",
-              boxShadow: `0 0 16px rgba(47,143,78,.5), inset 0 1px 2px rgba(255,255,255,.4)`,
+              boxShadow: `0 0 16px rgba(47,143,78,.5), inset 0 1px 2px rgba(47,143,78,.2)`,
             }} />
           </div>
           
@@ -320,21 +320,21 @@ export default function TransparansiTab() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))", gap: 20, marginBottom: 28 }}>
 
           {/* Area chart: performa aliran dana */}
-          <div style={{ ...card("rgba(255,255,255,0.04)") }}>
-            <div style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "rgba(255,255,255,.4)", marginBottom: 18 }}>📈 Performa Aliran Dana (Per Bulan)</div>
+          <div style={{ ...card("linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))") }}>
+            <div style={{ fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "#2F8F4E", marginBottom: 20 }}>📈 Performa Aliran Dana (Per Bulan)</div>
             <DanaFlowChart transaksi={transaksi} />
           </div>
 
           {/* Donut: distribusi pengeluaran RAB */}
-          <div style={{ ...card("rgba(255,255,255,0.04)") }}>
-            <div style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "rgba(255,255,255,.4)", marginBottom: 18 }}>🍩 Distribusi Pengeluaran per Program</div>
+          <div style={{ ...card("linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))") }}>
+            <div style={{ fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "#2F8F4E", marginBottom: 20 }}>🍩 Distribusi Pengeluaran per Program</div>
             <AlokasiDonut transaksi={transaksi} />
           </div>
         </div>
 
         {/* ── Rincian Alokasi RAB per Program ── */}
         <div style={{ marginBottom: 28 }}>
-          <div style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "rgba(255,255,255,.4)", marginBottom: 16 }}>📊 Rincian Alokasi Dana per Program RAB</div>
+          <div style={{ fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "#2F8F4E", marginBottom: 18 }}>📊 Rincian Alokasi Dana per Program RAB</div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: 14 }}>
             {ALOKASI.map((item, i) => {
               const used = transaksi.filter(t => t.tipe === "keluar" && t.kategori === item.label).reduce((s, t) => s + t.jumlah, 0);
@@ -342,17 +342,17 @@ export default function TransparansiTab() {
               const sisa = item.target - used;
               const col = ALOKASI_COLORS[i];
               return (
-                <div key={i} style={{ ...card("rgba(255,255,255,0.04)") }}>
+                <div key={i} style={{ ...card("linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))") }}>
                   <div style={{ display: "flex", gap: 10, alignItems: "flex-start", marginBottom: 14 }}>
                     <span style={{ fontSize: 22, lineHeight: 1, marginTop: 1 }}>{item.icon}</span>
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: C.cream, lineHeight: 1.3, marginBottom: 3 }}>{item.label}</div>
-                      <div style={{ fontSize: 10, color: "rgba(255,255,255,.35)", lineHeight: 1.4 }}>{item.desc}</div>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: "#1C3A2B", lineHeight: 1.3, marginBottom: 3 }}>{item.label}</div>
+                      <div style={{ fontSize: 10, color: "#5A4A40", lineHeight: 1.4 }}>{item.desc}</div>
                     </div>
                     <span style={{ fontSize: 16, fontWeight: 900, color: col, whiteSpace: "nowrap", lineHeight: 1 }}>{Math.round(pct)}%</span>
                   </div>
                   {/* Progress */}
-                  <div style={{ background: "rgba(255,255,255,0.08)", borderRadius: 99, height: 7, overflow: "hidden", marginBottom: 10 }}>
+                  <div style={{ background: "rgba(47,143,78,.08)", borderRadius: 99, height: 8, overflow: "hidden", marginBottom: 12 }}>
                     <div style={{
                       width: `${pct}%`, height: "100%", borderRadius: 99, background: col,
                       transition: "width 1.2s cubic-bezier(.34,1.1,.64,1)",
@@ -360,12 +360,12 @@ export default function TransparansiTab() {
                     }} />
                   </div>
                   {/* Angka */}
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 4 }}>
                     <span style={{ color: col, fontWeight: 700 }}>{fRp(used)} terpakai</span>
-                    <span style={{ color: "rgba(255,255,255,.35)" }}>{fRp(sisa)} sisa</span>
+                    <span style={{ color: "#5A4A40", fontWeight: 500 }}>{fRp(sisa)} sisa</span>
                   </div>
                   {/* Target */}
-                  <div style={{ marginTop: 4, fontSize: 10, color: "rgba(255,255,255,.2)" }}>Target: {fRp(item.target)}</div>
+                  <div style={{ fontSize: 10, color: "#9A8C85" }}>Target: {fRp(item.target)}</div>
                 </div>
               );
             })}
@@ -374,15 +374,16 @@ export default function TransparansiTab() {
 
         {/* ── Riwayat Transaksi ── */}
         <div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 12 }}>
-            <div style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "rgba(255,255,255,.4)" }}>📋 Riwayat Transaksi ({txFil.length})</div>
-            <div style={{ display: "flex", gap: 6 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18, flexWrap: "wrap", gap: 12 }}>
+            <div style={{ fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "#2F8F4E" }}>📋 Riwayat Transaksi ({txFil.length})</div>
+            <div style={{ display: "flex", gap: 8 }}>
               {(["semua", "masuk", "keluar"] as const).map(f => (
                 <button key={f} onClick={() => setFTipe(f)} style={{
-                  padding: "7px 15px", fontSize: 11, fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase",
-                  border: "1px solid rgba(255,255,255,.12)", borderRadius: 99, cursor: "pointer", transition: "all .2s",
-                  background: fTipe === f ? C.bright : "transparent",
-                  color: fTipe === f ? C.dark : "rgba(255,255,255,.45)",
+                  padding: "8px 16px", fontSize: 11, fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase",
+                  border: fTipe === f ? "1.5px solid #2F8F4E" : "1.5px solid rgba(47,143,78,.2)", borderRadius: 8, cursor: "pointer", transition: "all 0.3s",
+                  background: fTipe === f ? "linear-gradient(135deg,#2F8F4E,#4FBF7E)" : "rgba(255,254,249,.8)",
+                  color: fTipe === f ? "#FFF" : "#1C3A2B",
+                  boxShadow: fTipe === f ? "0 4px 12px rgba(47,143,78,.2)" : "none",
                 }}>
                   {f}
                 </button>
@@ -390,61 +391,61 @@ export default function TransparansiTab() {
             </div>
           </div>
 
-          <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.09)", borderRadius: 20, overflow: "hidden" }}>
+          <div style={{ background: "linear-gradient(135deg,rgba(255,254,249,.95),rgba(232,245,238,.5))", border: "1.5px solid rgba(47,143,78,.12)", borderRadius: 16, overflow: "hidden" }}>
             <div style={{ overflowX: "auto" }}>
               <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "'Inter',system-ui,sans-serif" }}>
                 <thead>
-                  <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+                  <tr style={{ borderBottom: "1.5px solid rgba(47,143,78,.12)" }}>
                     {["Tanggal", "Keterangan", "Kategori", "Tipe", "Jumlah"].map((h, i) => (
-                      <th key={h} style={{ padding: "12px 16px", fontSize: 9, fontWeight: 800, letterSpacing: ".1em", textTransform: "uppercase", color: "rgba(255,255,255,.3)", textAlign: i === 4 ? "right" : "left", whiteSpace: "nowrap" }}>{h}</th>
+                      <th key={h} style={{ padding: "14px 16px", fontSize: 10, fontWeight: 800, letterSpacing: ".1em", textTransform: "uppercase", color: "#2F8F4E", textAlign: i === 4 ? "right" : "left", whiteSpace: "nowrap" }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {txFil.map((t, i) => (
-                    <tr key={t.id} style={{ borderBottom: i < txFil.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none", transition: "background .15s" }}
-                      onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.04)")}
+                    <tr key={t.id} style={{ borderBottom: i < txFil.length - 1 ? "1px solid rgba(47,143,78,.1)" : "none", transition: "background .15s" }}
+                      onMouseEnter={e => (e.currentTarget.style.background = "rgba(47,143,78,.05)")}
                       onMouseLeave={e => (e.currentTarget.style.background = "transparent")}>
-                      <td style={{ padding: "13px 16px", fontSize: 12, color: "rgba(255,255,255,.45)", whiteSpace: "nowrap" }}>
+                      <td style={{ padding: "13px 16px", fontSize: 12, color: "#5A4A40", whiteSpace: "nowrap", fontWeight: 500 }}>
                         {new Date(t.tanggal).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
                       </td>
-                      <td style={{ padding: "13px 16px", fontSize: 13, color: C.cream, maxWidth: 240 }}>{t.keterangan}</td>
+                      <td style={{ padding: "13px 16px", fontSize: 13, color: "#1C3A2B", maxWidth: 240, fontWeight: 500 }}>{t.keterangan}</td>
                       <td style={{ padding: "13px 16px" }}>
-                        <span style={{ padding: "3px 10px", background: "rgba(255,255,255,0.07)", borderRadius: 99, fontSize: 11, fontWeight: 600, color: "rgba(255,255,255,.55)", whiteSpace: "nowrap" }}>
+                        <span style={{ padding: "4px 12px", background: "rgba(47,143,78,.08)", borderRadius: 8, fontSize: 11, fontWeight: 600, color: "#2F8F4E", whiteSpace: "nowrap" }}>
                           {t.kategori}
                         </span>
                       </td>
                       <td style={{ padding: "13px 16px" }}>
                         <span style={{
-                          padding: "3px 10px", borderRadius: 99, fontSize: 11, fontWeight: 700, whiteSpace: "nowrap",
-                          background: t.tipe === "masuk" ? "rgba(74,222,128,0.15)" : "rgba(248,113,113,0.15)",
-                          color: t.tipe === "masuk" ? C.bright : C.red,
+                          padding: "4px 12px", borderRadius: 8, fontSize: 11, fontWeight: 700, whiteSpace: "nowrap",
+                          background: t.tipe === "masuk" ? "rgba(79,191,126,.15)" : "rgba(184,72,48,.15)",
+                          color: t.tipe === "masuk" ? "#2F8F4E" : "#B8472F",
                         }}>
                           {t.tipe === "masuk" ? "↑ Masuk" : "↓ Keluar"}
                         </span>
                       </td>
-                      <td style={{ padding: "13px 16px", textAlign: "right", fontWeight: 700, whiteSpace: "nowrap", fontSize: 13, color: t.tipe === "masuk" ? C.bright : C.red }}>
+                      <td style={{ padding: "13px 16px", textAlign: "right", fontWeight: 700, whiteSpace: "nowrap", fontSize: 13, color: t.tipe === "masuk" ? "#2F8F4E" : "#B8472F" }}>
                         {t.tipe === "masuk" ? "+" : "−"}{fRp(t.jumlah)}
                       </td>
                     </tr>
                   ))}
                   {txFil.length === 0 && (
-                    <tr><td colSpan={5} style={{ padding: 40, textAlign: "center", color: "rgba(255,255,255,.25)", fontSize: 13 }}>Tidak ada transaksi</td></tr>
+                    <tr><td colSpan={5} style={{ padding: 40, textAlign: "center", color: "#9A8C85", fontSize: 13 }}>Tidak ada transaksi</td></tr>
                   )}
                 </tbody>
               </table>
             </div>
             {/* Footer */}
-            <div style={{ padding: "14px 22px", borderTop: "1px solid rgba(255,255,255,0.08)", display: "flex", justifyContent: "flex-end", gap: 24, flexWrap: "wrap" }}>
-              <span style={{ fontSize: 12, fontWeight: 700, color: C.bright }}>Masuk: {fRp(totMasuk)}</span>
-              <span style={{ fontSize: 12, fontWeight: 700, color: C.red }}>Keluar: {fRp(totKeluar)}</span>
-              <span style={{ fontSize: 13, fontWeight: 900, color: C.cream }}>Saldo: {fRp(saldo)}</span>
+            <div style={{ padding: "14px 22px", borderTop: "1px solid rgba(47,143,78,.12)", display: "flex", justifyContent: "flex-end", gap: 24, flexWrap: "wrap" }}>
+              <span style={{ fontSize: 12, fontWeight: 700, color: "#2F8F4E" }}>Masuk: {fRp(totMasuk)}</span>
+              <span style={{ fontSize: 12, fontWeight: 700, color: "#B8472F" }}>Keluar: {fRp(totKeluar)}</span>
+              <span style={{ fontSize: 13, fontWeight: 900, color: "#1C3A2B" }}>Saldo: {fRp(saldo)}</span>
             </div>
           </div>
 
-          <div style={{ marginTop: 16, padding: "13px 18px", background: "rgba(184,148,63,.07)", border: "1px solid rgba(184,148,63,.18)", borderRadius: 13, display: "flex", gap: 10, alignItems: "flex-start" }}>
+          <div style={{ marginTop: 16, padding: "13px 18px", background: "rgba(184,148,63,.08)", border: "1px solid rgba(184,148,63,.2)", borderRadius: 13, display: "flex", gap: 10, alignItems: "flex-start" }}>
             <span style={{ fontSize: 16 }}>ℹ️</span>
-            <div style={{ fontSize: 12, lineHeight: 1.7, color: "rgba(184,148,63,.8)" }}>
+            <div style={{ fontSize: 12, lineHeight: 1.7, color: "#7A6B5D" }}>
               Data diperbarui otomatis secara real-time via Supabase. Pertanyaan terkait keuangan: <strong>ciburial.smarthub@gmail.com</strong>
             </div>
           </div>
