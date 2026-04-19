@@ -238,7 +238,7 @@ export default function AdminRondaPage() {
         
         {/* Branding Ciburial Eco Digital - Menggantikan Emoji Mascot */}
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <div style={{ textAlign: "right", display: "none", "@media(min-width: 600px)": {display: "block"} } as any}>
+          <div className="slogan-mobile">
             <div style={{ fontSize: 12, fontWeight: 800, color: TEMA.hijauDaun }}>Silih Asah, Asih, Asuh</div>
           </div>
           <div style={{ width: 1, height: 28, background: TEMA.bgBambu }} />
@@ -510,6 +510,9 @@ export default function AdminRondaPage() {
           box-shadow: 0 0 12px rgba(45, 90, 64, 0.5);
           animation: scanSweep 2s ease-in-out infinite;
         }
+
+        .slogan-mobile { display: none; text-align: right; }
+        @media(min-width: 600px) { .slogan-mobile { display: block; } }
 
         /* Scrollbar Natural */
         .bambu-scrollbar::-webkit-scrollbar { width: 6px; }
