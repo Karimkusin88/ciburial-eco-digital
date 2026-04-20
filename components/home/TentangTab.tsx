@@ -318,7 +318,13 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(130px,1fr))", gap: 12 }}>
               {dwnPelindung.map((item, i) => (
                 <div key={i} className="ch" style={{ background: "var(--cw)", border: "1px solid var(--bo)", borderRadius: 16, padding: "18px 16px 14px", textAlign: "center" }}>
-                  <div style={{ width: 44, height: 44, borderRadius: "50%", background: "var(--cd)", margin: "0 auto 10px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, border: "2px solid var(--bo)" }}>{item.icon}</div>
+                  <div style={{ width: 44, height: 44, borderRadius: "50%", background: "var(--cd)", margin: "0 auto 10px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, border: "2px solid var(--bo)", overflow: "hidden", backgroundSize: "cover", backgroundPosition: "center" }}>
+                    {item.foto ? (
+                      <img src={item.foto} alt={item.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    ) : (
+                      item.icon
+                    )}
+                  </div>
                   <div style={{ fontSize: 13, fontWeight: 700, color: "var(--tp)", marginBottom: 3 }}>{item.name}</div>
                   <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".09em", textTransform: "uppercase", color: "var(--go)" }}>{item.role}</div>
                 </div>
@@ -332,7 +338,13 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
               <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--go)", marginBottom: 20 }}>B. Dewan Pengawas Kas</div>
               {dwnPengawas.map((item, i) => (
                 <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px", background: "var(--cd)", borderRadius: 12 }}>
-                  <span style={{ fontSize: 24 }}>{item.icon}</span>
+                  <div style={{ width: 48, height: 48, borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, overflow: "hidden", background: "white", border: "2px solid rgba(47,143,78,.15)" }}>
+                    {item.foto ? (
+                      <img src={item.foto} alt={item.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    ) : (
+                      item.icon
+                    )}
+                  </div>
                   <div>
                     <div style={{ fontSize: 14, fontWeight: 700, color: "var(--tp)" }}>{item.name}</div>
                     <div style={{ fontSize: 10, fontWeight: 700, color: "var(--go)", textTransform: "uppercase", letterSpacing: ".07em" }}>{item.role}</div>
@@ -346,7 +358,13 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
                 {timEksekutif.map((item, i) => (
                   <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "11px 14px", background: "var(--cd)", borderRadius: 10 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                      <span style={{ fontSize: 18 }}>{item.icon}</span>
+                      <div style={{ width: 40, height: 40, borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, overflow: "hidden", background: "white", border: "2px solid rgba(47,143,78,.1)" }}>
+                        {item.foto ? (
+                          <img src={item.foto} alt={item.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                        ) : (
+                          item.icon
+                        )}
+                      </div>
                       <span style={{ fontSize: 13, fontWeight: 700, color: "var(--tp)", fontStyle: item.name.includes("—") ? "italic" : "normal" }}>{item.name}</span>
                     </div>
                     <span style={{ fontSize: 9, fontWeight: 700, color: "var(--tm)", textTransform: "uppercase", letterSpacing: ".07em", background: "var(--cw)", padding: "3px 9px", borderRadius: 99 }}>{item.role}</span>
