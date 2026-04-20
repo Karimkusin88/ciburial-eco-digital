@@ -47,6 +47,7 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
   const [loadingDonasi, setLoadingDonasi] = useState(false);
   const [totalJiwa, setTotalJiwa] = useState<number | null>(null);
   const [pengurusDb, setPengurusDb] = useState<any[]>([]);
+  const [showStory, setShowStory] = useState(false);
 
   useEffect(() => {
     if (!isSupabaseReady()) return;
@@ -164,9 +165,12 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
           </div>
 
           {/* CTA Button */}
-          <div style={{ marginTop: 52, display: "flex", justifyContent: "center", gap: 14 }}>
+          <div style={{ marginTop: 52, display: "flex", justifyContent: "center", gap: 14, flexWrap: "wrap" }}>
             <button className="btn-heroic" onClick={() => onNavigate("tentang")} style={{ padding: "14px 32px", fontSize: 12, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", border: "none", borderRadius: 8, background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", color: "white", cursor: "pointer", boxShadow: "0 12px 32px rgba(47,143,78,.3)", transition: "all .35s cubic-bezier(.22,1,.36,1)" }} onMouseEnter={e => (e.currentTarget.style.transform = "translateY(-4px)", e.currentTarget.style.boxShadow = "0 16px 48px rgba(47,143,78,.4)")} onMouseLeave={e => (e.currentTarget.style.transform = "translateY(0)", e.currentTarget.style.boxShadow = "0 12px 32px rgba(47,143,78,.3)")}>
               Jelajahi Sekarang ↓
+            </button>
+            <button onClick={() => setShowStory(true)} style={{ padding: "14px 32px", fontSize: 12, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", border: "1.5px solid rgba(47,143,78,.4)", borderRadius: 8, background: "rgba(255,255,255,.6)", color: "#1C3A2B", cursor: "pointer", backdropFilter: "blur(8px)", transition: "all .35s cubic-bezier(.22,1,.36,1)", display: "flex", alignItems: "center", gap: 8 }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.background = "rgba(255,255,255,.9)"; e.currentTarget.style.boxShadow = "0 12px 32px rgba(47,143,78,.15)"; }} onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.background = "rgba(255,255,255,.6)"; e.currentTarget.style.boxShadow = "none"; }}>
+              <span style={{ fontSize: 16 }}>📖</span> Our Story
             </button>
           </div>
         </div>
@@ -553,6 +557,56 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
           </div>
         </div>
       </section>
+
+      {/* STORY MODAL */}
+      {showStory && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", margin: "auto", overflowY: "auto", background: "rgba(28,58,43,.6)", backdropFilter: "blur(12px)", padding: "40px 20px", animation: "storyFadeIn .3s ease" }}>
+          <div style={{ margin: "auto", background: "linear-gradient(135deg,rgba(255,254,249,1) 0%,rgba(232,245,238,1) 100%)", borderRadius: 24, maxWidth: 640, width: "100%", border: "1px solid rgba(47,143,78,.2)", boxShadow: "0 24px 64px rgba(28,58,43,.3)", position: "relative", animation: "storySlideUp .4s cubic-bezier(.22,1,.36,1)" }}>
+            
+            {/* Header / Cover */}
+            <div style={{ height: 160, background: "linear-gradient(135deg,#1C3A2B 0%,#2F8F4E 100%)", position: "relative", borderRadius: "24px 24px 0 0" }}>
+              <div style={{ position: "absolute", top: 20, right: 20 }}>
+                <button onClick={() => setShowStory(false)} style={{ width: 36, height: 36, borderRadius: "50%", background: "rgba(255,255,255,.2)", border: "none", color: "white", fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(4px)", transition: "background .2s" }} onMouseEnter={e => e.currentTarget.style.background="rgba(255,255,255,.4)"} onMouseLeave={e => e.currentTarget.style.background="rgba(255,255,255,.2)"}>✕</button>
+              </div>
+              <div style={{ position: "absolute", bottom: -40, left: 40, width: 80, height: 80, borderRadius: 20, background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 50, overflow: "hidden", border: "4px solid #FFFEF9", boxShadow: "0 8px 24px rgba(28,58,43,.15)" }}>
+                 {/* Empty avatar with background in case no img is defined */}
+                 <div style={{ width: "100%", height: "100%", background: "#4FBF7E", display: "flex", alignItems: "center", justifyContent: "center", color: "white" }}>👤</div>
+              </div>
+            </div>
+
+            {/* Body */}
+            <div style={{ padding: "50px 40px 40px" }}>
+              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".15em", textTransform: "uppercase", color: "#2F8F4E", marginBottom: 8 }}>The Origin Story</div>
+              <h3 className="fnt" style={{ fontSize: 32, fontWeight: 300, color: "#1C3A2B", lineHeight: 1.2, letterSpacing: "-.02em", marginBottom: 24 }}>Dari Pelosok Garut untuk Melesat ke Masa Depan.</h3>
+              
+              <div style={{ fontSize: 14, lineHeight: 1.8, color: "#5A4A40", display: "flex", flexDirection: "column", gap: 16 }}>
+                <p>Singkat cerita, semuanya bermula dari kegelisahan sederhana di sini, Kp. Ciburial, Bungbulang. Mengapa desa kita yang kaya akan kearifan lokal—dari kerajinan bambu hingga potensi pasokan pangan—harus selalu tergerus dan dipaksa tertinggal oleh cepatnya arus peradaban?</p>
+                <p>Sebagai pemuda daerah, saya menolak pasrah. <strong>Ciburial Eco-Digital</strong> didirikan bukan sekadar sebagai portal penyampaian informasi. Ini adalah sebuah manifestasi ide dan <strong style={{ color: "#2F8F4E" }}>quantum leap</strong> (lompatan besar).</p>
+                <p>Bersama, kami merancang cetak biru peradaban baru di mana tatanan kearifan lokal berdampingan secara harmonis dengan teknologi masa depan. Mulai dari sistem penerangan jalan cerdas (Smart PJU), pertanian organik terukur, hingga <strong>transparansi dana abadi kampung secara real-time yang terbuka utuh bagi masyarakat luas.</strong></p>
+                <p>Gerakan progresif ini tak lagi menuntut hak dari elit. Ekonomi sirkular dan komando lapangan kini digerakkan langsung oleh tangan-tangan pemuda Ciburial yang hari ini mendominasi 55% populasi desa.</p>
+                <div style={{ background: "linear-gradient(135deg,rgba(47,143,78,.08),rgba(47,143,78,.03))", padding: "16px 20px", borderRadius: 12, borderLeft: "3px solid #2F8F4E", fontStyle: "italic", fontWeight: 500, color: "#1C3A2B", marginTop: 8 }}>
+                  "Kita tidak sekadar pasrah memulung sisa zaman. Kita bangkit menciptakan standar peradabannya."
+                </div>
+              </div>
+
+              <div style={{ marginTop: 32, display: "flex", alignItems: "center", gap: 16, borderTop: "1px solid rgba(47,143,78,.1)", paddingTop: 24 }}>
+                <div>
+                  <div style={{ fontSize: 15, fontWeight: 800, color: "#1A1410" }}>Ubay Rahmat H.</div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "#2F8F4E", letterSpacing: ".05em", textTransform: "uppercase", marginTop: 2 }}>Inisiator & Founder</div>
+                </div>
+                <div style={{ marginLeft: "auto" }}>
+                  <span className="fnt" style={{ fontSize: 32, color: "rgba(184,148,63,.4)", fontStyle: "italic", fontWeight: 200, letterSpacing: "-.02em" }}>Ciburial</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <style>{`
+        @keyframes storyFadeIn { from { opacity: 0 } to { opacity: 1 } }
+        @keyframes storySlideUp { from { opacity: 0; transform: translateY(30px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+      `}</style>
     </div>
   );
 }
