@@ -702,24 +702,48 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                 </div>
               </div>
 
-              {/* Tombol Add to Cart */}
-              <button onClick={() => {
-                for (let i = 0; i < detailQty; i++) addToCart(selectedProduct);
-                setSelectedProduct(null);
-                setDetailQty(1);
-              }}
-                style={{ padding: "14px 24px", background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", border: "none", borderRadius: 12, color: "#FFF", fontSize: 15, fontWeight: 800, cursor: "pointer", boxShadow: "0 8px 20px rgba(47,143,78,.25)", transition: "all 0.3s", letterSpacing: "0.02em" }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateY(-2px)";
-                  e.currentTarget.style.boxShadow = "0 12px 28px rgba(47,143,78,.3)";
+              {/* Buttons Container */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                {/* Tambah ke Keranjang */}
+                <button onClick={() => {
+                  for (let i = 0; i < detailQty; i++) addToCart(selectedProduct);
+                  setSelectedProduct(null);
+                  setDetailQty(1);
                 }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow = "0 8px 20px rgba(47,143,78,.25)";
+                  style={{ padding: "14px 24px", background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", border: "none", borderRadius: 12, color: "#FFF", fontSize: 15, fontWeight: 800, cursor: "pointer", boxShadow: "0 8px 20px rgba(47,143,78,.25)", transition: "all 0.3s", letterSpacing: "0.02em" }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-2px)";
+                    e.currentTarget.style.boxShadow = "0 12px 28px rgba(47,143,78,.3)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow = "0 8px 20px rgba(47,143,78,.25)";
+                  }}
+                >
+                  🛒 Keranjang
+                </button>
+
+                {/* Beli Langsung */}
+                <button onClick={() => {
+                  for (let i = 0; i < detailQty; i++) addToCart(selectedProduct);
+                  setSelectedProduct(null);
+                  setDetailQty(1);
+                  setShowCart(false);
+                  setShowCheckout(true);
                 }}
-              >
-                🛒 Tambah {detailQty > 1 ? detailQty + 'x' : ''} ke Keranjang
-              </button>
+                  style={{ padding: "14px 24px", background: "linear-gradient(135deg,#B8943F,#D4AC5A)", border: "none", borderRadius: 12, color: "#FFF", fontSize: 15, fontWeight: 800, cursor: "pointer", boxShadow: "0 8px 20px rgba(184,148,63,.25)", transition: "all 0.3s", letterSpacing: "0.02em" }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-2px)";
+                    e.currentTarget.style.boxShadow = "0 12px 28px rgba(184,148,63,.3)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow = "0 8px 20px rgba(184,148,63,.25)";
+                  }}
+                >
+                  ⚡ Beli Langsung
+                </button>
+              </div>
             </div>
           </div>
 
@@ -1126,8 +1150,22 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                         e.stopPropagation();
                         addToCart(p);
                       }}
-                      style={{ marginTop: 12, padding: "10px", background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", border: "none", borderRadius: 8, fontSize: 12, fontWeight: 700, color: "#FFF", cursor: "pointer", transition: "all 0.3s", boxShadow: "0 4px 12px rgba(47,143,78,.2)" }}>
+                      style={{ marginTop: 12, padding: "10px", background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", border: "none", borderRadius: 8, fontSize: 12, fontWeight: 700, color: "#FFF", cursor: "pointer", transition: "all 0.3s", boxShadow: "0 4px 12px rgba(47,143,78,.2)", width: "100%" }}>
                       + Keranjang
+                    </button>
+
+                    {/* Tombol Beli Langsung */}
+                    <button 
+                      className="btn-buy-now"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        addToCart(p);
+                        setShowCart(false);
+                        setShowCheckout(true);
+                      }}
+                      style={{ marginTop: 8, padding: "8px 12px", background: "linear-gradient(135deg,#B8943F,#D4AC5A)", border: "none", borderRadius: 8, fontSize: 11, fontWeight: 700, color: "#FFF", cursor: "pointer", transition: "all 0.3s", boxShadow: "0 4px 12px rgba(184,148,63,.2)", width: "100%" }}>
+                      ⚡ Beli Langsung
+                    </button>
 
                     {/* Tombol Lihat Detail */}
                     <button 
@@ -1136,9 +1174,8 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                         e.stopPropagation();
                         setSelectedProduct(p);
                       }}
-                      style={{ padding: "8px 12px", background: "rgba(47,143,78,.1)", border: "1.5px solid rgba(47,143,78,.3)", borderRadius: 8, fontSize: 11, fontWeight: 600, color: "#2F8F4E", cursor: "pointer", transition: "all 0.3s", marginTop: 8 }}>
+                      style={{ padding: "8px 12px", background: "rgba(47,143,78,.1)", border: "1.5px solid rgba(47,143,78,.3)", borderRadius: 8, fontSize: 11, fontWeight: 600, color: "#2F8F4E", cursor: "pointer", transition: "all 0.3s", marginTop: 8, width: "100%" }}>
                       👁️ Detail
-                    </button>
                     </button>
                   </div>
                 </div>
