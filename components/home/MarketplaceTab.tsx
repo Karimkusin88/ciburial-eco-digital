@@ -88,6 +88,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
 
   // State untuk Product Detail & Reviews
   const [selectedProduct, setSelectedProduct] = useState<Produk | null>(null);
+  const [activePhotoIndex, setActivePhotoIndex] = useState(0);
   const [reviews, setReviews] = useState<any[]>([]);
   const [reviewLoading, setReviewLoading] = useState(false);
   const [newReview, setNewReview] = useState({ nama: "", rating: 5, komentar: "" });
@@ -613,7 +614,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
       <div className="pi" style={{ paddingTop: "clamp(64px,10vw,120px)", paddingBottom: 80, minHeight: "100vh", background: "linear-gradient(135deg,rgba(250,248,243,.5) 0%,rgba(255,254,249,.8) 100%)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 clamp(16px,3vw,28px)" }}>
           {/* Close Button */}
-          <button onClick={() => { setSelectedProduct(null); setDetailQty(1); }} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", fontSize: 14, fontWeight: 700, color: "#2F8F4E", padding: "6px 0", marginBottom: 24, transition: "all 0.3s" }}
+          <button onClick={() => { setSelectedProduct(null); setDetailQty(1); setActivePhotoIndex(0); }} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", fontSize: 14, fontWeight: 700, color: "#2F8F4E", padding: "6px 0", marginBottom: 24, transition: "all 0.3s" }}
             onMouseEnter={(e) => e.currentTarget.style.transform = "translateX(-4px)"}
             onMouseLeave={(e) => e.currentTarget.style.transform = "translateX(0)"}
           >
@@ -623,19 +624,74 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, marginBottom: 40 }} className="responsive-grid">
             {/* Foto Produk Besar (Left) */}
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              {/* Main Photo */}
-              <div style={{ borderRadius: 16, overflow: "hidden", aspectRatio: "1/1", background: "linear-gradient(135deg,rgba(79,191,126,.08),rgba(47,143,78,.04))", display: "flex", alignItems: "center", justifyContent: "center", border: "1.5px solid rgba(47,143,78,.15)", position: "relative" }}>
-                {selectedProduct.foto ? (
-                  <img src={selectedProduct.foto} alt={selectedProduct.nama} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                ) : (
-                  <span style={{ fontSize: 120 }}>{selectedProduct.icon || "🎋"}</span>
-                )}
-                {selectedProduct.tag && (
-                  <div style={{ position: "absolute", top: 20, left: 20, padding: "10px 16px", background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", color: "#FFF", borderRadius: 8, fontSize: 13, fontWeight: 800, boxShadow: "0 4px 12px rgba(47,143,78,.3)" }}>
-                    {selectedProduct.tag}
-                  </div>
-                )}
-              </div>
+              {/* Get photos from fotos array or fallback to foto */}
+              {(() => {
+                const photos = (selectedProduct as any)?.fotos && Array.isArray((selectedProduct as any).fotos) && (selectedProduct as any).fotos.length > 0
+                  ? (selectedProduct as any).fotos
+                  : selectedProduct?.foto ? [selectedProduct.foto] : [];
+                
+                return (
+                  <>
+                    {/* Main Photo */}
+                    <div style={{ borderRadius: 16, overflow: "hidden", aspectRatio: "1/1", background: "linear-gradient(135deg,rgba(79,191,126,.08),rgba(47,143,78,.04))", display: "flex", alignItems: "center", justifyContent: "center", border: "1.5px solid rgba(47,143,78,.15)", position: "relative" }}>
+                      {photos.length > 0 && photos[activePhotoIndex] ? (
+                        <>
+                          <img src={photos[activePhotoIndex]} alt={selectedProduct!.nama} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                          {/* Photo Counter */}
+                          {photos.length > 1 && (
+                            <div style={{ position: "absolute", bottom: 14, right: 14, background: "rgba(0,0,0,.5)", color: "white", padding: "6px 12px", borderRadius: 20, fontSize: 11, fontWeight: 700, letterSpacing: "0.05em" }}>
+                              {activePhotoIndex + 1}/{photos.length}
+                            </div>
+                          )}
+                          {/* Nav Arrows */}
+                          {photos.length > 1 && (
+                            <>
+                              <button
+                                onClick={() => setActivePhotoIndex(Math.max(0, activePhotoIndex - 1))}
+                                style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", background: "rgba(0,0,0,.4)", border: "none", color: "white", fontSize: 20, width: 40, height: 40, borderRadius: 8, cursor: "pointer", transition: "all 0.2s" }}
+                                onMouseEnter={(e) => e.currentTarget.style.background = "rgba(0,0,0,.6)"}
+                                onMouseLeave={(e) => e.currentTarget.style.background = "rgba(0,0,0,.4)"}
+                              >
+                                ‹
+                              </button>
+                              <button
+                                onClick={() => setActivePhotoIndex(Math.min(photos.length - 1, activePhotoIndex + 1))}
+                                style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", background: "rgba(0,0,0,.4)", border: "none", color: "white", fontSize: 20, width: 40, height: 40, borderRadius: 8, cursor: "pointer", transition: "all 0.2s" }}
+                                onMouseEnter={(e) => e.currentTarget.style.background = "rgba(0,0,0,.6)"}
+                                onMouseLeave={(e) => e.currentTarget.style.background = "rgba(0,0,0,.4)"}
+                              >
+                                ›
+                              </button>
+                            </>
+                          )}
+                        </>
+                      ) : (
+                        <span style={{ fontSize: 120 }}>{selectedProduct!.icon || "🎋"}</span>
+                      )}
+                      {selectedProduct!.tag && (
+                        <div style={{ position: "absolute", top: 20, left: 20, padding: "10px 16px", background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", color: "#FFF", borderRadius: 8, fontSize: 13, fontWeight: 800, boxShadow: "0 4px 12px rgba(47,143,78,.3)" }}>
+                          {selectedProduct!.tag}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Thumbnail Gallery */}
+                    {photos.length > 1 && (
+                      <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 4 }}>
+                        {photos.map((photo: string, idx: number) => (
+                          <button
+                            key={idx}
+                            onClick={() => setActivePhotoIndex(idx)}
+                            style={{ width: 70, height: 70, borderRadius: 10, overflow: "hidden", border: `3px solid ${activePhotoIndex === idx ? "#2F8F4E" : "rgba(47,143,78,.2)"}`, cursor: "pointer", flexShrink: 0, transition: "all 0.2s", padding: 0, background: "none" }}
+                          >
+                            <img src={photo} alt={`${idx + 1}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
             </div>
 
             {/* Info Produk (Right) */}
@@ -1112,11 +1168,14 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                   
                   {/* Product Image */}
                   <div style={{ aspectRatio: "1/1", background: "linear-gradient(135deg,rgba(79,191,126,.08),rgba(47,143,78,.04))", display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
-                    {p.foto ? (
-                      <img src={p.foto} alt={p.nama} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                    ) : (
-                      <span style={{ fontSize: 64 }}>{p.icon || "🎋"}</span>
-                    )}
+                    {(() => {
+                      const mainPhoto = (p as any)?.fotos && Array.isArray((p as any).fotos) && (p as any).fotos.length > 0 ? (p as any).fotos[0] : p.foto;
+                      return mainPhoto ? (
+                        <img src={mainPhoto} alt={p.nama} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      ) : (
+                        <span style={{ fontSize: 64 }}>{p.icon || "🎋"}</span>
+                      );
+                    })()}
                     {/* Badge Diskon / Label */}
                     {p.tag && (
                       <div style={{ position: "absolute", top: 12, left: 12, padding: "6px 12px", background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", color: "#FFF", borderRadius: 6, fontSize: 11, fontWeight: 800, boxShadow: "0 4px 12px rgba(47,143,78,.3)" }}>{p.tag}</div>

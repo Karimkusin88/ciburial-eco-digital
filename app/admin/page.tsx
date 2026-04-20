@@ -103,6 +103,7 @@ export default function AdminPage() {
   const [kFile, setKFile] = useState<File | null>(null);
   const [pForm, setPForm] = useState(emptyP);
   const [pFile, setPFile] = useState<File | null>(null);
+  const [pFiles, setPFiles] = useState<(File | null)[]>([null, null, null, null, null]); // 5 photo slots
   const [tForm, setTForm] = useState(emptyT);
   const [tmForm, setTmForm] = useState(emptyTm);
   const [tmFile, setTmFile] = useState<File | null>(null);
@@ -262,13 +263,20 @@ export default function AdminPage() {
   const addProduk = async () => {
     if (!pForm.nama || !pForm.harga) return showToast("❌ Nama & harga wajib diisi");
     setLoading(true);
-    let finalUrl = pForm.foto;
     try {
-      // Upload file kalau ada
-      if (pFile) {
-        finalUrl = await uploadToSupabase(pFile);
+      // Upload multiple files
+      const uploadedUrls: string[] = [];
+      for (const file of pFiles) {
+        if (file) {
+          try {
+            const url = await uploadToSupabase(file);
+            uploadedUrls.push(url);
+          } catch (e) {
+            console.error("File upload error:", e);
+          }
+        }
       }
-      
+
       const produkData: any = {
         nama: pForm.nama,
         deskripsi: pForm.deskripsi,
@@ -276,10 +284,11 @@ export default function AdminPage() {
         tag: pForm.tag,
         icon: pForm.icon
       };
-      
-      // Include foto kalau ada
-      if (finalUrl) {
-        produkData.foto = finalUrl;
+
+      // Save fotos array
+      if (uploadedUrls.length > 0) {
+        produkData.fotos = uploadedUrls;
+        produkData.foto = uploadedUrls[0]; // Main foto for backward compat
       }
       
       const { error } = await supabase.from("produk").insert(produkData);
@@ -287,6 +296,7 @@ export default function AdminPage() {
       
       setPForm(emptyP);
       setPFile(null);
+      setPFiles([null, null, null, null, null]);
       fetchAll();
       showToast("✅ Produk berhasil ditambahkan!");
     } catch (err: any) {
@@ -820,20 +830,31 @@ export default function AdminPage() {
                   <input className="field" value={pForm.tag} onChange={e => setPForm({...pForm, tag:e.target.value})} placeholder="Cth: Best Seller / Handmade / Eco" />
                 </div>
                 <div style={{ background:"rgba(61,43,31,.06)", padding:14, borderRadius:12, border:"1px dashed rgba(61,43,31,.2)" }}>
-                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#3D2B1F", marginBottom:6 }}>📸 Upload Foto Produk</label>
-                  <input 
-                    type="file" 
-                    accept="image/*" 
-                    onChange={e => setPFile(e.target.files?.[0] || null)} 
-                    style={{ fontSize:12, width:"100%", cursor:"pointer" }} 
-                  />
-                  {pFile && (
-                    <p style={{ fontSize:10, color:"#4A7C59", marginTop:8, fontWeight:700 }}>
-                      ✓ File terpilih: {pFile.name}
-                    </p>
-                  )}
-                  <div style={{ fontSize:10, color:"#9A8C85", marginTop:8 }}>
-                    💡 Format: JPG, PNG, WebP (max ~5MB)
+                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#3D2B1F", marginBottom:10 }}>📸 Upload Foto Produk (Maksimal 5)</label>
+                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
+                    {[0,1,2,3,4].map((idx) => (
+                      <div key={idx} style={{ background:"#FFFEF9", padding:10, borderRadius:8, border:"1.5px solid rgba(61,43,31,.15)" }}>
+                        <div style={{ fontSize:9, fontWeight:700, color:"#9A8C85", marginBottom:6, textTransform:"uppercase" }}>Foto {idx + 1}</div>
+                        <input 
+                          type="file" 
+                          accept="image/*" 
+                          onChange={(e) => {
+                            const newFiles = [...pFiles];
+                            newFiles[idx] = e.target.files?.[0] || null;
+                            setPFiles(newFiles);
+                          }} 
+                          style={{ fontSize:11, width:"100%", cursor:"pointer" }} 
+                        />
+                        {pFiles[idx] && (
+                          <p style={{ fontSize:9, color:"#4A7C59", marginTop:4, fontWeight:700 }}>
+                            ✓ {pFiles[idx]!.name.substring(0, 15)}...
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ fontSize:10, color:"#9A8C85", marginTop:10, paddingTop:10, borderTop:"1px solid rgba(61,43,31,.15)" }}>
+                    💡 Upload sampai 5 foto. Format: JPG, PNG, WebP (max ~5MB per file)
                   </div>
                 </div>
                 <button onClick={addProduk} disabled={loading} style={{ padding:"13px", borderRadius:12, background:"#3D2B1F", color:"#fff", fontSize:12, fontWeight:700, letterSpacing:".08em", textTransform:"uppercase", border:"none", cursor:"pointer", opacity:loading ? .6 : 1, marginTop:4 }}>
