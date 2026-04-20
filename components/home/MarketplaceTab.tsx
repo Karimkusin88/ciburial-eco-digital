@@ -1,6 +1,7 @@
 "use client";
 import { Produk, Iklan, fRp } from "./types";
 import { useState, useRef, useEffect } from "react";
+import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 interface MarketplaceTabProps {
   produk: Produk[];
@@ -29,6 +30,40 @@ interface CartItem extends Produk {
   qty: number;
 }
 
+interface OrderForm {
+  nama: string;
+  no_wa: string;
+  alamat: string;
+  kecamatan: string;
+  catatan: string;
+  metode_kirim: "ambil_sendiri" | "kurir_kampung" | "jne" | "jnt" | "sicepat";
+  metode_bayar: "qris" | "gopay" | "ovo" | "dana" | "va_bca" | "va_bni" | "va_bri" | "va_mandiri";
+}
+
+const METODE_KIRIM = [
+  { v:"ambil_sendiri", l:"🏠 Ambil Sendiri di Pos Kampung", harga:0 },
+  { v:"kurir_kampung", l:"🛵 Kurir Kampung (area Ciburial)", harga:5000 },
+  { v:"jne", l:"📦 JNE Regular", harga:15000 },
+  { v:"jnt", l:"📦 J&T Express", harga:13000 },
+  { v:"sicepat", l:"📦 SiCepat REG", harga:12000 },
+];
+
+const METODE_BAYAR = [
+  { v:"qris",       l:"QRIS",           icon:"🔲", grup:"E-Wallet & QRIS" },
+  { v:"gopay",      l:"GoPay",          icon:"💚", grup:"E-Wallet & QRIS" },
+  { v:"ovo",        l:"OVO",            icon:"💜", grup:"E-Wallet & QRIS" },
+  { v:"dana",       l:"DANA",           icon:"💙", grup:"E-Wallet & QRIS" },
+  { v:"va_bca",     l:"Virtual Account BCA",     icon:"🏦", grup:"Transfer Bank" },
+  { v:"va_bni",     l:"Virtual Account BNI",     icon:"🏦", grup:"Transfer Bank" },
+  { v:"va_bri",     l:"Virtual Account BRI",     icon:"🏦", grup:"Transfer Bank" },
+  { v:"va_mandiri", l:"Virtual Account Mandiri", icon:"🏦", grup:"Transfer Bank" },
+];
+
+const emptyOrder: OrderForm = {
+  nama:"", no_wa:"", alamat:"", kecamatan:"Bungbulang", catatan:"",
+  metode_kirim:"ambil_sendiri", metode_bayar:"qris",
+};
+
 export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout, setCheckout, onPaymentSuccess }: MarketplaceTabProps) {
   const [loadingSnap, setLoadingSnap] = useState(false);
   const [search, setSearch] = useState("");
@@ -39,6 +74,10 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
   // State untuk Keranjang Belanja
   const [cart, setCart] = useState<CartItem[]>([]);
   const [showCart, setShowCart] = useState(false);
+  const [showCheckout, setShowCheckout] = useState(false);
+  const [orderForm, setOrderForm] = useState<OrderForm>(emptyOrder);
+  const [orderLoading, setOrderLoading] = useState(false);
+  const [orderDone, setOrderDone] = useState<{orderId:string;metode:string}|null>(null);
 
   // Load keranjang dari localStorage pas komponen pertama kali jalan
   useEffect(() => {
@@ -113,48 +152,261 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
     return matchSearch && matchKat;
   });
 
-  const bayarSekarang = async () => {
-    if (cart.length === 0) return alert("Keranjang kosong bro!");
-    
-    setLoadingSnap(true);
+  const ongkosKirim = METODE_KIRIM.find(m=>m.v===orderForm.metode_kirim)?.harga||0;
+  const totalBayar = totalCartPrice + ongkosKirim;
+
+  const prosesCheckout = async () => {
+    if (!orderForm.nama) return alert("Nama wajib diisi!");
+    if (!orderForm.no_wa) return alert("No. WhatsApp wajib diisi!");
+    if (orderForm.metode_kirim !== "ambil_sendiri" && !orderForm.alamat) return alert("Alamat wajib diisi untuk pengiriman!");
+    if (cart.length === 0) return alert("Keranjang kosong!");
+
+    setOrderLoading(true);
     const orderId = `MKT-${Date.now()}`;
+    
     try {
-      // Bikin format detail item buat Midtrans
       const itemDetails = cart.map((item) => ({
         id: item.id,
         price: item.harga,
         quantity: item.qty,
-        name: item.nama.substring(0, 50) // Midtrans batesin nama item max 50 karakter
+        name: item.nama.substring(0, 50)
       }));
+
+      // Tambah ongkir ke item details kalau ada
+      if (ongkosKirim > 0) {
+        itemDetails.push({
+          id: "ONGKIR",
+          price: ongkosKirim,
+          quantity: 1,
+          name: `Ongkos Kirim - ${METODE_KIRIM.find(m=>m.v===orderForm.metode_kirim)?.l||""}`
+        });
+      }
+
+      // Map metode bayar ke Midtrans payment type
+      const paymentMap: Record<string,any> = {
+        qris: { payment_type: "qris" },
+        gopay: { payment_type: "gopay" },
+        ovo: { payment_type: "shopeepay" },
+        dana: { payment_type: "shopeepay" },
+        va_bca: { payment_type: "bank_transfer", bank_transfer: { bank: "bca" } },
+        va_bni: { payment_type: "bank_transfer", bank_transfer: { bank: "bni" } },
+        va_bri: { payment_type: "bank_transfer", bank_transfer: { bank: "bri" } },
+        va_mandiri: { payment_type: "echannel", bill_info1: "Pembayaran", bill_info2: "Ciburial Market" },
+      };
 
       const res = await fetch("/api/midtrans/tokenize", {
         method: "POST",
         headers: { "Content-type": "application/json" },
         body: JSON.stringify({
           order_id: orderId,
-          gross_amount: totalCartPrice,
-          item_details: itemDetails
+          gross_amount: totalBayar,
+          item_details: itemDetails,
+          customer_details: {
+            first_name: orderForm.nama,
+            phone: orderForm.no_wa,
+          },
+          // Kirim metode bayar preferred
+          preferred_payment: paymentMap[orderForm.metode_bayar],
         })
       });
+
       const data = await res.json();
       if (data.token && (window as any).snap) {
         (window as any).snap.pay(data.token, {
-          onSuccess: function (r: any) { 
-            alert("Pembayaran sukses! Terima kasih sudah berbelanja di Ciburial Marketplace. 🎉"); 
-            setCart([]); // Kosongin keranjang kalau sukses
+          onSuccess: async (r: any) => {
+            // Simpan order ke Supabase
+            if (isSupabaseReady()) {
+              await supabase.from("orders_marketplace").insert({
+                order_id: orderId,
+                nama_pembeli: orderForm.nama,
+                no_wa: orderForm.no_wa,
+                alamat: orderForm.alamat,
+                kecamatan: orderForm.kecamatan,
+                catatan: orderForm.catatan,
+                metode_kirim: orderForm.metode_kirim,
+                metode_bayar: r.payment_type || orderForm.metode_bayar,
+                total_harga: totalCartPrice,
+                ongkos_kirim: ongkosKirim,
+                total_bayar: totalBayar,
+                items: JSON.stringify(cart.map(c=>({id:c.id,nama:c.nama,harga:c.harga,qty:c.qty}))),
+                status: "dibayar",
+              });
+            }
+            setCart([]);
             setShowCart(false);
-            setCheckout(false); 
-            if (onPaymentSuccess) onPaymentSuccess(totalCartPrice, true, orderId, r.payment_type || "Midtrans");
+            setShowCheckout(false);
+            setOrderDone({ orderId, metode: r.payment_type || "Midtrans" });
+            if (onPaymentSuccess) onPaymentSuccess(totalBayar, true, orderId, r.payment_type || "Midtrans");
           },
-          onPending: function (r: any) { alert("Menunggu konfirmasi pembayaran Anda."); },
-          onError: function (r: any) { alert("Pembayaran gagal. Silakan coba lagi."); }
+          onPending: (r: any) => {
+            // Simpan order pending
+            if (isSupabaseReady()) {
+              supabase.from("orders_marketplace").insert({
+                order_id: orderId,
+                nama_pembeli: orderForm.nama,
+                no_wa: orderForm.no_wa,
+                alamat: orderForm.alamat,
+                metode_kirim: orderForm.metode_kirim,
+                metode_bayar: orderForm.metode_bayar,
+                total_bayar: totalBayar,
+                items: JSON.stringify(cart.map(c=>({id:c.id,nama:c.nama,harga:c.harga,qty:c.qty}))),
+                status: "pending",
+              });
+            }
+            alert("Menunggu pembayaran. Cek WhatsApp kamu untuk konfirmasi!");
+          },
+          onError: (r: any) => alert("Pembayaran gagal. Silakan coba lagi."),
         });
       } else {
         alert("Payment Gateway belum aktif. (" + (data.error || "Missing Token") + ")");
       }
     } catch (e) { alert("Error menghubungi server."); }
-    setLoadingSnap(false);
+    setOrderLoading(false);
   };
+
+  // ─── ORDER SUKSES ─────────────────────────────────────────────────────
+  if (orderDone) {
+    return (
+      <div style={{ minHeight:"100vh", display:"flex", alignItems:"center", justifyContent:"center", background:"linear-gradient(135deg,rgba(250,248,243,.8),rgba(255,254,249,.9))", padding:20 }}>
+        <div style={{ background:"white", borderRadius:24, padding:40, maxWidth:480, width:"100%", textAlign:"center", boxShadow:"0 20px 60px rgba(47,143,78,.1)", border:"1.5px solid rgba(47,143,78,.15)" }}>
+          <div style={{ fontSize:60, marginBottom:16 }}>🎉</div>
+          <h2 style={{ margin:"0 0 8px", color:"#1C3A2B", fontSize:24, fontWeight:800 }}>Pesanan Berhasil!</h2>
+          <p style={{ color:"#5A4A40", fontSize:14, margin:"0 0 20px", lineHeight:1.6 }}>
+            Terima kasih sudah berbelanja di Ciburial Marketplace!<br/>
+            Tim kami akan menghubungi kamu via WhatsApp.
+          </p>
+          <div style={{ background:"rgba(47,143,78,.06)", border:"1px solid rgba(47,143,78,.15)", borderRadius:12, padding:"14px 20px", marginBottom:24 }}>
+            <div style={{ fontSize:12, color:"#7a9a7e", marginBottom:4 }}>ID Pesanan</div>
+            <div style={{ fontWeight:800, fontSize:16, color:"#1C3A2B", letterSpacing:"0.05em" }}>{orderDone.orderId}</div>
+            <div style={{ fontSize:12, color:"#7a9a7e", marginTop:4 }}>via {orderDone.metode}</div>
+          </div>
+          <div style={{ fontSize:13, color:"#5A4A40", marginBottom:24, lineHeight:1.6 }}>
+            📱 Konfirmasi dikirim ke <strong>{orderForm.no_wa}</strong><br/>
+            {orderForm.metode_kirim === "ambil_sendiri" ? "🏠 Ambil di Pos Kampung Ciburial" : `🛵 Estimasi pengiriman 1-3 hari`}
+          </div>
+          <button onClick={()=>{ setOrderDone(null); setOrderForm(emptyOrder); }}
+            style={{ width:"100%", padding:"13px", borderRadius:12, background:"linear-gradient(135deg,#2F8F4E,#4FBF7E)", color:"white", border:"none", fontSize:15, fontWeight:700, cursor:"pointer" }}>
+            Belanja Lagi 🛒
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ─── TAMPILAN CHECKOUT ──────────────────────────────────────────────────
+  if (showCheckout) {
+    return (
+      <div className="pi" style={{ paddingTop:"clamp(64px,10vw,120px)", paddingBottom:80, minHeight:"100vh", background:"linear-gradient(135deg,rgba(250,248,243,.5),rgba(255,254,249,.8))" }}>
+        <div style={{ maxWidth:720, margin:"0 auto", padding:"0 clamp(16px,3vw,28px)" }}>
+          <button onClick={()=>setShowCheckout(false)} style={{ display:"flex", alignItems:"center", gap:6, background:"none", border:"none", cursor:"pointer", fontSize:14, fontWeight:700, color:"#2F8F4E", padding:"6px 0", marginBottom:20 }}>
+            ← Kembali ke Keranjang
+          </button>
+          <h2 style={{ margin:"0 0 24px", color:"#1C3A2B", fontSize:"clamp(22px,4vw,30px)", fontWeight:800 }}>🧾 Detail Pesanan</h2>
+
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:16 }}>
+            {/* Form kiri */}
+            <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
+              {/* Identitas */}
+              <div style={{ background:"white", borderRadius:16, padding:20, border:"1.5px solid rgba(47,143,78,.12)", boxShadow:"0 4px 16px rgba(47,143,78,.06)" }}>
+                <h4 style={{ margin:"0 0 14px", color:"#1C3A2B", fontSize:14, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.06em" }}>👤 Identitas Pembeli</h4>
+                <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+                  {[
+                    {label:"Nama Lengkap *", key:"nama", ph:"Nama sesuai identitas"},
+                    {label:"No. WhatsApp *", key:"no_wa", ph:"08xxxxxxxxxx"},
+                  ].map(f=>(
+                    <div key={f.key}>
+                      <label style={{ fontSize:11, fontWeight:700, color:"#6b7c6d", letterSpacing:"0.06em", textTransform:"uppercase" as const, display:"block", marginBottom:4 }}>{f.label}</label>
+                      <input value={(orderForm as any)[f.key]} onChange={e=>setOrderForm({...orderForm,[f.key]:e.target.value})} placeholder={f.ph}
+                        style={{ width:"100%", padding:"9px 12px", borderRadius:10, border:"1.5px solid rgba(47,143,78,.2)", fontSize:13, outline:"none", boxSizing:"border-box" as const }}/>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Pengiriman */}
+              <div style={{ background:"white", borderRadius:16, padding:20, border:"1.5px solid rgba(47,143,78,.12)", boxShadow:"0 4px 16px rgba(47,143,78,.06)" }}>
+                <h4 style={{ margin:"0 0 14px", color:"#1C3A2B", fontSize:14, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.06em" }}>🚚 Metode Pengiriman</h4>
+                <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+                  {METODE_KIRIM.map(m=>(
+                    <div key={m.v} onClick={()=>setOrderForm({...orderForm,metode_kirim:m.v as any})}
+                      style={{ padding:"10px 14px", borderRadius:10, border:`1.5px solid ${orderForm.metode_kirim===m.v?"#2F8F4E":"rgba(47,143,78,.15)"}`, cursor:"pointer", background:orderForm.metode_kirim===m.v?"rgba(47,143,78,.06)":"white", display:"flex", justifyContent:"space-between", alignItems:"center", transition:"all 0.15s" }}>
+                      <span style={{ fontSize:13, color:"#1C3A2B", fontWeight:500 }}>{m.l}</span>
+                      <span style={{ fontSize:13, fontWeight:700, color: m.harga===0?"#2F8F4E":"#1C3A2B" }}>{m.harga===0?"Gratis":`+${fRp(m.harga)}`}</span>
+                    </div>
+                  ))}
+                </div>
+                {orderForm.metode_kirim!=="ambil_sendiri" && (
+                  <div style={{ marginTop:12 }}>
+                    <label style={{ fontSize:11, fontWeight:700, color:"#6b7c6d", letterSpacing:"0.06em", textTransform:"uppercase" as const, display:"block", marginBottom:4 }}>Alamat Lengkap *</label>
+                    <textarea value={orderForm.alamat} onChange={e=>setOrderForm({...orderForm,alamat:e.target.value})} placeholder="Nama jalan, RT/RW, desa..." rows={2}
+                      style={{ width:"100%", padding:"9px 12px", borderRadius:10, border:"1.5px solid rgba(47,143,78,.2)", fontSize:13, outline:"none", resize:"none" as const, boxSizing:"border-box" as const, fontFamily:"inherit" }}/>
+                  </div>
+                )}
+              </div>
+
+              {/* Catatan */}
+              <div style={{ background:"white", borderRadius:16, padding:20, border:"1.5px solid rgba(47,143,78,.12)" }}>
+                <label style={{ fontSize:11, fontWeight:700, color:"#6b7c6d", letterSpacing:"0.06em", textTransform:"uppercase" as const, display:"block", marginBottom:8 }}>📝 Catatan (opsional)</label>
+                <textarea value={orderForm.catatan} onChange={e=>setOrderForm({...orderForm,catatan:e.target.value})} placeholder="Catatan khusus untuk penjual..." rows={2}
+                  style={{ width:"100%", padding:"9px 12px", borderRadius:10, border:"1.5px solid rgba(47,143,78,.15)", fontSize:13, outline:"none", resize:"none" as const, boxSizing:"border-box" as const, fontFamily:"inherit" }}/>
+              </div>
+            </div>
+
+            {/* Ringkasan + payment kanan */}
+            <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
+              {/* Ringkasan order */}
+              <div style={{ background:"white", borderRadius:16, padding:20, border:"1.5px solid rgba(47,143,78,.12)", boxShadow:"0 4px 16px rgba(47,143,78,.06)" }}>
+                <h4 style={{ margin:"0 0 14px", color:"#1C3A2B", fontSize:14, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.06em" }}>🛒 Ringkasan ({cart.length} produk)</h4>
+                {cart.map(item=>(
+                  <div key={item.id} style={{ display:"flex", justifyContent:"space-between", padding:"6px 0", borderBottom:"1px solid rgba(47,143,78,.08)", fontSize:13 }}>
+                    <span style={{ color:"#1C3A2B" }}>{item.nama} ×{item.qty}</span>
+                    <span style={{ fontWeight:600, color:"#2F8F4E" }}>{fRp(item.harga*item.qty)}</span>
+                  </div>
+                ))}
+                <div style={{ display:"flex", justifyContent:"space-between", padding:"8px 0", fontSize:13, color:"#6b7c6d" }}>
+                  <span>Ongkos Kirim</span>
+                  <span style={{ color:ongkosKirim===0?"#2F8F4E":"#1C3A2B" }}>{ongkosKirim===0?"Gratis":fRp(ongkosKirim)}</span>
+                </div>
+                <div style={{ display:"flex", justifyContent:"space-between", padding:"10px 0 0", borderTop:"2px solid rgba(47,143,78,.15)", fontWeight:800, color:"#1C3A2B", fontSize:16 }}>
+                  <span>Total</span>
+                  <span style={{ color:"#2F8F4E" }}>{fRp(totalBayar)}</span>
+                </div>
+              </div>
+
+              {/* Metode bayar */}
+              <div style={{ background:"white", borderRadius:16, padding:20, border:"1.5px solid rgba(47,143,78,.12)", boxShadow:"0 4px 16px rgba(47,143,78,.06)" }}>
+                <h4 style={{ margin:"0 0 14px", color:"#1C3A2B", fontSize:14, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.06em" }}>💳 Metode Pembayaran</h4>
+                {["E-Wallet & QRIS","Transfer Bank"].map(grup=>(
+                  <div key={grup} style={{ marginBottom:12 }}>
+                    <div style={{ fontSize:10, fontWeight:700, color:"#9A8C85", letterSpacing:"0.1em", textTransform:"uppercase" as const, marginBottom:6 }}>{grup}</div>
+                    <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:6 }}>
+                      {METODE_BAYAR.filter(m=>m.grup===grup).map(m=>(
+                        <div key={m.v} onClick={()=>setOrderForm({...orderForm,metode_bayar:m.v as any})}
+                          style={{ padding:"8px 10px", borderRadius:10, border:`1.5px solid ${orderForm.metode_bayar===m.v?"#2F8F4E":"rgba(47,143,78,.15)"}`, cursor:"pointer", background:orderForm.metode_bayar===m.v?"rgba(47,143,78,.08)":"white", display:"flex", alignItems:"center", gap:6, transition:"all 0.15s" }}>
+                          <span style={{ fontSize:16 }}>{m.icon}</span>
+                          <span style={{ fontSize:11, fontWeight:600, color:"#1C3A2B" }}>{m.l}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Tombol bayar */}
+              <button onClick={prosesCheckout} disabled={orderLoading}
+                style={{ padding:"14px", borderRadius:14, background:orderLoading?"rgba(47,143,78,.3)":"linear-gradient(135deg,#2F8F4E,#4FBF7E)", color:"white", border:"none", fontSize:15, fontWeight:800, cursor:orderLoading?"not-allowed":"pointer", boxShadow:"0 8px 20px rgba(47,143,78,.25)", letterSpacing:"0.03em", transition:"all 0.2s" }}>
+                {orderLoading ? "Memproses..." : `🔒 Bayar ${fRp(totalBayar)}`}
+              </button>
+              <div style={{ fontSize:11, color:"#9A8C85", textAlign:"center", lineHeight:1.5 }}>
+                🔒 Pembayaran aman via Midtrans<br/>
+                Didukung oleh Bank Indonesia
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // ─── TAMPILAN KERANJANG (MODAL/SIDEBAR HEROIC) ─────────────────────────
   if (showCart) {
@@ -224,12 +476,15 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                </div>
                
                <button 
-                  onClick={bayarSekarang} 
-                  disabled={loadingSnap || cart.length === 0} 
-                  style={{ width: "100%", padding: "14px", borderRadius: 10, fontSize: 16, fontWeight: 700, border: "none", cursor: loadingSnap || cart.length === 0 ? "not-allowed" : "pointer", background: loadingSnap || cart.length === 0 ? "rgba(47,143,78,.2)" : "linear-gradient(135deg,#2F8F4E,#4FBF7E)", color: loadingSnap || cart.length === 0 ? "#5A4A40" : "#FFF", transition: "all 0.3s", letterSpacing: ".05em", boxShadow: loadingSnap || cart.length === 0 ? "none" : "0 8px 16px rgba(47,143,78,.2)" }}
+                  onClick={()=>{ setShowCart(false); setShowCheckout(true); }} 
+                  disabled={cart.length === 0} 
+                  style={{ width: "100%", padding: "14px", borderRadius: 10, fontSize: 16, fontWeight: 700, border: "none", cursor: cart.length === 0 ? "not-allowed" : "pointer", background: cart.length === 0 ? "rgba(47,143,78,.2)" : "linear-gradient(135deg,#2F8F4E,#4FBF7E)", color: cart.length === 0 ? "#5A4A40" : "#FFF", transition: "all 0.3s", letterSpacing: ".05em", boxShadow: cart.length === 0 ? "none" : "0 8px 16px rgba(47,143,78,.2)" }}
                >
-                 {loadingSnap ? "Memproses..." : `Beli (${cart.length})`}
+                 {`Lanjut ke Checkout (${cart.length}) →`}
                </button>
+               <div style={{ marginTop:8, fontSize:11, color:"#9A8C85", textAlign:"center" }}>
+                 🔒 VA Bank · GoPay · OVO · Dana · QRIS
+               </div>
             </div>
           </div>
 
