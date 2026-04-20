@@ -86,6 +86,13 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
   const [trackingLoading, setTrackingLoading] = useState(false);
   const [trackingError, setTrackingError] = useState("");
 
+  // State untuk Product Detail & Reviews
+  const [selectedProduct, setSelectedProduct] = useState<Produk | null>(null);
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [reviewLoading, setReviewLoading] = useState(false);
+  const [newReview, setNewReview] = useState({ nama: "", rating: 5, komentar: "" });
+  const [submittingReview, setSubmittingReview] = useState(false);
+
   // Load keranjang dari localStorage pas komponen pertama kali jalan
   useEffect(() => {
     const savedCart = localStorage.getItem("ciburial_cart");
@@ -161,6 +168,58 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
 
   const ongkosKirim = METODE_KIRIM.find(m=>m.v===orderForm.metode_kirim)?.harga||0;
   const totalBayar = totalCartPrice + ongkosKirim;
+
+  // ─── LOAD REVIEWS ─────────────────────────────────────────────────────
+  useEffect(() => {
+    if (!selectedProduct) return;
+    const loadReviews = async () => {
+      setReviewLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from("reviews")
+          .select("*")
+          .eq("produk_id", selectedProduct.id)
+          .order("created_at", { ascending: false });
+        if (error) throw error;
+        setReviews(data || []);
+      } catch (e) {
+        console.error("Gagal load reviews:", e);
+      } finally {
+        setReviewLoading(false);
+      }
+    };
+    loadReviews();
+  }, [selectedProduct]);
+
+  // ─── SUBMIT REVIEW ────────────────────────────────────────────────────
+  const submitReview = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedProduct || !newReview.nama.trim() || !newReview.komentar.trim()) {
+      alert("Lengkapi nama dan komentar!");
+      return;
+    }
+    setSubmittingReview(true);
+    try {
+      const { data, error } = await supabase
+        .from("reviews")
+        .insert([{
+          produk_id: selectedProduct.id,
+          nama: newReview.nama,
+          rating: newReview.rating,
+          komentar: newReview.komentar,
+        }])
+        .select();
+      if (error) throw error;
+      setReviews([data[0], ...reviews]);
+      setNewReview({ nama: "", rating: 5, komentar: "" });
+      alert("Terima kasih atas review Anda! 🙏");
+    } catch (e) {
+      console.error("Gagal submit review:", e);
+      alert("Gagal submit review");
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
 
   const prosesCheckout = async () => {
     if (!orderForm.nama) return alert("Nama wajib diisi!");
@@ -538,6 +597,216 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
     );
   }
 
+  // ─── PRODUCT DETAIL MODAL ─────────────────────────────────────────────
+  if (selectedProduct) {
+    const totalRating = reviews.length > 0 ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1) : "0.0";
+    const ratingDist = {
+      5: reviews.filter(r => r.rating === 5).length,
+      4: reviews.filter(r => r.rating === 4).length,
+      3: reviews.filter(r => r.rating === 3).length,
+      2: reviews.filter(r => r.rating === 2).length,
+      1: reviews.filter(r => r.rating === 1).length,
+    };
+
+    return (
+      <div className="pi" style={{ paddingTop: "clamp(64px,10vw,120px)", paddingBottom: 80, minHeight: "100vh", background: "linear-gradient(135deg,rgba(250,248,243,.5) 0%,rgba(255,254,249,.8) 100%)" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 clamp(16px,3vw,28px)" }}>
+          {/* Close Button */}
+          <button onClick={() => setSelectedProduct(null)} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", fontSize: 14, fontWeight: 700, color: "#2F8F4E", padding: "6px 0", marginBottom: 24, transition: "all 0.3s" }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = "translateX(-4px)"}
+            onMouseLeave={(e) => e.currentTarget.style.transform = "translateX(0)"}
+          >
+            ← Kembali ke Marketplace
+          </button>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, marginBottom: 40 }} className="responsive-grid">
+            {/* Foto Produk Besar (Left) */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {/* Main Photo */}
+              <div style={{ borderRadius: 16, overflow: "hidden", aspectRatio: "1/1", background: "linear-gradient(135deg,rgba(79,191,126,.08),rgba(47,143,78,.04))", display: "flex", alignItems: "center", justifyContent: "center", border: "1.5px solid rgba(47,143,78,.15)", position: "relative" }}>
+                {selectedProduct.foto ? (
+                  <img src={selectedProduct.foto} alt={selectedProduct.nama} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                ) : (
+                  <span style={{ fontSize: 120 }}>{selectedProduct.icon || "🎋"}</span>
+                )}
+                {selectedProduct.tag && (
+                  <div style={{ position: "absolute", top: 20, left: 20, padding: "10px 16px", background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", color: "#FFF", borderRadius: 8, fontSize: 13, fontWeight: 800, boxShadow: "0 4px 12px rgba(47,143,78,.3)" }}>
+                    {selectedProduct.tag}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Info Produk (Right) */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+              {/* Header: Nama & Rating */}
+              <div>
+                <h1 style={{ margin: "0 0 12px", color: "#1C3A2B", fontSize: "clamp(24px,5vw,32px)", fontWeight: 800, lineHeight: 1.2 }}>
+                  {selectedProduct.nama}
+                </h1>
+                
+                {/* Rating Stars */}
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <span style={{ fontSize: 24 }}>★</span>
+                    <span style={{ fontSize: 20, fontWeight: 800, color: "#2F8F4E" }}>{totalRating}</span>
+                    <span style={{ fontSize: 13, color: "#6b7c6d" }}>({reviews.length} ulasan)</span>
+                  </div>
+                </div>
+
+                {/* Lokasi */}
+                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 16 }}>
+                  <span style={{ fontSize: 14 }}>📍</span>
+                  <span style={{ fontSize: 14, color: "#5A4A40", fontWeight: 500 }}>Kampung Ciburial</span>
+                </div>
+              </div>
+
+              {/* Harga Besar */}
+              <div style={{ padding: "16px", background: "linear-gradient(135deg,rgba(79,191,126,.1),rgba(47,143,78,.05))", borderRadius: 12, border: "1.5px solid rgba(47,143,78,.15)" }}>
+                <div style={{ fontSize: 12, color: "#6b7c6d", fontWeight: 600, marginBottom: 8 }}>HARGA</div>
+                <div className="fnt" style={{ fontSize: "clamp(28px,5vw,40px)", fontWeight: 900, background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+                  {fRp(selectedProduct.harga)}
+                </div>
+              </div>
+
+              {/* Deskripsi */}
+              <div>
+                <h3 style={{ margin: "0 0 10px", color: "#1C3A2B", fontSize: 14, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}>Deskripsi</h3>
+                <p style={{ margin: 0, color: "#5A4A40", fontSize: 14, lineHeight: 1.6, fontWeight: 500 }}>
+                  {selectedProduct.deskripsi || "Tidak ada deskripsi tersedia untuk produk ini."}
+                </p>
+              </div>
+
+              {/* Tombol Add to Cart */}
+              <button onClick={() => { addToCart(selectedProduct); setSelectedProduct(null); }}
+                style={{ padding: "14px 24px", background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", border: "none", borderRadius: 12, color: "#FFF", fontSize: 15, fontWeight: 800, cursor: "pointer", boxShadow: "0 8px 20px rgba(47,143,78,.25)", transition: "all 0.3s", letterSpacing: "0.02em" }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-2px)";
+                  e.currentTarget.style.boxShadow = "0 12px 28px rgba(47,143,78,.3)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "0 8px 20px rgba(47,143,78,.25)";
+                }}
+              >
+                🛒 Tambah ke Keranjang
+              </button>
+            </div>
+          </div>
+
+          {/* Reviews Section */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40 }}>
+            {/* Rating Distribution (Left) */}
+            <div style={{ background: "white", borderRadius: 16, padding: 28, border: "1.5px solid rgba(47,143,78,.12)", boxShadow: "0 4px 16px rgba(47,143,78,.06)" }}>
+              <h3 style={{ margin: "0 0 24px", color: "#1C3A2B", fontSize: 16, fontWeight: 800 }}>⭐ Rating & Ulasan</h3>
+              
+              {/* Big Rating Display */}
+              <div style={{ textAlign: "center", marginBottom: 24, paddingBottom: 24, borderBottom: "2px solid rgba(47,143,78,.15)" }}>
+                <div style={{ fontSize: 56, fontWeight: 900, color: "#2F8F4E", marginBottom: 8 }}>{totalRating}</div>
+                <div style={{ fontSize: 28, color: "#FFC400", marginBottom: 8 }}>{"★".repeat(Math.round(parseFloat(totalRating)))}</div>
+                <div style={{ fontSize: 13, color: "#6b7c6d", fontWeight: 600 }}>Berdasarkan {reviews.length} ulasan</div>
+              </div>
+
+              {/* Rating Distribution Bars */}
+              {[5,4,3,2,1].map(star => (
+                <div key={star} style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: "#1C3A2B", minWidth: 30 }}>{star}★</span>
+                  <div style={{ flex: 1, height: 8, background: "rgba(47,143,78,.1)", borderRadius: 4, overflow: "hidden" }}>
+                    <div style={{ height: "100%", background: "linear-gradient(90deg,#2F8F4E,#4FBF7E)", width: `${reviews.length > 0 ? (ratingDist[star as keyof typeof ratingDist] / reviews.length * 100) : 0}%`, transition: "width 0.6s ease" }} />
+                  </div>
+                  <span style={{ fontSize: 12, color: "#6b7c6d", fontWeight: 600, minWidth: 30 }}>{ratingDist[star as keyof typeof ratingDist]}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Form Tambah Review (Right) */}
+            <div style={{ background: "white", borderRadius: 16, padding: 28, border: "1.5px solid rgba(47,143,78,.12)", boxShadow: "0 4px 16px rgba(47,143,78,.06)" }}>
+              <h3 style={{ margin: "0 0 20px", color: "#1C3A2B", fontSize: 16, fontWeight: 800 }}>✍️ Berikan Ulasan Anda</h3>
+              
+              <form onSubmit={submitReview} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                {/* Nama */}
+                <input
+                  type="text"
+                  placeholder="Nama Anda"
+                  value={newReview.nama}
+                  onChange={(e) => setNewReview({ ...newReview, nama: e.target.value })}
+                  style={{ padding: "10px 14px", borderRadius: 8, border: "1.5px solid rgba(47,143,78,.2)", fontSize: 13, outline: "none", boxSizing: "border-box", fontFamily: "inherit" }}
+                />
+
+                {/* Rating */}
+                <div>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "#6b7c6d", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>Rating</label>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    {[1,2,3,4,5].map(star => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => setNewReview({ ...newReview, rating: star })}
+                        style={{ fontSize: 24, background: "none", border: "none", cursor: "pointer", opacity: star <= newReview.rating ? 1 : 0.4, transition: "all 0.2s" }}
+                      >
+                        ★
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Komentar */}
+                <textarea
+                  placeholder="Tulis ulasan Anda..."
+                  value={newReview.komentar}
+                  onChange={(e) => setNewReview({ ...newReview, komentar: e.target.value })}
+                  style={{ padding: "10px 14px", borderRadius: 8, border: "1.5px solid rgba(47,143,78,.2)", fontSize: 13, outline: "none", boxSizing: "border-box", minHeight: 80, fontFamily: "inherit", resize: "vertical" }}
+                />
+
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  disabled={submittingReview}
+                  style={{ padding: "10px 16px", background: submittingReview ? "rgba(47,143,78,.3)" : "linear-gradient(135deg,#2F8F4E,#4FBF7E)", border: "none", borderRadius: 8, color: "#FFF", fontSize: 13, fontWeight: 700, cursor: submittingReview ? "not-allowed" : "pointer", transition: "all 0.2s", letterSpacing: "0.02em" }}
+                >
+                  {submittingReview ? "⏳ Mengirim..." : "✓ Kirim Ulasan"}
+                </button>
+              </form>
+            </div>
+          </div>
+
+          {/* Recent Reviews */}
+          {reviews.length > 0 && (
+            <div style={{ marginTop: 40 }}>
+              <h3 style={{ margin: "0 0 20px", color: "#1C3A2B", fontSize: 16, fontWeight: 800 }}>📝 Ulasan Terbaru</h3>
+              <div style={{ display: "grid", gap: 16 }}>
+                {reviews.slice(0, 5).map((review, i) => (
+                  <div key={i} style={{ background: "white", borderRadius: 12, padding: 20, border: "1px solid rgba(47,143,78,.12)", boxShadow: "0 2px 8px rgba(0,0,0,.04)" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
+                      <div>
+                        <h4 style={{ margin: "0 0 4px", color: "#1C3A2B", fontSize: 14, fontWeight: 700 }}>{review.nama}</h4>
+                        <div style={{ fontSize: 12, color: "#FFC400" }}>{"★".repeat(review.rating)}</div>
+                      </div>
+                      <div style={{ fontSize: 11, color: "#9A8C85" }}>
+                        {new Date(review.created_at).toLocaleDateString("id-ID")}
+                      </div>
+                    </div>
+                    <p style={{ margin: "10px 0 0", color: "#5A4A40", fontSize: 13, lineHeight: 1.5 }}>
+                      {review.komentar}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <style>{`
+          @media (max-width: 768px) {
+            .responsive-grid {
+              grid-template-columns: 1fr !important;
+            }
+          }
+        `}</style>
+      </div>
+    );
+  }
+
   // ─── TAMPILAN KERANJANG (MODAL/SIDEBAR HEROIC) ─────────────────────────
   if (showCart) {
     return (
@@ -765,6 +1034,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
               const rating = MOCK_RATING[i % MOCK_RATING.length];
               return (
                 <div key={p.id} className="product-card"
+                    onClick={() => setSelectedProduct(p)}
                     style={{ 
                         background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(250,248,243,.8))", 
                         borderRadius: 14, 
@@ -829,6 +1099,17 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                       }}
                       style={{ marginTop: 12, padding: "10px", background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", border: "none", borderRadius: 8, fontSize: 12, fontWeight: 700, color: "#FFF", cursor: "pointer", transition: "all 0.3s", boxShadow: "0 4px 12px rgba(47,143,78,.2)" }}>
                       + Keranjang
+
+                    {/* Tombol Lihat Detail */}
+                    <button 
+                      className="btn-detail"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedProduct(p);
+                      }}
+                      style={{ padding: "8px 12px", background: "rgba(47,143,78,.1)", border: "1.5px solid rgba(47,143,78,.3)", borderRadius: 8, fontSize: 11, fontWeight: 600, color: "#2F8F4E", cursor: "pointer", transition: "all 0.3s", marginTop: 8 }}>
+                      👁️ Detail
+                    </button>
                     </button>
                   </div>
                 </div>
