@@ -31,16 +31,26 @@ const timEksekutif = [
   { role: "Bendahara", name: "— Hasil Voting —", icon: "💰", foto: "/uploads/pengurus/tim-eksekutif/bendahara.jpg" },
 ];
 const divisi = [
-  { icon: "🏗️", nama: "Green Build", full: "Infrastruktur & Konstruksi Hijau", tugas: "Balai Serba Guna, Smart PJU, drainase resapan",
-    ketua: { nama: "— Hasil Voting —" }, wakil: { nama: "— Hasil Voting —" } },
-  { icon: "💻", nama: "Digital Hub", full: "IT, Jaringan & Web3", tugas: "RT/RW Net, Learning Hub, Website, Crypto",
-    ketua: { nama: "— Hasil Voting —" }, wakil: { nama: "— Hasil Voting —" } },
-  { icon: "🌾", nama: "Eco-Waste & Farming", full: "Smart Farming & Lingkungan", tugas: "Pertanian organik, peternakan, Bank Sampah",
-    ketua: { nama: "— Hasil Voting —" }, wakil: { nama: "— Hasil Voting —" } },
-  { icon: "🛒", nama: "Local Commerce", full: "Ekonomi Kreatif & UMKM", tugas: "Pengrajin lokal, marketplace, quality control",
-    ketua: { nama: "— Hasil Voting —" }, wakil: { nama: "— Hasil Voting —" } },
-  { icon: "📢", nama: "Public Relations", full: "Humas & Transparansi Publik", tugas: "Dokumentasi, laporan dana, komunikasi CSR",
-    ketua: { nama: "— Hasil Voting —" }, wakil: { nama: "— Hasil Voting —" } },
+  {
+    icon: "🏗️", nama: "Green Build", full: "Infrastruktur & Konstruksi Hijau", tugas: "Balai Serba Guna, Smart PJU, drainase resapan",
+    ketua: { nama: "— Hasil Voting —" }, wakil: { nama: "— Hasil Voting —" }
+  },
+  {
+    icon: "💻", nama: "Digital Hub", full: "IT, Jaringan & Web3", tugas: "RT/RW Net, Learning Hub, Website, Crypto",
+    ketua: { nama: "— Hasil Voting —" }, wakil: { nama: "— Hasil Voting —" }
+  },
+  {
+    icon: "🌾", nama: "Eco-Waste & Farming", full: "Smart Farming & Lingkungan", tugas: "Pertanian organik, peternakan, Bank Sampah",
+    ketua: { nama: "— Hasil Voting —" }, wakil: { nama: "— Hasil Voting —" }
+  },
+  {
+    icon: "🛒", nama: "Local Commerce", full: "Ekonomi Kreatif & UMKM", tugas: "Pengrajin lokal, marketplace, quality control",
+    ketua: { nama: "— Hasil Voting —" }, wakil: { nama: "— Hasil Voting —" }
+  },
+  {
+    icon: "📢", nama: "Public Relations", full: "Humas & Transparansi Publik", tugas: "Dokumentasi, laporan dana, komunikasi CSR",
+    ketua: { nama: "— Hasil Voting —" }, wakil: { nama: "— Hasil Voting —" }
+  },
 ];
 
 export default function TentangTab({ onNavigate, testimoni = [], onPaymentSuccess }: TentangTabProps) {
@@ -78,21 +88,21 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
       const res = await fetch("/api/midtrans/tokenize", {
         method: "POST",
         headers: { "Content-type": "application/json" },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           order_id: orderId,
-          gross_amount: qty, 
+          gross_amount: qty,
           item_details: [{ id: "dn-custom", price: qty, quantity: 1, name: "Donasi Ciburial Eco-Digital" }]
         })
       });
       const data = await res.json();
       if (data.token && (window as any).snap) {
         (window as any).snap.pay(data.token, {
-          onSuccess: function(r:any){ 
-            alert("Donasi sukses diterima! Dana langsung terdata di transparansi."); 
+          onSuccess: function (r: any) {
+            alert("Donasi sukses diterima! Dana langsung terdata di transparansi.");
             if (onPaymentSuccess) onPaymentSuccess(qty, false, orderId, r.payment_type || "Midtrans");
           },
-          onPending: function(r:any){ alert("Menunggu status pembayaran donasi."); },
-          onError: function(r:any){ alert("Pembayaran gagal."); }
+          onPending: function (r: any) { alert("Menunggu status pembayaran donasi."); },
+          onError: function (r: any) { alert("Pembayaran gagal."); }
         });
       } else {
         alert("Server Midtrans belum nyambung! Cek .env di Settings Vercel. (Pesan sistem: " + (data.error || "Missing Token") + ")");
@@ -111,7 +121,7 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
         {/* Background Animations */}
         <div style={{ position: "absolute", bottom: "-30%", right: "-15%", width: "800px", height: "800px", background: "radial-gradient(circle,rgba(47,143,78,.25) 0%,transparent 70%)", borderRadius: "50%", animation: "float 30s ease-in-out infinite", zIndex: 0 }} />
         <div style={{ position: "absolute", top: "-20%", left: "-10%", width: "600px", height: "600px", background: "radial-gradient(circle,rgba(184,148,63,.15) 0%,transparent 70%)", borderRadius: "50%", animation: "float 25s ease-in-out infinite reverse", zIndex: 0 }} />
-        
+
         {/* Gradient Overlay */}
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg,rgba(28,58,43,.1) 0%,rgba(47,143,78,.05) 50%,transparent 100%)", pointerEvents: "none", zIndex: 1 }} />
 
@@ -128,33 +138,33 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
             <div className="h2" style={{ marginBottom: 12 }}>
               <span style={{ fontSize: 13, fontWeight: 600, letterSpacing: ".15em", textTransform: "uppercase", color: "#4FBF7E", textShadow: "0 2px 8px rgba(47,143,78,.15)" }}>▼ Selamat Datang di ▼</span>
             </div>
-            
+
             {/* Main Title */}
             <h1 className="fnt h3 hero-title" style={{ fontWeight: 200, lineHeight: 0.95, color: "#1C3A2B", letterSpacing: "-.04em", marginBottom: 12, fontSize: "clamp(56px,12vw,140px)", textShadow: "0 12px 32px rgba(28,58,43,.15)" }}>
               Ciburial
             </h1>
-            
+
             {/* Subtitle */}
             <h2 className="fnt h4 hero-sub" style={{ fontWeight: 500, fontStyle: "italic", background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", letterSpacing: "-.02em", marginBottom: 0, fontSize: "clamp(28px,5vw,54px)", textShadow: "0 2px 8px rgba(47,143,78,.1)" }}>
               Eco-Digital Village
             </h2>
-            
+
             {/* Divider */}
             <div style={{ height: 3, background: "linear-gradient(90deg,transparent,#2F8F4E 25%,#4FBF7E 50%,#2F8F4E 75%,transparent)", margin: "28px auto", maxWidth: 200, boxShadow: "0 0 24px rgba(47,143,78,.2)" }} />
-            
+
             {/* Tagline */}
             <div className="h5" style={{ marginBottom: 32 }}>
               <p className="fnt" style={{ fontSize: "clamp(14px,2.5vw,22px)", fontWeight: 300, fontStyle: "italic", color: "#5A4A40", letterSpacing: ".01em", lineHeight: 1.6, textShadow: "0 2px 4px rgba(28,58,43,.05)" }}>
                 Inovasi Desa Mandiri Berbasis Kearifan Lokal dan Teknologi Masa Depan
               </p>
             </div>
-            
+
             {/* Description */}
             <div className="h5" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
               <p style={{ maxWidth: 620, fontSize: "clamp(15px,2vw,18px)", fontWeight: 400, lineHeight: 1.9, color: "#5A4A40" }}>
                 Memutus rantai ketertinggalan dengan <strong style={{ color: "#2F8F4E", fontWeight: 600 }}>digitalisasi hasil bumi</strong>, <strong style={{ color: "#2F8F4E", fontWeight: 600 }}>ekosistem sirkular</strong>, dan <strong style={{ color: "#2F8F4E", fontWeight: 600 }}>generasi muda yang melek teknologi</strong> — tanpa meninggalkan identitas kampung halaman.
               </p>
-              
+
               {/* Tags */}
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "center" }}>
                 {["🌱 Pertanian Organik", "🐄 Peternakan Modern", "🎋 Kerajinan Bambu", "💡 Smart PJU", "♻️ Eco-Waste", "📚 Learning Hub", "🏛️ Balai Warga"].map(tag => (
@@ -326,8 +336,8 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
           <div style={{ marginBottom: 50 }}>
             <div style={{ fontSize: 13, fontWeight: 800, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--go)", marginBottom: 20, textAlign: "center" }}>A. Dewan Pelindung & Penasihat</div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 32, justifyContent: "center" }}>
-              {(pengurusDb.filter(p => p.kategori === 'pelindung').length > 0 ? pengurusDb.filter(p => p.kategori === 'pelindung') : dwnPelindung.map((p,i) => ({ ...p, jabatan: p.role, nama: p.name, id: `p-${i}` }))).map((item: any, i) => (
-                <div key={item.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 50, position: 'relative', width: 220, animation: `float-heroic 6s ease-in-out infinite ${(i*0.2).toFixed(1)}s` }}>
+              {(pengurusDb.filter(p => p.kategori === 'pelindung').length > 0 ? pengurusDb.filter(p => p.kategori === 'pelindung') : dwnPelindung.map((p, i) => ({ ...p, jabatan: p.role, nama: p.name, id: `p-${i}` }))).map((item: any, i) => (
+                <div key={item.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 50, position: 'relative', width: 220, animation: `float-heroic 6s ease-in-out infinite ${(i * 0.2).toFixed(1)}s` }}>
                   <div style={{ width: 140, height: 140, borderRadius: 28, padding: 5, background: "var(--cw)", border: `2px solid var(--go)`, zIndex: 2, position: "relative", marginBottom: -40, boxShadow: `0 16px 32px rgba(184,148,63,.25)`, overflow: "hidden" }}>
                     {item.foto ? (
                       <img src={item.foto} alt={item.nama} style={{ width: "100%", height: "100%", borderRadius: 22, objectFit: "cover" }} />
@@ -350,8 +360,8 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
             <div>
               <div style={{ fontSize: 13, fontWeight: 800, letterSpacing: ".14em", textTransform: "uppercase", color: "#4FBF7E", marginBottom: 20, textAlign: "center" }}>B. Dewan Pengawas Kas</div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 32, justifyContent: "center", maxWidth: 800, margin: "0 auto" }}>
-                {(pengurusDb.filter(p => p.kategori === 'pengawas').length > 0 ? pengurusDb.filter(p => p.kategori === 'pengawas') : dwnPengawas.map((p,i) => ({ ...p, jabatan: p.role, nama: p.name, id: `w-${i}` }))).map((item: any, i) => (
-                  <div key={item.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 40, position: 'relative', width: 220, animation: `float-heroic 6s ease-in-out infinite ${(i*0.2 + 1).toFixed(1)}s` }}>
+                {(pengurusDb.filter(p => p.kategori === 'pengawas').length > 0 ? pengurusDb.filter(p => p.kategori === 'pengawas') : dwnPengawas.map((p, i) => ({ ...p, jabatan: p.role, nama: p.name, id: `w-${i}` }))).map((item: any, i) => (
+                  <div key={item.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 40, position: 'relative', width: 220, animation: `float-heroic 6s ease-in-out infinite ${(i * 0.2 + 1).toFixed(1)}s` }}>
                     <div style={{ width: 140, height: 140, borderRadius: 28, padding: 5, background: "var(--cw)", border: `2px solid #2F8F4E`, zIndex: 2, position: "relative", marginBottom: -40, boxShadow: `0 16px 32px rgba(47,143,78,.25)`, overflow: "hidden" }}>
                       {item.foto ? (
                         <img src={item.foto} alt={item.nama} style={{ width: "100%", height: "100%", borderRadius: 22, objectFit: "cover" }} />
@@ -372,8 +382,8 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
             <div>
               <div style={{ fontSize: 13, fontWeight: 800, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--go)", marginBottom: 20, textAlign: "center" }}>C. Tim Eksekutif Lapangan</div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 32, justifyContent: "center" }}>
-                {(pengurusDb.filter(p => p.kategori === 'eksekutif').length > 0 ? pengurusDb.filter(p => p.kategori === 'eksekutif') : timEksekutif.map((p,i) => ({ ...p, jabatan: p.role, nama: p.name, id: `e-${i}` }))).map((item: any, i) => (
-                  <div key={item.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 40, position: 'relative', width: 220, animation: `float-heroic 6s ease-in-out infinite ${(i*0.2 + 2).toFixed(1)}s` }}>
+                {(pengurusDb.filter(p => p.kategori === 'eksekutif').length > 0 ? pengurusDb.filter(p => p.kategori === 'eksekutif') : timEksekutif.map((p, i) => ({ ...p, jabatan: p.role, nama: p.name, id: `e-${i}` }))).map((item: any, i) => (
+                  <div key={item.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 40, position: 'relative', width: 220, animation: `float-heroic 6s ease-in-out infinite ${(i * 0.2 + 2).toFixed(1)}s` }}>
                     <div style={{ width: 140, height: 140, borderRadius: 28, padding: 5, background: "var(--cw)", border: `2px solid var(--go)`, zIndex: 2, position: "relative", marginBottom: -40, boxShadow: `0 16px 32px rgba(184,148,63,.25)`, overflow: "hidden" }}>
                       {item.foto ? (
                         <img src={item.foto} alt={item.nama} style={{ width: "100%", height: "100%", borderRadius: 22, objectFit: "cover" }} />
@@ -414,14 +424,14 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
                   <div style={{ fontSize: 13, fontWeight: 800, color: "#1C3A2B", marginBottom: 4, textTransform: "uppercase", letterSpacing: ".04em", background: `linear-gradient(135deg,#2F8F4E,#4FBF7E)`, backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{d.nama}</div>
                   <div style={{ fontSize: 12, fontWeight: 600, color: "#5A4A40", marginBottom: 10, minHeight: 30 }}>{d.full}</div>
                   <div style={{ fontSize: 12, lineHeight: 1.6, color: "#5A4A40", marginBottom: 14, paddingBottom: 14, borderBottom: "1px solid rgba(47,143,78,.1)" }}>{d.tugas}</div>
-                  
+
                   {/* Ketua & Wakil (Nama saja) */}
                   <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                     <div style={{ fontSize: 10, fontWeight: 700, color: "#2F8F4E", textTransform: "uppercase", letterSpacing: ".05em" }}>👤 Ketua</div>
                     <div style={{ fontSize: 12, fontWeight: 600, color: "#1C3A2B", fontStyle: (pengurusDb.find(p => p.kategori === 'divisi' && p.jabatan.includes("Ketua") && p.jabatan.includes(d.nama))?.nama || d.ketua.nama).includes("—") ? "italic" : "normal", marginBottom: 8 }}>
                       {pengurusDb.find(p => p.kategori === 'divisi' && p.jabatan.includes("Ketua") && p.jabatan.includes(d.nama))?.nama || d.ketua.nama}
                     </div>
-                    
+
                     <div style={{ fontSize: 10, fontWeight: 700, color: "#2F8F4E", textTransform: "uppercase", letterSpacing: ".05em" }}>👤 Wakil</div>
                     <div style={{ fontSize: 12, fontWeight: 600, color: "#1C3A2B", fontStyle: (pengurusDb.find(p => p.kategori === 'divisi' && p.jabatan.includes("Wakil") && p.jabatan.includes(d.nama))?.nama || d.wakil.nama).includes("—") ? "italic" : "normal" }}>
                       {pengurusDb.find(p => p.kategori === 'divisi' && p.jabatan.includes("Wakil") && p.jabatan.includes(d.nama))?.nama || d.wakil.nama}
@@ -444,11 +454,11 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
               <p style={{ color: "var(--ts)", fontSize: 13, marginTop: 10 }}>Apa kata mereka tentang inisiatif Ciburial Eco-Digital.</p>
             </div>
           </div>
-          
+
           <div style={{ display: "flex", gap: 20, padding: "0 clamp(16px,4vw,32px) 20px", overflowX: "auto", scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch" }} className="hide-scroll">
             {testimoni.map((t, i) => (
               <div key={t.id || i} style={{ scrollSnapAlign: "start", flex: "0 0 clamp(280px, 40vw, 400px)", background: "var(--cw)", border: "1px solid var(--bo)", borderRadius: 20, padding: t.tipe === "berita" && t.foto ? "12px 12px 28px 12px" : 28, display: "flex", flexDirection: "column", gap: 14 }}>
-                
+
                 {/* COVER BESAR KHUSUS BERITA */}
                 {t.tipe === "berita" && t.foto && (
                   (t.foto.toLowerCase().includes(".mp4") || t.foto.toLowerCase().includes(".webm")) ? (
@@ -461,11 +471,11 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
                 <div style={{ padding: t.tipe === "berita" && t.foto ? "0 16px" : 0, display: "flex", flexDirection: "column", gap: 14, flex: 1 }}>
                   {t.tipe === "tokoh" && <div style={{ fontSize: 32, lineHeight: 1, color: "var(--go)", opacity: 0.5 }}>&quot;</div>}
                   {t.tipe === "berita" && !t.foto && <div style={{ fontSize: 28, lineHeight: 1, color: "var(--go)", opacity: 0.5 }}>📰</div>}
-                  
+
                   <p style={{ fontSize: 14, lineHeight: 1.7, color: "var(--ts)", flex: 1, fontStyle: t.tipe === "tokoh" ? "italic" : "normal" }}>
                     {t.tipe === "tokoh" ? `"${t.pesan}"` : t.pesan}
                   </p>
-                  
+
                   <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 10, borderTop: "1px solid var(--bo)", paddingTop: 18 }}>
                     {/* AVATAR KECIL (Khusus Tokoh) */}
                     {t.tipe === "tokoh" && t.foto ? (
@@ -560,17 +570,16 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
 
       {/* STORY MODAL */}
       {showStory && (
-        <div style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", margin: "auto", overflowY: "auto", background: "rgba(28,58,43,.6)", backdropFilter: "blur(12px)", padding: "40px 20px", animation: "storyFadeIn .3s ease" }}>
-          <div style={{ margin: "auto", background: "linear-gradient(135deg,rgba(255,254,249,1) 0%,rgba(232,245,238,1) 100%)", borderRadius: 24, maxWidth: 640, width: "100%", border: "1px solid rgba(47,143,78,.2)", boxShadow: "0 24px 64px rgba(28,58,43,.3)", position: "relative", animation: "storySlideUp .4s cubic-bezier(.22,1,.36,1)" }}>
-            
+        <div style={{ position: "fixed", inset: 0, zIndex: 9999, overflowY: "auto", background: "rgba(28,58,43,.7)", backdropFilter: "blur(12px)", padding: "clamp(40px,10vw,80px) 20px", animation: "storyFadeIn .3s ease", display: "block" }}>
+          <div style={{ margin: "0 auto", flexShrink: 0, background: "linear-gradient(135deg,rgba(255,254,249,1) 0%,rgba(232,245,238,1) 100%)", borderRadius: 24, maxWidth: 640, width: "100%", border: "1px solid rgba(47,143,78,.2)", boxShadow: "0 24px 64px rgba(28,58,43,.3)", position: "relative", animation: "storySlideUp .4s cubic-bezier(.22,1,.36,1)" }}>
+
             {/* Header / Cover */}
             <div style={{ height: 160, background: "linear-gradient(135deg,#1C3A2B 0%,#2F8F4E 100%)", position: "relative", borderRadius: "24px 24px 0 0" }}>
               <div style={{ position: "absolute", top: 20, right: 20 }}>
-                <button onClick={() => setShowStory(false)} style={{ width: 36, height: 36, borderRadius: "50%", background: "rgba(255,255,255,.2)", border: "none", color: "white", fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(4px)", transition: "background .2s" }} onMouseEnter={e => e.currentTarget.style.background="rgba(255,255,255,.4)"} onMouseLeave={e => e.currentTarget.style.background="rgba(255,255,255,.2)"}>✕</button>
+                <button onClick={() => setShowStory(false)} style={{ width: 36, height: 36, borderRadius: "50%", background: "rgba(255,255,255,.2)", border: "none", color: "white", fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(4px)", transition: "background .2s" }} onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,.4)"} onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,.2)"}>✕</button>
               </div>
               <div style={{ position: "absolute", bottom: -40, left: 40, width: 80, height: 80, borderRadius: 20, background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 50, overflow: "hidden", border: "4px solid #FFFEF9", boxShadow: "0 8px 24px rgba(28,58,43,.15)" }}>
-                 {/* Empty avatar with background in case no img is defined */}
-                 <div style={{ width: "100%", height: "100%", background: "#4FBF7E", display: "flex", alignItems: "center", justifyContent: "center", color: "white" }}>👤</div>
+                <img src="/founder.jpg" alt="Ubay Rahmat H." style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement!.innerHTML = '<div style="width:100%;height:100%;background:#4FBF7E;display:flex;align-items:center;justify-content:center;color:white;font-size:40px;">👤</div>'; }} />
               </div>
             </div>
 
@@ -578,12 +587,12 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
             <div style={{ padding: "50px 40px 40px" }}>
               <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".15em", textTransform: "uppercase", color: "#2F8F4E", marginBottom: 8 }}>The Origin Story</div>
               <h3 className="fnt" style={{ fontSize: 32, fontWeight: 300, color: "#1C3A2B", lineHeight: 1.2, letterSpacing: "-.02em", marginBottom: 24 }}>Dari Pelosok Garut untuk Melesat ke Masa Depan.</h3>
-              
+
               <div style={{ fontSize: 14, lineHeight: 1.8, color: "#5A4A40", display: "flex", flexDirection: "column", gap: 16 }}>
-                <p>Singkat cerita, semuanya bermula dari kegelisahan sederhana di sini, Kp. Ciburial, Bungbulang. Mengapa desa kita yang kaya akan kearifan lokal—dari kerajinan bambu hingga potensi pasokan pangan—harus selalu tergerus dan dipaksa tertinggal oleh cepatnya arus peradaban?</p>
+                <p>Singkat cerita, semuanya bermula dari kegelisahan sederhana di sini, Kp. Ciburial rw 08, Desa Hanjuang Bungbulang. Mengapa kampung kita yang kaya akan kearifan lokal—dari kerajinan bambu hingga potensi pasokan pangan—harus selalu tergerus dan dipaksa tertinggal oleh cepatnya arus peradaban?</p>
                 <p>Sebagai pemuda daerah, saya menolak pasrah. <strong>Ciburial Eco-Digital</strong> didirikan bukan sekadar sebagai portal penyampaian informasi. Ini adalah sebuah manifestasi ide dan <strong style={{ color: "#2F8F4E" }}>quantum leap</strong> (lompatan besar).</p>
                 <p>Bersama, kami merancang cetak biru peradaban baru di mana tatanan kearifan lokal berdampingan secara harmonis dengan teknologi masa depan. Mulai dari sistem penerangan jalan cerdas (Smart PJU), pertanian organik terukur, hingga <strong>transparansi dana abadi kampung secara real-time yang terbuka utuh bagi masyarakat luas.</strong></p>
-                <p>Gerakan progresif ini tak lagi menuntut hak dari elit. Ekonomi sirkular dan komando lapangan kini digerakkan langsung oleh tangan-tangan pemuda Ciburial yang hari ini mendominasi 55% populasi desa.</p>
+                <p>Gerakan progresif ini tak lagi menuntut hak dari elit. Ekonomi sirkular dan komando lapangan kini digerakkan langsung oleh tangan-tangan pemuda Ciburial yang hari ini mendominasi 55% populasi kampung.</p>
                 <div style={{ background: "linear-gradient(135deg,rgba(47,143,78,.08),rgba(47,143,78,.03))", padding: "16px 20px", borderRadius: 12, borderLeft: "3px solid #2F8F4E", fontStyle: "italic", fontWeight: 500, color: "#1C3A2B", marginTop: 8 }}>
                   "Kita tidak sekadar pasrah memulung sisa zaman. Kita bangkit menciptakan standar peradabannya."
                 </div>
