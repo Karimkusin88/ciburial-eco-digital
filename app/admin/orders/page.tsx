@@ -100,6 +100,21 @@ export default function AdminOrdersPage() {
     }
   };
 
+  const normalizePhoneNumber = (phone: string): string => {
+    if (!phone) return "";
+    // Hapus semua karakter non-numeric
+    let cleaned = phone.replace(/[^0-9]/g, '');
+    // Kalau mulai dengan 0, ganti dengan 62
+    if (cleaned.startsWith('0')) {
+      cleaned = '62' + cleaned.slice(1);
+    }
+    // Kalau belum punya prefix 62, tambahkan
+    if (!cleaned.startsWith('62')) {
+      cleaned = '62' + cleaned;
+    }
+    return cleaned;
+  };
+
   const sendWaBlast = async (order: Order) => {
     setSendingWa(order.id);
     try {
@@ -108,13 +123,20 @@ export default function AdminOrdersPage() {
         ? `Halo ${order.nama_pembeli}! 👋\n\nStatus pesanan Anda: ${statusLabel}\n🚚 No. Resi: ${order.no_resi}\n\nOrder ID: ${order.order_id}\n\nTerima kasih telah berbelanja di Ciburial Marketplace! 🙏`
         : `Halo ${order.nama_pembeli}! 👋\n\nStatus pesanan Anda: ${statusLabel}\n\nOrder ID: ${order.order_id}\n\nTerima kasih telah berbelanja di Ciburial Marketplace! 🙏`;
 
-      const waLink = `https://wa.me/${order.no_wa.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message)}`;
+      const cleanedPhone = normalizePhoneNumber(order.no_wa);
+      if (!cleanedPhone || cleanedPhone.length < 10) {
+        alert("❌ Nomor WhatsApp tidak valid");
+        setSendingWa(null);
+        return;
+      }
+
+      const waLink = `https://wa.me/${cleanedPhone}?text=${encodeURIComponent(message)}`;
       window.open(waLink, "_blank");
       
-      // Log ke database (opsional)
       alert("✅ Tautan WhatsApp terbuka!");
     } catch (e) {
-      alert("Error membuka WhatsApp");
+      alert("❌ Error membuka WhatsApp");
+      console.error(e);
     }
     setSendingWa(null);
   };
