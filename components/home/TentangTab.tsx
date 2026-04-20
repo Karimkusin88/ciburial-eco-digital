@@ -16,26 +16,31 @@ interface TentangTabProps {
 
 // ─── STRUKTUR ORGANISASI ─────────────────────────────────────────────────
 const dwnPelindung = [
-  { role: "Tokoh Agama", name: "— Hasil Musyawarah —", icon: "🕌" },
-  { role: "Kepala Kewilayahan", name: "Bpk. Enang (Ketua RW)", icon: "🏘️" },
-  { role: "Koordinator RT 01", name: "Sarip Hidayat", icon: "👤" },
-  { role: "Koordinator RT 02", name: "Oneng", icon: "👤" },
-  { role: "Koordinator RT 03", name: "Mumun", icon: "👤" },
+  { role: "Tokoh Agama", name: "— Hasil Musyawarah —", icon: "🕌", foto: "/uploads/pengurus/dewan/tokoh-agama.jpg" },
+  { role: "Kepala Kewilayahan", name: "Bpk. Enang (Ketua RW)", icon: "🏘️", foto: "/uploads/pengurus/dewan/kepala-kewilayahan.jpg" },
+  { role: "Koordinator RT 01", name: "Sarip Hidayat", icon: "👤", foto: "/uploads/pengurus/dewan/rt01.jpg" },
+  { role: "Koordinator RT 02", name: "Oneng", icon: "👤", foto: "/uploads/pengurus/dewan/rt02.jpg" },
+  { role: "Koordinator RT 03", name: "Mumun", icon: "👤", foto: "/uploads/pengurus/dewan/rt03.jpg" },
 ];
 const dwnPengawas = [
-  { role: "Pengelola Dana DKM", name: "Bpk. Pupu Apipudin", icon: "🤲" },
+  { role: "Pengelola Dana DKM", name: "Bpk. Pupu Apipudin", icon: "🤲", foto: "/uploads/pengurus/dewan/kas-dkm.jpg" },
 ];
 const timEksekutif = [
-  { role: "Ketua Pelaksana (PM)", name: "— Hasil Voting —", icon: "⚡" },
-  { role: "Sekretaris", name: "— Hasil Voting —", icon: "📋" },
-  { role: "Bendahara", name: "— Hasil Voting —", icon: "💰" },
+  { role: "Ketua Pelaksana (PM)", name: "— Hasil Voting —", icon: "⚡", foto: "/uploads/pengurus/tim-eksekutif/ketua-pm.jpg" },
+  { role: "Sekretaris", name: "— Hasil Voting —", icon: "📋", foto: "/uploads/pengurus/tim-eksekutif/sekretaris.jpg" },
+  { role: "Bendahara", name: "— Hasil Voting —", icon: "💰", foto: "/uploads/pengurus/tim-eksekutif/bendahara.jpg" },
 ];
 const divisi = [
-  { icon: "🏗️", nama: "Green Build", full: "Infrastruktur & Konstruksi Hijau", tugas: "Balai Serba Guna, Smart PJU, drainase resapan" },
-  { icon: "💻", nama: "Digital Hub", full: "IT, Jaringan & Web3", tugas: "RT/RW Net, Learning Hub, Website, Crypto" },
-  { icon: "🌾", nama: "Eco-Waste & Farming", full: "Smart Farming & Lingkungan", tugas: "Pertanian organik, peternakan, Bank Sampah" },
-  { icon: "🛒", nama: "Local Commerce", full: "Ekonomi Kreatif & UMKM", tugas: "Pengrajin lokal, marketplace, quality control" },
-  { icon: "📢", nama: "Public Relations", full: "Humas & Transparansi Publik", tugas: "Dokumentasi, laporan dana, komunikasi CSR" },
+  { icon: "🏗️", nama: "Green Build", full: "Infrastruktur & Konstruksi Hijau", tugas: "Balai Serba Guna, Smart PJU, drainase resapan",
+    ketua: { nama: "— Hasil Voting —" }, wakil: { nama: "— Hasil Voting —" } },
+  { icon: "💻", nama: "Digital Hub", full: "IT, Jaringan & Web3", tugas: "RT/RW Net, Learning Hub, Website, Crypto",
+    ketua: { nama: "— Hasil Voting —" }, wakil: { nama: "— Hasil Voting —" } },
+  { icon: "🌾", nama: "Eco-Waste & Farming", full: "Smart Farming & Lingkungan", tugas: "Pertanian organik, peternakan, Bank Sampah",
+    ketua: { nama: "— Hasil Voting —" }, wakil: { nama: "— Hasil Voting —" } },
+  { icon: "🛒", nama: "Local Commerce", full: "Ekonomi Kreatif & UMKM", tugas: "Pengrajin lokal, marketplace, quality control",
+    ketua: { nama: "— Hasil Voting —" }, wakil: { nama: "— Hasil Voting —" } },
+  { icon: "📢", nama: "Public Relations", full: "Humas & Transparansi Publik", tugas: "Dokumentasi, laporan dana, komunikasi CSR",
+    ketua: { nama: "— Hasil Voting —" }, wakil: { nama: "— Hasil Voting —" } },
 ];
 
 export default function TentangTab({ onNavigate, testimoni = [], onPaymentSuccess }: TentangTabProps) {
@@ -374,7 +379,15 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
                   <div style={{ fontSize: 13, fontWeight: 800, color: "#1C3A2B", marginBottom: 4, textTransform: "uppercase", letterSpacing: ".04em", background: `linear-gradient(135deg,#2F8F4E,#4FBF7E)`, backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{d.nama}</div>
                   <div style={{ fontSize: 12, fontWeight: 600, color: "#5A4A40", marginBottom: 10, minHeight: 30 }}>{d.full}</div>
                   <div style={{ fontSize: 12, lineHeight: 1.6, color: "#5A4A40", marginBottom: 14, paddingBottom: 14, borderBottom: "1px solid rgba(47,143,78,.1)" }}>{d.tugas}</div>
-                  <div style={{ fontSize: 10, fontWeight: 700, color: "#2F8F4E", fontStyle: "italic", letterSpacing: ".05em" }}>👤 Lab: — Hasil Voting —</div>
+                  
+                  {/* Ketua & Wakil (Nama saja) */}
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: "#2F8F4E", textTransform: "uppercase", letterSpacing: ".05em" }}>👤 Ketua</div>
+                    <div style={{ fontSize: 12, fontWeight: 600, color: "#1C3A2B", fontStyle: d.ketua.nama.includes("—") ? "italic" : "normal", marginBottom: 8 }}>{d.ketua.nama}</div>
+                    
+                    <div style={{ fontSize: 10, fontWeight: 700, color: "#2F8F4E", textTransform: "uppercase", letterSpacing: ".05em" }}>👤 Wakil</div>
+                    <div style={{ fontSize: 12, fontWeight: 600, color: "#1C3A2B", fontStyle: d.wakil.nama.includes("—") ? "italic" : "normal" }}>{d.wakil.nama}</div>
+                  </div>
                 </div>
               ))}
             </div>

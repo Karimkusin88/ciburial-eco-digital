@@ -56,7 +56,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
             <div style={{ fontSize: 11, fontWeight: 700, color: "var(--tm)", letterSpacing: ".08em", marginBottom: 4 }}>Nomor: 01/CBM/III/2026 &nbsp;|&nbsp; Hal: Permohonan Dukungan & Kolaborasi</div>
             <div style={{ fontSize: 11, color: "var(--tm)" }}>Lampiran: 1 (Satu) Berkas Proposal</div>
           </div>
-          <p style={{ marginBottom: 14 }}>Kepada Yth, <strong>[Nama Instansi / Perusahaan / Calon Donatur]</strong> di Tempat. Dengan hormat,</p>
+          <p style={{ marginBottom: 14 }}>Kepada Yth, <strong>[Instansi / Perusahaan / Donatur]</strong> di Tempat. Dengan hormat,</p>
           <p style={{ marginBottom: 14 }}>Puji syukur ke hadirat Tuhan Yang Maha Esa atas segala limpahan rahmat-Nya. Bersama surat ini, kami dari Paguyuban Warga & Pemuda Ciburial Makers bermaksud menyampaikan proposal program <strong>"Ciburial Eco-Digital Village"</strong>.</p>
           <p style={{ marginBottom: 14 }}>Program ini adalah inisiatif swadaya masyarakat akar rumput untuk membangun ekosistem desa yang mandiri, cerdas, dan ramah lingkungan. Mengawinkan kekayaan alam organik dengan literasi teknologi digital untuk menciptakan ketahanan pangan, keamanan lingkungan, dan peningkatan SDM generasi muda.</p>
           <p style={{ marginBottom: 28 }}>Mengingat besarnya skala pergerakan ini, kami membuka ruang kolaborasi dan memohon dukungan dari Bapak/Ibu/Saudara guna merealisasikan cetak biru kemakmuran desa ini.</p>
@@ -169,7 +169,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
             },
             {
               group: "C. Tim Eksekutif Lapangan (Ciburial Makers)", items: [
-                "Ketua Pelaksana (PM): [Hasil Voting]",
+                "Ketua Pelaksana : [Hasil Voting]",
                 "Sekretaris & Administrasi: [Hasil Voting]",
                 "Bendahara Program: [Hasil Voting]",
               ]
