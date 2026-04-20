@@ -118,7 +118,6 @@ export default function AdminOrdersPage() {
   const sendWaBlast = async (order: Order) => {
     setSendingWa(order.id);
     try {
-      const statusLabel = STATUS_OPTIONS.find(s => s.v === order.status)?.l || order.status;
       const statusEmoji = {
         pending: "⏳",
         dibayar: "✅",
@@ -128,26 +127,31 @@ export default function AdminOrdersPage() {
         dibatalkan: "❌"
       }[order.status] || "•";
 
-      const message = `Halo ${order.nama_pembeli}! 👋
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   STATUS PESANAN ANDA
-━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-${statusEmoji} ${statusLabel}
-📋 Order ID: ${order.order_id}
-${order.no_resi ? `🚚 No. Resi: ${order.no_resi}` : '⏳ Sedang diproses...'}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Terima kasih telah berbelanja di 
-✨ Ciburial Marketplace ✨
-
-Pertanyaan? Hubungi kami 💬
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
-
+      const statusLabel = STATUS_OPTIONS.find(s => s.v === order.status)?.l || order.status;
+      
+      const lines = [
+        "Halo " + order.nama_pembeli + "! 👋",
+        "",
+        "STATUS PESANAN ANDA",
+        "====================",
+        "",
+        statusEmoji + " " + statusLabel,
+        "Order ID: " + order.order_id,
+        order.no_resi ? ("No. Resi: " + order.no_resi) : "Sedang diproses...",
+        "",
+        "====================",
+        "",
+        "Terima kasih telah berbelanja di",
+        "Ciburial Marketplace",
+        "",
+        "Ada pertanyaan? Hubungi kami!",
+        "",
+        "Link lacak pesanan: tracking.ciburial-eco.com"
+      ];
+      
+      const message = lines.join("\n");
       const cleanedPhone = normalizePhoneNumber(order.no_wa);
+      
       if (!cleanedPhone || cleanedPhone.length < 10) {
         alert("❌ Nomor WhatsApp tidak valid");
         setSendingWa(null);

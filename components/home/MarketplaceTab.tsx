@@ -79,6 +79,13 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
   const [orderLoading, setOrderLoading] = useState(false);
   const [orderDone, setOrderDone] = useState<{orderId:string;metode:string}|null>(null);
 
+  // State untuk Tracking
+  const [showTracking, setShowTracking] = useState(false);
+  const [trackingId, setTrackingId] = useState("");
+  const [trackedOrder, setTrackedOrder] = useState<any>(null);
+  const [trackingLoading, setTrackingLoading] = useState(false);
+  const [trackingError, setTrackingError] = useState("");
+
   // Load keranjang dari localStorage pas komponen pertama kali jalan
   useEffect(() => {
     const savedCart = localStorage.getItem("ciburial_cart");
@@ -264,6 +271,45 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
     setOrderLoading(false);
   };
 
+  // ─── TRACKING ORDER ────────────────────────────────────────────────────
+  const cariTracking = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!trackingId.trim()) {
+      setTrackingError("Masukkan Order ID terlebih dahulu!");
+      return;
+    }
+
+    setTrackingLoading(true);
+    setTrackingError("");
+    setTrackedOrder(null);
+
+    if (!isSupabaseReady()) {
+      setTrackingError("Database belum siap");
+      setTrackingLoading(false);
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from("orders_marketplace")
+        .select("*")
+        .eq("order_id", trackingId.toUpperCase())
+        .single();
+
+      if (error || !data) {
+        setTrackingError("❌ Order ID tidak ditemukan");
+        setTrackedOrder(null);
+      } else {
+        setTrackedOrder(data);
+        setTrackingError("");
+      }
+    } catch (e) {
+      console.error("Error:", e);
+      setTrackingError("Error mencari pesanan");
+    }
+    setTrackingLoading(false);
+  };
+
   // ─── ORDER SUKSES ─────────────────────────────────────────────────────
   if (orderDone) {
     return (
@@ -408,6 +454,90 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
     );
   }
 
+  // ─── TRACKING ORDER ────────────────────────────────────────────────────
+  if (showTracking) {
+    const STATUS_INFO = {
+      pending: { label: "⏳ Menunggu Pembayaran", warna: "#FFB84D", progress: 10 },
+      dibayar: { label: "✅ Pembayaran Diterima", warna: "#4FBF7E", progress: 25 },
+      diproses: { label: "📦 Sedang Diproses", warna: "#0066CC", progress: 50 },
+      dikirim: { label: "🚚 Sedang Dikirim", warna: "#6366F1", progress: 75 },
+      selesai: { label: "🎉 Pesanan Selesai", warna: "#2F8F4E", progress: 100 },
+      dibatalkan: { label: "❌ Pesanan Dibatalkan", warna: "#B8472F", progress: 0 },
+    };
+
+    const statusInfo = trackedOrder ? STATUS_INFO[trackedOrder.status as keyof typeof STATUS_INFO] : null;
+    const items = trackedOrder ? (typeof trackedOrder.items === "string" ? JSON.parse(trackedOrder.items) : trackedOrder.items) : [];
+
+    return (
+      <div className="pi" style={{ paddingTop: "clamp(64px,10vw,120px)", paddingBottom: 80, minHeight: "100vh", background: "linear-gradient(135deg,rgba(250,248,243,.5) 0%,rgba(255,254,249,.8) 100%)" }}>
+        <div style={{ maxWidth: 600, margin: "0 auto", padding: "0 clamp(16px,3vw,28px)" }}>
+          <button onClick={() => setShowTracking(false)} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", fontSize: 14, fontWeight: 700, color: "#2F8F4E", padding: "6px 0", marginBottom: 24 }}>
+            ← Kembali ke Marketplace
+          </button>
+
+          <h2 style={{ margin: "0 0 24px", color: "#1C3A2B", fontSize: "clamp(22px,4vw,28px)", fontWeight: 800 }}>📦 Lacak Pesanan</h2>
+
+          <form onSubmit={cariTracking} style={{ marginBottom: 24 }}>
+            <div style={{ display: "flex", gap: 8 }}>
+              <input
+                type="text"
+                value={trackingId}
+                onChange={(e) => {
+                  setTrackingId(e.target.value.toUpperCase());
+                  setTrackingError("");
+                }}
+                placeholder="Contoh: MKT-1776656649289"
+                style={{ flex: 1, padding: "12px 14px", borderRadius: 10, border: "1.5px solid rgba(47,143,78,.2)", fontSize: 13, outline: "none", boxSizing: "border-box" }}
+              />
+              <button
+                type="submit"
+                disabled={trackingLoading}
+                style={{ padding: "12px 20px", borderRadius: 10, background: trackingLoading ? "rgba(47,143,78,.3)" : "linear-gradient(135deg,#2F8F4E,#4FBF7E)", color: "white", border: "none", fontSize: 13, fontWeight: 700, cursor: trackingLoading ? "not-allowed" : "pointer" }}
+              >
+                {trackingLoading ? "⏳" : "🔍"}
+              </button>
+            </div>
+            {trackingError && <div style={{ marginTop: 10, fontSize: 12, color: "#B8472F", fontWeight: 600 }}>{trackingError}</div>}
+          </form>
+
+          {trackedOrder && statusInfo && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div style={{ background: "white", borderRadius: 14, padding: 20, border: `1.5px solid ${statusInfo.warna}40` }}>
+                <div style={{ fontSize: 40, marginBottom: 12 }}>{statusInfo.label.split(" ")[0]}</div>
+                <h3 style={{ margin: "0 0 8px", color: "#1C3A2B", fontSize: 18, fontWeight: 700 }}>{statusInfo.label.substring(2)}</h3>
+                <div style={{ fontSize: 12, color: "#6b7c6d", fontFamily: "monospace", fontWeight: 600, marginBottom: 16 }}>{trackedOrder.order_id}</div>
+                
+                <div style={{ height: 6, background: "rgba(47,143,78,.1)", borderRadius: 3, overflow: "hidden", marginBottom: 8 }}>
+                  <div style={{ height: "100%", background: statusInfo.warna, width: `${statusInfo.progress}%`, transition: "width 0.6s ease" }} />
+                </div>
+                <div style={{ fontSize: 11, color: "#6b7c6d" }}>{statusInfo.progress}% Selesai</div>
+
+                {trackedOrder.no_resi && trackedOrder.status !== "pending" && (
+                  <div style={{ marginTop: 14, padding: 12, background: "rgba(47,143,78,.06)", borderRadius: 8, fontSize: 12 }}>
+                    <div style={{ color: "#6b7c6d", fontWeight: 600, marginBottom: 4 }}>No. Resi:</div>
+                    <div style={{ fontFamily: "monospace", fontWeight: 700, color: "#2F8F4E" }}>{trackedOrder.no_resi}</div>
+                  </div>
+                )}
+              </div>
+
+              {items.length > 0 && (
+                <div style={{ background: "white", borderRadius: 12, padding: 16, border: "1px solid rgba(47,143,78,.12)" }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "#1C3A2B", marginBottom: 10 }}>📦 Produk ({items.length})</div>
+                  {items.map((item: any, i: number) => (
+                    <div key={i} style={{ padding: "8px 0", borderBottom: i < items.length - 1 ? "1px solid rgba(47,143,78,.08)" : "none", fontSize: 12 }}>
+                      <div style={{ color: "#1C3A2B", fontWeight: 600 }}>{item.nama} ×{item.qty}</div>
+                      <div style={{ fontSize: 11, color: "#9A8C85" }}>{fRp(item.harga * item.qty)}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   // ─── TAMPILAN KERANJANG (MODAL/SIDEBAR HEROIC) ─────────────────────────
   if (showCart) {
     return (
@@ -521,6 +651,20 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                 }}
               />
             </div>
+
+            {/* Tracking Button */}
+            <button onClick={() => setShowTracking(true)} style={{ position: "relative", background: "linear-gradient(135deg,#4FBF7E,#6FD09E)", border: "none", cursor: "pointer", fontSize: 22, padding: "10px 14px", borderRadius: 10, color: "white", transition: "all 0.3s", fontWeight: 600, letterSpacing: ".05em", boxShadow: "0 8px 16px rgba(79,191,126,.2)" }}
+              onMouseEnter={e => {
+                e.currentTarget.style.transform = "translateY(-2px)";
+                e.currentTarget.style.boxShadow = "0 12px 24px rgba(79,191,126,.3)";
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "0 8px 16px rgba(79,191,126,.2)";
+              }}
+            >
+              📦
+            </button>
 
             {/* Cart Button */}
             <button onClick={() => setShowCart(true)} style={{ position: "relative", background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", border: "none", cursor: "pointer", fontSize: 22, padding: "10px 14px", borderRadius: 10, color: "white", transition: "all 0.3s", fontWeight: 600, letterSpacing: ".05em", boxShadow: "0 8px 16px rgba(47,143,78,.2)" }}
