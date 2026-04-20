@@ -94,7 +94,7 @@ export default function AdminPage() {
 
   /* ─── form state ─── */
   const emptyK = { judul:"", tanggal: new Date().toISOString().split("T")[0], kategori:"keagamaan", deskripsi:"", foto:"" };
-  const emptyP = { nama:"", deskripsi:"", harga:"", tag:"", icon:"🎋", foto:"" };
+  const emptyP = { nama:"", deskripsi:"", harga:"", tag:"", icon:"🎋" };
   const emptyT: { tanggal:string; keterangan:string; kategori:string; tipe:"masuk"|"keluar"; jumlah:string } = { tanggal: new Date().toISOString().split("T")[0], keterangan:"", kategori:"Donasi Warga", tipe:"masuk", jumlah:"" };
   const emptyTm: { nama:string; jabatan:string; pesan:string; tipe:"tokoh"|"berita"; foto:string } = { nama:"", jabatan:"", pesan:"", tipe:"tokoh", foto:"" };
   const emptyIk: { judul:string; deskripsi:string; tipe:"video"|"foto"; mediaUrl:string; linkTujuan:string } = { judul:"", deskripsi:"", tipe:"video", mediaUrl:"", linkTujuan:"" };
@@ -262,21 +262,18 @@ export default function AdminPage() {
   const addProduk = async () => {
     if (!pForm.nama || !pForm.harga) return showToast("❌ Nama & harga wajib diisi");
     setLoading(true);
-    let finalUrl = pForm.foto;
     try {
-      if (pFile) finalUrl = await uploadToSupabase(pFile);
-      const { error } = await supabase.from("produk").insert({ ...pForm, harga: Number(pForm.harga), foto: finalUrl || null });
+      const { error } = await supabase.from("produk").insert({ ...pForm, harga: Number(pForm.harga) });
       if (error) throw error;
-      setPForm(emptyP); setPFile(null); fetchAll(); showToast("✅ Produk berhasil ditambahkan!");
+      setPForm(emptyP); fetchAll(); showToast("✅ Produk berhasil ditambahkan!");
     } catch (err: any) {
-      showToast(err.message?.includes("Bucket not found") ? "❌ Buat bucket 'ciburial-assets' dulu!" : "❌ Gagal: " + err.message);
+      showToast("❌ Gagal: " + err.message);
     }
     setLoading(false);
   };
 
-  const deleteProduk = async (id: string, foto?: string) => {
+  const deleteProduk = async (id: string) => {
     if (!confirm("Hapus produk ini?")) return;
-    hapusDariSupabase(foto);
     await supabase.from("produk").delete().eq("id", id);
     fetchAll(); showToast("🗑️ Produk dihapus");
   };
@@ -796,14 +793,6 @@ export default function AdminPage() {
                 <div>
                   <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Tag / Label</label>
                   <input className="field" value={pForm.tag} onChange={e => setPForm({...pForm, tag:e.target.value})} placeholder="Cth: Best Seller / Handmade / Eco" />
-                </div>
-                <div style={{ background:"rgba(61,43,31,.06)", padding:14, borderRadius:12, border:"1px dashed rgba(61,43,31,.2)" }}>
-                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#3D2B1F", marginBottom:6 }}>Upload Foto Produk (opsional)</label>
-                  <input type="file" accept="image/*" onChange={e => setPFile(e.target.files?.[0] || null)} style={{ fontSize:12, width:"100%" }} />
-                  {pFile && <p style={{ fontSize:10, color:"#4A7C59", marginTop:8, fontWeight:700 }}>✓ File terpilih: {pFile.name}</p>}
-                  
-                  <div style={{ marginTop:14, fontSize:10, color:"#9A8C85", borderTop:"1px solid rgba(61,43,31,.1)", paddingTop:10 }}>ATAU paste link foto:</div>
-                  <input className="field" value={pForm.foto} onChange={e => setPForm({...pForm, foto:e.target.value})} placeholder="https://..." style={{ marginTop:6, fontSize:11, padding:"8px 12px" }} disabled={!!pFile} />
                 </div>
                 <button onClick={addProduk} disabled={loading} style={{ padding:"13px", borderRadius:12, background:"#3D2B1F", color:"#fff", fontSize:12, fontWeight:700, letterSpacing:".08em", textTransform:"uppercase", border:"none", cursor:"pointer", opacity:loading ? .6 : 1, marginTop:4 }}>
                   {loading ? "Menyimpan..." : "Simpan Produk"}
