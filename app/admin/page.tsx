@@ -94,7 +94,7 @@ export default function AdminPage() {
 
   /* ─── form state ─── */
   const emptyK = { judul:"", tanggal: new Date().toISOString().split("T")[0], kategori:"keagamaan", deskripsi:"", foto:"" };
-  const emptyP = { nama:"", deskripsi:"", harga:"", tag:"", icon:"🎋" };
+  const emptyP = { nama:"", deskripsi:"", harga:"", tag:"", icon:"🎋", foto:"" };
   const emptyT: { tanggal:string; keterangan:string; kategori:string; tipe:"masuk"|"keluar"; jumlah:string } = { tanggal: new Date().toISOString().split("T")[0], keterangan:"", kategori:"Donasi Warga", tipe:"masuk", jumlah:"" };
   const emptyTm: { nama:string; jabatan:string; pesan:string; tipe:"tokoh"|"berita"; foto:string } = { nama:"", jabatan:"", pesan:"", tipe:"tokoh", foto:"" };
   const emptyIk: { judul:string; deskripsi:string; tipe:"video"|"foto"; mediaUrl:string; linkTujuan:string } = { judul:"", deskripsi:"", tipe:"video", mediaUrl:"", linkTujuan:"" };
@@ -263,7 +263,10 @@ export default function AdminPage() {
     if (!pForm.nama || !pForm.harga) return showToast("❌ Nama & harga wajib diisi");
     setLoading(true);
     try {
-      const { error } = await supabase.from("produk").insert({ ...pForm, harga: Number(pForm.harga) });
+      const produkData: any = { ...pForm, harga: Number(pForm.harga) };
+      // Foto bersifat optional - hanya include kalau ada
+      if (!pForm.foto) delete produkData.foto;
+      const { error } = await supabase.from("produk").insert(produkData);
       if (error) throw error;
       setPForm(emptyP); fetchAll(); showToast("✅ Produk berhasil ditambahkan!");
     } catch (err: any) {
@@ -793,6 +796,11 @@ export default function AdminPage() {
                 <div>
                   <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Tag / Label</label>
                   <input className="field" value={pForm.tag} onChange={e => setPForm({...pForm, tag:e.target.value})} placeholder="Cth: Best Seller / Handmade / Eco" />
+                </div>
+                <div>
+                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>📸 Foto Produk (URL)</label>
+                  <input className="field" value={pForm.foto} onChange={e => setPForm({...pForm, foto:e.target.value})} placeholder="Paste link foto (https://...)" />
+                  <div style={{ fontSize:10, color:"#6b7c6d", marginTop:6 }}>💡 Copi link dari Google Photos, Imgur, atau sumber lain</div>
                 </div>
                 <button onClick={addProduk} disabled={loading} style={{ padding:"13px", borderRadius:12, background:"#3D2B1F", color:"#fff", fontSize:12, fontWeight:700, letterSpacing:".08em", textTransform:"uppercase", border:"none", cursor:"pointer", opacity:loading ? .6 : 1, marginTop:4 }}>
                   {loading ? "Menyimpan..." : "Simpan Produk"}
