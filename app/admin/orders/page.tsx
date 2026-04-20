@@ -119,9 +119,33 @@ export default function AdminOrdersPage() {
     setSendingWa(order.id);
     try {
       const statusLabel = STATUS_OPTIONS.find(s => s.v === order.status)?.l || order.status;
-      const message = order.no_resi 
-        ? `Halo ${order.nama_pembeli}! 👋\n\nStatus pesanan Anda: ${statusLabel}\n🚚 No. Resi: ${order.no_resi}\n\nOrder ID: ${order.order_id}\n\nTerima kasih telah berbelanja di Ciburial Marketplace! 🙏`
-        : `Halo ${order.nama_pembeli}! 👋\n\nStatus pesanan Anda: ${statusLabel}\n\nOrder ID: ${order.order_id}\n\nTerima kasih telah berbelanja di Ciburial Marketplace! 🙏`;
+      const statusEmoji = {
+        pending: "⏳",
+        dibayar: "✅",
+        diproses: "📦",
+        dikirim: "🚚",
+        selesai: "🎉",
+        dibatalkan: "❌"
+      }[order.status] || "•";
+
+      const message = `Halo ${order.nama_pembeli}! 👋
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   STATUS PESANAN ANDA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+${statusEmoji} ${statusLabel}
+📋 Order ID: ${order.order_id}
+${order.no_resi ? `🚚 No. Resi: ${order.no_resi}` : '⏳ Sedang diproses...'}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Terima kasih telah berbelanja di 
+✨ Ciburial Marketplace ✨
+
+Pertanyaan? Hubungi kami 💬
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
 
       const cleanedPhone = normalizePhoneNumber(order.no_wa);
       if (!cleanedPhone || cleanedPhone.length < 10) {
