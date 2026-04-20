@@ -13,8 +13,9 @@ interface Produk    { id: string; nama: string; deskripsi: string; harga: number
 interface Transaksi { id: string; tanggal: string; keterangan: string; kategori: string; tipe: "masuk" | "keluar"; jumlah: number; }
 interface Testimoni { id: string; nama: string; jabatan: string; pesan: string; foto?: string; tipe: "tokoh" | "berita"; }
 interface Iklan { id: string; judul: string; deskripsi: string; mediaUrl: string; tipe: "video" | "foto"; linkTujuan?: string; }
+interface Pengurus { id: string; nama: string; jabatan: string; kategori: "pelindung" | "pengawas" | "eksekutif" | "divisi"; urutan: number; foto?: string; }
 
-type AdminTab = "dashboard" | "kegiatan" | "produk" | "transaksi" | "testimoni" | "iklan";
+type AdminTab = "dashboard" | "kegiatan" | "produk" | "transaksi" | "testimoni" | "iklan" | "pengurus";
 
 const formatRp = (n: number) => "Rp " + n.toLocaleString("id-ID");
 
@@ -91,6 +92,7 @@ export default function AdminPage() {
   const [transaksiList, setTransaksiList] = useState<Transaksi[]>([]);
   const [testimoniList, setTestimoniList] = useState<Testimoni[]>([]);
   const [iklanList, setIklanList] = useState<Iklan[]>([]);
+  const [pengurusList, setPengurusList] = useState<Pengurus[]>([]);
 
   /* ─── form state ─── */
   const emptyK = { judul:"", tanggal: new Date().toISOString().split("T")[0], kategori:"keagamaan", deskripsi:"", foto:"" };
@@ -98,6 +100,7 @@ export default function AdminPage() {
   const emptyT: { tanggal:string; keterangan:string; kategori:string; tipe:"masuk"|"keluar"; jumlah:string } = { tanggal: new Date().toISOString().split("T")[0], keterangan:"", kategori:"Donasi Warga", tipe:"masuk", jumlah:"" };
   const emptyTm: { nama:string; jabatan:string; pesan:string; tipe:"tokoh"|"berita"; foto:string } = { nama:"", jabatan:"", pesan:"", tipe:"tokoh", foto:"" };
   const emptyIk: { judul:string; deskripsi:string; tipe:"video"|"foto"; mediaUrl:string; linkTujuan:string } = { judul:"", deskripsi:"", tipe:"video", mediaUrl:"", linkTujuan:"" };
+  const emptyPg: { nama:string; jabatan:string; kategori:"pelindung"|"pengawas"|"eksekutif"|"divisi"; urutan:string; foto:string } = { nama:"", jabatan:"", kategori:"pelindung", urutan:"1", foto:"" };
 
   const [kForm, setKForm] = useState(emptyK);
   const [kFile, setKFile] = useState<File | null>(null);
@@ -109,6 +112,8 @@ export default function AdminPage() {
   const [tmFile, setTmFile] = useState<File | null>(null);
   const [ikForm, setIkForm] = useState(emptyIk);
   const [ikFile, setIkFile] = useState<File | null>(null);
+  const [pgForm, setPgForm] = useState(emptyPg);
+  const [pgFile, setPgFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 
   const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(""), 3000); };
@@ -123,9 +128,11 @@ export default function AdminPage() {
     ]);
     let tm: any = { data: null };
     let ik: any = { data: null };
+    let pg: any = { data: null };
     try { 
       tm = await supabase.from("testimoni").select("*").order("created_at", { ascending: false }); 
       ik = await supabase.from("iklan").select("*").order("created_at", { ascending: false }); 
+      pg = await supabase.from("pengurus_desa").select("*").order("kategori").order("urutan", { ascending: true });
     } catch (e) {}
 
     if (k.data) setKegiatanList(k.data as Kegiatan[]);
@@ -133,6 +140,7 @@ export default function AdminPage() {
     if (t.data) setTransaksiList(t.data as Transaksi[]);
     if (tm.data) setTestimoniList(tm.data as Testimoni[]);
     if (ik.data) setIklanList(ik.data as Iklan[]);
+    if (pg.data) setPengurusList(pg.data as Pengurus[]);
 
     // Fetch dashboard data
     if (isSupabaseReady()) {
@@ -378,6 +386,29 @@ export default function AdminPage() {
     fetchAll(); showToast("🗑️ Iklan dihapus");
   };
 
+  /* ─── pengurus CRUD ─── */
+  const addPengurus = async () => {
+    if (!pgForm.nama || !pgForm.jabatan) return showToast("❌ Nama & jabatan wajib diisi");
+    setLoading(true);
+    let finalUrl = pgForm.foto;
+    try {
+      if (pgFile) finalUrl = await uploadToSupabase(pgFile);
+      const { error } = await supabase.from("pengurus_desa").insert({ ...pgForm, urutan: Number(pgForm.urutan), foto: finalUrl || null });
+      if (error) throw error;
+      setPgForm(emptyPg); setPgFile(null); fetchAll(); showToast("✅ Pengurus ditambahkan!");
+    } catch (err: any) {
+      showToast("❌ Gagal: " + err.message);
+    }
+    setLoading(false);
+  };
+
+  const deletePengurus = async (id: string, foto?: string) => {
+    if (!confirm("Hapus kepengurusan ini?")) return;
+    hapusDariSupabase(foto);
+    await supabase.from("pengurus_desa").delete().eq("id", id);
+    fetchAll(); showToast("🗑️ Pengurus dihapus");
+  };
+
   /* ─── Ringkasan keuangan ─── */
   const totalMasuk  = transaksiList.filter(t => t.tipe === "masuk").reduce((s, t) => s + t.jumlah, 0);
   const totalKeluar = transaksiList.filter(t => t.tipe === "keluar").reduce((s, t) => s + t.jumlah, 0);
@@ -469,7 +500,7 @@ export default function AdminPage() {
 
         {/* ── TAB NAV ── */}
         <div style={{ display:"flex", gap:4, marginBottom:20, background:"#FFFEF9", padding:4, borderRadius:14, border:"1px solid #E5E0D8", width:"fit-content", flexWrap:"wrap" }}>
-          {([["dashboard","📊 Dashboard"],["kegiatan","📅 Kegiatan"],["produk","🛒 Produk"],["transaksi","💰 Transaksi"],["testimoni","💬 Tokoh & Berita"],["iklan","🎥 Iklan Promo"]] as const).map(([key, label]) => (
+          {([["dashboard","📊 Dashboard"],["pengurus","👥 Pengurus"],["kegiatan","📅 Kegiatan"],["produk","🛒 Produk"],["transaksi","💰 Transaksi"],["testimoni","💬 Tokoh & Berita"],["iklan","🎥 Iklan Promo"]] as const).map(([key, label]) => (
             <button key={key} onClick={() => setActiveTab(key)} style={{
               padding:"9px 20px", borderRadius:10, fontSize:12, fontWeight:700, letterSpacing:".06em",
               border:"none", cursor:"pointer", transition:"all .2s",
@@ -1147,6 +1178,82 @@ export default function AdminPage() {
                       <button className="btn-sm" onClick={() => deleteIklan(ik.id, ik.mediaUrl)} style={{ background:"#FDF0F0", color:"#8B2020", flexShrink:0 }}>🗑️</button>
                     </div>
                   ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ═══════════════ TAB: PENGURUS ═══════════════ */}
+        {activeTab === "pengurus" && (
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 2fr", gap:20, alignItems:"start" }}>
+            {/* Form tambah */}
+            <div style={{ background:"#FFFEF9", border:"1px solid #E5E0D8", borderRadius:20, padding:"28px" }}>
+              <h3 style={{ fontSize:14, fontWeight:700, color:"#1C3A2B", marginBottom:20, paddingBottom:14, borderBottom:"1px solid #E5E0D8" }}>➕ Tambah Pengurus Desa</h3>
+              <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
+                <div>
+                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Kategori *</label>
+                  <select className="field" value={pgForm.kategori} onChange={e => setPgForm({...pgForm, kategori:e.target.value as any})}>
+                    <option value="pelindung">Dewan Pelindung & Penasihat</option>
+                    <option value="pengawas">Dewan Pengawas DKM</option>
+                    <option value="eksekutif">Tim Eksekutif Lapangan</option>
+                    <option value="divisi">5 Divisi Operasional (Garda Depan)</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Nama Lengkap *</label>
+                  <input className="field" value={pgForm.nama} onChange={e => setPgForm({...pgForm, nama:e.target.value})} placeholder="Cth: Bpk. Enang" />
+                </div>
+                <div>
+                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Jabatan / Peran *</label>
+                  <input className="field" value={pgForm.jabatan} onChange={e => setPgForm({...pgForm, jabatan:e.target.value})} placeholder="Cth: Ketua RW 02" />
+                </div>
+                <div>
+                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Urutan Tampil (Angka)</label>
+                  <input type="number" className="field" value={pgForm.urutan} onChange={e => setPgForm({...pgForm, urutan:e.target.value})} placeholder="1" />
+                </div>
+                <div style={{ background:"rgba(28,58,43,.06)", padding:14, borderRadius:12, border:"1px dashed rgba(28,58,43,.2)" }}>
+                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#1C3A2B", marginBottom:6 }}>Upload Foto Profil (Opsional)</label>
+                  <input type="file" accept="image/*" onChange={e => setPgFile(e.target.files?.[0] || null)} style={{ fontSize:12, width:"100%" }} />
+                  {pgFile && <p style={{ fontSize:10, color:"#1C6B3A", marginTop:8, fontWeight:700 }}>✓ File terpilih: {pgFile.name}</p>}
+                </div>
+                <button onClick={addPengurus} disabled={loading} style={{ padding:"13px", borderRadius:12, background:"#1C3A2B", color:"#fff", fontSize:12, fontWeight:700, letterSpacing:".08em", textTransform:"uppercase", border:"none", cursor:"pointer", opacity:loading ? .6 : 1, marginTop:4 }}>
+                  {loading ? "Menyimpan/Upload..." : "Simpan Pengurus"}
+                </button>
+              </div>
+            </div>
+
+            {/* List */}
+            <div style={{ background:"#FFFEF9", border:"1px solid #E5E0D8", borderRadius:20, overflow:"hidden" }}>
+              <div style={{ padding:"20px 24px", borderBottom:"1px solid #E5E0D8" }}>
+                <h3 style={{ fontSize:14, fontWeight:700, color:"#1C3A2B" }}>Daftar Pengurus Aktual ({pengurusList.length})</h3>
+              </div>
+              {pengurusList.length === 0 ? (
+                <div style={{ padding:"48px", textAlign:"center", color:"#9A8C85", fontSize:13 }}>Belum ada pengurus di database.</div>
+              ) : (
+                <div style={{ maxHeight:600, overflowY:"auto" }}>
+                  {pengurusList.map((pg) => {
+                    const bgKat = pg.kategori === 'pelindung' ? '#FDF4E3' : pg.kategori === 'pengawas' ? '#E8F5EE' : pg.kategori === 'eksekutif' ? '#FDF0F0' : '#EAF0F6';
+                    const colKat = pg.kategori === 'pelindung' ? '#9C7A14' : pg.kategori === 'pengawas' ? '#1C6B3A' : pg.kategori === 'eksekutif' ? '#B8472F' : '#1A3A6B';
+                    return (
+                      <div key={pg.id} className="row-hover" style={{ padding:"16px 24px", borderBottom:"1px solid #E5E0D8", display:"flex", gap:14, alignItems:"center", transition:"background .15s" }}>
+                        <div style={{ width:60, height:60, borderRadius:"50%", background:"#F0EDE5", border:"2px solid #E5E0D8", display:"flex", alignItems:"center", justifyContent:"center", fontSize:24, flexShrink:0, overflow:"hidden" }}>
+                          {pg.foto ? <img src={pg.foto} style={{width:"100%",height:"100%",objectFit:"cover"}} alt=""/> : "👤"}
+                        </div>
+                        <div style={{ flex:1 }}>
+                          <div style={{ display:"flex", gap:8, alignItems:"center", marginBottom:4 }}>
+                            <span style={{ fontSize:16, fontWeight:700, color:"#1A1410" }}>{pg.nama}</span>
+                            <span style={{ fontSize:9, fontWeight:800, padding:"3px 8px", borderRadius:6, textTransform:"uppercase", background:bgKat, color:colKat }}>
+                              {pg.kategori}
+                            </span>
+                          </div>
+                          <div style={{ fontSize:12, fontWeight:700, color:"#9A8C85", marginBottom:2 }}>{pg.jabatan}</div>
+                          <div style={{ fontSize:10, color:"#A89A90" }}>Urutan Tampil: {pg.urutan}</div>
+                        </div>
+                        <button className="btn-sm" onClick={() => deletePengurus(pg.id, pg.foto)} style={{ background:"#FDF0F0", color:"#8B2020", flexShrink:0 }}>🗑️ Hapus</button>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>

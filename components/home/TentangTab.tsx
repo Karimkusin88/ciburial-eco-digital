@@ -46,6 +46,7 @@ const divisi = [
 export default function TentangTab({ onNavigate, testimoni = [], onPaymentSuccess }: TentangTabProps) {
   const [loadingDonasi, setLoadingDonasi] = useState(false);
   const [totalJiwa, setTotalJiwa] = useState<number | null>(null);
+  const [pengurusDb, setPengurusDb] = useState<any[]>([]);
 
   useEffect(() => {
     if (!isSupabaseReady()) return;
@@ -54,6 +55,11 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
       // Tabel "keluarga" adalah data KK, bukan jiwa — jangan dijumlahkan
       const angRes = await supabase.from("anggota_kk").select("id", { count: "exact", head: true });
       setTotalJiwa(angRes.count || 0);
+
+      const pgRes = await supabase.from("pengurus_desa").select("*").order("urutan", { ascending: true });
+      if (pgRes.data && pgRes.data.length > 0) {
+        setPengurusDb(pgRes.data);
+      }
     })();
   }, []);
 
@@ -313,61 +319,68 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
           </div>
 
           {/* Dewan Pelindung */}
-          <div style={{ marginBottom: 12 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--go)", marginBottom: 14 }}>A. Dewan Pelindung & Penasihat</div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(130px,1fr))", gap: 12 }}>
-              {dwnPelindung.map((item, i) => (
-                <div key={i} className="ch" style={{ background: "var(--cw)", border: "1px solid var(--bo)", borderRadius: 16, padding: "18px 16px 14px", textAlign: "center" }}>
-                  <div style={{ width: 44, height: 44, borderRadius: "50%", background: "var(--cd)", margin: "0 auto 10px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, border: "2px solid var(--bo)", overflow: "hidden", backgroundSize: "cover", backgroundPosition: "center" }}>
+          <div style={{ marginBottom: 50 }}>
+            <div style={{ fontSize: 13, fontWeight: 800, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--go)", marginBottom: 20, textAlign: "center" }}>A. Dewan Pelindung & Penasihat</div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 32, justifyContent: "center" }}>
+              {(pengurusDb.filter(p => p.kategori === 'pelindung').length > 0 ? pengurusDb.filter(p => p.kategori === 'pelindung') : dwnPelindung.map((p,i) => ({ ...p, jabatan: p.role, nama: p.name, id: `p-${i}` }))).map((item: any, i) => (
+                <div key={item.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 50, position: 'relative', width: 220, animation: `float-heroic 6s ease-in-out infinite ${(i*0.2).toFixed(1)}s` }}>
+                  <div style={{ width: 140, height: 140, borderRadius: 28, padding: 5, background: "var(--cw)", border: `2px solid var(--go)`, zIndex: 2, position: "relative", marginBottom: -40, boxShadow: `0 16px 32px rgba(184,148,63,.25)`, overflow: "hidden" }}>
                     {item.foto ? (
-                      <img src={item.foto} alt={item.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      <img src={item.foto} alt={item.nama} style={{ width: "100%", height: "100%", borderRadius: 22, objectFit: "cover" }} />
                     ) : (
-                      item.icon
+                      <div style={{ width: "100%", height: "100%", borderRadius: 22, background: "var(--fo)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 44 }}>👤</div>
                     )}
                   </div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: "var(--tp)", marginBottom: 3 }}>{item.name}</div>
-                  <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".09em", textTransform: "uppercase", color: "var(--go)" }}>{item.role}</div>
+                  <div style={{ background: "linear-gradient(135deg,rgba(184,148,63,1),rgba(155,125,76,1))", padding: "64px 20px 24px", borderRadius: "16px 16px 24px 24px", width: "100%", textAlign: "center", borderTop: "none", boxShadow: `0 12px 28px rgba(0,0,0,0.2)` }}>
+                    <div style={{ fontSize: 15, fontWeight: 800, color: "white", marginBottom: 6, textShadow: "0 2px 4px rgba(0,0,0,0.2)" }}>{item.nama}</div>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.9)", textTransform: "uppercase", letterSpacing: ".06em" }}>{item.jabatan}</div>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
 
           {/* DKM + Tim Eksekutif */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(260px,100%),1fr))", gap: 14, marginBottom: 12 }}>
-            <div className="d2" style={{ background: "var(--cw)", border: "1px solid var(--bo)", borderRadius: 20, padding: "28px" }}>
-              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--go)", marginBottom: 20 }}>B. Dewan Pengawas Kas</div>
-              {dwnPengawas.map((item, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px", background: "var(--cd)", borderRadius: 12 }}>
-                  <div style={{ width: 48, height: 48, borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, overflow: "hidden", background: "white", border: "2px solid rgba(47,143,78,.15)" }}>
-                    {item.foto ? (
-                      <img src={item.foto} alt={item.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                    ) : (
-                      item.icon
-                    )}
-                  </div>
-                  <div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: "var(--tp)" }}>{item.name}</div>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: "var(--go)", textTransform: "uppercase", letterSpacing: ".07em" }}>{item.role}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="d3" style={{ background: "var(--cw)", border: "1px solid var(--bo)", borderRadius: 20, padding: "28px" }}>
-              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--go)", marginBottom: 20 }}>C. Tim Eksekutif Lapangan</div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                {timEksekutif.map((item, i) => (
-                  <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "11px 14px", background: "var(--cd)", borderRadius: 10 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                      <div style={{ width: 40, height: 40, borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, overflow: "hidden", background: "white", border: "2px solid rgba(47,143,78,.1)" }}>
-                        {item.foto ? (
-                          <img src={item.foto} alt={item.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                        ) : (
-                          item.icon
-                        )}
-                      </div>
-                      <span style={{ fontSize: 13, fontWeight: 700, color: "var(--tp)", fontStyle: item.name.includes("—") ? "italic" : "normal" }}>{item.name}</span>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 40, marginBottom: 40 }}>
+            {/* Dewan Pengawas */}
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 800, letterSpacing: ".14em", textTransform: "uppercase", color: "#4FBF7E", marginBottom: 20, textAlign: "center" }}>B. Dewan Pengawas Kas</div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 32, justifyContent: "center", maxWidth: 800, margin: "0 auto" }}>
+                {(pengurusDb.filter(p => p.kategori === 'pengawas').length > 0 ? pengurusDb.filter(p => p.kategori === 'pengawas') : dwnPengawas.map((p,i) => ({ ...p, jabatan: p.role, nama: p.name, id: `w-${i}` }))).map((item: any, i) => (
+                  <div key={item.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 40, position: 'relative', width: 220, animation: `float-heroic 6s ease-in-out infinite ${(i*0.2 + 1).toFixed(1)}s` }}>
+                    <div style={{ width: 140, height: 140, borderRadius: 28, padding: 5, background: "var(--cw)", border: `2px solid #2F8F4E`, zIndex: 2, position: "relative", marginBottom: -40, boxShadow: `0 16px 32px rgba(47,143,78,.25)`, overflow: "hidden" }}>
+                      {item.foto ? (
+                        <img src={item.foto} alt={item.nama} style={{ width: "100%", height: "100%", borderRadius: 22, objectFit: "cover" }} />
+                      ) : (
+                        <div style={{ width: "100%", height: "100%", borderRadius: 22, background: "var(--fo)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 44 }}>👤</div>
+                      )}
                     </div>
-                    <span style={{ fontSize: 9, fontWeight: 700, color: "var(--tm)", textTransform: "uppercase", letterSpacing: ".07em", background: "var(--cw)", padding: "3px 9px", borderRadius: 99 }}>{item.role}</span>
+                    <div style={{ background: "linear-gradient(135deg,rgba(47,143,78,1),rgba(28,58,43,1))", padding: "64px 20px 24px", borderRadius: "16px 16px 24px 24px", width: "100%", textAlign: "center", borderTop: "none", boxShadow: `0 12px 28px rgba(0,0,0,0.2)` }}>
+                      <div style={{ fontSize: 15, fontWeight: 800, color: "white", marginBottom: 6, textShadow: "0 2px 4px rgba(0,0,0,0.2)" }}>{item.nama}</div>
+                      <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.8)", textTransform: "uppercase", letterSpacing: ".06em" }}>{item.jabatan}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Tim Eksekutif */}
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 800, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--go)", marginBottom: 20, textAlign: "center" }}>C. Tim Eksekutif Lapangan</div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 32, justifyContent: "center" }}>
+                {(pengurusDb.filter(p => p.kategori === 'eksekutif').length > 0 ? pengurusDb.filter(p => p.kategori === 'eksekutif') : timEksekutif.map((p,i) => ({ ...p, jabatan: p.role, nama: p.name, id: `e-${i}` }))).map((item: any, i) => (
+                  <div key={item.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 40, position: 'relative', width: 220, animation: `float-heroic 6s ease-in-out infinite ${(i*0.2 + 2).toFixed(1)}s` }}>
+                    <div style={{ width: 140, height: 140, borderRadius: 28, padding: 5, background: "var(--cw)", border: `2px solid var(--go)`, zIndex: 2, position: "relative", marginBottom: -40, boxShadow: `0 16px 32px rgba(184,148,63,.25)`, overflow: "hidden" }}>
+                      {item.foto ? (
+                        <img src={item.foto} alt={item.nama} style={{ width: "100%", height: "100%", borderRadius: 22, objectFit: "cover" }} />
+                      ) : (
+                        <div style={{ width: "100%", height: "100%", borderRadius: 22, background: "var(--fo)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 44 }}>👤</div>
+                      )}
+                    </div>
+                    <div style={{ background: "linear-gradient(135deg,rgba(184,148,63,1),rgba(155,125,76,1))", padding: "64px 20px 24px", borderRadius: "16px 16px 24px 24px", width: "100%", textAlign: "center", borderTop: "none", boxShadow: `0 12px 28px rgba(0,0,0,0.2)` }}>
+                      <div style={{ fontSize: 15, fontWeight: 800, color: "white", marginBottom: 6, textShadow: "0 2px 4px rgba(0,0,0,0.2)" }}>{item.nama}</div>
+                      <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.9)", textTransform: "uppercase", letterSpacing: ".06em" }}>{item.jabatan}</div>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -401,10 +414,14 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
                   {/* Ketua & Wakil (Nama saja) */}
                   <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                     <div style={{ fontSize: 10, fontWeight: 700, color: "#2F8F4E", textTransform: "uppercase", letterSpacing: ".05em" }}>👤 Ketua</div>
-                    <div style={{ fontSize: 12, fontWeight: 600, color: "#1C3A2B", fontStyle: d.ketua.nama.includes("—") ? "italic" : "normal", marginBottom: 8 }}>{d.ketua.nama}</div>
+                    <div style={{ fontSize: 12, fontWeight: 600, color: "#1C3A2B", fontStyle: (pengurusDb.find(p => p.kategori === 'divisi' && p.jabatan.includes("Ketua") && p.jabatan.includes(d.nama))?.nama || d.ketua.nama).includes("—") ? "italic" : "normal", marginBottom: 8 }}>
+                      {pengurusDb.find(p => p.kategori === 'divisi' && p.jabatan.includes("Ketua") && p.jabatan.includes(d.nama))?.nama || d.ketua.nama}
+                    </div>
                     
                     <div style={{ fontSize: 10, fontWeight: 700, color: "#2F8F4E", textTransform: "uppercase", letterSpacing: ".05em" }}>👤 Wakil</div>
-                    <div style={{ fontSize: 12, fontWeight: 600, color: "#1C3A2B", fontStyle: d.wakil.nama.includes("—") ? "italic" : "normal" }}>{d.wakil.nama}</div>
+                    <div style={{ fontSize: 12, fontWeight: 600, color: "#1C3A2B", fontStyle: (pengurusDb.find(p => p.kategori === 'divisi' && p.jabatan.includes("Wakil") && p.jabatan.includes(d.nama))?.nama || d.wakil.nama).includes("—") ? "italic" : "normal" }}>
+                      {pengurusDb.find(p => p.kategori === 'divisi' && p.jabatan.includes("Wakil") && p.jabatan.includes(d.nama))?.nama || d.wakil.nama}
+                    </div>
                   </div>
                 </div>
               ))}
