@@ -9,7 +9,7 @@ import "./admin-styles.css";
 // PIN diverifikasi server-side via /api/admin/verify
 
 interface Kegiatan { id: string; judul: string; tanggal: string; kategori: string; deskripsi: string; foto?: string; }
-interface Produk    { id: string; nama: string; deskripsi: string; harga: number; tag: string; icon: string; }
+interface Produk    { id: string; nama: string; deskripsi: string; harga: number; tag: string; icon: string; foto?: string; }
 interface Transaksi { id: string; tanggal: string; keterangan: string; kategori: string; tipe: "masuk" | "keluar"; jumlah: number; }
 interface Testimoni { id: string; nama: string; jabatan: string; pesan: string; foto?: string; tipe: "tokoh" | "berita"; }
 interface Iklan { id: string; judul: string; deskripsi: string; mediaUrl: string; tipe: "video" | "foto"; linkTujuan?: string; }
@@ -262,21 +262,43 @@ export default function AdminPage() {
   const addProduk = async () => {
     if (!pForm.nama || !pForm.harga) return showToast("❌ Nama & harga wajib diisi");
     setLoading(true);
+    let finalUrl = pForm.foto;
     try {
-      const produkData: any = { ...pForm, harga: Number(pForm.harga) };
-      // Foto bersifat optional - hanya include kalau ada
-      if (!pForm.foto) delete produkData.foto;
+      // Upload file kalau ada
+      if (pFile) {
+        finalUrl = await uploadToSupabase(pFile);
+      }
+      
+      const produkData: any = {
+        nama: pForm.nama,
+        deskripsi: pForm.deskripsi,
+        harga: Number(pForm.harga),
+        tag: pForm.tag,
+        icon: pForm.icon
+      };
+      
+      // Include foto kalau ada
+      if (finalUrl) {
+        produkData.foto = finalUrl;
+      }
+      
       const { error } = await supabase.from("produk").insert(produkData);
       if (error) throw error;
-      setPForm(emptyP); fetchAll(); showToast("✅ Produk berhasil ditambahkan!");
+      
+      setPForm(emptyP);
+      setPFile(null);
+      fetchAll();
+      showToast("✅ Produk berhasil ditambahkan!");
     } catch (err: any) {
+      console.error("Upload error:", err);
       showToast("❌ Gagal: " + err.message);
     }
     setLoading(false);
   };
 
-  const deleteProduk = async (id: string) => {
+  const deleteProduk = async (id: string, foto?: string) => {
     if (!confirm("Hapus produk ini?")) return;
+    if (foto) hapusDariSupabase(foto);
     await supabase.from("produk").delete().eq("id", id);
     fetchAll(); showToast("🗑️ Produk dihapus");
   };
@@ -797,10 +819,22 @@ export default function AdminPage() {
                   <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Tag / Label</label>
                   <input className="field" value={pForm.tag} onChange={e => setPForm({...pForm, tag:e.target.value})} placeholder="Cth: Best Seller / Handmade / Eco" />
                 </div>
-                <div>
-                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>📸 Foto Produk (URL)</label>
-                  <input className="field" value={pForm.foto} onChange={e => setPForm({...pForm, foto:e.target.value})} placeholder="Paste link foto (https://...)" />
-                  <div style={{ fontSize:10, color:"#6b7c6d", marginTop:6 }}>💡 Copi link dari Google Photos, Imgur, atau sumber lain</div>
+                <div style={{ background:"rgba(61,43,31,.06)", padding:14, borderRadius:12, border:"1px dashed rgba(61,43,31,.2)" }}>
+                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#3D2B1F", marginBottom:6 }}>📸 Upload Foto Produk</label>
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    onChange={e => setPFile(e.target.files?.[0] || null)} 
+                    style={{ fontSize:12, width:"100%", cursor:"pointer" }} 
+                  />
+                  {pFile && (
+                    <p style={{ fontSize:10, color:"#4A7C59", marginTop:8, fontWeight:700 }}>
+                      ✓ File terpilih: {pFile.name}
+                    </p>
+                  )}
+                  <div style={{ fontSize:10, color:"#9A8C85", marginTop:8 }}>
+                    💡 Format: JPG, PNG, WebP (max ~5MB)
+                  </div>
                 </div>
                 <button onClick={addProduk} disabled={loading} style={{ padding:"13px", borderRadius:12, background:"#3D2B1F", color:"#fff", fontSize:12, fontWeight:700, letterSpacing:".08em", textTransform:"uppercase", border:"none", cursor:"pointer", opacity:loading ? .6 : 1, marginTop:4 }}>
                   {loading ? "Menyimpan..." : "Simpan Produk"}
@@ -828,7 +862,7 @@ export default function AdminPage() {
                         <div style={{ fontSize:13, color:"#4A7C59", fontWeight:700 }}>{formatRp(p.harga)}</div>
                         {p.deskripsi && <div style={{ fontSize:12, color:"#9A8C85", marginTop:2 }}>{p.deskripsi}</div>}
                       </div>
-                      <button className="btn-sm" onClick={() => deleteProduk(p.id)} style={{ background:"#FDF0F0", color:"#8B2020" }}>🗑️ Hapus</button>
+                      <button className="btn-sm" onClick={() => deleteProduk(p.id, p.foto)} style={{ background:"#FDF0F0", color:"#8B2020" }}>🗑️ Hapus</button>
                     </div>
                   ))}
                 </div>
