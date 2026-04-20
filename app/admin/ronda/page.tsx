@@ -180,14 +180,74 @@ export default function AdminRondaPage() {
         @keyframes slide-in { from{transform:translateX(100%);opacity:0} to{transform:translateX(0);opacity:1} }
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
         @keyframes scanline { 0%{top:0} 100%{top:100%} }
-        .ronda-tab { transition:all 0.2s; }
-        .ronda-tab:hover { background:rgba(47,143,78,0.08) !important; }
-        .ronda-card { transition:all 0.25s; border:1px solid rgba(47,143,78,0.12); }
-        .ronda-card:hover { border-color:rgba(47,143,78,0.25) !important; transform:translateY(-1px); }
-        .scan-btn { transition:all 0.2s; }
-        .scan-btn:hover { filter:brightness(0.95); }
-        ::-webkit-scrollbar { width:4px; }
-        ::-webkit-scrollbar-thumb { background:rgba(47,143,78,0.3); border-radius:2px; }
+        
+        .ronda-tab { 
+          transition:all 0.3s cubic-bezier(0.34,1.1,0.64,1); 
+          cursor:pointer;
+        }
+        .ronda-tab:hover { 
+          background:rgba(47,143,78,0.08) !important; 
+          transform: translateY(-1px);
+        }
+        .ronda-tab:active {
+          transform: translateY(0);
+        }
+        
+        .ronda-card { 
+          transition:all 0.3s ease;
+          border:1px solid rgba(47,143,78,0.12);
+          box-shadow: 0 1px 3px rgba(47,143,78,0.08);
+        }
+        .ronda-card:hover { 
+          border-color:rgba(47,143,78,0.25) !important;
+          box-shadow: 0 4px 12px rgba(47,143,78,0.12);
+          transform:translateY(-2px);
+        }
+        
+        .scan-btn {
+          transition:all 0.3s ease;
+          cursor:pointer;
+          position:relative;
+          overflow:hidden;
+        }
+        .scan-btn:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(47,143,78,0.15) !important;
+        }
+        .scan-btn:active {
+          transform: translateY(0);
+        }
+        
+        input[type="text"],
+        input[type="date"],
+        input[type="time"],
+        select,
+        textarea {
+          transition:all 0.3s ease;
+          font-family:'Inter',system-ui,sans-serif !important;
+        }
+        
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        input[type="time"]:focus,
+        select:focus,
+        textarea:focus {
+          outline:none;
+          background:rgba(255,254,249,0.95) !important;
+          border-color:rgba(47,143,78,0.4) !important;
+          box-shadow:0 0 0 3px rgba(47,143,78,0.08), inset 0 1px 2px rgba(47,143,78,0.08) !important;
+        }
+        
+        ::-webkit-scrollbar { width:6px; height:6px; }
+        ::-webkit-scrollbar-track { background:transparent; }
+        ::-webkit-scrollbar-thumb { 
+          background:rgba(47,143,78,0.25); 
+          border-radius:3px;
+          transition: background 0.2s ease;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+          background:rgba(47,143,78,0.4);
+        }
       `}</style>
 
       {/* Toast */}
@@ -280,8 +340,10 @@ export default function AdminRondaPage() {
                 const isActive = activeJadwal === j.id;
                 return (
                   <div key={j.id} onClick={() => { setActiveJadwal(j.id); setTab("scan"); }}
-                    style={{ padding:"14px 18px", borderBottom:i<jadwal.length-1?"1px solid rgba(47,143,78,0.08)":"none", cursor:"pointer", background:isActive?"rgba(47,143,78,0.06)":"transparent", display:"flex", alignItems:"center", gap:14, transition:"background 0.2s" }}>
-                    <div style={{ width:40, height:40, borderRadius:10, background:"rgba(47,143,78,0.08)", border:"1px solid rgba(47,143,78,0.15)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0 }}>🔦</div>
+                    style={{ padding:"14px 18px", borderBottom:i<jadwal.length-1?"1px solid rgba(47,143,78,0.08)":"none", cursor:"pointer", background:activeJadwal===j.id?"rgba(47,143,78,0.06)":"transparent", display:"flex", alignItems:"center", gap:14, transition:"all 0.2s cubic-bezier(0.34,1.1,0.64,1)", borderRadius:8 }}
+                    onMouseEnter={e=>activeJadwal!==j.id&&(e.currentTarget.style.background="rgba(47,143,78,0.04)")}
+                    onMouseLeave={e=>activeJadwal!==j.id&&(e.currentTarget.style.background="transparent")}>
+                    <div style={{ width:40, height:40, borderRadius:10, background:"rgba(47,143,78,0.08)", border:"1px solid rgba(47,143,78,0.15)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0, transition:"all 0.3s ease", boxShadow:"0 1px 3px rgba(47,143,78,0.06)" }}>🔦</div>
                     <div style={{ flex:1 }}>
                       <div style={{ fontFamily:"'Rajdhani',sans-serif", fontWeight:600, fontSize:15, color:"#1C3A2B" }}>
                         RT {j.rt} — {new Date(j.tanggal).toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"long"})}
@@ -305,13 +367,13 @@ export default function AdminRondaPage() {
             <div style={{ marginBottom:16 }}>
               <label style={{ fontSize:10, fontWeight:700, color:"rgba(47,143,78,0.6)", letterSpacing:"0.15em", display:"block", marginBottom:6 }}>JADWAL AKTIF</label>
               <select value={activeJadwal||""} onChange={e=>setActiveJadwal(e.target.value)}
-                style={{ width:"100%", padding:"10px 14px", borderRadius:10, border:"1.5px solid rgba(47,143,78,0.2)", fontSize:12, background:"rgba(255,254,249,0.8)", color:"#2F8F4E", outline:"none", fontFamily:"'Inter',sans-serif" }}>
+                style={{ width:"100%", padding:"10px 14px", borderRadius:10, border:"1.5px solid rgba(47,143,78,0.2)", fontSize:12, background:"rgba(255,254,249,0.8)", color:"#2F8F4E", outline:"none", fontFamily:"'Inter',sans-serif", boxShadow:"0 1px 3px rgba(47,143,78,0.08)", transition:"all 0.3s ease", cursor:"pointer" }}>
                 <option value="">-- PILIH JADWAL RONDA --</option>
                 {jadwal.map(j => <option key={j.id} value={j.id}>RT {j.rt} — {new Date(j.tanggal).toLocaleDateString("id-ID",{day:"numeric",month:"long"})} ({absensi.filter(a=>a.jadwal_id===j.id).length} hadir)</option>)}
               </select>
             </div>
 
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:16 }}>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:18 }}>
               {/* NFC Scanner panel */}
               <div style={{ background:"linear-gradient(135deg,rgba(255,254,249,0.8),rgba(232,245,238,0.4))", borderRadius:18, padding:24, border:`1.5px solid ${scanning?"rgba(47,143,78,0.4)":"rgba(47,143,78,0.12)"}`, boxShadow:scanning?"0 0 30px rgba(47,143,78,0.1)":"none", transition:"all 0.3s", textAlign:"center" }}>
                 <div style={{ fontSize:10, fontWeight:700, color:"rgba(47,143,78,0.6)", letterSpacing:"0.15em", marginBottom:20 }}>
@@ -322,7 +384,7 @@ export default function AdminRondaPage() {
 
                 {/* Last scan result */}
                 {lastScan && (
-                  <div style={{ margin:"20px 0", padding:"12px 16px", background:"rgba(79,191,126,0.12)", border:"1px solid rgba(47,143,78,0.2)", borderRadius:12, animation:"slide-in 0.3s ease" }}>
+                  <div style={{ margin:"20px 0", padding:"12px 16px", background:"rgba(79,191,126,0.12)", border:"1px solid rgba(47,143,78,0.2)", borderRadius:12, animation:"slide-in 0.3s ease", boxShadow:"0 2px 6px rgba(47,143,78,0.1)" }}>
                     <div style={{ fontFamily:"'Rajdhani',sans-serif", fontWeight:700, fontSize:16, color:"#2F8F4E" }}>✓ {lastScan.nama}</div>
                     <div style={{ fontSize:11, color:"rgba(47,143,78,0.6)", marginTop:4, fontWeight:500 }}>+{lastScan.poin} POIN · {lastScan.waktu}</div>
                   </div>
@@ -344,12 +406,12 @@ export default function AdminRondaPage() {
                 <div style={{ background:"linear-gradient(135deg,rgba(255,254,249,0.8),rgba(232,245,238,0.4))", borderRadius:14, padding:18, border:"1.5px solid rgba(47,143,78,0.12)", marginBottom:12 }}>
                   <div style={{ fontSize:10, fontWeight:700, color:"rgba(47,143,78,0.6)", letterSpacing:"0.15em", marginBottom:12 }}>INPUT MANUAL</div>
                   <select value={manualKK} onChange={e=>setManualKK(e.target.value)}
-                    style={{ width:"100%", padding:"9px 12px", borderRadius:10, border:"1.5px solid rgba(47,143,78,0.2)", fontSize:12, background:"rgba(255,254,249,0.8)", color:"#1C3A2B", outline:"none", marginBottom:10, fontFamily:"'Inter',sans-serif" }}>
+                    style={{ width:"100%", padding:"9px 12px", borderRadius:10, border:"1.5px solid rgba(47,143,78,0.2)", fontSize:12, background:"rgba(255,254,249,0.8)", color:"#1C3A2B", outline:"none", marginBottom:10, fontFamily:"'Inter',sans-serif", boxShadow:"0 1px 3px rgba(47,143,78,0.08)", transition:"all 0.3s ease", cursor:"pointer" }}>
                     <option value="">-- Pilih warga --</option>
                     {kkList.map(k => <option key={k.id} value={k.id}>{k.kepala_keluarga} (RT {k.rt})</option>)}
                   </select>
                   <button onClick={()=>{ if(manualKK){ catatAbsensi(manualKK,"manual"); setManualKK(""); } }} className="scan-btn"
-                    style={{ width:"100%", padding:"9px", borderRadius:10, border:"1.5px solid rgba(47,143,78,0.3)", background:"linear-gradient(135deg,#2F8F4E,#4FBF7E)", color:"#FFF", fontSize:11, fontWeight:700, cursor:"pointer", letterSpacing:"0.1em", fontFamily:"'Inter',sans-serif" }}>
+                    style={{ width:"100%", padding:"10px", borderRadius:10, border:"1.5px solid rgba(47,143,78,0.3)", background:"linear-gradient(135deg,#2F8F4E,#4FBF7E)", color:"#FFF", fontSize:11, fontWeight:700, letterSpacing:"0.1em", fontFamily:"'Inter',sans-serif", boxShadow:"0 2px 6px rgba(47,143,78,0.2)" }}>
                     ✓ CATAT HADIR
                   </button>
                 </div>
@@ -365,7 +427,7 @@ export default function AdminRondaPage() {
                       <div style={{ padding:20, textAlign:"center", color:"rgba(47,143,78,0.2)", fontSize:11, letterSpacing:"0.08em" }}>BELUM ADA YANG HADIR</div>
                     ) : activeAbsensi.map((a, i) => (
                       <div key={a.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"9px 16px", borderBottom:i<activeAbsensi.length-1?"1px solid rgba(47,143,78,0.08)":"none" }}>
-                        <div style={{ width:6, height:6, borderRadius:"50%", background:"#2F8F4E", boxShadow:"0 0 6px rgba(47,143,78,0.6)", flexShrink:0 }}/>
+                        <div style={{ width:6, height:6, borderRadius:"50%", background:"#2F8F4E", boxShadow:"0 0 6px rgba(47,143,78,0.5)", flexShrink:0, transition:"all 0.3s ease" }}/>
                         <div style={{ flex:1 }}>
                           <div style={{ fontSize:13, color:"#1C3A2B", fontWeight:600 }}>{a.nama}</div>
                           <div style={{ fontSize:10, color:"rgba(47,143,78,0.5)", fontWeight:500 }}>{a.metode==="nfc"?"e-KTP/NFC":"Manual"} · {new Date(a.waktu_tap).toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"})}</div>
@@ -400,20 +462,20 @@ export default function AdminRondaPage() {
                 <div key={f.key} style={{ marginBottom:12 }}>
                   <label style={{ fontSize:10, fontWeight:700, color:"rgba(47,143,78,0.6)", letterSpacing:"0.12em", display:"block", marginBottom:5 }}>{f.label}</label>
                   <input type={f.type} value={(formJadwal as any)[f.key]} onChange={e=>setFormJadwal({...formJadwal,[f.key]:e.target.value})}
-                    style={{ width:"100%", padding:"9px 12px", borderRadius:10, border:"1.5px solid rgba(47,143,78,0.2)", fontSize:13, background:"rgba(255,254,249,0.8)", color:"#2F8F4E", outline:"none", boxSizing:"border-box", fontFamily:"'Inter',sans-serif" }}/>
+                    style={{ width:"100%", padding:"9px 12px", borderRadius:10, border:"1.5px solid rgba(47,143,78,0.2)", fontSize:13, background:"rgba(255,254,249,0.8)", color:"#2F8F4E", outline:"none", boxSizing:"border-box", fontFamily:"'Inter',sans-serif", boxShadow:"0 1px 3px rgba(47,143,78,0.08)", transition:"all 0.3s ease" }}/>
                 </div>
               ))}
 
               <div style={{ marginBottom:16 }}>
                 <label style={{ fontSize:10, fontWeight:700, color:"rgba(47,143,78,0.6)", letterSpacing:"0.12em", display:"block", marginBottom:5 }}>RT</label>
                 <select value={formJadwal.rt} onChange={e=>setFormJadwal({...formJadwal,rt:e.target.value})}
-                  style={{ width:"100%", padding:"9px 12px", borderRadius:10, border:"1.5px solid rgba(47,143,78,0.2)", fontSize:13, background:"rgba(255,254,249,0.8)", color:"#2F8F4E", outline:"none", fontFamily:"'Inter',sans-serif" }}>
+                  style={{ width:"100%", padding:"9px 12px", borderRadius:10, border:"1.5px solid rgba(47,143,78,0.2)", fontSize:13, background:"rgba(255,254,249,0.8)", color:"#2F8F4E", outline:"none", fontFamily:"'Inter',sans-serif", boxShadow:"0 1px 3px rgba(47,143,78,0.08)", transition:"all 0.3s ease", cursor:"pointer" }}>
                   {["01","02","03","04","05"].map(v => <option key={v} value={v}>RT {v}</option>)}
                 </select>
               </div>
 
               <button onClick={buatJadwal} className="scan-btn"
-                style={{ width:"100%", padding:"11px", borderRadius:12, border:"1.5px solid rgba(47,143,78,0.3)", background:"linear-gradient(135deg,#2F8F4E,#4FBF7E)", color:"#FFF", fontSize:12, fontWeight:700, cursor:"pointer", letterSpacing:"0.1em", fontFamily:"'Inter',sans-serif" }}>
+                style={{ width:"100%", padding:"11px", borderRadius:12, border:"1.5px solid rgba(47,143,78,0.3)", background:"linear-gradient(135deg,#2F8F4E,#4FBF7E)", color:"#FFF", fontSize:12, fontWeight:700, letterSpacing:"0.1em", fontFamily:"'Inter',sans-serif", boxShadow:"0 2px 8px rgba(47,143,78,0.2)", transition:"all 0.3s ease" }}>
                 + BUAT JADWAL
               </button>
 
@@ -436,10 +498,10 @@ export default function AdminRondaPage() {
                 const jmlHadir = absensi.filter(a => a.jadwal_id === j.id).length;
                 return (
                   <div key={j.id} onClick={() => { setActiveJadwal(j.id); setTab("scan"); }}
-                    style={{ padding:"13px 18px", borderBottom:i<jadwal.length-1?"1px solid rgba(47,143,78,0.08)":"none", cursor:"pointer", display:"flex", alignItems:"center", gap:12, transition:"background 0.15s" }}
-                    onMouseEnter={e=>(e.currentTarget.style.background="rgba(47,143,78,0.05)")}
+                    style={{ padding:"13px 18px", borderBottom:i<jadwal.length-1?"1px solid rgba(47,143,78,0.08)":"none", cursor:"pointer", display:"flex", alignItems:"center", gap:12, transition:"all 0.15s", borderRadius:8 }}
+                    onMouseEnter={e=>(e.currentTarget.style.background="rgba(47,143,78,0.06)")}
                     onMouseLeave={e=>(e.currentTarget.style.background="transparent")}>
-                    <div style={{ width:8, height:8, borderRadius:"50%", background:j.tanggal===hariIni?"#2F8F4E":"rgba(47,143,78,0.2)", boxShadow:j.tanggal===hariIni?"0 0 8px rgba(47,143,78,0.6)":"none", flexShrink:0 }}/>
+                    <div style={{ width:8, height:8, borderRadius:"50%", background:j.tanggal===hariIni?"#2F8F4E":"rgba(47,143,78,0.2)", boxShadow:j.tanggal===hariIni?"0 0 8px rgba(47,143,78,0.5)":"0 0 4px rgba(47,143,78,0.2)", flexShrink:0, transition:"all 0.3s ease" }}/>
                     <div style={{ flex:1 }}>
                       <div style={{ fontFamily:"'Rajdhani',sans-serif", fontWeight:600, fontSize:14, color:"#1C3A2B" }}>
                         RT {j.rt} — {new Date(j.tanggal).toLocaleDateString("id-ID",{weekday:"short",day:"numeric",month:"short"})}
