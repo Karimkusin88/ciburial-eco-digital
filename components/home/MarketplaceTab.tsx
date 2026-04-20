@@ -92,6 +92,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
   const [reviewLoading, setReviewLoading] = useState(false);
   const [newReview, setNewReview] = useState({ nama: "", rating: 5, komentar: "" });
   const [submittingReview, setSubmittingReview] = useState(false);
+  const [detailQty, setDetailQty] = useState(1);
 
   // Load keranjang dari localStorage pas komponen pertama kali jalan
   useEffect(() => {
@@ -612,7 +613,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
       <div className="pi" style={{ paddingTop: "clamp(64px,10vw,120px)", paddingBottom: 80, minHeight: "100vh", background: "linear-gradient(135deg,rgba(250,248,243,.5) 0%,rgba(255,254,249,.8) 100%)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 clamp(16px,3vw,28px)" }}>
           {/* Close Button */}
-          <button onClick={() => setSelectedProduct(null)} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", fontSize: 14, fontWeight: 700, color: "#2F8F4E", padding: "6px 0", marginBottom: 24, transition: "all 0.3s" }}
+          <button onClick={() => { setSelectedProduct(null); setDetailQty(1); }} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", fontSize: 14, fontWeight: 700, color: "#2F8F4E", padding: "6px 0", marginBottom: 24, transition: "all 0.3s" }}
             onMouseEnter={(e) => e.currentTarget.style.transform = "translateX(-4px)"}
             onMouseLeave={(e) => e.currentTarget.style.transform = "translateX(0)"}
           >
@@ -677,8 +678,36 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                 </p>
               </div>
 
+              {/* Quantity Selector */}
+              <div style={{ display: "flex", alignItems: "center", gap: 16, padding: "16px", background: "rgba(47,143,78,.06)", borderRadius: 12, border: "1.5px solid rgba(47,143,78,.15)" }}>
+                <span style={{ fontSize: 12, fontWeight: 700, color: "#6b7c6d", textTransform: "uppercase", letterSpacing: "0.05em" }}>Jumlah</span>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, background: "white", borderRadius: 8, padding: "4px 8px", border: "1.5px solid rgba(47,143,78,.2)" }}>
+                  <button
+                    onClick={() => setDetailQty(Math.max(1, detailQty - 1))}
+                    style={{ background: "none", border: "none", fontSize: 18, cursor: "pointer", color: "#2F8F4E", fontWeight: 800, width: 24, textAlign: "center", transition: "all 0.2s", padding: 0 }}
+                    onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.2)"}
+                    onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+                  >
+                    −
+                  </button>
+                  <span style={{ fontSize: 14, fontWeight: 800, color: "#1C3A2B", minWidth: 30, textAlign: "center" }}>{detailQty}</span>
+                  <button
+                    onClick={() => setDetailQty(detailQty + 1)}
+                    style={{ background: "none", border: "none", fontSize: 18, cursor: "pointer", color: "#2F8F4E", fontWeight: 800, width: 24, textAlign: "center", transition: "all 0.2s", padding: 0 }}
+                    onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.2)"}
+                    onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
               {/* Tombol Add to Cart */}
-              <button onClick={() => { addToCart(selectedProduct); setSelectedProduct(null); }}
+              <button onClick={() => {
+                for (let i = 0; i < detailQty; i++) addToCart(selectedProduct);
+                setSelectedProduct(null);
+                setDetailQty(1);
+              }}
                 style={{ padding: "14px 24px", background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", border: "none", borderRadius: 12, color: "#FFF", fontSize: 15, fontWeight: 800, cursor: "pointer", boxShadow: "0 8px 20px rgba(47,143,78,.25)", transition: "all 0.3s", letterSpacing: "0.02em" }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = "translateY(-2px)";
@@ -689,7 +718,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                   e.currentTarget.style.boxShadow = "0 8px 20px rgba(47,143,78,.25)";
                 }}
               >
-                🛒 Tambah ke Keranjang
+                🛒 Tambah {detailQty > 1 ? detailQty + 'x' : ''} ke Keranjang
               </button>
             </div>
           </div>
