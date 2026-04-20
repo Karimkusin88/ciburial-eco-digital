@@ -78,6 +78,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
   const [orderForm, setOrderForm] = useState<OrderForm>(emptyOrder);
   const [orderLoading, setOrderLoading] = useState(false);
   const [orderDone, setOrderDone] = useState<{orderId:string;metode:string}|null>(null);
+  const [directCheckoutItems, setDirectCheckoutItems] = useState<CartItem[]>([]); // For "Beli Langsung"
 
   // State untuk Tracking
   const [showTracking, setShowTracking] = useState(false);
@@ -169,7 +170,11 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
   });
 
   const ongkosKirim = METODE_KIRIM.find(m=>m.v===orderForm.metode_kirim)?.harga||0;
-  const totalBayar = totalCartPrice + ongkosKirim;
+  
+  // Use directCheckout items if doing direct purchase, otherwise use cart
+  const itemsForCheckout = directCheckoutItems.length > 0 ? directCheckoutItems : cart;
+  const checkoutTotal = itemsForCheckout.reduce((total, item) => total + item.harga * item.qty, 0);
+  const totalBayar = checkoutTotal + ongkosKirim;
 
   // ─── LOAD REVIEWS ─────────────────────────────────────────────────────
   useEffect(() => {
@@ -781,10 +786,13 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
 
                 {/* Beli Langsung */}
                 <button onClick={() => {
-                  for (let i = 0; i < detailQty; i++) addToCart(selectedProduct);
+                  const newItems: CartItem[] = [];
+                  for (let i = 0; i < detailQty; i++) {
+                    newItems.push({ ...selectedProduct!, qty: 1 });
+                  }
+                  setDirectCheckoutItems(newItems);
                   setSelectedProduct(null);
                   setDetailQty(1);
-                  setShowCart(false);
                   setShowCheckout(true);
                 }}
                   style={{ padding: "14px 24px", background: "linear-gradient(135deg,#B8943F,#D4AC5A)", border: "none", borderRadius: 12, color: "#FFF", fontSize: 15, fontWeight: 800, cursor: "pointer", boxShadow: "0 8px 20px rgba(184,148,63,.25)", transition: "all 0.3s", letterSpacing: "0.02em" }}
@@ -962,6 +970,11 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                                <span style={{ fontSize: 14, fontWeight: 600, color: "#1C3A2B", minWidth: 20, textAlign: "center" }}>{item.qty}</span>
                                <button onClick={() => updateQty(item.id, 1)} style={{ background: "none", border: "none", color: "#2F8F4E", fontSize: 16, fontWeight: 700, cursor: "pointer", width: 24, transition: "all 0.3s" }}>+</button>
                              </div>
+                          </div>
+                          
+                          <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid rgba(47,143,78,.1)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                             <span style={{ fontSize: 12, color: "#6b7c6d", fontWeight: 500 }}>Subtotal</span>
+                             <span style={{ fontSize: 16, fontWeight: 800, color: "#2F8F4E" }}>{fRp(item.harga * item.qty)}</span>
                           </div>
                        </div>
                     </div>
@@ -1218,8 +1231,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                       className="btn-buy-now"
                       onClick={(e) => {
                         e.stopPropagation();
-                        addToCart(p);
-                        setShowCart(false);
+                        setDirectCheckoutItems([{ ...p, qty: 1 }]);
                         setShowCheckout(true);
                       }}
                       style={{ marginTop: 8, padding: "8px 12px", background: "linear-gradient(135deg,#B8943F,#D4AC5A)", border: "none", borderRadius: 8, fontSize: 11, fontWeight: 700, color: "#FFF", cursor: "pointer", transition: "all 0.3s", boxShadow: "0 4px 12px rgba(184,148,63,.2)", width: "100%" }}>
