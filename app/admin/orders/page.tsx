@@ -205,7 +205,7 @@ export default function AdminOrdersPage() {
                   {filtered.map((order, i) => {
                     const statusInfo = STATUS_OPTIONS.find(s => s.v === order.status);
                     return (
-                      <tr key={order.id} style={{ borderBottom: i < filtered.length - 1 ? "1px solid rgba(47,143,78,.08)" : "none", hover: { background: "rgba(47,143,78,.02)" } }}>
+                      <tr key={order.id} style={{ borderBottom: i < filtered.length - 1 ? "1px solid rgba(47,143,78,.08)" : "none" }}>
                         <td style={{ padding: "12px 16px", fontSize: 12, fontFamily: "monospace", fontWeight: 700, color: "#2F8F4E" }}>
                           {order.order_id}
                           <div style={{ fontSize: 10, color: "#9A8C85", marginTop: 2 }}>
