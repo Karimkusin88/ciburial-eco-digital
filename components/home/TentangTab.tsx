@@ -579,7 +579,7 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
                 <button onClick={() => setShowStory(false)} style={{ width: 36, height: 36, borderRadius: "50%", background: "rgba(255,255,255,.2)", border: "none", color: "white", fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(4px)", transition: "background .2s" }} onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,.4)"} onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,.2)"}>✕</button>
               </div>
               <div style={{ position: "absolute", bottom: -40, left: 40, width: 80, height: 80, borderRadius: 20, background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 50, overflow: "hidden", border: "4px solid #FFFEF9", boxShadow: "0 8px 24px rgba(28,58,43,.15)" }}>
-                <img src="/founder.jpg" alt="Ubay Rahmat H." style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement!.innerHTML = '<div style="width:100%;height:100%;background:#4FBF7E;display:flex;align-items:center;justify-content:center;color:white;font-size:40px;">👤</div>'; }} />
+                <img src="/founder.png" alt="Ubay Rahmat H." style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement!.innerHTML = '<div style="width:100%;height:100%;background:#4FBF7E;display:flex;align-items:center;justify-content:center;color:white;font-size:40px;">👤</div>'; }} />
               </div>
             </div>
 
