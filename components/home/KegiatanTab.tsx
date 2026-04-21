@@ -5,7 +5,7 @@ import { Kegiatan, KAT_CFG } from "./types";
 function KegiatanSlider({ fotos, judul }: { fotos: string[], judul: string }) {
   const [act, setAct] = useState(0);
   return (
-    <div style={{ position: "relative", width: "100%", aspectRatio: "16/9", overflow: "hidden" }}>
+    <div style={{ position: "relative", width: "100%", aspectRatio: "4/3", overflow: "hidden", background: "#1A2016" }}>
       <div className="hide-scroll" onScroll={e => {
           const w = e.currentTarget.clientWidth;
           const idx = Math.round(e.currentTarget.scrollLeft / w);
@@ -13,11 +13,12 @@ function KegiatanSlider({ fotos, judul }: { fotos: string[], judul: string }) {
         }}
         style={{ display: "flex", overflowX: "auto", scrollSnapType: "x mandatory", width: "100%", height: "100%", scrollBehavior: "smooth" }}>
         {fotos.map((url, idx) => (
-          <div key={idx} style={{ scrollSnapAlign: "center", flex: "0 0 100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg,rgba(255,254,249,.8),rgba(250,248,243,.6))" }}>
+          <div key={idx} style={{ scrollSnapAlign: "center", flex: "0 0 100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: `url('${url}') center/cover no-repeat`, position: "relative" }}>
+            <div style={{ position: "absolute", inset: 0, background: "rgba(28,58,43,0.8)", backdropFilter: "blur(16px)" }} />
             {(url.toLowerCase().includes(".mp4") || url.toLowerCase().includes(".webm")) ? (
-              <video src={url} controls playsInline style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              <video src={url} controls playsInline style={{ width: "100%", height: "100%", objectFit: "contain", position: "relative", zIndex: 1 }} />
             ) : (
-              <img src={url} alt={`${judul} ${idx}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              <img src={url} alt={`${judul} ${idx}`} style={{ width: "100%", height: "100%", objectFit: "contain", position: "relative", zIndex: 1 }} />
             )}
           </div>
         ))}
@@ -107,13 +108,16 @@ export default function KegiatanTab({ kegiatan, dataLoad }: KegiatanTabProps) {
                     {fotoList.length > 1 ? (
                       <KegiatanSlider fotos={fotoList} judul={k.judul} />
                     ) : fotoList.length === 1 ? (
-                      (fotoList[0].toLowerCase().includes(".mp4") || fotoList[0].toLowerCase().includes(".webm")) ? (
-                        <video src={fotoList[0]} controls playsInline style={{ width: "100%", aspectRatio: "16/9", objectFit: "cover" }} />
-                      ) : (
-                        <img src={fotoList[0]} alt={k.judul} style={{ width: "100%", aspectRatio: "16/9", objectFit: "cover" }} />
-                      )
+                      <div style={{ position: "relative", width: "100%", aspectRatio: "4/3", background: `url('${fotoList[0]}') center/cover no-repeat`, overflow: "hidden" }}>
+                        <div style={{ position: "absolute", inset: 0, background: "rgba(28,58,43,0.8)", backdropFilter: "blur(16px)" }} />
+                        {(fotoList[0].toLowerCase().includes(".mp4") || fotoList[0].toLowerCase().includes(".webm")) ? (
+                          <video src={fotoList[0]} controls playsInline style={{ width: "100%", height: "100%", objectFit: "contain", position: "relative", zIndex: 1 }} />
+                        ) : (
+                          <img src={fotoList[0]} alt={k.judul} style={{ width: "100%", height: "100%", objectFit: "contain", position: "relative", zIndex: 1 }} />
+                        )}
+                      </div>
                     ) : (
-                      <div style={{ height: 140, background: `linear-gradient(135deg,${kat.color}30,${kat.color}10)`, borderBottom: `4px solid ${kat.color}` }} />
+                      <div style={{ aspectRatio: "4/3", background: `linear-gradient(135deg,${kat.color}30,${kat.color}10)`, borderBottom: `4px solid ${kat.color}` }} />
                     )}
                     <div style={{ padding: "22px 24px" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
