@@ -586,22 +586,23 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
             {/* Body */}
             <div style={{ padding: "50px 40px 40px" }}>
               <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".15em", textTransform: "uppercase", color: "#2F8F4E", marginBottom: 8 }}>The Origin Story</div>
-              <h3 className="fnt" style={{ fontSize: 32, fontWeight: 300, color: "#1C3A2B", lineHeight: 1.2, letterSpacing: "-.02em", marginBottom: 24 }}>Dari Pelosok Garut untuk Melesat ke Masa Depan.</h3>
+              <h3 className="fnt" style={{ fontSize: 32, fontWeight: 300, color: "#1C3A2B", lineHeight: 1.2, letterSpacing: "-.02em", marginBottom: 24 }}>Dari Pelosok Garut Menuju Masa Depan</h3>
 
               <div style={{ fontSize: 14, lineHeight: 1.8, color: "#5A4A40", display: "flex", flexDirection: "column", gap: 16 }}>
-                <p>Singkat cerita, semuanya bermula dari kegelisahan sederhana di sini, Kp. Ciburial rw 08, Desa Hanjuang Bungbulang. Mengapa kampung kita yang kaya akan kearifan lokal—dari kerajinan bambu hingga potensi pasokan pangan—harus selalu tergerus dan dipaksa tertinggal oleh cepatnya arus peradaban?</p>
-                <p>Sebagai pemuda daerah, saya menolak pasrah. <strong>Ciburial Eco-Digital</strong> didirikan bukan sekadar sebagai portal penyampaian informasi. Ini adalah sebuah manifestasi ide dan <strong style={{ color: "#2F8F4E" }}>quantum leap</strong> (lompatan besar).</p>
-                <p>Bersama, kami merancang cetak biru peradaban baru di mana tatanan kearifan lokal berdampingan secara harmonis dengan teknologi masa depan. Mulai dari sistem penerangan jalan cerdas (Smart PJU), pertanian organik terukur, hingga <strong>transparansi dana abadi kampung secara real-time yang terbuka utuh bagi masyarakat luas.</strong></p>
-                <p>Gerakan progresif ini tak lagi menuntut hak dari elit. Ekonomi sirkular dan komando lapangan kini digerakkan langsung oleh tangan-tangan pemuda Ciburial yang hari ini mendominasi 55% populasi kampung.</p>
+                <p>Semua berawal dari satu pertanyaan sederhana:<br />kenapa potensi lokal yang begitu besar justru tertinggal oleh perkembangan zaman?</p>
+                <p>Kami tidak menunggu jawaban.<br />Kami mulai membangun.</p>
+                <p><strong>Ciburial Eco-Digital</strong> hadir sebagai jembatan antara kearifan lokal dan teknologi modern—<br />membawa sistem yang transparan, terstruktur, dan berdampak nyata bagi masyarakat.</p>
+                <p>Ini bukan sekadar inovasi.<br />Ini adalah langkah menuju transformasi.</p>
+                <p>Kami percaya masa depan tidak hanya milik kota besar.<br />Masa depan bisa dibangun dari desa—oleh mereka yang berani memulai.</p>
                 <div style={{ background: "linear-gradient(135deg,rgba(47,143,78,.08),rgba(47,143,78,.03))", padding: "16px 20px", borderRadius: 12, borderLeft: "3px solid #2F8F4E", fontStyle: "italic", fontWeight: 500, color: "#1C3A2B", marginTop: 8 }}>
-                  "Kita tidak sekadar pasrah memulung sisa zaman. Kita bangkit menciptakan standar peradabannya."
+                  &ldquo;Start small. Build real. Create impact.&rdquo;
                 </div>
               </div>
 
               <div style={{ marginTop: 32, display: "flex", alignItems: "center", gap: 16, borderTop: "1px solid rgba(47,143,78,.1)", paddingTop: 24 }}>
                 <div>
                   <div style={{ fontSize: 15, fontWeight: 800, color: "#1A1410" }}>Ubay Rahmat H.</div>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: "#2F8F4E", letterSpacing: ".05em", textTransform: "uppercase", marginTop: 2 }}>Inisiator & Founder</div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "#2F8F4E", letterSpacing: ".05em", textTransform: "uppercase", marginTop: 2 }}>Founder & Builder</div>
                 </div>
                 <div style={{ marginLeft: "auto" }}>
                   <span className="fnt" style={{ fontSize: 32, color: "rgba(184,148,63,.4)", fontStyle: "italic", fontWeight: 200, letterSpacing: "-.02em" }}>Ciburial</span>
