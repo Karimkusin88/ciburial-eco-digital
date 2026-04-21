@@ -251,14 +251,14 @@ export default function RondaKioskPage() {
             <div style={{ flex:1, minWidth:0 }}>
               <div style={{ fontSize:9, fontWeight:700, letterSpacing:".18em", color:"rgba(47,143,78,0.5)", marginBottom:2 }}>JADWAL AKTIF</div>
               <div style={{ fontSize:13, fontWeight:700, color:"#4FBF7E", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>
-                RT {activeJadwalData.rt} &nbsp;—&nbsp; {new Date(activeJadwalData.tanggal).toLocaleDateString("id-ID", { weekday:"long", day:"numeric", month:"long" })}
+                {activeJadwalData.rt} &nbsp;—&nbsp; {new Date(activeJadwalData.tanggal).toLocaleDateString("id-ID", { weekday:"long", day:"numeric", month:"long" })}
                 &nbsp;·&nbsp; {activeJadwalData.jam_mulai}–{activeJadwalData.jam_selesai}
               </div>
             </div>
             {jadwal.length > 1 && (
               <select value={activeJadwal || ""} onChange={e => setActiveJadwal(e.target.value)}
                 style={{ padding:"6px 10px", borderRadius:8, border:"1px solid rgba(47,143,78,0.25)", fontSize:11, color:"#4FBF7E", outline:"none", fontFamily:"inherit", fontWeight:600, cursor:"pointer", flexShrink:0 }}>
-                {jadwal.map(j => <option key={j.id} value={j.id}>RT {j.rt} · {new Date(j.tanggal).toLocaleDateString("id-ID", { day:"numeric", month:"short" })}</option>)}
+                {jadwal.map(j => <option key={j.id} value={j.id}>{j.rt} · {new Date(j.tanggal).toLocaleDateString("id-ID", { day:"numeric", month:"short" })}</option>)}
               </select>
             )}
           </div>

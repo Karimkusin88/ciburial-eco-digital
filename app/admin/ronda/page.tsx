@@ -7,7 +7,7 @@ interface Jadwal { id:string; tanggal:string; rt:string; jam_mulai:string; jam_s
 interface Absensi { id:string; jadwal_id:string; kk_id:string; nama:string; waktu_tap:string; metode:string; }
 
 const POIN_RONDA = 30;
-const emptyJadwal = { tanggal:new Date().toISOString().split("T")[0], rt:"01", jam_mulai:"21:00", jam_selesai:"04:00" };
+const emptyJadwal = { tanggal:new Date().toISOString().split("T")[0], rt:"RW", jam_mulai:"21:00", jam_selesai:"04:00" };
 
 // ─── RADAR ANIMATION ─────────────────────────────────────────────────────────
 function RadarPing({ active }:{ active:boolean }) {
@@ -111,14 +111,18 @@ export default function AdminRondaPage() {
     else { showToast("✅ Jadwal ronda dibuat!"); setFormJadwal(emptyJadwal); fetchAll(); }
   }
 
-  async function generateJadwalHarian() {
-    showToast("⏳ Sedang generate jadwal...");
+  async function generateJadwalRange(days: number) {
+    showToast(`⏳ Generate jadwal ${days} hari...`);
     try {
-      const res = await fetch("/api/ronda/generate", { method: "POST" });
+      const res = await fetch("/api/ronda/generate", { 
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ days })
+      });
       const data = await res.json();
       
       if (data.success) {
-        showToast(`✅ ${data.message} (${data.count} RT)`);
+        showToast(`✅ ${data.message} (${data.count} jadwal)`);
         fetchAll();
       } else {
         showToast(`⚠️ ${data.message}`, false);
@@ -391,7 +395,7 @@ export default function AdminRondaPage() {
                     <div style={{ width:40, height:40, borderRadius:10, background:"rgba(47,143,78,0.08)", border:"1px solid rgba(47,143,78,0.15)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0, transition:"all 0.3s ease", boxShadow:"0 1px 3px rgba(47,143,78,0.06)" }}>🔦</div>
                     <div style={{ flex:1 }}>
                       <div style={{ fontFamily:"'Rajdhani',sans-serif", fontWeight:600, fontSize:15, color:"#1C3A2B" }}>
-                        RT {j.rt} — {new Date(j.tanggal).toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"long"})}
+                        {j.rt} — {new Date(j.tanggal).toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"long"})}
                       </div>
                       <div style={{ fontSize:11, color:"rgba(47,143,78,0.5)", marginTop:2, fontWeight:500 }}>
                         ⏰ {j.jam_mulai} - {j.jam_selesai} · ✅ {jmlHadir} hadir · 🏆 {jmlHadir*POIN_RONDA} poin
@@ -414,7 +418,7 @@ export default function AdminRondaPage() {
               <select value={activeJadwal||""} onChange={e=>setActiveJadwal(e.target.value)}
                 style={{ width:"100%", padding:"10px 14px", borderRadius:10, border:"1.5px solid rgba(47,143,78,0.2)", fontSize:12, background:"rgba(255,254,249,0.8)", color:"#2F8F4E", outline:"none", fontFamily:"'Inter',sans-serif", boxShadow:"0 1px 3px rgba(47,143,78,0.08)", transition:"all 0.3s ease", cursor:"pointer" }}>
                 <option value="">-- PILIH JADWAL RONDA --</option>
-                {jadwal.map(j => <option key={j.id} value={j.id}>RT {j.rt} — {new Date(j.tanggal).toLocaleDateString("id-ID",{day:"numeric",month:"long"})} ({absensi.filter(a=>a.jadwal_id===j.id).length} hadir)</option>)}
+                {jadwal.map(j => <option key={j.id} value={j.id}>{j.rt} — {new Date(j.tanggal).toLocaleDateString("id-ID",{day:"numeric",month:"long"})} ({absensi.filter(a=>a.jadwal_id===j.id).length} hadir)</option>)}
               </select>
             </div>
 
@@ -518,22 +522,28 @@ export default function AdminRondaPage() {
               ))}
 
               <div style={{ marginBottom:16 }}>
-                <label style={{ fontSize:10, fontWeight:700, color:"rgba(47,143,78,0.6)", letterSpacing:"0.12em", display:"block", marginBottom:5 }}>RT</label>
+                <label style={{ fontSize:10, fontWeight:700, color:"rgba(47,143,78,0.6)", letterSpacing:"0.12em", display:"block", marginBottom:5 }}>RW</label>
                 <select value={formJadwal.rt} onChange={e=>setFormJadwal({...formJadwal,rt:e.target.value})}
                   style={{ width:"100%", padding:"9px 12px", borderRadius:10, border:"1.5px solid rgba(47,143,78,0.2)", fontSize:13, background:"rgba(255,254,249,0.8)", color:"#2F8F4E", outline:"none", fontFamily:"'Inter',sans-serif", boxShadow:"0 1px 3px rgba(47,143,78,0.08)", transition:"all 0.3s ease", cursor:"pointer" }}>
-                  {["01","02","03","04","05"].map(v => <option key={v} value={v}>RT {v}</option>)}
+                  <option value="RW">RW 01</option>
                 </select>
               </div>
 
-              <div style={{ display:"flex", gap:10, marginBottom:16 }}>
+              <div style={{ display:"flex", flexDirection:"column", gap:8, marginBottom:16 }}>
                 <button onClick={buatJadwal} className="scan-btn"
-                  style={{ flex:1, padding:"11px", borderRadius:12, border:"1.5px solid rgba(47,143,78,0.3)", background:"linear-gradient(135deg,#2F8F4E,#4FBF7E)", color:"#FFF", fontSize:12, fontWeight:700, letterSpacing:"0.1em", fontFamily:"'Inter',sans-serif", boxShadow:"0 2px 8px rgba(47,143,78,0.2)", transition:"all 0.3s ease" }}>
-                  + BUAT JADWAL
+                  style={{ width:"100%", padding:"11px", borderRadius:12, border:"1.5px solid rgba(47,143,78,0.3)", background:"linear-gradient(135deg,#2F8F4E,#4FBF7E)", color:"#FFF", fontSize:12, fontWeight:700, letterSpacing:"0.1em", fontFamily:"'Inter',sans-serif", boxShadow:"0 2px 8px rgba(47,143,78,0.2)", transition:"all 0.3s ease" }}>
+                  + BUAT 1 JADWAL
                 </button>
-                <button onClick={generateJadwalHarian} className="scan-btn"
-                  style={{ flex:1, padding:"11px", borderRadius:12, border:"1.5px solid rgba(79,191,126,0.4)", background:"rgba(79,191,126,0.12)", color:"#2F8F4E", fontSize:12, fontWeight:700, letterSpacing:"0.1em", fontFamily:"'Inter',sans-serif", boxShadow:"0 2px 8px rgba(47,143,78,0.1)", transition:"all 0.3s ease" }}>
-                  ✨ GENERATE HARIAN
-                </button>
+                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
+                  <button onClick={() => generateJadwalRange(7)} className="scan-btn"
+                    style={{ padding:"10px", borderRadius:12, border:"1.5px solid rgba(79,191,126,0.4)", background:"rgba(79,191,126,0.12)", color:"#2F8F4E", fontSize:11, fontWeight:700, letterSpacing:"0.08em", fontFamily:"'Inter',sans-serif", boxShadow:"0 2px 8px rgba(47,143,78,0.1)", transition:"all 0.3s ease" }}>
+                    📅 1 MINGGU
+                  </button>
+                  <button onClick={() => generateJadwalRange(30)} className="scan-btn"
+                    style={{ padding:"10px", borderRadius:12, border:"1.5px solid rgba(79,191,126,0.4)", background:"rgba(79,191,126,0.12)", color:"#2F8F4E", fontSize:11, fontWeight:700, letterSpacing:"0.08em", fontFamily:"'Inter',sans-serif", boxShadow:"0 2px 8px rgba(47,143,78,0.1)", transition:"all 0.3s ease" }}>
+                    📆 1 BULAN
+                  </button>
+                </div>
               </div>
 
               {/* Info poin */}
@@ -561,7 +571,7 @@ export default function AdminRondaPage() {
                     <div style={{ width:8, height:8, borderRadius:"50%", background:j.tanggal===hariIni?"#2F8F4E":"rgba(47,143,78,0.2)", boxShadow:j.tanggal===hariIni?"0 0 8px rgba(47,143,78,0.5)":"0 0 4px rgba(47,143,78,0.2)", flexShrink:0, transition:"all 0.3s ease" }}/>
                     <div style={{ flex:1 }}>
                       <div style={{ fontFamily:"'Rajdhani',sans-serif", fontWeight:600, fontSize:14, color:"#1C3A2B" }}>
-                        RT {j.rt} — {new Date(j.tanggal).toLocaleDateString("id-ID",{weekday:"short",day:"numeric",month:"short"})}
+                        {j.rt} — {new Date(j.tanggal).toLocaleDateString("id-ID",{weekday:"short",day:"numeric",month:"short"})}
                       </div>
                       <div style={{ fontSize:11, color:"rgba(47,143,78,0.5)", marginTop:1, fontWeight:500 }}>
                         {j.jam_mulai} → {j.jam_selesai} · {jmlHadir} hadir
