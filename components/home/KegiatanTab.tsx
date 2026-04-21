@@ -2,6 +2,38 @@
 import { useState } from "react";
 import { Kegiatan, KAT_CFG } from "./types";
 
+function KegiatanSlider({ fotos, judul }: { fotos: string[], judul: string }) {
+  const [act, setAct] = useState(0);
+  return (
+    <div style={{ position: "relative", width: "100%", aspectRatio: "16/9", overflow: "hidden" }}>
+      <div className="hide-scroll" onScroll={e => {
+          const w = e.currentTarget.clientWidth;
+          const idx = Math.round(e.currentTarget.scrollLeft / w);
+          if (idx !== act) setAct(idx);
+        }}
+        style={{ display: "flex", overflowX: "auto", scrollSnapType: "x mandatory", width: "100%", height: "100%", scrollBehavior: "smooth" }}>
+        {fotos.map((url, idx) => (
+          <div key={idx} style={{ scrollSnapAlign: "center", flex: "0 0 100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg,rgba(255,254,249,.8),rgba(250,248,243,.6))" }}>
+            {(url.toLowerCase().includes(".mp4") || url.toLowerCase().includes(".webm")) ? (
+              <video src={url} controls playsInline style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            ) : (
+              <img src={url} alt={`${judul} ${idx}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            )}
+          </div>
+        ))}
+      </div>
+      <div style={{ position: "absolute", bottom: 12, left: "50%", transform: "translateX(-50%)", display: "flex", gap: 6, background: "rgba(0,0,0,0.5)", padding: "6px 10px", borderRadius: 16, backdropFilter: "blur(4px)" }}>
+        {fotos.map((_, idx) => (
+          <div key={idx} style={{ width: 6, height: 6, borderRadius: "50%", background: act === idx ? "#FFF" : "rgba(255,255,255,0.4)", transition: "background .3s", boxShadow: act === idx ? "0 0 8px rgba(255,255,255,0.8)" : "none" }} />
+        ))}
+      </div>
+      <div style={{ position: "absolute", top: 12, right: 12, background: "rgba(0,0,0,0.5)", color: "white", padding: "4px 10px", borderRadius: 12, fontSize: 10, fontWeight: 800, backdropFilter: "blur(4px)", letterSpacing: ".1em" }}>
+        {act + 1} / {fotos.length}
+      </div>
+    </div>
+  );
+}
+
 interface KegiatanTabProps {
   kegiatan: Kegiatan[];
   dataLoad: boolean;
@@ -71,9 +103,11 @@ export default function KegiatanTab({ kegiatan, dataLoad }: KegiatanTabProps) {
                     el.style.transform = "translateY(0) scale(1)";
                     el.style.boxShadow = "0 4px 12px rgba(0,0,0,.04)";
                   }}>
-                    {k.foto ? (
+                    {k.fotos && k.fotos.length > 1 ? (
+                      <KegiatanSlider fotos={k.fotos} judul={k.judul} />
+                    ) : k.foto ? (
                       (k.foto.toLowerCase().includes(".mp4") || k.foto.toLowerCase().includes(".webm")) ? (
-                        <video src={k.foto} autoPlay muted loop playsInline style={{ width: "100%", aspectRatio: "16/9", objectFit: "cover" }} />
+                        <video src={k.foto} controls playsInline style={{ width: "100%", aspectRatio: "16/9", objectFit: "cover" }} />
                       ) : (
                         <img src={k.foto} alt={k.judul} style={{ width: "100%", aspectRatio: "16/9", objectFit: "cover" }} />
                       )

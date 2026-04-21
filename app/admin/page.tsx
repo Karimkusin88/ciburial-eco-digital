@@ -8,7 +8,7 @@ import "./admin-styles.css";
 
 // PIN diverifikasi server-side via /api/admin/verify
 
-interface Kegiatan { id: string; judul: string; tanggal: string; kategori: string; deskripsi: string; foto?: string; }
+interface Kegiatan { id: string; judul: string; tanggal: string; kategori: string; deskripsi: string; foto?: string; fotos?: string[]; }
 interface Produk    { id: string; nama: string; deskripsi: string; harga: number; tag: string; icon: string; foto?: string; }
 interface Transaksi { id: string; tanggal: string; keterangan: string; kategori: string; tipe: "masuk" | "keluar"; jumlah: number; }
 interface Testimoni { id: string; nama: string; jabatan: string; pesan: string; foto?: string; tipe: "tokoh" | "berita"; }
@@ -104,6 +104,7 @@ export default function AdminPage() {
 
   const [kForm, setKForm] = useState(emptyK);
   const [kFile, setKFile] = useState<File | null>(null);
+  const [kFiles, setKFiles] = useState<(File | null)[]>(Array(8).fill(null));
   const [pForm, setPForm] = useState(emptyP);
   const [pFile, setPFile] = useState<File | null>(null);
   const [pFiles, setPFiles] = useState<(File | null)[]>([null, null, null, null, null]); // 5 photo slots
@@ -248,12 +249,42 @@ export default function AdminPage() {
   const addKegiatan = async () => {
     if (!kForm.judul || !kForm.tanggal) return showToast("❌ Judul & tanggal wajib diisi");
     setLoading(true);
-    let finalUrl = kForm.foto;
     try {
-      if (kFile) finalUrl = await uploadToSupabase(kFile);
-      const { error } = await supabase.from("kegiatan").insert({ ...kForm, foto: finalUrl || null });
+      const uploadedUrls: string[] = [];
+      for (const file of kFiles) {
+        if (file) {
+          try {
+            const url = await uploadToSupabase(file);
+            uploadedUrls.push(url);
+          } catch (e) {
+            console.error("File upload error:", e);
+          }
+        }
+      }
+
+      const kegiatanData: any = {
+        judul: kForm.judul,
+        tanggal: kForm.tanggal,
+        kategori: kForm.kategori,
+        deskripsi: kForm.deskripsi
+      };
+
+      if (uploadedUrls.length > 0) {
+        kegiatanData.fotos = uploadedUrls;
+        kegiatanData.foto = uploadedUrls[0];
+      } else if (kForm.foto) {
+        kegiatanData.foto = kForm.foto;
+        kegiatanData.fotos = [kForm.foto];
+      }
+      
+      const { error } = await supabase.from("kegiatan").insert(kegiatanData);
       if (error) throw error;
-      setKForm(emptyK); setKFile(null); fetchAll(); showToast("✅ Kegiatan berhasil ditambahkan!");
+      
+      setKForm(emptyK);
+      setKFile(null);
+      setKFiles(Array(8).fill(null));
+      fetchAll();
+      showToast("✅ Kegiatan berhasil ditambahkan!");
     } catch (err: any) {
       showToast(err.message?.includes("Bucket not found") ? "❌ Buat bucket 'ciburial-assets' dulu!" : "❌ Gagal: " + err.message);
     }
@@ -785,12 +816,28 @@ export default function AdminPage() {
                   <textarea className="field" rows={3} value={kForm.deskripsi} onChange={e => setKForm({...kForm, deskripsi:e.target.value})} placeholder="Ceritakan sedikit tentang acara ini..." style={{ resize:"vertical" }} />
                 </div>
                 <div style={{ background:"rgba(28,58,43,.06)", padding:14, borderRadius:12, border:"1px dashed rgba(28,58,43,.2)" }}>
-                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#1C3A2B", marginBottom:6 }}>Upload Foto / Video (opsional)</label>
-                  <input type="file" accept="image/*,video/mp4,video/webm" onChange={e => setKFile(e.target.files?.[0] || null)} style={{ fontSize:12, width:"100%" }} />
-                  {kFile && <p style={{ fontSize:10, color:"#1C6B3A", marginTop:8, fontWeight:700 }}>✓ File terpilih: {kFile.name}</p>}
-                  
-                  <div style={{ marginTop:14, fontSize:10, color:"#9A8C85", borderTop:"1px solid rgba(28,58,43,.1)", paddingTop:10 }}>ATAU paste link (opsional):</div>
-                  <input className="field" value={kForm.foto} onChange={e => setKForm({...kForm, foto:e.target.value})} placeholder="https://..." style={{ marginTop:6, fontSize:11, padding:"8px 12px" }} disabled={!!kFile} />
+                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#1C3A2B", marginBottom:6 }}>Upload Galeri Foto (Max 8) *opsi slide di web*</label>
+                  <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:8 }}>
+                    {kFiles.map((f, i) => (
+                      <label key={i} style={{ aspectRatio:"1", background:f ? "#E8F5EE" : "#fff", border:f ? "1.5px solid #2F8F4E" : "1px dashed rgba(28,58,43,.2)", borderRadius:10, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", overflow:"hidden", position:"relative" }}>
+                        <input type="file" accept="image/*,video/mp4,video/webm" style={{ display:"none" }} onChange={e => {
+                          const n = [...kFiles];
+                          n[i] = e.target.files?.[0] || null;
+                          setKFiles(n);
+                        }} />
+                        {f ? (
+                          <>
+                            <span style={{ fontSize:20 }}>🖼️</span>
+                            <div style={{ position:"absolute", bottom:0, width:"100%", background:"rgba(47,143,78,.9)", color:"#fff", fontSize:8, textAlign:"center", padding:2, whiteSpace:"nowrap", textOverflow:"ellipsis", overflow:"hidden" }}>{f.name}</div>
+                          </>
+                        ) : (
+                          <span style={{ fontSize:16, color:"rgba(28,58,43,.3)" }}>+</span>
+                        )}
+                      </label>
+                    ))}
+                  </div>
+                  <div style={{ marginTop:14, fontSize:10, color:"#9A8C85", borderTop:"1px solid rgba(28,58,43,.1)", paddingTop:10 }}>ATAU paste 1 link (opsional):</div>
+                  <input className="field" value={kForm.foto} onChange={e => setKForm({...kForm, foto:e.target.value})} placeholder="https://..." style={{ marginTop:6, fontSize:11, padding:"8px 12px" }} disabled={kFiles.some(f => f !== null)} />
                 </div>
                 <button onClick={addKegiatan} disabled={loading} style={{ padding:"13px", borderRadius:12, background:"#1C3A2B", color:"#fff", fontSize:12, fontWeight:700, letterSpacing:".08em", textTransform:"uppercase", border:"none", cursor:"pointer", opacity:loading ? .6 : 1, marginTop:4 }}>
                   {loading ? "Menyimpan..." : "Simpan Kegiatan"}

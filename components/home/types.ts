@@ -9,6 +9,7 @@ export interface Kegiatan {
   kategori: string;
   deskripsi: string;
   foto?: string;
+  fotos?: string[];
 }
 
 export interface Produk {
