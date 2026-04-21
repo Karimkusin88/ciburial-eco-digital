@@ -111,6 +111,23 @@ export default function AdminRondaPage() {
     else { showToast("✅ Jadwal ronda dibuat!"); setFormJadwal(emptyJadwal); fetchAll(); }
   }
 
+  async function generateJadwalHarian() {
+    showToast("⏳ Sedang generate jadwal...");
+    try {
+      const res = await fetch("/api/ronda/generate", { method: "POST" });
+      const data = await res.json();
+      
+      if (data.success) {
+        showToast(`✅ ${data.message} (${data.count} RT)`);
+        fetchAll();
+      } else {
+        showToast(`⚠️ ${data.message}`, false);
+      }
+    } catch (err: any) {
+      showToast(`❌ Error: ${err.message}`, false);
+    }
+  }
+
   async function catatAbsensi(kkId:string, metode:string) {
     if (!activeJadwal) return showToast("⚠️ Pilih jadwal dulu!", false);
     const kk = kkList.find(k => k.id===kkId || k.nfc_id===kkId.toUpperCase());
@@ -137,6 +154,34 @@ export default function AdminRondaPage() {
     const waktu = new Date().toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"});
     setLastScan({ nama, poin:POIN_RONDA, waktu });
     showToast(`✅ ${nama} HADIR! +${POIN_RONDA} poin`);
+    fetchAll();
+  }
+
+  async function deleteAbsensi(absensiId: string, nama: string, kk_id: string) {
+    if (!confirm(`Hapus absen ${nama}? Poin akan dikurangi.`)) return;
+    
+    // Cari anggota dengan kk_id ini
+    const ang = anggotaList.find(a => a.kk_id === kk_id);
+    
+    // Hapus absensi
+    const { error: delError } = await supabase.from("absensi_ronda").delete().eq("id", absensiId);
+    if (delError) return showToast(`❌ Gagal hapus: ${delError.message}`, false);
+    
+    // Kurangi poin
+    if (ang?.id) {
+      const newPoints = Math.max(0, (ang.saldo_poin || 0) - POIN_RONDA);
+      await supabase.from("anggota_kk").update({ saldo_poin: newPoints }).eq("id", ang.id);
+      await supabase.from("riwayat_poin").insert({ 
+        anggota_id: ang.id, 
+        kk_id, 
+        jumlah: POIN_RONDA, 
+        jenis: "keluar", 
+        sumber: "ronda_hapus", 
+        keterangan: `Penghapusan absen ronda — ${new Date().toLocaleDateString("id-ID")}` 
+      });
+    }
+    
+    showToast(`✅ ${nama} dihapus dari absensi! -${POIN_RONDA} poin`);
     fetchAll();
   }
 
@@ -433,6 +478,12 @@ export default function AdminRondaPage() {
                           <div style={{ fontSize:10, color:"rgba(47,143,78,0.5)", fontWeight:500 }}>{a.metode==="nfc"?"e-KTP/NFC":"Manual"} · {new Date(a.waktu_tap).toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"})}</div>
                         </div>
                         <div style={{ fontSize:11, color:"#2F8F4E", fontWeight:700 }}>+{POIN_RONDA}</div>
+                        <button onClick={() => deleteAbsensi(a.id, a.nama, a.kk_id)} className="scan-btn"
+                          style={{ padding:"5px 10px", borderRadius:6, border:"1px solid rgba(184,72,48,0.3)", background:"rgba(184,72,48,0.08)", color:"#B8472F", fontSize:10, fontWeight:600, letterSpacing:"0.08em", fontFamily:"'Inter',sans-serif", cursor:"pointer", transition:"all 0.2s ease" }}
+                          onMouseEnter={e => (e.currentTarget.style.background = "rgba(184,72,48,0.15)")}
+                          onMouseLeave={e => (e.currentTarget.style.background = "rgba(184,72,48,0.08)")}>
+                          🗑 Hapus
+                        </button>
                       </div>
                     ))}
                   </div>
@@ -474,13 +525,19 @@ export default function AdminRondaPage() {
                 </select>
               </div>
 
-              <button onClick={buatJadwal} className="scan-btn"
-                style={{ width:"100%", padding:"11px", borderRadius:12, border:"1.5px solid rgba(47,143,78,0.3)", background:"linear-gradient(135deg,#2F8F4E,#4FBF7E)", color:"#FFF", fontSize:12, fontWeight:700, letterSpacing:"0.1em", fontFamily:"'Inter',sans-serif", boxShadow:"0 2px 8px rgba(47,143,78,0.2)", transition:"all 0.3s ease" }}>
-                + BUAT JADWAL
-              </button>
+              <div style={{ display:"flex", gap:10, marginBottom:16 }}>
+                <button onClick={buatJadwal} className="scan-btn"
+                  style={{ flex:1, padding:"11px", borderRadius:12, border:"1.5px solid rgba(47,143,78,0.3)", background:"linear-gradient(135deg,#2F8F4E,#4FBF7E)", color:"#FFF", fontSize:12, fontWeight:700, letterSpacing:"0.1em", fontFamily:"'Inter',sans-serif", boxShadow:"0 2px 8px rgba(47,143,78,0.2)", transition:"all 0.3s ease" }}>
+                  + BUAT JADWAL
+                </button>
+                <button onClick={generateJadwalHarian} className="scan-btn"
+                  style={{ flex:1, padding:"11px", borderRadius:12, border:"1.5px solid rgba(79,191,126,0.4)", background:"rgba(79,191,126,0.12)", color:"#2F8F4E", fontSize:12, fontWeight:700, letterSpacing:"0.1em", fontFamily:"'Inter',sans-serif", boxShadow:"0 2px 8px rgba(47,143,78,0.1)", transition:"all 0.3s ease" }}>
+                  ✨ GENERATE HARIAN
+                </button>
+              </div>
 
               {/* Info poin */}
-              <div style={{ marginTop:16, padding:"10px 14px", background:"rgba(184,148,63,0.08)", border:"1.5px solid rgba(184,148,63,0.2)", borderRadius:10 }}>
+              <div style={{ marginBottom:16, padding:"10px 14px", background:"rgba(184,148,63,0.08)", border:"1.5px solid rgba(184,148,63,0.2)", borderRadius:10 }}>
                 <div style={{ fontSize:10, color:"rgba(184,148,63,0.8)", letterSpacing:"0.08em", fontWeight:500 }}>
                   🏆 SETIAP PETUGAS HADIR = <strong style={{color:"#B8943F"}}>+{POIN_RONDA} POIN</strong>
                 </div>

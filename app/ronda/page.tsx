@@ -10,7 +10,6 @@ export default function RondaKioskPage() {
   const [anggotaList, setAnggotaList] = useState<any[]>([]);
   const [activeJadwal, setActiveJadwal] = useState<string | null>(null);
   const [scanning, setScanning] = useState(false);
-  const [manualKK, setManualKK] = useState("");
   const [lastScan, setLastScan] = useState<{ nama: string; poin: number; waktu: string } | null>(null);
   const [toast, setToast] = useState({ msg: "", ok: true });
   const [jam, setJam] = useState(new Date());
@@ -355,23 +354,6 @@ export default function RondaKioskPage() {
               <div style={{ backgroundColor:"rgba(47,143,78,0.2)", padding:"6px 12px", borderRadius:100, fontSize:14, fontWeight:900, color:"#4FBF7E", flexShrink:0 }}>+{lastScan.poin}</div>
             </div>
           )}
-
-          {/* Manual Input */}
-          <div className="glass-card" style={{ padding:"20px" }}>
-            <div style={{ fontSize:9, fontWeight:700, letterSpacing:".22em", color:"rgba(232,245,238,0.22)", marginBottom:14 }}>ABSEN MANUAL</div>
-            <select value={manualKK} onChange={e => setManualKK(e.target.value)}
-              style={{ width:"100%", padding:"12px 14px", borderRadius:11, border:"1px solid rgba(47,143,78,0.18)", fontSize:13, color: manualKK ? "#E8F5EE" : "rgba(232,245,238,0.28)", outline:"none", fontFamily:"inherit", fontWeight:500, marginBottom:10, boxSizing:"border-box" as const, cursor:"pointer" }}>
-              <option value="">— Pilih nama warga —</option>
-              {kkList.map(k => <option key={k.id} value={k.id}>{k.kepala_keluarga} (RT {k.rt})</option>)}
-            </select>
-            <button
-              onClick={() => { if (manualKK) { catatAbsensi(manualKK, "manual"); setManualKK(""); } }}
-              className="ronda-btn"
-              disabled={!manualKK}
-              style={{ width:"100%", padding:"13px", borderRadius:11, background: manualKK ? "rgba(47,143,78,0.88)" : "rgba(47,143,78,0.07)", color: manualKK ? "#fff" : "rgba(47,143,78,0.22)", fontSize:13, fontWeight:700, fontFamily:"inherit", boxSizing:"border-box" as const, transition:"all 0.25s", boxShadow: manualKK ? "0 6px 24px rgba(47,143,78,0.25)" : "none" }}>
-              Catat Kehadiran
-            </button>
-          </div>
         </div>
 
         {/* ── RIGHT COLUMN: Live Attendance Feed ── */}
@@ -396,7 +378,7 @@ export default function RondaKioskPage() {
               <div style={{ padding:"56px 24px", textAlign:"center" }}>
                 <div style={{ fontSize:40, marginBottom:14, opacity:0.12 }}>🌙</div>
                 <div style={{ fontSize:13, color:"rgba(232,245,238,0.22)", fontWeight:500 }}>Belum ada yang absen</div>
-                <div style={{ fontSize:11, color:"rgba(232,245,238,0.12)", marginTop:6 }}>Tap e-KTP atau gunakan input manual</div>
+                <div style={{ fontSize:11, color:"rgba(232,245,238,0.12)", marginTop:6 }}>Tap e-KTP untuk catat kehadiran</div>
               </div>
             ) : (
               hadir.map((a, i) => (
