@@ -176,7 +176,7 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
 
           {/* CTA Button */}
           <div style={{ marginTop: 52, display: "flex", justifyContent: "center", gap: 14, flexWrap: "wrap" }}>
-            <button className="btn-heroic" onClick={() => onNavigate("tentang")} style={{ padding: "14px 32px", fontSize: 12, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", border: "none", borderRadius: 8, background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", color: "white", cursor: "pointer", boxShadow: "0 12px 32px rgba(47,143,78,.3)", transition: "all .35s cubic-bezier(.22,1,.36,1)" }} onMouseEnter={e => (e.currentTarget.style.transform = "translateY(-4px)", e.currentTarget.style.boxShadow = "0 16px 48px rgba(47,143,78,.4)")} onMouseLeave={e => (e.currentTarget.style.transform = "translateY(0)", e.currentTarget.style.boxShadow = "0 12px 32px rgba(47,143,78,.3)")}>
+            <button className="btn-heroic" onClick={() => document.getElementById("content-start")?.scrollIntoView({ behavior: "smooth" })} style={{ padding: "14px 32px", fontSize: 12, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", border: "none", borderRadius: 8, background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", color: "white", cursor: "pointer", boxShadow: "0 12px 32px rgba(47,143,78,.3)", transition: "all .35s cubic-bezier(.22,1,.36,1)" }} onMouseEnter={e => (e.currentTarget.style.transform = "translateY(-4px)", e.currentTarget.style.boxShadow = "0 16px 48px rgba(47,143,78,.4)")} onMouseLeave={e => (e.currentTarget.style.transform = "translateY(0)", e.currentTarget.style.boxShadow = "0 12px 32px rgba(47,143,78,.3)")}>
               Jelajahi Sekarang ↓
             </button>
             <button onClick={() => setShowStory(true)} style={{ padding: "14px 32px", fontSize: 12, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", border: "1.5px solid rgba(47,143,78,.4)", borderRadius: 8, background: "rgba(255,255,255,.6)", color: "#1C3A2B", cursor: "pointer", backdropFilter: "blur(8px)", transition: "all .35s cubic-bezier(.22,1,.36,1)", display: "flex", alignItems: "center", gap: 8 }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.background = "rgba(255,255,255,.9)"; e.currentTarget.style.boxShadow = "0 12px 32px rgba(47,143,78,.15)"; }} onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.background = "rgba(255,255,255,.6)"; e.currentTarget.style.boxShadow = "none"; }}>
@@ -199,7 +199,7 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
       </section>
 
       {/* MARQUEE */}
-      <div style={{ background: "var(--fo)", overflow: "hidden", padding: "12px 0" }}>
+      <div id="content-start" style={{ background: "var(--fo)", overflow: "hidden", padding: "12px 0" }}>
         <div className="mq" style={{ display: "flex", whiteSpace: "nowrap", width: "max-content" }}>
           {[...Array(4)].map((_, i) => (
             <span key={i} style={{ display: "flex", alignItems: "center", gap: 26, padding: "0 26px", color: "rgba(255,255,255,.38)", fontSize: 10, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase" }}>
