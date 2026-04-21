@@ -74,12 +74,14 @@ export default function AdminRondaPage() {
   const [anggotaList, setAnggotaList] = useState<any[]>([]);
   const [formJadwal, setFormJadwal] = useState(emptyJadwal);
   const [activeJadwal, setActiveJadwal] = useState<string|null>(null);
-  const [tab, setTab] = useState<"monitor"|"jadwal"|"scan">("monitor");
+  const [tab, setTab] = useState<"monitor"|"kalender"|"scan"|"jadwal">("kalender");
   const [scanning, setScanning] = useState(false);
   const [lastScan, setLastScan] = useState<{nama:string;poin:number;waktu:string}|null>(null);
   const [manualKK, setManualKK] = useState("");
   const [toast, setToast] = useState({ msg:"", ok:true });
   const [jam, setJam] = useState(new Date());
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState<string|null>(null);
   const nfcRef = useRef<any>(null);
 
   useEffect(() => {
@@ -92,8 +94,8 @@ export default function AdminRondaPage() {
   async function fetchAll() {
     if (!isSupabaseReady()) return;
     const [j, a, kk, ang] = await Promise.all([
-      supabase.from("jadwal_ronda").select("*").order("tanggal",{ascending:false}).limit(10),
-      supabase.from("absensi_ronda").select("*").order("waktu_tap",{ascending:false}).limit(50),
+      supabase.from("jadwal_ronda").select("*").order("tanggal",{ascending:true}),
+      supabase.from("absensi_ronda").select("*").order("waktu_tap",{ascending:false}),
       supabase.from("keluarga").select("id,kepala_keluarga,rt,nfc_id,no_wa").order("kepala_keluarga"),
       supabase.from("anggota_kk").select("id,kk_id,nama,nfc_id,saldo_poin").eq("hubungan","kepala"),
     ]);
@@ -346,13 +348,120 @@ export default function AdminRondaPage() {
 
         {/* Tab nav */}
         <div style={{ display:"flex", gap:2, marginBottom:20, background:"rgba(47,143,78,0.05)", borderRadius:12, padding:5, border:"1.5px solid rgba(47,143,78,0.12)" }}>
-          {([["monitor","📡 MONITOR"],["scan","🔦 SCAN NFC / e-KTP"],["jadwal","📋 JADWAL"]] as const).map(([t,l]) => (
+          {([["kalender","📅 KALENDER"],["monitor","📡 MONITOR"],["scan","🔦 SCAN NFC"],["jadwal","➕ BUAT JADWAL"]] as const).map(([t,l]) => (
             <button key={t} onClick={()=>setTab(t)} className="ronda-tab"
               style={{ flex:1, padding:"9px 8px", borderRadius:8, fontSize:11, fontWeight:tab===t?700:500, border:"none", cursor:"pointer", letterSpacing:"0.08em", fontFamily:"'Inter',sans-serif", background:tab===t?"linear-gradient(135deg,#2F8F4E,#4FBF7E)":"transparent", color:tab===t?"#FFF":"rgba(47,143,78,0.6)", boxShadow:tab===t?"0 4px 12px rgba(47,143,78,0.15)":"none" }}>
               {l}
             </button>
           ))}
         </div>
+
+        {/* ── KALENDER TAB ── */}
+        {tab==="kalender" && (
+          <div>
+            {/* Calendar Header */}
+            <div style={{ background:"linear-gradient(135deg,rgba(255,254,249,0.8),rgba(232,245,238,0.4))", borderRadius:16, padding:20, border:"1.5px solid rgba(47,143,78,0.12)", marginBottom:20 }}>
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
+                <button onClick={()=>setCurrentMonth(new Date(currentMonth.getFullYear(),currentMonth.getMonth()-1))} style={{ padding:"8px 12px", borderRadius:8, border:"1px solid rgba(47,143,78,0.2)", background:"rgba(255,254,249,0.8)", color:"#2F8F4E", fontSize:11, fontWeight:700, cursor:"pointer" }}>← Sebelumnya</button>
+                <div style={{ fontSize:16, fontWeight:700, color:"#2F8F4E", letterSpacing:"0.1em" }}>
+                  {currentMonth.toLocaleDateString("id-ID",{month:"long",year:"numeric"}).toUpperCase()}
+                </div>
+                <button onClick={()=>setCurrentMonth(new Date(currentMonth.getFullYear(),currentMonth.getMonth()+1))} style={{ padding:"8px 12px", borderRadius:8, border:"1px solid rgba(47,143,78,0.2)", background:"rgba(255,254,249,0.8)", color:"#2F8F4E", fontSize:11, fontWeight:700, cursor:"pointer" }}>Berikutnya →</button>
+              </div>
+
+              {/* Calendar Grid */}
+              <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", gap:8 }}>
+                {["Min","Sen","Sel","Rab","Kam","Jum","Sab"].map(d => <div key={d} style={{ textAlign:"center", fontSize:10, fontWeight:700, color:"rgba(47,143,78,0.6)", letterSpacing:"0.1em", padding:"8px 0" }}>{d}</div>)}
+                
+                {Array.from({length:42}).map((_,i)=>{
+                  const firstDay = new Date(currentMonth.getFullYear(),currentMonth.getMonth(),1).getDay();
+                  const daysInMonth = new Date(currentMonth.getFullYear(),currentMonth.getMonth()+1,0).getDate();
+                  const dayNum = i-firstDay+1;
+                  const isCurrentMonth = dayNum>0 && dayNum<=daysInMonth;
+                  const dateStr = isCurrentMonth ? `${currentMonth.getFullYear()}-${String(currentMonth.getMonth()+1).padStart(2,"0")}-${String(dayNum).padStart(2,"0")}` : "";
+                  const hasJadwal = isCurrentMonth && jadwal.some(j=>j.tanggal===dateStr);
+                  const jadwalDay = hasJadwal ? jadwal.find(j=>j.tanggal===dateStr) : null;
+                  const absenCount = jadwalDay ? absensi.filter(a=>a.jadwal_id===jadwalDay.id).length : 0;
+                  const isSelected = selectedDate === dateStr;
+                  const isToday = dateStr === new Date().toISOString().split("T")[0];
+                  
+                  return (
+                    <div key={i} onClick={()=>isCurrentMonth && setSelectedDate(isSelected?null:dateStr)} style={{
+                      padding:"12px 8px", borderRadius:10, border: isSelected?"2px solid #2F8F4E":`1.5px solid ${isCurrentMonth?"rgba(47,143,78,0.15)":"rgba(47,143,78,0.05)"}`,
+                      background: isSelected?"rgba(47,143,78,0.1)":hasJadwal?"rgba(47,143,78,0.05)":"transparent",
+                      minHeight:70, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
+                      cursor:isCurrentMonth?"pointer":"default", transition:"all 0.2s ease", opacity:isCurrentMonth?1:0.3,
+                      boxShadow:isSelected?"0 4px 12px rgba(47,143,78,0.15)":"none",
+                      border:isToday&&isCurrentMonth?"2px solid #B8943F":isSelected?"2px solid #2F8F4E":`1.5px solid ${isCurrentMonth?"rgba(47,143,78,0.15)":"rgba(47,143,78,0.05)"}`
+                    }}>
+                      {isCurrentMonth && (
+                        <>
+                          <div style={{ fontSize:14, fontWeight:700, color:"#1C3A2B", marginBottom:4 }}>{dayNum}</div>
+                          {hasJadwal && (
+                            <div style={{ fontSize:10, fontWeight:600, color:"#2F8F4E", background:"rgba(47,143,78,0.15)", padding:"2px 6px", borderRadius:4, marginBottom:2 }}>Jadwal ✓</div>
+                          )}
+                          {absenCount > 0 && (
+                            <div style={{ fontSize:9, fontWeight:600, color:"#B8943F", background:"rgba(184,148,63,0.12)", padding:"2px 6px", borderRadius:4 }}>{absenCount} hadir</div>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Detail Selected Date */}
+            {selectedDate && jadwal.find(j=>j.tanggal===selectedDate) && (
+              <div style={{ background:"linear-gradient(135deg,rgba(255,254,249,0.8),rgba(232,245,238,0.4))", borderRadius:16, padding:20, border:"1.5px solid rgba(47,143,78,0.12)" }}>
+                <div style={{ fontSize:12, fontWeight:700, color:"#2F8F4E", letterSpacing:"0.15em", marginBottom:14 }}>DETAIL JADWAL</div>
+                
+                {(() => {
+                  const jadwalSelected = jadwal.find(j=>j.tanggal===selectedDate);
+                  const absensiSelected = absensi.filter(a=>a.jadwal_id===jadwalSelected?.id);
+                  
+                  return (
+                    <div>
+                      <div style={{ marginBottom:16, padding:"12px 16px", background:"rgba(47,143,78,0.06)", borderRadius:12, border:"1px solid rgba(47,143,78,0.1)" }}>
+                        <div style={{ fontSize:13, fontWeight:600, color:"#1C3A2B", marginBottom:6 }}>
+                          {new Date(selectedDate).toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}
+                        </div>
+                        <div style={{ fontSize:11, color:"rgba(47,143,78,0.6)", fontWeight:500 }}>
+                          ⏰ {jadwalSelected?.jam_mulai} - {jadwalSelected?.jam_selesai}
+                        </div>
+                      </div>
+
+                      {/* Absensi List */}
+                      <div style={{ background:"rgba(47,143,78,0.02)", borderRadius:12, border:"1px solid rgba(47,143,78,0.1)", overflow:"hidden" }}>
+                        <div style={{ padding:"10px 16px", borderBottom:"1px solid rgba(47,143,78,0.1)", display:"flex", justifyContent:"space-between" }}>
+                          <span style={{ fontSize:10, fontWeight:700, color:"#2F8F4E", letterSpacing:"0.15em" }}>ABSENSI ({absensiSelected.length})</span>
+                          <span style={{ fontSize:10, color:"rgba(47,143,78,0.5)", fontWeight:500 }}>Total Poin: {absensiSelected.length*POIN_RONDA}</span>
+                        </div>
+                        <div style={{ maxHeight:300, overflowY:"auto" }}>
+                          {absensiSelected.length === 0 ? (
+                            <div style={{ padding:20, textAlign:"center", color:"rgba(47,143,78,0.2)", fontSize:11 }}>Belum ada absensi</div>
+                          ) : absensiSelected.map((a,i) => (
+                            <div key={a.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 16px", borderBottom:i<absensiSelected.length-1?"1px solid rgba(47,143,78,0.08)":"none" }}>
+                              <div style={{ width:6, height:6, borderRadius:"50%", background:"#2F8F4E", flexShrink:0 }}/>
+                              <div style={{ flex:1 }}>
+                                <div style={{ fontSize:12, color:"#1C3A2B", fontWeight:600 }}>{a.nama}</div>
+                                <div style={{ fontSize:9, color:"rgba(47,143,78,0.5)", fontWeight:500 }}>{a.metode==="nfc"?"e-KTP":"Manual"} · {new Date(a.waktu_tap).toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"})}</div>
+                              </div>
+                              <div style={{ fontSize:11, color:"#2F8F4E", fontWeight:700, marginRight:8 }}>+{POIN_RONDA}</div>
+                              <button onClick={() => deleteAbsensi(a.id, a.nama, a.kk_id)} style={{ padding:"5px 10px", borderRadius:6, border:"1px solid rgba(184,72,48,0.3)", background:"rgba(184,72,48,0.08)", color:"#B8472F", fontSize:9, fontWeight:600, letterSpacing:"0.08em", fontFamily:"'Inter',sans-serif", cursor:"pointer", transition:"all 0.2s ease" }} onMouseEnter={e=>(e.currentTarget.style.background="rgba(184,72,48,0.15)")} onMouseLeave={e=>(e.currentTarget.style.background="rgba(184,72,48,0.08)")}>
+                                🗑 Hapus
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* ── MONITOR TAB ── */}
         {tab==="monitor" && (
