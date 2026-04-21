@@ -448,16 +448,21 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
       {testimoni.length > 0 && (
         <section className="sec" style={{ padding: "clamp(48px,8vw,104px) 0", background: "var(--fo)", overflow: "hidden" }}>
           <div style={{ maxWidth: 1320, margin: "0 auto", padding: "0 clamp(16px,4vw,32px)" }}>
-            <div style={{ textAlign: "center", marginBottom: 40 }}>
+            <div style={{ textAlign: "center", marginBottom: 50 }}>
               <div className="dl dlc" style={{ background: "var(--go)" }} />
-              <h2 className="fnt" style={{ fontSize: "clamp(26px,4vw,44px)", fontWeight: 300, color: "var(--cw)", letterSpacing: "-.02em" }}>Dukungan & Liputan</h2>
-              <p style={{ color: "var(--ts)", fontSize: 13, marginTop: 10 }}>Apa kata mereka tentang inisiatif Ciburial Eco-Digital.</p>
+              <h2 className="fnt" style={{ fontSize: "clamp(28px,5vw,48px)", fontWeight: 300, color: "var(--cw)", letterSpacing: "-.02em", marginBottom: 16 }}>Dukungan & Liputan</h2>
+              <p className="fnt" style={{ color: "rgba(255,255,255,0.75)", fontSize: "clamp(16px, 2vw, 22px)", marginTop: 0, fontWeight: 300, fontStyle: "italic" }}>
+                "Apa kata mereka tentang inisiatif Ciburial Eco-Digital."
+              </p>
             </div>
           </div>
 
-          <div style={{ display: "flex", gap: 20, padding: "0 clamp(16px,4vw,32px) 20px", overflowX: "auto", scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch" }} className="hide-scroll">
+          <div style={{ display: "flex", gap: 24, padding: "0 clamp(16px,4vw,32px) 40px", overflowX: "auto", scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch" }} className="hide-scroll">
             {testimoni.map((t, i) => (
-              <div key={t.id || i} style={{ scrollSnapAlign: "start", flex: "0 0 clamp(280px, 40vw, 400px)", background: "var(--cw)", border: "1px solid var(--bo)", borderRadius: 20, padding: t.tipe === "berita" && t.foto ? "12px 12px 28px 12px" : 28, display: "flex", flexDirection: "column", gap: 14 }}>
+              <div key={t.id || i} style={{ scrollSnapAlign: "start", flex: "0 0 clamp(280px, 40vw, 400px)", background: "var(--cw)", border: "1.5px solid rgba(47,143,78,.1)", borderRadius: 20, padding: t.tipe === "berita" && t.foto ? "12px 12px 28px 12px" : "32px 28px", display: "flex", flexDirection: "column", gap: 14, boxShadow: "0 12px 32px rgba(0,0,0,0.1)", transition: "all .3s ease" }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(-6px)"; (e.currentTarget as HTMLElement).style.boxShadow = "0 20px 48px rgba(47,143,78,.15)"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(0)"; (e.currentTarget as HTMLElement).style.boxShadow = "0 12px 32px rgba(0,0,0,0.1)"; }}
+              >
 
                 {/* COVER BESAR KHUSUS BERITA */}
                 {t.tipe === "berita" && t.foto && (
@@ -472,7 +477,7 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
                   {t.tipe === "tokoh" && <div style={{ fontSize: 32, lineHeight: 1, color: "var(--go)", opacity: 0.5 }}>&quot;</div>}
                   {t.tipe === "berita" && !t.foto && <div style={{ fontSize: 28, lineHeight: 1, color: "var(--go)", opacity: 0.5 }}>📰</div>}
 
-                  <p style={{ fontSize: 14, lineHeight: 1.7, color: "var(--ts)", flex: 1, fontStyle: t.tipe === "tokoh" ? "italic" : "normal" }}>
+                  <p className="fnt" style={{ fontSize: "clamp(15px, 2vw, 18px)", lineHeight: 1.75, color: "#1C3A2B", flex: 1, fontStyle: t.tipe === "tokoh" ? "italic" : "normal", fontWeight: 400 }}>
                     {t.tipe === "tokoh" ? `"${t.pesan}"` : t.pesan}
                   </p>
 
@@ -490,8 +495,8 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
                       </div>
                     )}
                     <div>
-                      <div style={{ fontSize: 14, fontWeight: 700, color: "var(--tp)" }}>{t.nama}</div>
-                      <div style={{ fontSize: 11, fontWeight: 600, color: "var(--go)", letterSpacing: ".04em", textTransform: "uppercase" }}>{t.jabatan}</div>
+                      <div style={{ fontSize: 16, fontWeight: 800, color: "#1C3A2B" }}>{t.nama}</div>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: "#2F8F4E", letterSpacing: ".05em", textTransform: "uppercase", marginTop: 2 }}>{t.jabatan}</div>
                     </div>
                     <span style={{ marginLeft: "auto", fontSize: 10, fontWeight: 700, padding: "4px 8px", background: t.tipe === "tokoh" ? "rgba(184,148,63,.1)" : "rgba(45,90,64,.1)", color: t.tipe === "tokoh" ? "#7A5A1E" : "#2D5A40", borderRadius: 6, textTransform: "uppercase" }}>
                       {t.tipe}
