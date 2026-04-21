@@ -83,6 +83,7 @@ export default function KegiatanTab({ kegiatan, dataLoad }: KegiatanTabProps) {
               {kegFil.map((k, i) => {
                 const kat = KAT_CFG[k.kategori] || { label: "📌 Lainnya", bg: "rgba(90,74,64,.08)", color: "#5A4A40" };
                 const d = new Date(k.tanggal);
+                const fotoList = k.foto ? k.foto.split(',').filter(Boolean) : [];
                 return (
                   <div key={k.id} className="keg-card" style={{ 
                     background: "linear-gradient(135deg,rgba(255,254,249,.95),rgba(250,248,243,.85))", 
@@ -103,13 +104,13 @@ export default function KegiatanTab({ kegiatan, dataLoad }: KegiatanTabProps) {
                     el.style.transform = "translateY(0) scale(1)";
                     el.style.boxShadow = "0 4px 12px rgba(0,0,0,.04)";
                   }}>
-                    {k.fotos && k.fotos.length > 1 ? (
-                      <KegiatanSlider fotos={k.fotos} judul={k.judul} />
-                    ) : k.foto ? (
-                      (k.foto.toLowerCase().includes(".mp4") || k.foto.toLowerCase().includes(".webm")) ? (
-                        <video src={k.foto} controls playsInline style={{ width: "100%", aspectRatio: "16/9", objectFit: "cover" }} />
+                    {fotoList.length > 1 ? (
+                      <KegiatanSlider fotos={fotoList} judul={k.judul} />
+                    ) : fotoList.length === 1 ? (
+                      (fotoList[0].toLowerCase().includes(".mp4") || fotoList[0].toLowerCase().includes(".webm")) ? (
+                        <video src={fotoList[0]} controls playsInline style={{ width: "100%", aspectRatio: "16/9", objectFit: "cover" }} />
                       ) : (
-                        <img src={k.foto} alt={k.judul} style={{ width: "100%", aspectRatio: "16/9", objectFit: "cover" }} />
+                        <img src={fotoList[0]} alt={k.judul} style={{ width: "100%", aspectRatio: "16/9", objectFit: "cover" }} />
                       )
                     ) : (
                       <div style={{ height: 140, background: `linear-gradient(135deg,${kat.color}30,${kat.color}10)`, borderBottom: `4px solid ${kat.color}` }} />

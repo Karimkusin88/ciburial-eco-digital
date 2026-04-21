@@ -270,11 +270,9 @@ export default function AdminPage() {
       };
 
       if (uploadedUrls.length > 0) {
-        kegiatanData.fotos = uploadedUrls;
-        kegiatanData.foto = uploadedUrls[0];
+        kegiatanData.foto = uploadedUrls.join(',');
       } else if (kForm.foto) {
         kegiatanData.foto = kForm.foto;
-        kegiatanData.fotos = [kForm.foto];
       }
       
       const { error } = await supabase.from("kegiatan").insert(kegiatanData);
@@ -858,7 +856,12 @@ export default function AdminPage() {
                     const kat = KAT_OPTIONS.find(o => o.value === k.kategori);
                     return (
                       <div key={k.id} className="row-hover" style={{ padding:"16px 24px", borderBottom:"1px solid #E5E0D8", display:"flex", gap:14, alignItems:"flex-start", transition:"background .15s" }}>
-                        {k.foto && <img src={k.foto} alt="" style={{ width:56, height:56, borderRadius:10, objectFit:"cover", flexShrink:0 }} />}
+                        {k.foto && (() => {
+                          const f = k.foto.split(',')[0];
+                          return (f.toLowerCase().includes(".mp4") || f.toLowerCase().includes(".webm")) 
+                            ? <video src={f} muted style={{ width:56, height:56, borderRadius:10, objectFit:"cover", flexShrink:0 }} />
+                            : <img src={f} alt="" style={{ width:56, height:56, borderRadius:10, objectFit:"cover", flexShrink:0 }} />;
+                        })()}
                         <div style={{ flex:1, minWidth:0 }}>
                           <div style={{ display:"flex", gap:8, alignItems:"center", marginBottom:4, flexWrap:"wrap" }}>
                             <span style={{ fontSize:10, fontWeight:700, letterSpacing:".06em", padding:"2px 8px", borderRadius:99, background:"rgba(28,58,43,.1)", color:"#1C3A2B" }}>{kat?.label || k.kategori}</span>
