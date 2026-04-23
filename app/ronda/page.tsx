@@ -4,6 +4,27 @@ import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 const POIN_RONDA = 30;
 
+// ─── CARA KERJA ──────────────────────────────────────────────────────────────
+function CaraKerja() {
+  const steps = [
+    { i: "01", t: "SIAGA PETUGAS", d: "Petugas ronda bersiap di pos dengan perlengkapan patroli." },
+    { i: "02", t: "TEMPEL KARTU", d: "Tempelkan e-KTP atau Kartu Warga pada sensor NFC di HP." },
+    { i: "03", t: "TERCATAT", d: "Sistem mencatat kehadiran & waktu patroli secara real-time." },
+    { i: "04", t: "BONUS POIN", d: "Petugas yang aktif akan mendapatkan poin apresiasi warga." },
+  ];
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 14, marginTop: 24 }}>
+      {steps.map(s => (
+        <div key={s.i} className="glass-card" style={{ padding: 18, border: "1px solid rgba(47,143,78,0.12)" }}>
+          <div style={{ fontSize: 9, fontWeight: 900, color: "#2F8F4E", marginBottom: 6, opacity: 0.6 }}>LANGKAH {s.i}</div>
+          <div style={{ fontSize: 13, fontWeight: 800, color: "#E8F5EE", marginBottom: 4 }}>{s.t}</div>
+          <div style={{ fontSize: 11, color: "rgba(232,245,238,0.35)", fontWeight: 500, lineHeight: 1.5 }}>{s.d}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function RondaKioskPage() {
   const [jadwal, setJadwal] = useState<any[]>([]);
   const [kkList, setKkList] = useState<any[]>([]);
@@ -354,6 +375,8 @@ export default function RondaKioskPage() {
               <div style={{ backgroundColor:"rgba(47,143,78,0.2)", padding:"6px 12px", borderRadius:100, fontSize:14, fontWeight:900, color:"#4FBF7E", flexShrink:0 }}>+{lastScan.poin}</div>
             </div>
           )}
+
+          <CaraKerja />
         </div>
 
         {/* ── RIGHT COLUMN: Live Attendance Feed ── */}
