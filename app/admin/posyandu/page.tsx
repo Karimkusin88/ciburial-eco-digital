@@ -533,14 +533,10 @@ export default function AdminPosyanduPage(){
           </div>
         )}
       </div>
-    </div>
-  );
-}
-
-      </div>
       <style>{`
         @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.6;transform:scale(1.2)}}
         @keyframes ping{0%{transform:scale(1);opacity:0.8}100%{transform:scale(1.6);opacity:0}}
+        @keyframes sweep { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
         @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
       `}</style>
     </div>
