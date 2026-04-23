@@ -387,7 +387,7 @@ export default function AdminRondaPage() {
                   
                   return (
                     <div key={i} onClick={()=>isCurrentMonth && setSelectedDate(isSelected?null:dateStr)} style={{
-                      padding:"12px 8px", borderRadius:10, border: isSelected?"2px solid #2F8F4E":`1.5px solid ${isCurrentMonth?"rgba(47,143,78,0.15)":"rgba(47,143,78,0.05)"}`,
+                      padding:"12px 8px", borderRadius:10,
                       background: isSelected?"rgba(47,143,78,0.1)":hasJadwal?"rgba(47,143,78,0.05)":"transparent",
                       minHeight:70, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
                       cursor:isCurrentMonth?"pointer":"default", transition:"all 0.2s ease", opacity:isCurrentMonth?1:0.3,
