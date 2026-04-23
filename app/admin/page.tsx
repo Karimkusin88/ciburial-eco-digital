@@ -4,7 +4,7 @@
 // PIN admin disimpan di environment variable ADMIN_PIN
 import { useState, useEffect, useCallback } from "react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
-import "./admin-styles.css";
+import "./admin-styles-heroic.css";
 
 // PIN diverifikasi server-side via /api/admin/verify
 
@@ -445,25 +445,29 @@ export default function AdminPage() {
 
   /* ══════ PASSWORD GATE ══════ */
   if (!auth) return (
-    <div className="admin-page">
-      <div style={{ minHeight:"100vh", background:"#FAF8F3", display:"flex", alignItems:"center", justifyContent:"center", padding:"24px" }}>
-        <div style={{ width:"100%", maxWidth:400, background:"#FFFEF9", border:"1px solid #E5E0D8", borderRadius:28, padding:"48px 40px", textAlign:"center" }}>
-          <div style={{ width:64, height:64, borderRadius:"50%", background:"#1C3A2B", display:"flex", alignItems:"center", justifyContent:"center", margin:"0 auto 20px", fontSize:28 }}>🌿</div>
-          <h1 className="fnt" style={{ fontSize:30, fontWeight:300, color:"#1C3A2B", letterSpacing:"-.02em", marginBottom:6 }}>Admin Panel</h1>
-          <p style={{ fontSize:12, color:"#9A8C85", marginBottom:32, fontWeight:600, letterSpacing:".05em" }}>Ciburial Eco-Digital Village</p>
-          <input
-            type="tel" inputMode="numeric" placeholder="Masukkan PIN admin (6 digit)"
-            className="field-login" value={pwInput}
-            maxLength={6}
-            onChange={e => { setPwInput(e.target.value.replace(/\D/g, '')); setPwErr(false); }}
-            onKeyDown={e => e.key === "Enter" && handleLogin()}
-            style={{ marginBottom: pwErr ? 8 : 20, borderColor: pwErr ? "#8B2020" : undefined, textAlign:"center", fontSize:24, letterSpacing:".3em", fontWeight:700 }}
-          />
-          {pwErr && <p style={{ fontSize:12, color:"#8B2020", fontWeight:700, marginBottom:16 }}>PIN salah. Coba lagi.</p>}
-          <button onClick={handleLogin} disabled={loading} style={{ width:"100%", padding:"14px", borderRadius:14, background:"#1C3A2B", color:"#fff", fontSize:12, fontWeight:700, letterSpacing:".1em", textTransform:"uppercase", border:"none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}>
-            {loading ? "Memverifikasi..." : "Masuk →"}
+    <div className="admin-page heroic-bg">
+      <div style={{ minHeight:"100vh", display:"flex", alignItems:"center", justifyContent:"center", padding:"24px" }}>
+        <div className="card-heroic" style={{ width:"100%", maxWidth:420, padding:"48px 40px", textAlign:"center" }}>
+          <div className="float-heroic" style={{ width:80, height:80, borderRadius:"50%", background:"linear-gradient(135deg, #2F8F4E, #4FBF7E)", display:"flex", alignItems:"center", justifyContent:"center", margin:"0 auto 24px", fontSize:32, boxShadow: "0 10px 30px rgba(47,143,78,0.3)" }}>🌿</div>
+          <h1 className="section-title-heroic" style={{ fontSize:36, marginBottom:8 }}>Admin Panel</h1>
+          <p className="section-subtitle-heroic" style={{ marginBottom:32 }}>Ciburial Eco-Digital Village</p>
+          
+          <div className="form-group-heroic" style={{ marginBottom: 24 }}>
+            <input
+              type="tel" inputMode="numeric" placeholder="PIN ADMIN"
+              className="form-input-heroic" value={pwInput}
+              maxLength={6}
+              onChange={e => { setPwInput(e.target.value.replace(/\D/g, '')); setPwErr(false); }}
+              onKeyDown={e => e.key === "Enter" && handleLogin()}
+              style={{ textAlign:"center", fontSize:24, letterSpacing:".4em", fontWeight:800, padding: "16px" }}
+            />
+            {pwErr && <p style={{ fontSize:12, color:"#8B2020", fontWeight:700, marginTop:8 }}>⚠️ PIN salah. Coba lagi.</p>}
+          </div>
+
+          <button className="btn-heroic" onClick={handleLogin} disabled={loading} style={{ width:"100%" }}>
+            <span>{loading ? "MEMVERIFIKASI..." : "MASUK KE DASHBOARD →"}</span>
           </button>
-          <p style={{ fontSize:11, color:"#C8C0B8", marginTop:20 }}>Hanya untuk pengelola resmi Ciburial</p>
+          <p style={{ fontSize:11, color:"#9A8C85", marginTop:24, fontWeight: 500 }}>Akses terbatas untuk pengelola resmi Ciburial</p>
         </div>
       </div>
     </div>
@@ -471,70 +475,116 @@ export default function AdminPage() {
 
   /* ══════ ADMIN DASHBOARD ══════ */
   return (
-    <>
-      <div className="admin-page" style={{background:"#F0EDE5",minHeight:"100vh"}}>
-        {toast && <div className="admin-toast">{toast}</div>}
+    <div className="admin-page heroic-bg" style={{ minHeight:"100vh" }}>
+      {toast && <div className="admin-toast pulse-glow-heroic">{toast}</div>}
 
-      {/* ── HEADER ── */}
-      <header style={{ background:"#1C3A2B", padding:"0 28px", height:60, display:"flex", alignItems:"center", justifyContent:"space-between", position:"sticky", top:0, zIndex:40 }}>
-        <div style={{ display:"flex", alignItems:"center", gap:12 }}>
-          <span style={{ fontSize:20 }}>🌿</span>
+      {/* ── HEADER HEROIC ── */}
+      <header style={{ 
+        background: "rgba(28, 58, 43, 0.95)", 
+        backdropFilter: "blur(12px)",
+        padding: "0 32px", 
+        height: 72, 
+        display: "flex", 
+        alignItems: "center", 
+        justifyContent: "space-between", 
+        position: "sticky", 
+        top: 0, 
+        zIndex: 100,
+        borderBottom: "1px solid rgba(79, 191, 126, 0.2)",
+        boxShadow: "0 4px 20px rgba(0,0,0,0.15)"
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <div className="pulse-glow-heroic" style={{ width: 40, height: 40, borderRadius: "50%", background: "linear-gradient(135deg, #2F8F4E, #4FBF7E)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>🌿</div>
           <div>
-            <span className="fnt" style={{ fontSize:18, fontWeight:300, color:"#FAF8F3", letterSpacing:"-.02em" }}>Ciburial</span>
-            <span style={{ fontSize:10, fontWeight:700, color:"#B8943F", letterSpacing:".15em", textTransform:"uppercase", marginLeft:8 }}>Admin Panel</span>
+            <div style={{ fontSize: 18, fontWeight: 800, color: "#FAF8F3", letterSpacing: "-0.01em", lineHeight: 1 }}>CIBURIAL</div>
+            <div style={{ fontSize: 10, fontWeight: 700, color: "#4FBF7E", letterSpacing: "0.15em", textTransform: "uppercase", marginTop: 4 }}>DASHBOARD UTAMA</div>
           </div>
         </div>
-        <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
           {!isSupabaseReady() && (
-            <span style={{ fontSize:11, fontWeight:700, color:"#D4AC5A", background:"rgba(184,148,63,.15)", padding:"4px 12px", borderRadius:99, letterSpacing:".06em" }}>⚠️ Supabase belum dikonfigurasi</span>
+            <div className="badge-heroic" style={{ background: "rgba(139, 32, 32, 0.15)", color: "#FF8A8A", borderColor: "rgba(139, 32, 32, 0.3)" }}>⚠️ OFFLINE MODE</div>
           )}
-          <a href="/" target="_blank" style={{ fontSize:11, fontWeight:700, letterSpacing:".08em", textTransform:"uppercase", color:"rgba(250,248,243,.5)", textDecoration:"none" }}>Lihat Website →</a>
-          <button onClick={() => setAuth(false)} style={{ padding:"7px 16px", borderRadius:99, background:"rgba(255,255,255,.08)", border:"1px solid rgba(255,255,255,.12)", color:"rgba(250,248,243,.6)", fontSize:11, fontWeight:700, cursor:"pointer" }}>Keluar</button>
+          <a href="/" target="_blank" className="badge-heroic" style={{ textDecoration: "none" }}>LIHAT WEB →</a>
+          <button onClick={() => setAuth(false)} style={{ 
+            padding: "8px 20px", 
+            borderRadius: 8, 
+            background: "rgba(255,255,255,0.05)", 
+            border: "1px solid rgba(255,255,255,0.1)", 
+            color: "rgba(250,248,243,0.7)", 
+            fontSize: 11, 
+            fontWeight: 700, 
+            cursor: "pointer",
+            transition: "all 0.3s"
+          }} 
+          onMouseOver={e => e.currentTarget.style.background = "rgba(139, 32, 32, 0.2)"}
+          onMouseOut={e => e.currentTarget.style.background = "rgba(255,255,255,0.05)"}
+          >KELUAR</button>
         </div>
       </header>
 
-      <main style={{ maxWidth:1100, margin:"0 auto", padding:"28px 24px 80px" }}>
+      <main style={{ maxWidth: 1280, margin: "0 auto", padding: "40px 32px 100px" }}>
 
         {/* ── Supabase warning ── */}
         {!isSupabaseReady() && (
-          <div style={{ padding:"20px 24px", background:"rgba(184,148,63,.1)", border:"1px solid rgba(184,148,63,.3)", borderRadius:16, marginBottom:24, display:"flex", gap:16, alignItems:"flex-start" }}>
-            <span style={{ fontSize:22, marginTop:2 }}>⚠️</span>
-            <div>
-              <div style={{ fontSize:14, fontWeight:700, color:"#7A5A1E", marginBottom:4 }}>Supabase belum dikonfigurasi</div>
-              <div style={{ fontSize:13, lineHeight:1.7, color:"#9A7A3A" }}>
-                Data tidak akan tersimpan. Tambahkan <code style={{ background:"rgba(0,0,0,.06)", padding:"1px 6px", borderRadius:4 }}>NEXT_PUBLIC_SUPABASE_URL</code> dan <code style={{ background:"rgba(0,0,0,.06)", padding:"1px 6px", borderRadius:4 }}>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> ke file <code style={{ background:"rgba(0,0,0,.06)", padding:"1px 6px", borderRadius:4 }}>.env.local</code> kamu, lalu restart server. Lihat panduan setup di <code style={{ background:"rgba(0,0,0,.06)", padding:"1px 6px", borderRadius:4 }}>lib/supabase.ts</code>.
+          <div className="card-heroic" style={{ padding:"24px", marginBottom:32, borderLeft: "4px solid #8B2020", background: "rgba(139, 32, 32, 0.05)" }}>
+            <div style={{ display:"flex", gap:20, alignItems:"center" }}>
+              <span className="float-heroic" style={{ fontSize:32 }}>⚠️</span>
+              <div>
+                <div style={{ fontSize:16, fontWeight:800, color:"#8B2020", marginBottom:4 }}>Supabase Belum Dikonfigurasi</div>
+                <div style={{ fontSize:13, lineHeight:1.7, color:"#5A4A40" }}>
+                  Data tidak akan tersimpan secara permanen. Tambahkan variabel environment Supabase ke file <code style={{ background:"rgba(0,0,0,.06)", padding:"2px 6px", borderRadius:4 }}>.env.local</code> Anda untuk mengaktifkan database real-time.
+                </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* ── SUMMARY CARDS ── */}
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(180px, 1fr))", gap:14, marginBottom:28 }}>
+        {/* ── SUMMARY STATS HEROIC ── */}
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(220px, 1fr))", gap:20, marginBottom:40 }}>
           {[
-            { label:"Total Kegiatan", value: kegiatanList.length + " Acara",    icon:"📅", c:"#1C3A2B" },
-            { label:"Total Produk",   value: produkList.length + " Item",        icon:"🛒", c:"#3D2B1F" },
-            { label:"Total Masuk",    value: formatRp(totalMasuk),              icon:"↑",  c:"#1C6B3A" },
-            { label:"Total Keluar",   value: formatRp(totalKeluar),             icon:"↓",  c:"#8B2020" },
-            { label:"Saldo Dana",     value: formatRp(saldo),                   icon:"◎",  c:"#1C3A2B" },
+            { label:"Total Kegiatan", value: kegiatanList.length, unit: "Acara", icon:"📅", desc: "Agenda kampung aktif" },
+            { label:"Produk Desa",   value: produkList.length, unit: "Item", icon:"🛒", desc: "Karya UMKM lokal" },
+            { label:"Total Masuk",    value: formatRp(totalMasuk), unit: "", icon:"📈", desc: "Pemasukan dana", color: "#2F8F4E" },
+            { label:"Total Keluar",   value: formatRp(totalKeluar), unit: "", icon:"📉", desc: "Alokasi dana", color: "#8B2020" },
+            { label:"Saldo Aktual",   value: formatRp(saldo), unit: "", icon:"💎", desc: "Dana tersedia", color: "#1C3A2B" },
           ].map((card, i) => (
-            <div key={i} style={{ padding:"20px 22px", background:"#FFFEF9", border:"1px solid #E5E0D8", borderRadius:16 }}>
-              <div style={{ fontSize:11, fontWeight:700, letterSpacing:".1em", textTransform:"uppercase", color:"#9A8C85", marginBottom:8 }}>{card.label}</div>
-              <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-                <span style={{ fontSize:18 }}>{card.icon}</span>
-                <span className="fnt" style={{ fontSize:20, fontWeight:600, color:card.c }}>{card.value}</span>
+            <div key={i} className="stat-box-heroic">
+              <div className="stat-label-heroic">{card.label}</div>
+              <div className="stat-value-heroic" style={{ color: card.color }}>
+                {card.value}<span style={{ fontSize: 16, marginLeft: 4 }}>{card.unit}</span>
               </div>
+              <div className="stat-desc-heroic">{card.icon} {card.desc}</div>
             </div>
           ))}
         </div>
 
-        {/* ── TAB NAV ── */}
-        <div style={{ display:"flex", gap:4, marginBottom:20, background:"#FFFEF9", padding:4, borderRadius:14, border:"1px solid #E5E0D8", width:"fit-content", flexWrap:"wrap" }}>
+        {/* ── TAB NAV HEROIC ── */}
+        <div style={{ 
+          display:"flex", 
+          gap:8, 
+          marginBottom:32, 
+          background:"rgba(255, 254, 249, 0.6)", 
+          padding:6, 
+          borderRadius:16, 
+          border:"1.5px solid rgba(47, 143, 78, 0.15)", 
+          width:"fit-content", 
+          flexWrap:"wrap",
+          backdropFilter: "blur(8px)"
+        }}>
           {([["dashboard","📊 Dashboard"],["pengurus","👥 Pengurus"],["kegiatan","📅 Kegiatan"],["produk","🛒 Produk"],["transaksi","💰 Transaksi"],["testimoni","💬 Tokoh & Berita"],["iklan","🎥 Iklan Promo"]] as const).map(([key, label]) => (
             <button key={key} onClick={() => setActiveTab(key)} style={{
-              padding:"9px 20px", borderRadius:10, fontSize:12, fontWeight:700, letterSpacing:".06em",
-              border:"none", cursor:"pointer", transition:"all .2s",
-              background: activeTab === key ? "#1C3A2B" : "transparent",
-              color: activeTab === key ? "#fff" : "#9A8C85",
+              padding:"10px 24px", 
+              borderRadius:12, 
+              fontSize:12, 
+              fontWeight:800, 
+              letterSpacing:".04em",
+              border:"none", 
+              cursor:"pointer", 
+              transition:"all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
+              background: activeTab === key ? "linear-gradient(135deg, #2F8F4E, #4FBF7E)" : "transparent",
+              color: activeTab === key ? "#fff" : "#5A4A40",
+              boxShadow: activeTab === key ? "0 8px 20px rgba(47, 143, 78, 0.25)" : "none",
+              transform: activeTab === key ? "translateY(-2px)" : "none"
             }}>{label}</button>
           ))}
         </div>
@@ -550,10 +600,10 @@ export default function AdminPage() {
             const perDash=circ*(perempuan/total);
             return (
               <svg width={100} height={100}>
-                <circle cx={cx} cy={cy} r={R} fill="none" stroke="#1a3a6b" strokeWidth={sw} strokeDasharray={`${lakiDash} ${circ-lakiDash}`} strokeDashoffset={circ*0.25} transform={`rotate(0 ${cx} ${cy})`}/>
-                <circle cx={cx} cy={cy} r={R} fill="none" stroke="#b8943f" strokeWidth={sw} strokeDasharray={`${perDash} ${circ-perDash}`} strokeDashoffset={circ*0.25-lakiDash} transform={`rotate(0 ${cx} ${cy})`}/>
-                <text x={cx} y={cy-4} textAnchor="middle" fontSize={14} fontWeight="800" fill="#1C3A2B">{total}</text>
-                <text x={cx} y={cy+12} textAnchor="middle" fontSize={8} fill="#9A8C85">jiwa</text>
+                <circle cx={cx} cy={cy} r={R} fill="none" stroke="#2F8F4E" strokeWidth={sw} strokeDasharray={`${lakiDash} ${circ-lakiDash}`} strokeDashoffset={circ*0.25} style={{ opacity: 0.8 }}/>
+                <circle cx={cx} cy={cy} r={R} fill="none" stroke="#4FBF7E" strokeWidth={sw} strokeDasharray={`${perDash} ${circ-perDash}`} strokeDashoffset={circ*0.25-lakiDash} style={{ opacity: 0.4 }}/>
+                <text x={cx} y={cy-4} textAnchor="middle" fontSize={14} fontWeight="900" fill="#1C3A2B">{total}</text>
+                <text x={cx} y={cy+12} textAnchor="middle" fontSize={8} fill="#9A8C85" fontWeight="700">JIWA</text>
               </svg>
             );
           }
@@ -562,10 +612,10 @@ export default function AdminPage() {
             const R=36,circ=2*Math.PI*R,dash=circ*(pct/100);
             return (
               <svg width={90} height={90}>
-                <circle cx={45} cy={45} r={R} fill="none" stroke="rgba(28,58,43,.1)" strokeWidth={10}/>
-                <circle cx={45} cy={45} r={R} fill="none" stroke="#1C3A2B" strokeWidth={10} strokeDasharray={`${dash} ${circ-dash}`} strokeDashoffset={circ*0.25} strokeLinecap="round"/>
-                <text x={45} y={41} textAnchor="middle" fontSize={14} fontWeight="800" fill="#1C3A2B">{pct}%</text>
-                <text x={45} y={55} textAnchor="middle" fontSize={8} fill="#9A8C85">imunisasi</text>
+                <circle cx={45} cy={45} r={R} fill="none" stroke="rgba(47,143,78,.1)" strokeWidth={10}/>
+                <circle cx={45} cy={45} r={R} fill="none" stroke="#2F8F4E" strokeWidth={10} strokeDasharray={`${dash} ${circ-dash}`} strokeDashoffset={circ*0.25} strokeLinecap="round"/>
+                <text x={45} y={41} textAnchor="middle" fontSize={14} fontWeight="900" fill="#1C3A2B">{pct}%</text>
+                <text x={45} y={55} textAnchor="middle" fontSize={8} fill="#9A8C85" fontWeight="700">TARGET</text>
               </svg>
             );
           }
@@ -580,207 +630,148 @@ export default function AdminPage() {
             const path=pts.map((p,i)=>`${i===0?"M":"L"}${p.x},${p.y}`).join(" ");
             const area=`${path} L${pts[pts.length-1].x},${H-P} L${P},${H-P} Z`;
             return (
-              <svg width={W} height={H}>
-                <defs><linearGradient id="dg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#1C3A2B" stopOpacity="0.15"/><stop offset="100%" stopColor="#1C3A2B" stopOpacity="0"/></linearGradient></defs>
+              <svg width="100%" height={H} viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none">
+                <defs><linearGradient id="dg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#2F8F4E" stopOpacity="0.2"/><stop offset="100%" stopColor="#2F8F4E" stopOpacity="0"/></linearGradient></defs>
                 <path d={area} fill="url(#dg)"/>
-                <path d={path} fill="none" stroke="#1C3A2B" strokeWidth={2} strokeLinecap="round"/>
+                <path d={path} fill="none" stroke="#2F8F4E" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round"/>
                 {pts.map((p,i)=>(
                   <g key={i}>
-                    <circle cx={p.x} cy={p.y} r={3} fill="#1C3A2B" stroke="white" strokeWidth={1.5}/>
-                    <text x={p.x} y={H-4} fontSize={7} textAnchor="middle" fill="#9A8C85">{p.b}</text>
-                    <text x={p.x} y={p.y-6} fontSize={7} textAnchor="middle" fill="#1C3A2B" fontWeight="700">{p.kg.toFixed(0)}</text>
+                    <circle cx={p.x} cy={p.y} r={4} fill="#2F8F4E" stroke="white" strokeWidth={2}/>
+                    <text x={p.x} y={H-4} fontSize={8} textAnchor="middle" fill="#9A8C85" fontWeight="700">{p.b}</text>
                   </g>
                 ))}
               </svg>
             );
           }
-          // Bar chart poin per RT
-          function BarChart() {
-            const rts = ["01","02","03"];
-            // dummy sampai data real tersedia
-            const vals = rts.map(rt => ({rt, poin: Math.floor(Math.random()*500)+100}));
-            const maxV = Math.max(...vals.map(v=>v.poin))||1;
-            return (
-              <div style={{display:"flex",gap:12,alignItems:"flex-end",height:80,padding:"0 8px"}}>
-                {vals.map(v=>(
-                  <div key={v.rt} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
-                    <span style={{fontSize:10,fontWeight:700,color:"#1C3A2B"}}>{v.poin}</span>
-                    <div style={{width:"100%",background:"#1C3A2B",borderRadius:"4px 4px 0 0",height:`${(v.poin/maxV)*60}px`,opacity:0.8}}/>
-                    <span style={{fontSize:10,color:"#9A8C85"}}>RT {v.rt}</span>
-                  </div>
-                ))}
-              </div>
-            );
-          }
-          // Line chart kas
-          function LineChart() {
-            const txByMonth:Record<string,{masuk:number;keluar:number}> = {};
-            transaksiList.forEach(t => {
-              const b = new Date(t.tanggal).toLocaleDateString("id-ID",{month:"short"});
-              if (!txByMonth[b]) txByMonth[b]={masuk:0,keluar:0};
-              txByMonth[b][t.tipe] += t.jumlah;
-            });
-            const data = Object.entries(txByMonth).slice(-6).map(([b,v])=>({b,...v}));
-            if (data.length < 2) return <div style={{textAlign:"center",padding:20,color:"#9A8C85",fontSize:11}}>Butuh min 2 bulan data</div>;
-            const W=260,H=90,P=20;
-            const maxV=Math.max(...data.flatMap(d=>[d.masuk,d.keluar]))*1.1||1;
-            const xStep=(W-P*2)/(data.length-1);
-            const yFn=(v:number)=>H-P-((v/maxV)*(H-P*2));
-            const mkPath=(key:"masuk"|"keluar")=>data.map((d,i)=>`${i===0?"M":"L"}${P+i*xStep},${yFn(d[key])}`).join(" ");
-            return (
-              <svg width={W} height={H}>
-                <path d={mkPath("masuk")} fill="none" stroke="#1C6B3A" strokeWidth={2} strokeLinecap="round"/>
-                <path d={mkPath("keluar")} fill="none" stroke="#8B2020" strokeWidth={2} strokeLinecap="round" strokeDasharray="4 2"/>
-                {data.map((d,i)=>(
-                  <text key={i} x={P+i*xStep} y={H-4} fontSize={7} textAnchor="middle" fill="#9A8C85">{d.b}</text>
-                ))}
-                <circle cx={W-40} cy={8} r={4} fill="#1C6B3A"/>
-                <text x={W-33} y={12} fontSize={8} fill="#1C6B3A">Masuk</text>
-                <circle cx={W-40} cy={22} r={4} fill="#8B2020"/>
-                <text x={W-33} y={26} fontSize={8} fill="#8B2020">Keluar</text>
-              </svg>
-            );
-          }
           const ICON:Record<string,string>={posyandu:"👶",ronda:"🔦",bank_sampah:"♻️",tukar:"🎁",kerja_bakti:"🌿",masjid:"🕌",learning_hub:"📚",lapor_fasilitas:"🔧"};
           return (
-            <div>
-              {/* Banner ultah hari ini */}
+            <div className="float-heroic-subtle">
+              {/* Banner ultah hari ini heroic */}
               {ultahHari.length>0 && (
-                <div style={{background:"linear-gradient(135deg,#B8943F,#D4AC5A)",borderRadius:16,padding:"14px 20px",marginBottom:20,color:"white",display:"flex",alignItems:"center",gap:12}}>
-                  <span style={{fontSize:28}}>🎂</span>
+                <div className="pulse-glow-heroic" style={{background:"linear-gradient(135deg, #2F8F4E, #4FBF7E)", borderRadius:16, padding:"20px 28px", marginBottom:32, color:"white", display:"flex", alignItems:"center", gap:20, border: "none" }}>
+                  <span className="float-heroic" style={{fontSize:40}}>🎂</span>
                   <div>
-                    <div style={{fontWeight:800,fontSize:14}}>🎉 Selamat Ulang Tahun!</div>
-                    <div style={{fontSize:13,opacity:0.9}}>{ultahHari.map((a:any)=>{
+                    <div style={{fontWeight:900, fontSize:18, letterSpacing: "-0.02em"}}>HARI SPESIAL DESA! 🎉</div>
+                    <div style={{fontSize:15, opacity:0.95, fontWeight: 500}}>Warga berulang tahun: {ultahHari.map((a:any)=>{
                       const umur=new Date().getFullYear()-new Date(a.tgl_lahir).getFullYear();
-                      return `${a.nama} (${umur} tahun)`;
+                      return `${a.nama} (${umur} thn)`;
                     }).join(" · ")}</div>
                   </div>
                 </div>
               )}
 
-              {/* Stats row */}
-              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:12,marginBottom:20}}>
+              {/* Stats row dash - mini heroic boxes */}
+              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))",gap:16,marginBottom:32}}>
                 {[
-                  {i:"🏠",v:dashData.totalKK||0,l:"Total KK",c:"#1C3A2B"},
-                  {i:"👥",v:dashData.totalJiwa||0,l:"Total Jiwa",c:"#1A3A6B"},
-                  {i:"♻️",v:`${(dashData.totKg||0).toFixed(0)}kg`,l:"Sampah Terkelola",c:"#4A7C59"},
-                  {i:"🪙",v:(dashData.totPoin||0).toLocaleString(),l:"Total Poin",c:"#B8943F"},
-                  {i:"👶",v:dashData.anakPosyandu||0,l:"Anak Posyandu",c:"#8B2020"},
-                  {i:"🕌",v:`${dashData.muzakki||0}/${dashData.mustahiq||0}`,l:"Muzakki/Mustahiq",c:"#1C3A2B"},
+                  {i:"🏠",v:dashData.totalKK||0,l:"TOTAL KK",c:"#1C3A2B"},
+                  {i:"👥",v:dashData.totalJiwa||0,l:"TOTAL JIWA",c:"#1C3A2B"},
+                  {i:"♻️",v:`${(dashData.totKg||0).toFixed(0)}`,u:"kg",l:"SAMPAH",c:"#2F8F4E"},
+                  {i:"🪙",v:(dashData.totPoin||0).toLocaleString(),l:"TOTAL POIN",c:"#4FBF7E"},
+                  {i:"👶",v:dashData.anakPosyandu||0,l:"ANAK POSYANDU",c:"#8B2020"},
+                  {i:"🕌",v:`${dashData.muzakki||0}/${dashData.mustahiq||0}`,l:"ZAKAT",c:"#1C3A2B"},
                 ].map(s=>(
-                  <div key={s.l} style={{background:"#FFFEF9",border:"1px solid #E5E0D8",borderRadius:14,padding:"16px",borderLeft:`4px solid ${s.c}`}}>
-                    <div style={{fontSize:18,marginBottom:6}}>{s.i}</div>
-                    <div style={{fontSize:20,fontWeight:900,color:s.c}}>{s.v}</div>
-                    <div style={{fontSize:10,color:"#9A8C85",textTransform:"uppercase",letterSpacing:"0.08em"}}>{s.l}</div>
+                  <div key={s.l} className="stat-box-heroic" style={{ padding: "20px", textAlign: "left" }}>
+                    <div style={{fontSize:24,marginBottom:12}}>{s.i}</div>
+                    <div className="stat-value-heroic" style={{fontSize:24, color: s.c}}>{s.v}<span style={{fontSize:12, marginLeft:2}}>{s.u}</span></div>
+                    <div className="stat-label-heroic" style={{fontSize:10}}>{s.l}</div>
                   </div>
                 ))}
               </div>
 
-              {/* Charts row */}
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:16,marginBottom:16}}>
+              {/* Charts row heroic cards */}
+              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(300px, 1fr))",gap:24,marginBottom:32}}>
                 {/* Donut demografi */}
-                <div style={{background:"#FFFEF9",border:"1px solid #E5E0D8",borderRadius:16,padding:18}}>
-                  <div style={{fontSize:11,fontWeight:700,color:"#9A8C85",textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:10}}>📊 Demografi Warga</div>
-                  <div style={{display:"flex",justifyContent:"center"}}><DonutChart laki={dashData.laki||0} perempuan={dashData.perempuan||0}/></div>
-                  <div style={{display:"flex",gap:12,justifyContent:"center",marginTop:6}}>
-                    <span style={{fontSize:11,color:"#1A3A6B"}}>👨 L: {dashData.laki||0}</span>
-                    <span style={{fontSize:11,color:"#B8943F"}}>👩 P: {dashData.perempuan||0}</span>
+                <div className="card-heroic">
+                  <div className="badge-heroic" style={{marginBottom:20}}>📊 DEMOGRAFI WARGA</div>
+                  <div style={{display:"flex", alignItems:"center", gap: 32}}>
+                    <DonutChart laki={dashData.laki||0} perempuan={dashData.perempuan||0}/>
+                    <div style={{display:"flex", flexDirection:"column", gap:8}}>
+                      <div style={{display:"flex", alignItems:"center", gap:8}}>
+                        <div style={{width:12, height:12, borderRadius:3, background:"#2F8F4E"}}/>
+                        <span style={{fontSize:13, fontWeight:700, color:"#1C3A2B"}}>👨 LAKI: {dashData.laki||0}</span>
+                      </div>
+                      <div style={{display:"flex", alignItems:"center", gap:8}}>
+                        <div style={{width:12, height:12, borderRadius:3, background:"#4FBF7E", opacity: 0.6}}/>
+                        <span style={{fontSize:13, fontWeight:700, color:"#1C3A2B"}}>👩 PEREMPUAN: {dashData.perempuan||0}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 {/* Radial imunisasi */}
-                <div style={{background:"#FFFEF9",border:"1px solid #E5E0D8",borderRadius:16,padding:18,textAlign:"center"}}>
-                  <div style={{fontSize:11,fontWeight:700,color:"#9A8C85",textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:10}}>💉 Capaian Posyandu</div>
-                  <div style={{display:"flex",justifyContent:"center"}}><RadialBar pct={imunPct}/></div>
-                  <div style={{fontSize:11,color:"#9A8C85",marginTop:4}}>{dashData.imunSudah||0}/{dashData.imunTotal||0} jadwal selesai</div>
+                <div className="card-heroic" style={{textAlign:"center"}}>
+                  <div className="badge-heroic" style={{marginBottom:20}}>💉 CAPAIAN POSYANDU</div>
+                  <div style={{display:"flex", justifyContent:"center", marginBottom: 16}}><RadialBar pct={imunPct}/></div>
+                  <div style={{fontSize:12, fontWeight: 700, color:"#9A8C85"}}>{dashData.imunSudah||0} DARI {dashData.imunTotal||0} JADWAL SELESAI</div>
                 </div>
 
                 {/* Area chart sampah */}
-                <div style={{background:"#FFFEF9",border:"1px solid #E5E0D8",borderRadius:16,padding:18}}>
-                  <div style={{fontSize:11,fontWeight:700,color:"#9A8C85",textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:10}}>♻️ Tren Bank Sampah (kg)</div>
-                  <AreaChart/>
+                <div className="card-heroic">
+                  <div className="badge-heroic" style={{marginBottom:20}}>♻️ TREN BANK SAMPAH (KG)</div>
+                  <div style={{ marginTop: 10 }}><AreaChart/></div>
                 </div>
               </div>
 
-              {/* Charts row 2 */}
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:16}}>
-                {/* Bar chart poin per RT */}
-                <div style={{background:"#FFFEF9",border:"1px solid #E5E0D8",borderRadius:16,padding:18}}>
-                  <div style={{fontSize:11,fontWeight:700,color:"#9A8C85",textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:10}}>🏆 Poin per RT</div>
-                  <BarChart/>
-                </div>
-
-                {/* Line chart kas */}
-                <div style={{background:"#FFFEF9",border:"1px solid #E5E0D8",borderRadius:16,padding:18}}>
-                  <div style={{fontSize:11,fontWeight:700,color:"#9A8C85",textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:10}}>💰 Pertumbuhan Kas</div>
-                  <LineChart/>
-                </div>
-              </div>
-
-              {/* Running text + ultah minggu */}
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
+              {/* Aktivitas & Quick Links Heroic */}
+              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(400px, 1fr))",gap:24}}>
                 {/* Aktivitas realtime */}
-                <div style={{background:"#FFFEF9",border:"1px solid #E5E0D8",borderRadius:16,padding:18}}>
-                  <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:12}}>
-                    <span style={{width:7,height:7,borderRadius:"50%",background:"#1C6B3A",display:"inline-block",animation:"pulse 1.5s infinite"}}/>
-                    <span style={{fontSize:11,fontWeight:700,color:"#9A8C85",textTransform:"uppercase",letterSpacing:"0.08em"}}>Aktivitas Realtime</span>
+                <div className="card-heroic">
+                  <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:24}}>
+                    <div className="badge-heroic">⚡ AKTIVITAS REALTIME</div>
+                    <span className="pulse-glow-heroic" style={{width:10,height:10,borderRadius:"50%",background:"#2F8F4E"}}/>
                   </div>
-                  {aktivitas.length===0?(
-                    <div style={{textAlign:"center",padding:20,color:"#9A8C85",fontSize:12}}>Belum ada aktivitas</div>
-                  ):aktivitas.map((a:any,i:number)=>{
-                    const usia=Math.round((new Date().getTime()-new Date(a.created_at).getTime())/(1000*60));
-                    const lbl=usia<60?`${usia}m lalu`:usia<1440?`${Math.round(usia/60)}j lalu`:`${Math.round(usia/1440)}h lalu`;
-                    return(
-                      <div key={a.id} style={{display:"flex",gap:8,padding:"7px 0",borderBottom:i<aktivitas.length-1?"1px solid #F0EDE5":"none",alignItems:"flex-start"}}>
-                        <span style={{fontSize:14,flexShrink:0}}>{ICON[a.sumber]||"📌"}</span>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                    {aktivitas.length===0?(
+                      <div style={{textAlign:"center",padding:40,color:"#9A8C85",fontSize:13, fontWeight: 600}}>Menunggu aktivitas warga...</div>
+                    ):aktivitas.map((a:any,i:number)=>(
+                      <div key={a.id} style={{display:"flex",gap:16,paddingBottom:16,borderBottom:i<aktivitas.length-1?"1px solid rgba(47,143,78,0.1)":"none",alignItems:"flex-start"}}>
+                        <div style={{width:40, height:40, borderRadius:10, background:"rgba(47,143,78,0.1)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:20, flexShrink:0}}>{ICON[a.sumber]||"📌"}</div>
                         <div style={{flex:1}}>
-                          <div style={{fontSize:12,color:"#1A1410",lineHeight:1.4}}>{a.keterangan}</div>
-                          <div style={{fontSize:10,color:"#9A8C85"}}>{lbl} · +{a.jumlah} poin</div>
+                          <div style={{fontSize:14, fontWeight:700, color:"#1C3A2B", marginBottom:4}}>{a.keterangan}</div>
+                          <div style={{fontSize:11, color:"#9A8C85", fontWeight: 700}}>{a.anggota_kk?.nama || "Warga"} · +{a.jumlah} POIN</div>
                         </div>
                       </div>
-                    );
-                  })}
+                    ))}
+                  </div>
                 </div>
 
-                {/* Ultah + quick links */}
-                <div>
-                  {/* Ultah minggu ini */}
-                  {ultahMinggu.length>0 && (
-                    <div style={{background:"rgba(184,148,63,0.08)",border:"1px solid rgba(184,148,63,0.2)",borderRadius:14,padding:16,marginBottom:12}}>
-                      <div style={{fontSize:11,fontWeight:700,color:"#B8943F",marginBottom:8,textTransform:"uppercase",letterSpacing:"0.06em"}}>📅 Akan Ultah (7 hari)</div>
-                      {ultahMinggu.slice(0,4).map((a:any,i:number)=>{
-                        const l=new Date(a.tgl_lahir);
-                        const next=new Date(new Date().getFullYear(),l.getMonth(),l.getDate());
-                        const hari=Math.ceil((next.getTime()-new Date().getTime())/(1000*60*60*24));
-                        const umur=new Date().getFullYear()-l.getFullYear();
-                        return(
-                          <div key={i} style={{display:"flex",justifyContent:"space-between",fontSize:12,color:"#5A4A40",padding:"4px 0",borderBottom:i<ultahMinggu.length-1?"1px solid rgba(184,148,63,0.15)":"none"}}>
-                            <span>🎂 {a.nama} <span style={{color:"#9A8C85",fontSize:11}}>(ke-{umur+1})</span></span>
-                            <span style={{color:"#B8943F",fontWeight:700}}>{hari===1?"Besok":`${hari} hari`}</span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-
-                  {/* Quick links */}
-                  <div style={{background:"#FFFEF9",border:"1px solid #E5E0D8",borderRadius:14,padding:16}}>
-                    <div style={{fontSize:11,fontWeight:700,color:"#9A8C85",textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:10}}>⚡ Akses Cepat</div>
-                    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6}}>
+                {/* Right col: Quick Links & Ultah */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+                   {/* Quick links card */}
+                   <div className="card-heroic" style={{ background: "linear-gradient(135deg, rgba(28, 58, 43, 0.95), rgba(47, 143, 78, 0.95))", color: "white" }}>
+                    <div className="stat-label-heroic" style={{ color: "rgba(255,255,255,0.7)", marginBottom: 20 }}>AKSES CEPAT MODUL</div>
+                    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
                       {[
-                        {href:"/admin/warga",i:"👥",l:"Data Warga"},
-                        {href:"/admin/posyandu",i:"👶",l:"Posyandu"},
-                        {href:"/admin/bank-sampah",i:"♻️",l:"Bank Sampah"},
-                        {href:"/admin/ronda",i:"🔦",l:"Ronda NFC"},
-                        {href:"/admin/zakat",i:"🕌",l:"Zakat"},
-                        {href:"/admin/dashboard",i:"📊",l:"Full Analytics"},
+                        {href:"/admin/warga",i:"👥",l:"DATA WARGA"},
+                        {href:"/admin/posyandu",i:"👶",l:"POSYANDU"},
+                        {href:"/admin/bank-sampah",i:"♻️",l:"BANK SAMPAH"},
+                        {href:"/admin/ronda",i:"🔦",l:"RONDA NFC"},
+                        {href:"/admin/zakat",i:"🕌",l:"ZAKAT"},
+                        {href:"/admin/dashboard",i:"📊",l:"ANALYTICS"},
                       ].map(l=>(
-                        <a key={l.href} href={l.href} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 10px",borderRadius:10,background:"rgba(28,58,43,0.04)",border:"1px solid #E5E0D8",textDecoration:"none",color:"#1A1410",fontSize:12,fontWeight:500}}>
+                        <a key={l.href} href={l.href} style={{display:"flex",alignItems:"center",gap:10,padding:"14px",borderRadius:12,background:"rgba(255,255,255,0.1)",border:"1px solid rgba(255,255,255,0.1)",textDecoration:"none",color:"white",fontSize:12,fontWeight:800, transition: "all 0.3s"}} 
+                        onMouseOver={e => {e.currentTarget.style.background = "rgba(255,255,255,0.2)"; e.currentTarget.style.transform = "translateX(4px)"}}
+                        onMouseOut={e => {e.currentTarget.style.background = "rgba(255,255,255,0.1)"; e.currentTarget.style.transform = "none"}}>
                           <span>{l.i}</span><span>{l.l}</span>
                         </a>
                       ))}
                     </div>
                   </div>
+
+                  {/* Upcoming birthdays */}
+                  {ultahMinggu.length > 0 && (
+                    <div className="card-heroic">
+                      <div className="badge-heroic" style={{marginBottom:20}}>📅 AKAN DATANG (7 HARI)</div>
+                      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                        {ultahMinggu.slice(0,4).map((a:any,i:number)=>(
+                          <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",fontSize:13,paddingBottom:10,borderBottom:i<ultahMinggu.length-1?"1px solid rgba(0,0,0,0.05)":"none"}}>
+                            <span style={{fontWeight: 700, color: "#1C3A2B"}}>🎂 {a.nama}</span>
+                            <span className="badge-heroic" style={{fontSize:10, padding: "4px 10px"}}>{new Date(a.tgl_lahir).getDate()}/{new Date(a.tgl_lahir).getMonth()+1}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -789,88 +780,79 @@ export default function AdminPage() {
 
         {/* ═══════════════ TAB: KEGIATAN ═══════════════ */}
         {activeTab === "kegiatan" && (
-          <div style={{ display:"grid", gridTemplateColumns:"1fr 2fr", gap:20, alignItems:"start" }}>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(350px, 1fr))", gap:32, alignItems:"start" }}>
 
             {/* Form tambah */}
-            <div style={{ background:"#FFFEF9", border:"1px solid #E5E0D8", borderRadius:20, padding:"28px" }}>
-              <h3 style={{ fontSize:14, fontWeight:700, color:"#1C3A2B", marginBottom:20, paddingBottom:14, borderBottom:"1px solid #E5E0D8" }}>➕ Tambah Kegiatan Baru</h3>
-              <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
-                <div>
-                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Judul Acara *</label>
-                  <input className="field" value={kForm.judul} onChange={e => setKForm({...kForm, judul:e.target.value})} placeholder="Cth: Peringatan Maulid Nabi SAW" />
+            <div className="card-heroic">
+              <div className="badge-heroic" style={{marginBottom:24}}>➕ TAMBAH KEGIATAN BARU</div>
+              <div className="form-heroic">
+                <div className="form-group-heroic">
+                  <label className="form-label-heroic">JUDUL ACARA *</label>
+                  <input className="form-input-heroic" value={kForm.judul} onChange={e => setKForm({...kForm, judul:e.target.value})} placeholder="Cth: Peringatan Maulid Nabi SAW" />
                 </div>
-                <div>
-                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Tanggal *</label>
-                  <input type="date" className="field" value={kForm.tanggal} onChange={e => setKForm({...kForm, tanggal:e.target.value})} />
+                <div className="form-group-heroic">
+                  <label className="form-label-heroic">TANGGAL *</label>
+                  <input type="date" className="form-input-heroic" value={kForm.tanggal} onChange={e => setKForm({...kForm, tanggal:e.target.value})} />
                 </div>
-                <div>
-                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Kategori *</label>
-                  <select className="field" value={kForm.kategori} onChange={e => setKForm({...kForm, kategori:e.target.value})}>
+                <div className="form-group-heroic">
+                  <label className="form-label-heroic">KATEGORI *</label>
+                  <select className="form-input-heroic" value={kForm.kategori} onChange={e => setKForm({...kForm, kategori:e.target.value})}>
                     {KAT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                   </select>
                 </div>
-                <div>
-                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Deskripsi</label>
-                  <textarea className="field" rows={3} value={kForm.deskripsi} onChange={e => setKForm({...kForm, deskripsi:e.target.value})} placeholder="Ceritakan sedikit tentang acara ini..." style={{ resize:"vertical" }} />
+                <div className="form-group-heroic">
+                  <label className="form-label-heroic">DESKRIPSI</label>
+                  <textarea className="form-input-heroic" rows={3} value={kForm.deskripsi} onChange={e => setKForm({...kForm, deskripsi:e.target.value})} placeholder="Ceritakan sedikit tentang acara ini..." style={{ resize:"vertical" }} />
                 </div>
-                <div style={{ background:"rgba(28,58,43,.06)", padding:14, borderRadius:12, border:"1px dashed rgba(28,58,43,.2)" }}>
-                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#1C3A2B", marginBottom:6 }}>Upload Galeri Foto (Max 8) *opsi slide di web*</label>
+                <div className="gradient-border-heroic" style={{ padding: 20 }}>
+                  <label className="form-label-heroic" style={{ color:"#1C3A2B", marginBottom:12, display: "block" }}>📸 GALERI FOTO (MAX 8)</label>
                   <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:8 }}>
                     {kFiles.map((f, i) => (
-                      <label key={i} style={{ aspectRatio:"1", background:f ? "#E8F5EE" : "#fff", border:f ? "1.5px solid #2F8F4E" : "1px dashed rgba(28,58,43,.2)", borderRadius:10, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", overflow:"hidden", position:"relative" }}>
+                      <label key={i} style={{ aspectRatio:"1", background:f ? "rgba(47,143,78,0.1)" : "rgba(0,0,0,0.03)", border:f ? "2px solid #2F8F4E" : "1px dashed rgba(0,0,0,0.1)", borderRadius:10, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", overflow:"hidden", position:"relative", transition: "all 0.3s" }}>
                         <input type="file" accept="image/*,video/mp4,video/webm" style={{ display:"none" }} onChange={e => {
                           const n = [...kFiles];
                           n[i] = e.target.files?.[0] || null;
                           setKFiles(n);
                         }} />
-                        {f ? (
-                          <>
-                            <span style={{ fontSize:20 }}>🖼️</span>
-                            <div style={{ position:"absolute", bottom:0, width:"100%", background:"rgba(47,143,78,.9)", color:"#fff", fontSize:8, textAlign:"center", padding:2, whiteSpace:"nowrap", textOverflow:"ellipsis", overflow:"hidden" }}>{f.name}</div>
-                          </>
-                        ) : (
-                          <span style={{ fontSize:16, color:"rgba(28,58,43,.3)" }}>+</span>
-                        )}
+                        {f ? <span style={{ fontSize:20 }}>🖼️</span> : <span style={{ fontSize:16, color:"rgba(0,0,0,0.2)" }}>+</span>}
                       </label>
                     ))}
                   </div>
-                  <div style={{ marginTop:14, fontSize:10, color:"#9A8C85", borderTop:"1px solid rgba(28,58,43,.1)", paddingTop:10 }}>ATAU paste 1 link (opsional):</div>
-                  <input className="field" value={kForm.foto} onChange={e => setKForm({...kForm, foto:e.target.value})} placeholder="https://..." style={{ marginTop:6, fontSize:11, padding:"8px 12px" }} disabled={kFiles.some(f => f !== null)} />
                 </div>
-                <button onClick={addKegiatan} disabled={loading} style={{ padding:"13px", borderRadius:12, background:"#1C3A2B", color:"#fff", fontSize:12, fontWeight:700, letterSpacing:".08em", textTransform:"uppercase", border:"none", cursor:"pointer", opacity:loading ? .6 : 1, marginTop:4 }}>
-                  {loading ? "Menyimpan..." : "Simpan Kegiatan"}
+                <button className="btn-heroic" onClick={addKegiatan} disabled={loading} style={{ marginTop: 8 }}>
+                  <span>{loading ? "MENYIMPAN..." : "SIMPAN KEGIATAN"}</span>
                 </button>
               </div>
             </div>
 
             {/* List */}
-            <div style={{ background:"#FFFEF9", border:"1px solid #E5E0D8", borderRadius:20, overflow:"hidden" }}>
-              <div style={{ padding:"20px 24px", borderBottom:"1px solid #E5E0D8", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-                <h3 style={{ fontSize:14, fontWeight:700, color:"#1C3A2B" }}>Daftar Kegiatan ({kegiatanList.length})</h3>
+            <div className="card-heroic" style={{ padding: 0, overflow: "hidden" }}>
+              <div style={{ padding:"24px 32px", borderBottom:"1px solid rgba(47,143,78,0.1)", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                <div className="badge-heroic">📅 DAFTAR KEGIATAN ({kegiatanList.length})</div>
               </div>
               {kegiatanList.length === 0 ? (
-                <div style={{ padding:"48px", textAlign:"center", color:"#9A8C85", fontSize:13 }}>Belum ada kegiatan. Tambahkan yang pertama!</div>
+                <div style={{ padding:"60px", textAlign:"center", color:"#9A8C85", fontWeight: 600 }}>Belum ada agenda kegiatan.</div>
               ) : (
-                <div style={{ maxHeight:520, overflowY:"auto" }}>
+                <div style={{ maxHeight:600, overflowY:"auto" }}>
                   {kegiatanList.map((k) => {
                     const kat = KAT_OPTIONS.find(o => o.value === k.kategori);
                     return (
-                      <div key={k.id} className="row-hover" style={{ padding:"16px 24px", borderBottom:"1px solid #E5E0D8", display:"flex", gap:14, alignItems:"flex-start", transition:"background .15s" }}>
+                      <div key={k.id} style={{ padding:"20px 32px", borderBottom:"1px solid rgba(0,0,0,0.05)", display:"flex", gap:20, alignItems:"flex-start", transition:"all 0.3s" }} className="row-hover-heroic">
                         {k.foto && (() => {
                           const f = k.foto.split(',')[0];
                           return (f.toLowerCase().includes(".mp4") || f.toLowerCase().includes(".webm")) 
-                            ? <video src={f} muted style={{ width:56, height:56, borderRadius:10, objectFit:"cover", flexShrink:0 }} />
-                            : <img src={f} alt="" style={{ width:56, height:56, borderRadius:10, objectFit:"cover", flexShrink:0 }} />;
+                            ? <video src={f} muted style={{ width:64, height:64, borderRadius:12, objectFit:"cover", flexShrink:0, boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }} />
+                            : <img src={f} alt="" style={{ width:64, height:64, borderRadius:12, objectFit:"cover", flexShrink:0, boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }} />;
                         })()}
                         <div style={{ flex:1, minWidth:0 }}>
-                          <div style={{ display:"flex", gap:8, alignItems:"center", marginBottom:4, flexWrap:"wrap" }}>
-                            <span style={{ fontSize:10, fontWeight:700, letterSpacing:".06em", padding:"2px 8px", borderRadius:99, background:"rgba(28,58,43,.1)", color:"#1C3A2B" }}>{kat?.label || k.kategori}</span>
-                            <span style={{ fontSize:11, color:"#9A8C85" }}>{new Date(k.tanggal).toLocaleDateString("id-ID", { day:"numeric", month:"long", year:"numeric" })}</span>
+                          <div style={{ display:"flex", gap:8, alignItems:"center", marginBottom:6 }}>
+                            <span style={{ fontSize:10, fontWeight:800, padding:"3px 10px", borderRadius:99, background:"rgba(47,143,78,0.1)", color:"#2F8F4E" }}>{kat?.label || k.kategori}</span>
+                            <span style={{ fontSize:11, color:"#9A8C85", fontWeight: 700 }}>{new Date(k.tanggal).toLocaleDateString("id-ID", { day:"numeric", month:"short", year:"numeric" })}</span>
                           </div>
-                          <div style={{ fontSize:14, fontWeight:700, color:"#1A1410", marginBottom:4 }}>{k.judul}</div>
-                          {k.deskripsi && <div style={{ fontSize:12, color:"#9A8C85", lineHeight:1.6, overflow:"hidden", display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical" as any }}>{k.deskripsi}</div>}
+                          <div style={{ fontSize:15, fontWeight:800, color:"#1C3A2B", marginBottom:4 }}>{k.judul}</div>
+                          {k.deskripsi && <div style={{ fontSize:13, color:"#5A4A40", lineHeight:1.6, opacity: 0.8 }}>{k.deskripsi.substring(0, 100)}...</div>}
                         </div>
-                        <button className="btn-sm" onClick={() => deleteKegiatan(k.id)} style={{ background:"#FDF0F0", color:"#8B2020", flexShrink:0 }}>🗑️ Hapus</button>
+                        <button onClick={() => deleteKegiatan(k.id)} style={{ padding: "8px", borderRadius: 8, background: "rgba(139,32,32,0.05)", border: "1px solid rgba(139,32,32,0.1)", color: "#8B2020", cursor: "pointer" }}>🗑️</button>
                       </div>
                     );
                   })}
@@ -882,89 +864,76 @@ export default function AdminPage() {
 
         {/* ═══════════════ TAB: PRODUK ═══════════════ */}
         {activeTab === "produk" && (
-          <div style={{ display:"grid", gridTemplateColumns:"1fr 2fr", gap:20, alignItems:"start" }}>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(350px, 1fr))", gap:32, alignItems:"start" }}>
 
             {/* Form tambah */}
-            <div style={{ background:"#FFFEF9", border:"1px solid #E5E0D8", borderRadius:20, padding:"28px" }}>
-              <h3 style={{ fontSize:14, fontWeight:700, color:"#1C3A2B", marginBottom:20, paddingBottom:14, borderBottom:"1px solid #E5E0D8" }}>➕ Tambah Produk Baru</h3>
-              <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
-                <div>
-                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Nama Produk *</label>
-                  <input className="field" value={pForm.nama} onChange={e => setPForm({...pForm, nama:e.target.value})} placeholder="Cth: Lampu Hex-Bamboo" />
+            <div className="card-heroic">
+              <div className="badge-heroic" style={{marginBottom:24}}>➕ TAMBAH PRODUK BARU</div>
+              <div className="form-heroic">
+                <div className="form-group-heroic">
+                  <label className="form-label-heroic">NAMA PRODUK *</label>
+                  <input className="form-input-heroic" value={pForm.nama} onChange={e => setPForm({...pForm, nama:e.target.value})} placeholder="Cth: Lampu Hex-Bamboo" />
                 </div>
-                <div>
-                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Deskripsi</label>
-                  <textarea className="field" rows={3} value={pForm.deskripsi} onChange={e => setPForm({...pForm, deskripsi:e.target.value})} placeholder="Deskripsi singkat produk..." style={{ resize:"vertical" }} />
+                <div className="form-group-heroic">
+                  <label className="form-label-heroic">DESKRIPSI</label>
+                  <textarea className="form-input-heroic" rows={3} value={pForm.deskripsi} onChange={e => setPForm({...pForm, deskripsi:e.target.value})} placeholder="Deskripsi singkat produk..." style={{ resize:"vertical" }} />
                 </div>
-                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
-                  <div>
-                    <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Harga (Rp) *</label>
-                    <input type="number" className="field" value={pForm.harga} onChange={e => setPForm({...pForm, harga:e.target.value})} placeholder="150000" />
+                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:16 }}>
+                  <div className="form-group-heroic">
+                    <label className="form-label-heroic">HARGA (RP) *</label>
+                    <input type="number" className="form-input-heroic" value={pForm.harga} onChange={e => setPForm({...pForm, harga:e.target.value})} placeholder="150000" />
                   </div>
-                  <div>
-                    <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Icon/Emoji</label>
-                    <input className="field" value={pForm.icon} onChange={e => setPForm({...pForm, icon:e.target.value})} placeholder="🎋" style={{ fontSize:20 }} />
+                  <div className="form-group-heroic">
+                    <label className="form-label-heroic">ICON / EMOJI</label>
+                    <input className="form-input-heroic" value={pForm.icon} onChange={e => setPForm({...pForm, icon:e.target.value})} placeholder="🎋" style={{ fontSize:20 }} />
                   </div>
                 </div>
-                <div>
-                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Tag / Label</label>
-                  <input className="field" value={pForm.tag} onChange={e => setPForm({...pForm, tag:e.target.value})} placeholder="Cth: Best Seller / Handmade / Eco" />
+                <div className="form-group-heroic">
+                  <label className="form-label-heroic">TAG / LABEL</label>
+                  <input className="form-input-heroic" value={pForm.tag} onChange={e => setPForm({...pForm, tag:e.target.value})} placeholder="Cth: Best Seller / Handmade / Eco" />
                 </div>
-                <div style={{ background:"rgba(61,43,31,.06)", padding:14, borderRadius:12, border:"1px dashed rgba(61,43,31,.2)" }}>
-                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#3D2B1F", marginBottom:10 }}>📸 Upload Foto Produk (Maksimal 5)</label>
-                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
+                <div className="gradient-border-heroic" style={{ padding: 20 }}>
+                  <label className="form-label-heroic" style={{ color:"#1C3A2B", marginBottom:12, display: "block" }}>📸 FOTO PRODUK (MAX 5)</label>
+                  <div style={{ display:"grid", gridTemplateColumns:"repeat(5,1fr)", gap:8 }}>
                     {[0,1,2,3,4].map((idx) => (
-                      <div key={idx} style={{ background:"#FFFEF9", padding:10, borderRadius:8, border:"1.5px solid rgba(61,43,31,.15)" }}>
-                        <div style={{ fontSize:9, fontWeight:700, color:"#9A8C85", marginBottom:6, textTransform:"uppercase" }}>Foto {idx + 1}</div>
-                        <input 
-                          type="file" 
-                          accept="image/*" 
-                          onChange={(e) => {
-                            const newFiles = [...pFiles];
-                            newFiles[idx] = e.target.files?.[0] || null;
-                            setPFiles(newFiles);
-                          }} 
-                          style={{ fontSize:11, width:"100%", cursor:"pointer" }} 
-                        />
-                        {pFiles[idx] && (
-                          <p style={{ fontSize:9, color:"#4A7C59", marginTop:4, fontWeight:700 }}>
-                            ✓ {pFiles[idx]!.name.substring(0, 15)}...
-                          </p>
-                        )}
-                      </div>
+                      <label key={idx} style={{ aspectRatio:"1", background:pFiles[idx] ? "rgba(47,143,78,0.1)" : "rgba(0,0,0,0.03)", border:pFiles[idx] ? "2px solid #2F8F4E" : "1px dashed rgba(0,0,0,0.1)", borderRadius:8, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", overflow:"hidden", transition: "all 0.3s" }}>
+                        <input type="file" accept="image/*" onChange={(e) => {
+                          const newFiles = [...pFiles];
+                          newFiles[idx] = e.target.files?.[0] || null;
+                          setPFiles(newFiles);
+                        }} style={{ display:"none" }} />
+                        {pFiles[idx] ? <span style={{ fontSize:16 }}>🖼️</span> : <span style={{ fontSize:14, color:"rgba(0,0,0,0.2)" }}>+</span>}
+                      </label>
                     ))}
                   </div>
-                  <div style={{ fontSize:10, color:"#9A8C85", marginTop:10, paddingTop:10, borderTop:"1px solid rgba(61,43,31,.15)" }}>
-                    💡 Upload sampai 5 foto. Format: JPG, PNG, WebP (max ~5MB per file)
-                  </div>
                 </div>
-                <button onClick={addProduk} disabled={loading} style={{ padding:"13px", borderRadius:12, background:"#3D2B1F", color:"#fff", fontSize:12, fontWeight:700, letterSpacing:".08em", textTransform:"uppercase", border:"none", cursor:"pointer", opacity:loading ? .6 : 1, marginTop:4 }}>
-                  {loading ? "Menyimpan..." : "Simpan Produk"}
+                <button className="btn-heroic" onClick={addProduk} disabled={loading} style={{ marginTop: 8 }}>
+                  <span>{loading ? "MENYIMPAN..." : "SIMPAN PRODUK"}</span>
                 </button>
               </div>
             </div>
 
             {/* List */}
-            <div style={{ background:"#FFFEF9", border:"1px solid #E5E0D8", borderRadius:20, overflow:"hidden" }}>
-              <div style={{ padding:"20px 24px", borderBottom:"1px solid #E5E0D8" }}>
-                <h3 style={{ fontSize:14, fontWeight:700, color:"#3D2B1F" }}>Daftar Produk ({produkList.length})</h3>
+            <div className="card-heroic" style={{ padding: 0, overflow: "hidden" }}>
+              <div style={{ padding:"24px 32px", borderBottom:"1px solid rgba(47,143,78,0.1)" }}>
+                <div className="badge-heroic">🛒 DAFTAR PRODUK ({produkList.length})</div>
               </div>
               {produkList.length === 0 ? (
-                <div style={{ padding:"48px", textAlign:"center", color:"#9A8C85", fontSize:13 }}>Belum ada produk. Tambahkan yang pertama!</div>
+                <div style={{ padding:"60px", textAlign:"center", color:"#9A8C85", fontWeight: 600 }}>Belum ada produk terdaftar.</div>
               ) : (
-                <div style={{ maxHeight:520, overflowY:"auto" }}>
+                <div style={{ maxHeight:600, overflowY:"auto" }}>
                   {produkList.map((p) => (
-                    <div key={p.id} className="row-hover" style={{ padding:"16px 24px", borderBottom:"1px solid #E5E0D8", display:"flex", gap:14, alignItems:"center", transition:"background .15s" }}>
-                      <div style={{ width:48, height:48, borderRadius:10, background:"#F0EDE5", display:"flex", alignItems:"center", justifyContent:"center", fontSize:26, flexShrink:0 }}>{p.icon}</div>
+                    <div key={p.id} style={{ padding:"20px 32px", borderBottom:"1px solid rgba(0,0,0,0.05)", display:"flex", gap:20, alignItems:"center", transition:"all 0.3s" }} className="row-hover-heroic">
+                      <div style={{ width:56, height:56, borderRadius:12, background:"linear-gradient(135deg, rgba(47,143,78,0.1), rgba(79,191,126,0.1))", display:"flex", alignItems:"center", justifyContent:"center", fontSize:28, flexShrink:0 }}>{p.icon}</div>
                       <div style={{ flex:1 }}>
-                        <div style={{ display:"flex", gap:8, alignItems:"center", marginBottom:3 }}>
-                          <span style={{ fontSize:14, fontWeight:700, color:"#1A1410" }}>{p.nama}</span>
-                          {p.tag && <span style={{ fontSize:10, fontWeight:700, padding:"2px 8px", borderRadius:99, background:"rgba(61,43,31,.08)", color:"#6B4F3A" }}>{p.tag}</span>}
+                        <div style={{ display:"flex", gap:8, alignItems:"center", marginBottom:4 }}>
+                          <span style={{ fontSize:15, fontWeight:800, color:"#1C3A2B" }}>{p.nama}</span>
+                          {p.tag && <span style={{ fontSize:9, fontWeight:800, padding:"2px 8px", borderRadius:99, background:"#2F8F4E", color:"#fff" }}>{p.tag}</span>}
                         </div>
-                        <div style={{ fontSize:13, color:"#4A7C59", fontWeight:700 }}>{formatRp(p.harga)}</div>
-                        {p.deskripsi && <div style={{ fontSize:12, color:"#9A8C85", marginTop:2 }}>{p.deskripsi}</div>}
+                        <div style={{ fontSize:14, color:"#2F8F4E", fontWeight:800 }}>{formatRp(p.harga)}</div>
+                        {p.deskripsi && <div style={{ fontSize:12, color:"#9A8C85", marginTop:4, fontWeight: 500 }}>{p.deskripsi}</div>}
                       </div>
-                      <button className="btn-sm" onClick={() => deleteProduk(p.id, p.foto)} style={{ background:"#FDF0F0", color:"#8B2020" }}>🗑️ Hapus</button>
+                      <button onClick={() => deleteProduk(p.id, p.foto)} style={{ padding: "8px", borderRadius: 8, background: "rgba(139,32,32,0.05)", border: "1px solid rgba(139,32,32,0.1)", color: "#8B2020", cursor: "pointer" }}>🗑️</button>
                     </div>
                   ))}
                 </div>
@@ -975,114 +944,106 @@ export default function AdminPage() {
 
         {/* ═══════════════ TAB: TRANSAKSI ═══════════════ */}
         {activeTab === "transaksi" && (
-          <div style={{ display:"flex", flexDirection:"column", gap:20 }}>
+          <div style={{ display:"flex", flexDirection:"column", gap:32 }}>
 
             {/* Form tambah */}
-            <div style={{ background:"#FFFEF9", border:"1px solid #E5E0D8", borderRadius:20, padding:"28px" }}>
-              <h3 style={{ fontSize:14, fontWeight:700, color:"#1C3A2B", marginBottom:20, paddingBottom:14, borderBottom:"1px solid #E5E0D8" }}>➕ Catat Transaksi Baru</h3>
-              <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(160px, 1fr))", gap:14 }}>
-                <div>
-                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Tanggal *</label>
-                  <input type="date" className="field" value={tForm.tanggal} onChange={e => setTForm({...tForm, tanggal:e.target.value})} />
+            <div className="card-heroic">
+              <div className="badge-heroic" style={{marginBottom:24}}>➕ CATAT TRANSAKSI BARU</div>
+              <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(200px, 1fr))", gap:20 }}>
+                <div className="form-group-heroic">
+                  <label className="form-label-heroic">TANGGAL *</label>
+                  <input type="date" className="form-input-heroic" value={tForm.tanggal} onChange={e => setTForm({...tForm, tanggal:e.target.value})} />
                 </div>
-                <div>
-                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Tipe *</label>
-                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:6 }}>
+                <div className="form-group-heroic">
+                  <label className="form-label-heroic">TIPE ALIRAN DANA *</label>
+                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
                     {(["masuk","keluar"] as const).map(t => (
                       <button key={t} onClick={() => setTForm(f => ({
                         ...f,
                         tipe: t,
                         kategori: t === "masuk" ? KAT_MASUK[0] : KAT_KELUAR[0],
                       }))} style={{
-                        padding:"11px 8px", borderRadius:10, fontSize:12, fontWeight:700, border:"1px solid #E5E0D8", cursor:"pointer", transition:"all .2s",
-                        background: tForm.tipe === t ? (t === "masuk" ? "#E8F5EE" : "#FDF0F0") : "#FFFEF9",
-                        color: tForm.tipe === t ? (t === "masuk" ? "#1C6B3A" : "#8B2020") : "#9A8C85",
-                        borderColor: tForm.tipe === t ? (t === "masuk" ? "#B8DFCA" : "#F0C8C8") : "#E5E0D8",
+                        padding:"12px", borderRadius:10, fontSize:11, fontWeight:800, border:"2px solid transparent", cursor:"pointer", transition:"all 0.3s",
+                        background: tForm.tipe === t ? (t === "masuk" ? "rgba(47,143,78,0.15)" : "rgba(139,32,32,0.1)") : "rgba(0,0,0,0.03)",
+                        color: tForm.tipe === t ? (t === "masuk" ? "#2F8F4E" : "#8B2020") : "#9A8C85",
+                        borderColor: tForm.tipe === t ? (t === "masuk" ? "#2F8F4E" : "#8B2020") : "transparent",
                       }}>
-                        {t === "masuk" ? "↑ Masuk" : "↓ Keluar"}
+                        {t === "masuk" ? "↑ MASUK" : "↓ KELUAR"}
                       </button>
                     ))}
                   </div>
                 </div>
-                <div>
-                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Kategori</label>
-                  <select className="field" value={tForm.kategori} onChange={e => setTForm({...tForm, kategori:e.target.value})}>
-                    <optgroup label="━━ Kategori">
-                      {(tForm.tipe === "masuk" ? KAT_MASUK : KAT_KELUAR).map(k => <option key={k}>{k}</option>)}
-                    </optgroup>
+                <div className="form-group-heroic">
+                  <label className="form-label-heroic">KATEGORI</label>
+                  <select className="form-input-heroic" value={tForm.kategori} onChange={e => setTForm({...tForm, kategori:e.target.value})}>
+                    {(tForm.tipe === "masuk" ? KAT_MASUK : KAT_KELUAR).map(k => <option key={k}>{k}</option>)}
                   </select>
-
                 </div>
-                <div>
-                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Jumlah (Rp) *</label>
-                  <input type="number" className="field" value={tForm.jumlah} onChange={e => setTForm({...tForm, jumlah:e.target.value})} placeholder="500000" />
+                <div className="form-group-heroic">
+                  <label className="form-label-heroic">JUMLAH (RP) *</label>
+                  <input type="number" className="form-input-heroic" value={tForm.jumlah} onChange={e => setTForm({...tForm, jumlah:e.target.value})} placeholder="500000" />
                 </div>
-                <div style={{ gridColumn:"1/-1" }}>
-                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Keterangan *</label>
-                  <input className="field" value={tForm.keterangan} onChange={e => setTForm({...tForm, keterangan:e.target.value})} placeholder="Cth: Donasi QRIS dari Bpk. Ahmad" />
+                <div className="form-group-heroic" style={{ gridColumn:"1/-1" }}>
+                  <label className="form-label-heroic">KETERANGAN TRANSAKSI *</label>
+                  <input className="form-input-heroic" value={tForm.keterangan} onChange={e => setTForm({...tForm, keterangan:e.target.value})} placeholder="Cth: Donasi QRIS dari Bpk. Ahmad" />
                 </div>
               </div>
-              <div style={{ display:"flex", gap:10, marginTop:18 }}>
-                <button onClick={() => addTransaksi(false)} disabled={loading} style={{ flex:1, padding:"13px", borderRadius:12, background:"#1C3A2B", color:"#fff", fontSize:12, fontWeight:700, letterSpacing:".08em", textTransform:"uppercase", border:"none", cursor:"pointer", opacity:loading ? .6 : 1 }}>
-                  {loading ? "Menyimpan..." : "Simpan Saja"}
+              <div style={{ display:"flex", gap:12, marginTop:24 }}>
+                <button className="btn-heroic" onClick={() => addTransaksi(false)} disabled={loading} style={{ flex:1, background: "linear-gradient(135deg, #1C3A2B, #2F8F4E)" }}>
+                  <span>{loading ? "MENYIMPAN..." : "SIMPAN DATA"}</span>
                 </button>
-                <button onClick={() => addTransaksi(true)} disabled={loading} style={{ flex:1, padding:"13px", borderRadius:12, background:"#B8943F", color:"#fff", fontSize:12, fontWeight:700, letterSpacing:".08em", textTransform:"uppercase", border:"none", cursor:"pointer", opacity:loading ? .6 : 1, display:"flex", alignItems:"center", justifyContent:"center", gap:8 }}>
-                  ✉️ Simpan & Notif Gmail
+                <button className="btn-heroic" onClick={() => addTransaksi(true)} disabled={loading} style={{ flex:1, background: "linear-gradient(135deg, #B8943F, #D4AC5A)" }}>
+                  <span>✉️ SIMPAN & NOTIF GMAIL</span>
                 </button>
-              </div>
-
-              {/* QRIS info */}
-              <div style={{ marginTop:20, padding:"16px 20px", background:"rgba(45,90,64,.06)", borderRadius:12, border:"1px dashed rgba(45,90,64,.2)" }}>
-                <div style={{ fontSize:12, fontWeight:700, color:"#2D5A40", marginBottom:4 }}>💡 Auto-Sync QRIS & Rekening Bank</div>
-                <div style={{ fontSize:12, lineHeight:1.7, color:"#4A7C59" }}>
-                  Untuk sinkronisasi otomatis dari QRIS/transfer bank, kamu butuh integrasi dengan <strong>Midtrans</strong> atau <strong>Xendit</strong> + webhook ke API route Next.js. Hubungi developer untuk setup ini — nilainya worth it untuk transparansi 100% otomatis.
-                </div>
               </div>
             </div>
 
             {/* List */}
-            <div style={{ background:"#FFFEF9", border:"1px solid #E5E0D8", borderRadius:20, overflow:"hidden" }}>
-              <div style={{ padding:"20px 24px", borderBottom:"1px solid #E5E0D8", display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:12 }}>
-                <h3 style={{ fontSize:14, fontWeight:700, color:"#1C3A2B" }}>Riwayat Transaksi ({transaksiList.length})</h3>
-                <div style={{ display:"flex", gap:16 }}>
-                  <span style={{ fontSize:12, fontWeight:700, color:"#1C6B3A" }}>↑ {formatRp(totalMasuk)}</span>
-                  <span style={{ fontSize:12, fontWeight:700, color:"#8B2020" }}>↓ {formatRp(totalKeluar)}</span>
-                  <span style={{ fontSize:13, fontWeight:800, color:"#1C3A2B" }}>Saldo: {formatRp(saldo)}</span>
+            <div className="card-heroic" style={{ padding: 0, overflow: "hidden" }}>
+              <div style={{ padding:"24px 32px", borderBottom:"1px solid rgba(47,143,78,0.1)", display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:16 }}>
+                <div className="badge-heroic">💰 RIWAYAT TRANSAKSI ({transaksiList.length})</div>
+                <div style={{ display:"flex", gap:20 }}>
+                  <div style={{ textAlign: "right" }}>
+                    <div style={{ fontSize: 10, fontWeight: 800, color: "#9A8C85" }}>TOTAL MASUK</div>
+                    <div style={{ fontSize: 14, fontWeight: 900, color: "#2F8F4E" }}>{formatRp(totalMasuk)}</div>
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <div style={{ fontSize: 10, fontWeight: 800, color: "#9A8C85" }}>TOTAL KELUAR</div>
+                    <div style={{ fontSize: 14, fontWeight: 900, color: "#8B2020" }}>{formatRp(totalKeluar)}</div>
+                  </div>
                 </div>
               </div>
               <div style={{ overflowX:"auto" }}>
-                <table style={{ width:"100%", borderCollapse:"collapse" }}>
+                <table className="table-heroic">
                   <thead>
-                    <tr style={{ background:"#F0EDE5" }}>
+                    <tr>
                       {["Tanggal","Keterangan","Kategori","Tipe","Jumlah","Aksi"].map(h => (
-                        <th key={h} style={{ padding:"11px 16px", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", textAlign:"left", borderBottom:"1px solid #E5E0D8" }}>{h}</th>
+                        <th key={h}>{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {transaksiList.length === 0 ? (
-                      <tr><td colSpan={6} style={{ padding:"40px", textAlign:"center", color:"#9A8C85", fontSize:13 }}>Belum ada transaksi tercatat.</td></tr>
+                      <tr><td colSpan={6} style={{ padding:"60px", textAlign:"center", color:"#9A8C85", fontWeight: 600 }}>Belum ada data transaksi.</td></tr>
                     ) : transaksiList.map(t => (
-                      <tr key={t.id} className="row-hover" style={{ transition:"background .15s" }}>
-                        <td style={{ padding:"12px 16px", fontSize:12, color:"#5A4A40", whiteSpace:"nowrap", borderBottom:"1px solid #E5E0D8" }}>
+                      <tr key={t.id}>
+                        <td style={{ whiteSpace:"nowrap", fontSize: 12, fontWeight: 700 }}>
                           {new Date(t.tanggal).toLocaleDateString("id-ID", { day:"numeric", month:"short", year:"numeric" })}
                         </td>
-                        <td style={{ padding:"12px 16px", fontSize:13, color:"#1A1410", borderBottom:"1px solid #E5E0D8" }}>{t.keterangan}</td>
-                        <td style={{ padding:"12px 16px", borderBottom:"1px solid #E5E0D8" }}>
-                          <span style={{ fontSize:11, fontWeight:600, color:"#5A4A40", background:"#F0EDE5", padding:"3px 10px", borderRadius:99 }}>{t.kategori}</span>
-                        </td>
-                        <td style={{ padding:"12px 16px", borderBottom:"1px solid #E5E0D8" }}>
-                          <span style={{ fontSize:11, fontWeight:700, padding:"3px 10px", borderRadius:99, background: t.tipe === "masuk" ? "#E8F5EE" : "#FDF0F0", color: t.tipe === "masuk" ? "#1C6B3A" : "#8B2020" }}>
-                            {t.tipe === "masuk" ? "↑ Masuk" : "↓ Keluar"}
+                        <td style={{ fontSize: 13, fontWeight: 600, color: "#1C3A2B" }}>{t.keterangan}</td>
+                        <td><span className="badge-heroic" style={{ padding: "4px 10px", fontSize: 10, border: "none", background: "rgba(0,0,0,0.05)" }}>{t.kategori}</span></td>
+                        <td>
+                          <span style={{ fontSize:10, fontWeight:900, color: t.tipe === "masuk" ? "#2F8F4E" : "#8B2020" }}>
+                            {t.tipe === "masuk" ? "↑ MASUK" : "↓ KELUAR"}
                           </span>
                         </td>
-                        <td style={{ padding:"12px 16px", fontSize:13, fontWeight:700, whiteSpace:"nowrap", color: t.tipe === "masuk" ? "#1C6B3A" : "#8B2020", borderBottom:"1px solid #E5E0D8" }}>
+                        <td style={{ fontSize:13, fontWeight:900, whiteSpace:"nowrap", color: t.tipe === "masuk" ? "#2F8F4E" : "#8B2020" }}>
                           {t.tipe === "masuk" ? "+" : "-"}{formatRp(t.jumlah)}
                         </td>
-                        <td style={{ padding:"12px 16px", borderBottom:"1px solid #E5E0D8" }}>
-                          <div style={{ display:"flex", gap:6 }}>
-                            <button className="btn-sm" onClick={() => openGmailNotif(t)} style={{ background:"rgba(184,148,63,.1)", color:"#7A5A1E" }}>✉️</button>
-                            <button className="btn-sm" onClick={() => deleteTransaksi(t.id)} style={{ background:"#FDF0F0", color:"#8B2020" }}>🗑️</button>
+                        <td>
+                          <div style={{ display:"flex", gap:8 }}>
+                            <button onClick={() => openGmailNotif(t)} style={{ padding: "6px", borderRadius: 6, background: "rgba(184,148,63,0.1)", border: "none", cursor: "pointer" }}>✉️</button>
+                            <button onClick={() => deleteTransaksi(t.id)} style={{ padding: "6px", borderRadius: 6, background: "rgba(139,32,32,0.05)", border: "none", cursor: "pointer" }}>🗑️</button>
                           </div>
                         </td>
                       </tr>
@@ -1093,67 +1054,64 @@ export default function AdminPage() {
             </div>
           </div>
         )}
+
         {/* ═══════════════ TAB: TESTIMONI ═══════════════ */}
         {activeTab === "testimoni" && (
-          <div style={{ display:"grid", gridTemplateColumns:"1fr 2fr", gap:20, alignItems:"start" }}>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(350px, 1fr))", gap:32, alignItems:"start" }}>
             {/* Form tambah */}
-            <div style={{ background:"#FFFEF9", border:"1px solid #E5E0D8", borderRadius:20, padding:"28px" }}>
-              <h3 style={{ fontSize:14, fontWeight:700, color:"#1C3A2B", marginBottom:20, paddingBottom:14, borderBottom:"1px solid #E5E0D8" }}>➕ Tambah Testimoni / Berita</h3>
-              <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
+            <div className="card-heroic">
+              <div className="badge-heroic" style={{marginBottom:24}}>➕ TAMBAH TESTIMONI / BERITA</div>
+              <div className="form-heroic">
                 <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
-                  <button onClick={() => setTmForm({...tmForm, tipe:"tokoh"})} style={{ padding:"10px", fontSize:11, fontWeight:700, borderRadius:10, border:"1px solid #E5E0D8", background: tmForm.tipe === "tokoh" ? "#1C3A2B" : "#FFFEF9", color: tmForm.tipe === "tokoh" ? "#fff" : "#9A8C85", cursor:"pointer" }}>👤 Dari Tokoh</button>
-                  <button onClick={() => setTmForm({...tmForm, tipe:"berita"})} style={{ padding:"10px", fontSize:11, fontWeight:700, borderRadius:10, border:"1px solid #E5E0D8", background: tmForm.tipe === "berita" ? "#1A3A6B" : "#FFFEF9", color: tmForm.tipe === "berita" ? "#fff" : "#9A8C85", cursor:"pointer" }}>📰 Artikel Berita</button>
+                  <button onClick={() => setTmForm({...tmForm, tipe:"tokoh"})} style={{ padding:"12px", fontSize:11, fontWeight:800, borderRadius:10, border:"2px solid", cursor:"pointer", transition: "all 0.3s", background: tmForm.tipe === "tokoh" ? "#1C3A2B" : "rgba(0,0,0,0.03)", color: tmForm.tipe === "tokoh" ? "#fff" : "#9A8C85", borderColor: tmForm.tipe === "tokoh" ? "#1C3A2B" : "transparent" }}>👤 DARI TOKOH</button>
+                  <button onClick={() => setTmForm({...tmForm, tipe:"berita"})} style={{ padding:"12px", fontSize:11, fontWeight:800, borderRadius:10, border:"2px solid", cursor:"pointer", transition: "all 0.3s", background: tmForm.tipe === "berita" ? "#1A3A6B" : "rgba(0,0,0,0.03)", color: tmForm.tipe === "berita" ? "#fff" : "#9A8C85", borderColor: tmForm.tipe === "berita" ? "#1A3A6B" : "transparent" }}>📰 ARTIKEL BERITA</button>
                 </div>
-                <div>
-                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Nama Tokoh / Media *</label>
-                  <input className="field" value={tmForm.nama} onChange={e => setTmForm({...tmForm, nama:e.target.value})} placeholder="Cth: Garut News / H. Kepala Desa" />
+                <div className="form-group-heroic">
+                  <label className="form-label-heroic">NAMA TOKOH / MEDIA *</label>
+                  <input className="form-input-heroic" value={tmForm.nama} onChange={e => setTmForm({...tmForm, nama:e.target.value})} placeholder="Cth: Garut News / H. Kepala Desa" />
                 </div>
-                <div>
-                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Jabatan / Subteks</label>
-                  <input className="field" value={tmForm.jabatan} onChange={e => setTmForm({...tmForm, jabatan:e.target.value})} placeholder="Cth: Media Lokal / Kepala Kecamatan" />
+                <div className="form-group-heroic">
+                  <label className="form-label-heroic">JABATAN / SUBTEKS</label>
+                  <input className="form-input-heroic" value={tmForm.jabatan} onChange={e => setTmForm({...tmForm, jabatan:e.target.value})} placeholder="Cth: Media Lokal / Kepala Kecamatan" />
                 </div>
-                <div>
-                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Isi Pesan/Kutipan *</label>
-                  <textarea className="field" rows={4} value={tmForm.pesan} onChange={e => setTmForm({...tmForm, pesan:e.target.value})} placeholder="Ketik disini..." style={{ resize:"vertical" }} />
+                <div className="form-group-heroic">
+                  <label className="form-label-heroic">ISI PESAN / KUTIPAN *</label>
+                  <textarea className="form-input-heroic" rows={4} value={tmForm.pesan} onChange={e => setTmForm({...tmForm, pesan:e.target.value})} placeholder="Ketik disini..." style={{ resize:"vertical" }} />
                 </div>
-                <div style={{ background:"rgba(28,58,43,.06)", padding:14, borderRadius:12, border:"1px dashed rgba(28,58,43,.2)" }}>
-                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#1C3A2B", marginBottom:6 }}>Upload Foto / Logo</label>
+                <div className="gradient-border-heroic" style={{ padding: 20 }}>
+                  <label className="form-label-heroic" style={{ marginBottom: 12, display: "block" }}>📸 UPLOAD FOTO / LOGO</label>
                   <input type="file" accept="image/*" onChange={e => setTmFile(e.target.files?.[0] || null)} style={{ fontSize:12, width:"100%" }} />
-                  {tmFile && <p style={{ fontSize:10, color:"#1C6B3A", marginTop:8, fontWeight:700 }}>✓ File dipilih: {tmFile.name}</p>}
-                  
-                  <div style={{ marginTop:14, fontSize:10, color:"#9A8C85", borderTop:"1px solid rgba(28,58,43,.1)", paddingTop:10 }}>ATAU paste link (opsional):</div>
-                  <input className="field" value={tmForm.foto} onChange={e => setTmForm({...tmForm, foto:e.target.value})} placeholder="https://..." style={{ marginTop:6, fontSize:11, padding:"8px 12px" }} disabled={!!tmFile} />
-                  <p style={{ fontSize:9, color:"#8B2020", marginTop:6 }}>PENTING: Fitur upload lokal mewajibkan pembuatan Bucket bernama <strong>ciburial-assets</strong> di menu Supabase Storage dan diaturnya ke setting Public.</p>
+                  {tmFile && <p style={{ fontSize:10, color:"#2F8F4E", marginTop:8, fontWeight:800 }}>✓ {tmFile.name}</p>}
                 </div>
-                <button onClick={addTestimoni} disabled={loading} style={{ padding:"13px", borderRadius:12, background:"#1C3A2B", color:"#fff", fontSize:12, fontWeight:700, letterSpacing:".08em", textTransform:"uppercase", border:"none", cursor:"pointer", opacity:loading ? .6 : 1, marginTop:4 }}>
-                  {loading ? "Menyimpan/Upload..." : "Simpan Data"}
+                <button className="btn-heroic" onClick={addTestimoni} disabled={loading} style={{ marginTop: 8 }}>
+                  <span>{loading ? "MENYIMPAN..." : "SIMPAN DATA"}</span>
                 </button>
               </div>
             </div>
 
             {/* List */}
-            <div style={{ background:"#FFFEF9", border:"1px solid #E5E0D8", borderRadius:20, overflow:"hidden" }}>
-              <div style={{ padding:"20px 24px", borderBottom:"1px solid #E5E0D8" }}>
-                <h3 style={{ fontSize:14, fontWeight:700, color:"#1C3A2B" }}>Daftar Testimoni & Berita ({testimoniList.length})</h3>
+            <div className="card-heroic" style={{ padding: 0, overflow: "hidden" }}>
+              <div style={{ padding:"24px 32px", borderBottom:"1px solid rgba(47,143,78,0.1)" }}>
+                <div className="badge-heroic">💬 DAFTAR TESTIMONI & BERITA ({testimoniList.length})</div>
               </div>
               {testimoniList.length === 0 ? (
-                <div style={{ padding:"48px", textAlign:"center", color:"#9A8C85", fontSize:13 }}>Belum ada data. Tambahkan Testimoni pertama lu!</div>
+                <div style={{ padding:"60px", textAlign:"center", color:"#9A8C85", fontWeight: 600 }}>Belum ada data testimoni.</div>
               ) : (
-                <div style={{ maxHeight:520, overflowY:"auto" }}>
+                <div style={{ maxHeight:600, overflowY:"auto" }}>
                   {testimoniList.map((tm) => (
-                    <div key={tm.id} className="row-hover" style={{ padding:"16px 24px", borderBottom:"1px solid #E5E0D8", display:"flex", gap:14, alignItems:"flex-start", transition:"background .15s" }}>
-                      {tm.foto ? <img src={tm.foto} alt="" style={{ width:50, height:50, borderRadius:"50%", objectFit:"cover", flexShrink:0, border:"2px solid #E5E0D8" }} /> : <div style={{ width:50, height:50, borderRadius:"50%", background:"#F0EDE5", display:"flex", alignItems:"center", justifyContent:"center", fontSize:20, flexShrink:0 }}>👤</div>}
+                    <div key={tm.id} style={{ padding:"20px 32px", borderBottom:"1px solid rgba(0,0,0,0.05)", display:"flex", gap:20, alignItems:"flex-start", transition: "all 0.3s" }} className="row-hover-heroic">
+                      {tm.foto ? <img src={tm.foto} alt="" style={{ width:56, height:56, borderRadius:"50%", objectFit:"cover", flexShrink:0, border:"3px solid rgba(47,143,78,0.2)" }} /> : <div style={{ width:56, height:56, borderRadius:"50%", background:"rgba(0,0,0,0.05)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:24, flexShrink:0 }}>👤</div>}
                       <div style={{ flex:1 }}>
                         <div style={{ display:"flex", gap:8, alignItems:"center", marginBottom:4 }}>
-                          <span style={{ fontSize:14, fontWeight:700, color:"#1A1410" }}>{tm.nama}</span>
-                          <span style={{ fontSize:9, fontWeight:700, padding:"2px 8px", borderRadius:6, textTransform:"uppercase", background: tm.tipe === "tokoh" ? "rgba(184,148,63,.1)" : "rgba(45,90,160,.1)", color: tm.tipe === "tokoh" ? "#7A5A1E" : "#1A3A6B" }}>
+                          <span style={{ fontSize:15, fontWeight:800, color:"#1C3A2B" }}>{tm.nama}</span>
+                          <span style={{ fontSize:9, fontWeight:800, padding:"2px 8px", borderRadius:6, textTransform:"uppercase", background: tm.tipe === "tokoh" ? "rgba(184,148,63,.1)" : "rgba(45,90,160,.1)", color: tm.tipe === "tokoh" ? "#7A5A1E" : "#1A3A6B" }}>
                             {tm.tipe}
                           </span>
                         </div>
-                        <div style={{ fontSize:11, fontWeight:700, color:"#9A8C85", textTransform:"uppercase", letterSpacing:".06em", marginBottom:8 }}>{tm.jabatan}</div>
-                        <div style={{ fontSize:12, color:"#5A4A40", fontStyle:"italic", lineHeight:1.6 }}>&quot;{tm.pesan}&quot;</div>
+                        <div style={{ fontSize:11, fontWeight:800, color:"#9A8C85", textTransform:"uppercase", letterSpacing:".04em", marginBottom:8 }}>{tm.jabatan}</div>
+                        <div style={{ fontSize:13, color:"#5A4A40", fontStyle:"italic", lineHeight:1.6, opacity: 0.8 }}>&quot;{tm.pesan}&quot;</div>
                       </div>
-                      <button className="btn-sm" onClick={() => deleteTestimoni(tm.id, tm.foto)} style={{ background:"#FDF0F0", color:"#8B2020", flexShrink:0 }}>🗑️ Hapus</button>
+                      <button onClick={() => deleteTestimoni(tm.id, tm.foto)} style={{ padding: "8px", borderRadius: 8, background: "rgba(139,32,32,0.05)", border: "none", color: "#8B2020", cursor: "pointer" }}>🗑️</button>
                     </div>
                   ))}
                 </div>
@@ -1164,68 +1122,65 @@ export default function AdminPage() {
 
         {/* ═══════════════ TAB: IKLAN ═══════════════ */}
         {activeTab === "iklan" && (
-          <div style={{ display:"grid", gridTemplateColumns:"1fr 2fr", gap:20, alignItems:"start" }}>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(350px, 1fr))", gap:32, alignItems:"start" }}>
             {/* Form tambah */}
-            <div style={{ background:"#FFFEF9", border:"1px solid #E5E0D8", borderRadius:20, padding:"28px" }}>
-              <h3 style={{ fontSize:14, fontWeight:700, color:"#1C3A2B", marginBottom:20, paddingBottom:14, borderBottom:"1px solid #E5E0D8" }}>➕ Tambah Iklan / Promo</h3>
-              <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
+            <div className="card-heroic">
+              <div className="badge-heroic" style={{marginBottom:24}}>➕ TAMBAH IKLAN / PROMO</div>
+              <div className="form-heroic">
                 <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
-                  <button onClick={() => setIkForm({...ikForm, tipe:"foto"})} style={{ padding:"10px", fontSize:11, fontWeight:700, borderRadius:10, border:"1px solid #E5E0D8", background: ikForm.tipe === "foto" ? "#1C3A2B" : "#FFFEF9", color: ikForm.tipe === "foto" ? "#fff" : "#9A8C85", cursor:"pointer" }}>🖼️ Foto Promo</button>
-                  <button onClick={() => setIkForm({...ikForm, tipe:"video"})} style={{ padding:"10px", fontSize:11, fontWeight:700, borderRadius:10, border:"1px solid #E5E0D8", background: ikForm.tipe === "video" ? "#1A3A6B" : "#FFFEF9", color: ikForm.tipe === "video" ? "#fff" : "#9A8C85", cursor:"pointer" }}>🎥 Video Promo</button>
+                  <button onClick={() => setIkForm({...ikForm, tipe:"foto"})} style={{ padding:"12px", fontSize:11, fontWeight:800, borderRadius:10, border:"2px solid", cursor:"pointer", transition: "all 0.3s", background: ikForm.tipe === "foto" ? "#1C3A2B" : "rgba(0,0,0,0.03)", color: ikForm.tipe === "foto" ? "#fff" : "#9A8C85", borderColor: ikForm.tipe === "foto" ? "#1C3A2B" : "transparent" }}>🖼️ FOTO PROMO</button>
+                  <button onClick={() => setIkForm({...ikForm, tipe:"video"})} style={{ padding:"12px", fontSize:11, fontWeight:800, borderRadius:10, border:"2px solid", cursor:"pointer", transition: "all 0.3s", background: ikForm.tipe === "video" ? "#1A3A6B" : "rgba(0,0,0,0.03)", color: ikForm.tipe === "video" ? "#fff" : "#9A8C85", borderColor: ikForm.tipe === "video" ? "#1A3A6B" : "transparent" }}>🎥 VIDEO PROMO</button>
                 </div>
-                <div>
-                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Judul Iklan *</label>
-                  <input className="field" value={ikForm.judul} onChange={e => setIkForm({...ikForm, judul:e.target.value})} placeholder="Cth: Promo Ramadhan" />
+                <div className="form-group-heroic">
+                  <label className="form-label-heroic">JUDUL IKLAN *</label>
+                  <input className="form-input-heroic" value={ikForm.judul} onChange={e => setIkForm({...ikForm, judul:e.target.value})} placeholder="Cth: Promo Ramadhan" />
                 </div>
-                <div>
-                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Deskripsi *</label>
-                  <textarea className="field" rows={3} value={ikForm.deskripsi} onChange={e => setIkForm({...ikForm, deskripsi:e.target.value})} placeholder="Diskon besar-besaran..." style={{ resize:"vertical" }} />
+                <div className="form-group-heroic">
+                  <label className="form-label-heroic">DESKRIPSI *</label>
+                  <textarea className="form-input-heroic" rows={3} value={ikForm.deskripsi} onChange={e => setIkForm({...ikForm, deskripsi:e.target.value})} placeholder="Diskon besar-besaran..." style={{ resize:"vertical" }} />
                 </div>
-                <div>
-                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Link Tujuan (opsional)</label>
-                  <input className="field" value={ikForm.linkTujuan} onChange={e => setIkForm({...ikForm, linkTujuan:e.target.value})} placeholder="https://..." />
+                <div className="form-group-heroic">
+                  <label className="form-label-heroic">LINK TUJUAN (OPSIONAL)</label>
+                  <input className="form-input-heroic" value={ikForm.linkTujuan} onChange={e => setIkForm({...ikForm, linkTujuan:e.target.value})} placeholder="https://..." />
                 </div>
-                <div style={{ background:"rgba(28,58,43,.06)", padding:14, borderRadius:12, border:"1px dashed rgba(28,58,43,.2)" }}>
-                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#1C3A2B", marginBottom:6 }}>Upload {ikForm.tipe} *</label>
+                <div className="gradient-border-heroic" style={{ padding: 20 }}>
+                  <label className="form-label-heroic" style={{ marginBottom: 12, display: "block" }}>📸 UPLOAD {ikForm.tipe.toUpperCase()} *</label>
                   <input type="file" accept={ikForm.tipe === "video" ? "video/*" : "image/*"} onChange={e => setIkFile(e.target.files?.[0] || null)} style={{ fontSize:12, width:"100%" }} />
-                  {ikFile && <p style={{ fontSize:10, color:"#1C6B3A", marginTop:8, fontWeight:700 }}>✓ File terpilih: {ikFile.name}</p>}
-                  
-                  <div style={{ marginTop:14, fontSize:10, color:"#9A8C85", borderTop:"1px solid rgba(28,58,43,.1)", paddingTop:10 }}>ATAU paste link media:</div>
-                  <input className="field" value={ikForm.mediaUrl} onChange={e => setIkForm({...ikForm, mediaUrl:e.target.value})} placeholder="https://..." style={{ marginTop:6, fontSize:11, padding:"8px 12px" }} disabled={!!ikFile} />
+                  {ikFile && <p style={{ fontSize:10, color:"#2F8F4E", marginTop:8, fontWeight:800 }}>✓ {ikFile.name}</p>}
                 </div>
-                <button onClick={addIklan} disabled={loading} style={{ padding:"13px", borderRadius:12, background:"#1C3A2B", color:"#fff", fontSize:12, fontWeight:700, letterSpacing:".08em", textTransform:"uppercase", border:"none", cursor:"pointer", opacity:loading ? .6 : 1, marginTop:4 }}>
-                  {loading ? "Menyimpan/Upload..." : "Simpan Iklan"}
+                <button className="btn-heroic" onClick={addIklan} disabled={loading} style={{ marginTop: 8 }}>
+                  <span>{loading ? "MENYIMPAN..." : "SIMPAN IKLAN"}</span>
                 </button>
               </div>
             </div>
 
             {/* List */}
-            <div style={{ background:"#FFFEF9", border:"1px solid #E5E0D8", borderRadius:20, overflow:"hidden" }}>
-              <div style={{ padding:"20px 24px", borderBottom:"1px solid #E5E0D8" }}>
-                <h3 style={{ fontSize:14, fontWeight:700, color:"#1C3A2B" }}>Daftar Iklan Promo ({iklanList.length})</h3>
+            <div className="card-heroic" style={{ padding: 0, overflow: "hidden" }}>
+              <div style={{ padding:"24px 32px", borderBottom:"1px solid rgba(47,143,78,0.1)" }}>
+                <div className="badge-heroic">🎥 DAFTAR IKLAN PROMO ({iklanList.length})</div>
               </div>
               {iklanList.length === 0 ? (
-                <div style={{ padding:"48px", textAlign:"center", color:"#9A8C85", fontSize:13 }}>Belum ada iklan. Buat promo pertama lur!</div>
+                <div style={{ padding:"60px", textAlign:"center", color:"#9A8C85", fontWeight: 600 }}>Belum ada promo aktif.</div>
               ) : (
-                <div style={{ maxHeight:520, overflowY:"auto" }}>
+                <div style={{ maxHeight:600, overflowY:"auto" }}>
                   {iklanList.map((ik) => (
-                    <div key={ik.id} className="row-hover" style={{ padding:"16px 24px", borderBottom:"1px solid #E5E0D8", display:"flex", gap:14, alignItems:"flex-start", transition:"background .15s" }}>
+                    <div key={ik.id} style={{ padding:"20px 32px", borderBottom:"1px solid rgba(0,0,0,0.05)", display:"flex", gap:20, alignItems:"flex-start", transition: "all 0.3s" }} className="row-hover-heroic">
                       {ik.tipe === "video" ? (
-                        <div style={{ width:70, height:48, background:"#000", borderRadius:8, display:"flex", alignItems:"center", justifyContent:"center", color:"#fff", fontSize:16, flexShrink:0 }}>🎥</div>
+                        <div style={{ width:80, height:56, background:"#000", borderRadius:10, display:"flex", alignItems:"center", justifyContent:"center", color:"#fff", fontSize:20, flexShrink:0, boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}>🎥</div>
                       ) : (
-                        <img src={ik.mediaUrl} alt="" style={{ width:70, height:48, borderRadius:8, objectFit:"cover", flexShrink:0, border:"1px solid #E5E0D8" }} />
+                        <img src={ik.mediaUrl} alt="" style={{ width:80, height:56, borderRadius:10, objectFit:"cover", flexShrink:0, border:"2px solid rgba(0,0,0,0.05)", boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }} />
                       )}
                       <div style={{ flex:1 }}>
                         <div style={{ display:"flex", gap:8, alignItems:"center", marginBottom:4 }}>
-                          <span style={{ fontSize:14, fontWeight:700, color:"#1A1410" }}>{ik.judul}</span>
-                          <span style={{ fontSize:9, fontWeight:700, padding:"2px 8px", borderRadius:6, textTransform:"uppercase", background: ik.tipe === "video" ? "rgba(45,90,160,.1)" : "rgba(184,148,63,.1)", color: ik.tipe === "video" ? "#1A3A6B" : "#7A5A1E" }}>
+                          <span style={{ fontSize:15, fontWeight:800, color:"#1C3A2B" }}>{ik.judul}</span>
+                          <span style={{ fontSize:9, fontWeight:800, padding:"2px 8px", borderRadius:6, textTransform:"uppercase", background: ik.tipe === "video" ? "rgba(45,90,160,.1)" : "rgba(184,148,63,.1)", color: ik.tipe === "video" ? "#1A3A6B" : "#7A5A1E" }}>
                             {ik.tipe}
                           </span>
                         </div>
-                        <div style={{ fontSize:11, color:"#5A4A40", lineHeight:1.4 }}>{ik.deskripsi}</div>
-                        {ik.linkTujuan && <div style={{ fontSize:10, color:"#1C3A2B", marginTop:4 }}>🔗 {ik.linkTujuan}</div>}
+                        <div style={{ fontSize:13, color:"#5A4A40", lineHeight:1.4, opacity: 0.8 }}>{ik.deskripsi}</div>
+                        {ik.linkTujuan && <div style={{ fontSize:11, color:"#2F8F4E", marginTop:6, fontWeight: 700 }}>🔗 {ik.linkTujuan.substring(0, 30)}...</div>}
                       </div>
-                      <button className="btn-sm" onClick={() => deleteIklan(ik.id, ik.mediaUrl)} style={{ background:"#FDF0F0", color:"#8B2020", flexShrink:0 }}>🗑️</button>
+                      <button onClick={() => deleteIklan(ik.id, ik.mediaUrl)} style={{ padding: "8px", borderRadius: 8, background: "rgba(139,32,32,0.05)", border: "none", color: "#8B2020", cursor: "pointer" }}>🗑️</button>
                     </div>
                   ))}
                 </div>
@@ -1236,71 +1191,71 @@ export default function AdminPage() {
 
         {/* ═══════════════ TAB: PENGURUS ═══════════════ */}
         {activeTab === "pengurus" && (
-          <div style={{ display:"grid", gridTemplateColumns:"1fr 2fr", gap:20, alignItems:"start" }}>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(350px, 1fr))", gap:32, alignItems:"start" }}>
             {/* Form tambah */}
-            <div style={{ background:"#FFFEF9", border:"1px solid #E5E0D8", borderRadius:20, padding:"28px" }}>
-              <h3 style={{ fontSize:14, fontWeight:700, color:"#1C3A2B", marginBottom:20, paddingBottom:14, borderBottom:"1px solid #E5E0D8" }}>➕ Tambah Pengurus Desa</h3>
-              <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
-                <div>
-                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Kategori *</label>
-                  <select className="field" value={pgForm.kategori} onChange={e => setPgForm({...pgForm, kategori:e.target.value as any})}>
+            <div className="card-heroic">
+              <div className="badge-heroic" style={{marginBottom:24}}>➕ TAMBAH PENGURUS DESA</div>
+              <div className="form-heroic">
+                <div className="form-group-heroic">
+                  <label className="form-label-heroic">KATEGORI *</label>
+                  <select className="form-input-heroic" value={pgForm.kategori} onChange={e => setPgForm({...pgForm, kategori:e.target.value as any})}>
                     <option value="pelindung">Dewan Pelindung & Penasihat</option>
                     <option value="pengawas">Dewan Pengawas DKM</option>
                     <option value="eksekutif">Tim Eksekutif Lapangan</option>
                     <option value="divisi">5 Divisi Operasional (Garda Depan)</option>
                   </select>
                 </div>
-                <div>
-                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Nama Lengkap *</label>
-                  <input className="field" value={pgForm.nama} onChange={e => setPgForm({...pgForm, nama:e.target.value})} placeholder="Cth: Bpk. Enang" />
+                <div className="form-group-heroic">
+                  <label className="form-label-heroic">NAMA LENGKAP *</label>
+                  <input className="form-input-heroic" value={pgForm.nama} onChange={e => setPgForm({...pgForm, nama:e.target.value})} placeholder="Cth: Bpk. Enang" />
                 </div>
-                <div>
-                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Jabatan / Peran *</label>
-                  <input className="field" value={pgForm.jabatan} onChange={e => setPgForm({...pgForm, jabatan:e.target.value})} placeholder="Cth: Ketua RW 02" />
+                <div className="form-group-heroic">
+                  <label className="form-label-heroic">JABATAN / PERAN *</label>
+                  <input className="form-input-heroic" value={pgForm.jabatan} onChange={e => setPgForm({...pgForm, jabatan:e.target.value})} placeholder="Cth: Ketua RW 02" />
                 </div>
-                <div>
-                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#9A8C85", marginBottom:6 }}>Urutan Tampil (Angka)</label>
-                  <input type="number" className="field" value={pgForm.urutan} onChange={e => setPgForm({...pgForm, urutan:e.target.value})} placeholder="1" />
+                <div className="form-group-heroic">
+                  <label className="form-label-heroic">URUTAN TAMPIL (ANGKA)</label>
+                  <input type="number" className="form-input-heroic" value={pgForm.urutan} onChange={e => setPgForm({...pgForm, urutan:e.target.value})} placeholder="1" />
                 </div>
-                <div style={{ background:"rgba(28,58,43,.06)", padding:14, borderRadius:12, border:"1px dashed rgba(28,58,43,.2)" }}>
-                  <label style={{ display:"block", fontSize:10, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:"#1C3A2B", marginBottom:6 }}>Upload Foto Profil (Opsional)</label>
+                <div className="gradient-border-heroic" style={{ padding: 20 }}>
+                  <label className="form-label-heroic" style={{ marginBottom: 12, display: "block" }}>📸 FOTO PROFIL (OPSIONAL)</label>
                   <input type="file" accept="image/*" onChange={e => setPgFile(e.target.files?.[0] || null)} style={{ fontSize:12, width:"100%" }} />
-                  {pgFile && <p style={{ fontSize:10, color:"#1C6B3A", marginTop:8, fontWeight:700 }}>✓ File terpilih: {pgFile.name}</p>}
+                  {pgFile && <p style={{ fontSize:10, color:"#2F8F4E", marginTop:8, fontWeight:800 }}>✓ {pgFile.name}</p>}
                 </div>
-                <button onClick={addPengurus} disabled={loading} style={{ padding:"13px", borderRadius:12, background:"#1C3A2B", color:"#fff", fontSize:12, fontWeight:700, letterSpacing:".08em", textTransform:"uppercase", border:"none", cursor:"pointer", opacity:loading ? .6 : 1, marginTop:4 }}>
-                  {loading ? "Menyimpan/Upload..." : "Simpan Pengurus"}
+                <button className="btn-heroic" onClick={addPengurus} disabled={loading} style={{ marginTop: 8 }}>
+                  <span>{loading ? "MENYIMPAN..." : "SIMPAN PENGURUS"}</span>
                 </button>
               </div>
             </div>
 
             {/* List */}
-            <div style={{ background:"#FFFEF9", border:"1px solid #E5E0D8", borderRadius:20, overflow:"hidden" }}>
-              <div style={{ padding:"20px 24px", borderBottom:"1px solid #E5E0D8" }}>
-                <h3 style={{ fontSize:14, fontWeight:700, color:"#1C3A2B" }}>Daftar Pengurus Aktual ({pengurusList.length})</h3>
+            <div className="card-heroic" style={{ padding: 0, overflow: "hidden" }}>
+              <div style={{ padding:"24px 32px", borderBottom:"1px solid rgba(47,143,78,0.1)" }}>
+                <div className="badge-heroic">👥 DAFTAR PENGURUS AKTUAL ({pengurusList.length})</div>
               </div>
               {pengurusList.length === 0 ? (
-                <div style={{ padding:"48px", textAlign:"center", color:"#9A8C85", fontSize:13 }}>Belum ada pengurus di database.</div>
+                <div style={{ padding:"60px", textAlign:"center", color:"#9A8C85", fontWeight: 600 }}>Belum ada pengurus terdaftar.</div>
               ) : (
                 <div style={{ maxHeight:600, overflowY:"auto" }}>
                   {pengurusList.map((pg) => {
-                    const bgKat = pg.kategori === 'pelindung' ? '#FDF4E3' : pg.kategori === 'pengawas' ? '#E8F5EE' : pg.kategori === 'eksekutif' ? '#FDF0F0' : '#EAF0F6';
-                    const colKat = pg.kategori === 'pelindung' ? '#9C7A14' : pg.kategori === 'pengawas' ? '#1C6B3A' : pg.kategori === 'eksekutif' ? '#B8472F' : '#1A3A6B';
+                    const bgKat = pg.kategori === 'pelindung' ? 'rgba(184,148,63,0.1)' : pg.kategori === 'pengawas' ? 'rgba(47,143,78,0.1)' : pg.kategori === 'eksekutif' ? 'rgba(139,32,32,0.1)' : 'rgba(26,58,107,0.1)';
+                    const colKat = pg.kategori === 'pelindung' ? '#9C7A14' : pg.kategori === 'pengawas' ? '#2F8F4E' : pg.kategori === 'eksekutif' ? '#8B2020' : '#1A3A6B';
                     return (
-                      <div key={pg.id} className="row-hover" style={{ padding:"16px 24px", borderBottom:"1px solid #E5E0D8", display:"flex", gap:14, alignItems:"center", transition:"background .15s" }}>
-                        <div style={{ width:60, height:60, borderRadius:"50%", background:"#F0EDE5", border:"2px solid #E5E0D8", display:"flex", alignItems:"center", justifyContent:"center", fontSize:24, flexShrink:0, overflow:"hidden" }}>
+                      <div key={pg.id} style={{ padding:"20px 32px", borderBottom:"1px solid rgba(0,0,0,0.05)", display:"flex", gap:20, alignItems:"center", transition: "all 0.3s" }} className="row-hover-heroic">
+                        <div style={{ width:64, height:64, borderRadius:"50%", background:"rgba(0,0,0,0.05)", border:"3px solid rgba(47,143,78,0.2)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:28, flexShrink:0, overflow:"hidden", boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}>
                           {pg.foto ? <img src={pg.foto} style={{width:"100%",height:"100%",objectFit:"cover"}} alt=""/> : "👤"}
                         </div>
                         <div style={{ flex:1 }}>
                           <div style={{ display:"flex", gap:8, alignItems:"center", marginBottom:4 }}>
-                            <span style={{ fontSize:16, fontWeight:700, color:"#1A1410" }}>{pg.nama}</span>
-                            <span style={{ fontSize:9, fontWeight:800, padding:"3px 8px", borderRadius:6, textTransform:"uppercase", background:bgKat, color:colKat }}>
+                            <span style={{ fontSize:16, fontWeight:800, color:"#1C3A2B" }}>{pg.nama}</span>
+                            <span style={{ fontSize:9, fontWeight:800, padding:"3px 10px", borderRadius:99, textTransform:"uppercase", background:bgKat, color:colKat }}>
                               {pg.kategori}
                             </span>
                           </div>
-                          <div style={{ fontSize:12, fontWeight:700, color:"#9A8C85", marginBottom:2 }}>{pg.jabatan}</div>
-                          <div style={{ fontSize:10, color:"#A89A90" }}>Urutan Tampil: {pg.urutan}</div>
+                          <div style={{ fontSize:12, fontWeight:800, color:"#9A8C85", letterSpacing: ".02em" }}>{pg.jabatan}</div>
+                          <div style={{ fontSize:10, color:"#A89A90", fontWeight: 700, marginTop: 4 }}>PRIORITAS TAMPIL: #{pg.urutan}</div>
                         </div>
-                        <button className="btn-sm" onClick={() => deletePengurus(pg.id, pg.foto)} style={{ background:"#FDF0F0", color:"#8B2020", flexShrink:0 }}>🗑️ Hapus</button>
+                        <button onClick={() => deletePengurus(pg.id, pg.foto)} style={{ padding: "8px", borderRadius: 8, background: "rgba(139,32,32,0.05)", border: "none", color: "#8B2020", cursor: "pointer" }}>🗑️</button>
                       </div>
                     );
                   })}
@@ -1310,8 +1265,7 @@ export default function AdminPage() {
           </div>
         )}
       </main>
+      <style>{`@keyframes pulse-soft-heroic{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.95)}}`}</style>
     </div>
-    <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}`}</style>
-    </>
   );
 }
