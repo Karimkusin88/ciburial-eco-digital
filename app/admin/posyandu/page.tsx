@@ -20,6 +20,7 @@ const JADWAL_IMUNISASI = [
   { jenis:"MR2",        label:"Campak-Rubella (MR) 2",        usia_bulan:60 },
 ];
 
+// ─── HELPER FUNCTIONS ────────────────────────────────────────────────────────
 function hitungUmurBulan(tgl:string):number {
   return Math.floor((new Date().getTime()-new Date(tgl).getTime())/(1000*60*60*24*30));
 }
@@ -166,7 +167,7 @@ export default function AdminPosyanduPage(){
   function showToast(msg:string,ok=true){setToast({msg,ok});setTimeout(()=>setToast({msg:"",ok:true}),4000);}
 
   async function fetchAll(){
-    if(!isSupabaseReady())return;
+    if(!isSupabaseReady()) return;
     const[a,tk,im,kk,ibu]=await Promise.all([
       supabase.from("anak_posyandu").select("*").order("nama"),
       supabase.from("tumbuh_kembang").select("*").order("tanggal",{ascending:false}),
@@ -182,6 +183,54 @@ export default function AdminPosyanduPage(){
   }
   useEffect(()=>{fetchAll();},[]);
 
+  async function generateJadwal(anakId:string,tgl_lahir:string){
+    const rows=JADWAL_IMUNISASI.map(j=>({anak_id:anakId,jenis:j.jenis,usia_bulan:j.usia_bulan,tanggal_jadwal:tglDariUsia(tgl_lahir,j.usia_bulan),status:"belum"}));
+    await supabase.from("imunisasi").insert(rows);
+  }
+
+  async function simpanAnak(){
+    if(!formAnak.nama||!formAnak.tgl_lahir)return showToast("❌ Nama & tgl lahir wajib!",false);
+    setLoading(true);
+    const{data,error}=await supabase.from("anak_posyandu").insert({...formAnak,nama_ibu:authenticatedIbu?.nama||"-"}).select().single();
+    if(error)showToast(`❌ ${error.message}`,false);
+    else{
+      await generateJadwal(data.id,formAnak.tgl_lahir);
+      showToast("💕 Anak terdaftar + jadwal imunisasi dibuat! 💉");
+      setFormAnak({nama:"",tgl_lahir:"",jenis_kelamin:"L",nama_ibu:"",no_wa_ibu:"",kk_id:""});
+      setShowFormAnak(false);
+      fetchAll();
+    }
+    setLoading(false);
+  }
+
+  async function simpanTK(){
+    if(!formTK.anak_id||!formTK.bb_kg)return showToast("❌ Pilih anak & isi BB!",false);
+    setLoading(true);
+    const anak=anakList.find(a=>a.id===formTK.anak_id)!;
+    const gz=statusGiziWHO(Number(formTK.bb_kg),anak.tgl_lahir);
+    const{error}=await supabase.from("tumbuh_kembang").insert({
+      anak_id:formTK.anak_id,tanggal:formTK.tanggal,
+      bb_kg:Number(formTK.bb_kg), tb_cm:formTK.tb_cm?Number(formTK.tb_cm):null,
+      lila_cm:formTK.lila_cm?Number(formTK.lila_cm):null, lk_cm:formTK.lk_cm?Number(formTK.lk_cm):null,
+      catatan:formTK.catatan||null,status_gizi:gz.status,
+    });
+    if(error){showToast(`❌ ${error.message}`,false);setLoading(false);return;}
+    
+    // Reward poin otomatis
+    if(authenticatedIbu){
+      const hariIni=new Date().toISOString().split("T")[0];
+      const{data:cek}=await supabase.from("riwayat_poin").select("id").eq("anggota_id",authenticatedIbu.id).eq("sumber","posyandu").gte("created_at",`${hariIni}T00:00:00`).lte("created_at",`${hariIni}T23:59:59`).limit(1);
+      if(!cek||cek.length===0){
+        await supabase.from("anggota_kk").update({saldo_poin:(authenticatedIbu.saldo_poin||0)+POIN_POSYANDU}).eq("id",authenticatedIbu.id);
+        await supabase.from("riwayat_poin").insert({anggota_id:authenticatedIbu.id,kk_id:authenticatedIbu.kk_id,jumlah:POIN_POSYANDU,jenis:"masuk",sumber:"posyandu",keterangan:`Timbangan Si Kecil — ${anak.nama}`});
+      }
+    }
+    
+    showToast(`💕 Tersimpan! Status: ${gz.label}`);
+    setFormTK({...formTK,bb_kg:"",tb_cm:"",lila_cm:"",lk_cm:"",catatan:""});
+    setLoading(false);fetchAll();
+  }
+
   async function nfcAbsensi(nfcId:string){
     const id=nfcId.replace(/:/g,"").toUpperCase();
     const currentIbuList = ibuListRef.current;
@@ -189,21 +238,19 @@ export default function AdminPosyanduPage(){
     if(!ibu)return showToast(`❌ Bunda belum terdaftar di Sistem Desa! (${id})`,false);
     
     const anak=anakList.filter(a=>a.kk_id===ibu.kk_id);
-    
     const hariIni=new Date().toISOString().split("T")[0];
-    const{data:cek}=await supabase.from("riwayat_poin").select("id").eq("anggota_id",ibu.id).eq("sumber","posyandu").gte("created_at",`${hariIni}T00:00:00`).lte("created_at",`${hariIni}T23:59:59`).limit(1);
+    const{data:cek}=await supabase.from("riwayat_poin").select("id").eq("anggota_id",ibu.id).eq("sumber","posyandu_kunjungan").gte("created_at",`${hariIni}T00:00:00`).lte("created_at",`${hariIni}T23:59:59`).limit(1);
     
     if(!cek||cek.length===0){
-      await supabase.from("anggota_kk").update({saldo_poin:(ibu.saldo_poin||0)+POIN_POSYANDU}).eq("id",ibu.id);
-      await supabase.from("riwayat_poin").insert({anggota_id:ibu.id,kk_id:ibu.kk_id,jumlah:POIN_POSYANDU,jenis:"masuk",sumber:"posyandu",keterangan:`Tap NFC Posyandu Ceria — ${hariIni}`});
-      showToast(`💕 Selamat datang ibu ${ibu.nama}! +${POIN_POSYANDU} poin 🎉`);
+      await supabase.from("riwayat_poin").insert({anggota_id:ibu.id,kk_id:ibu.kk_id,jumlah:5,jenis:"masuk",sumber:"posyandu_kunjungan",keterangan:`Kunjungan Posyandu — ${hariIni}`});
+      showToast(`💕 Selamat datang ibu ${ibu.nama}! ✨`);
     } else {
       showToast(`💕 Senang berjumpa lagi, Ibu ${ibu.nama}! ✨`);
     }
 
     setAuthenticatedIbu(ibu);
-    setTab("daftar"); // Langsung buka daftar anak setelah tap
-    setLastScan({nama:ibu.nama,namaAnak:anak.map(a=>a.nama).join(", ") || "Belum ada balita terdaftar",poin:POIN_POSYANDU});
+    setTab("daftar");
+    setLastScan({nama:ibu.nama,namaAnak:anak.map(a=>a.nama).join(", ") || "Belum ada balita terdaftar",poin:5});
     fetchAll();
   }
 
@@ -216,6 +263,7 @@ export default function AdminPosyanduPage(){
       ndef.addEventListener("reading",({serialNumber}:any)=>nfcAbsensi(serialNumber));
     }catch(e:any){showToast(`❌ Gagal: ${e?.message||"Error"}`,false);setScanning(false);}
   }
+  
   function stopNFC(){
     try{nfcRef.current?.stop?.();}catch{}
     setScanning(false);setLastScan(null);
@@ -224,7 +272,16 @@ export default function AdminPosyanduPage(){
     showToast("Sesi berakhir, data dikunci kembali.");
   }
 
-  // Filter list anak hanya untuk Ibu yang sedang login/tap
+  async function updateImunisasi(id:string){
+    await supabase.from("imunisasi").update({tanggal_realisasi:new Date().toISOString().split("T")[0],status:"sudah"}).eq("id",id);
+    showToast("💖 Vaksin masuk, Si Kecil kuat!");fetchAll();
+  }
+  
+  async function tandaiTerlewat(id:string){
+    await supabase.from("imunisasi").update({status:"terlewat"}).eq("id",id);
+    showToast("⚠️ Vaksin ditandai terlewat");fetchAll();
+  }
+
   const myAnakList = authenticatedIbu ? anakList.filter(a => a.kk_id === authenticatedIbu.kk_id) : [];
   const activeTK=tkList.filter(t=>t.anak_id===activeAnak?.id);
   const activeImun=imunList.filter(i=>i.anak_id===activeAnak?.id);
@@ -267,7 +324,6 @@ export default function AdminPosyanduPage(){
 
       <div style={{maxWidth:1000,margin:"0 auto",padding:"0 16px 40px",position:"relative",zIndex:10}}>
         
-        {/* Navigation Tabs (Only if identified) */}
         {authenticatedIbu && (
           <div style={{display:"flex",gap:10,overflowX:"auto",paddingBottom:20,scrollbarWidth:"none"}}>
             {(["daftar","input","imunisasi"] as const).map(t=>(
@@ -279,17 +335,6 @@ export default function AdminPosyanduPage(){
           </div>
         )}
 
-        {authenticatedIbu && anakAlert.length>0&&(
-          <div style={{background:"#FEF2F2",border:"2px solid #FECACA",borderRadius:20,padding:"16px 20px",marginBottom:24,display:"flex",alignItems:"center",gap:16,boxShadow:"0 4px 12px rgba(254,202,202,0.5)"}}>
-            <span style={{fontSize:28}}>🚨</span>
-            <div>
-              <div style={{fontSize:15,color:"#991B1B",fontWeight:800,marginBottom:4}}>Tindakan Medis Diperlukan!</div>
-              <div style={{fontSize:14,color:"#B91C1C",fontWeight:600}}>Mohon periksa data: {anakAlert.map(a=>a.nama).join(", ")}</div>
-            </div>
-          </div>
-        )}
-
-        {/* ── KIOSK SCAN MODE (LOCKED) ── */}
         {!authenticatedIbu && (
           <div style={{animation:"fadeIn 0.5s ease-out"}}>
             <div style={{background:"white",borderRadius:32,padding:48,boxShadow:"0 25px 50px -12px rgba(244,63,94,0.15)",textAlign:"center",border:"1px solid #FFF1F2",maxWidth:600,margin:"0 auto"}}>
@@ -299,246 +344,103 @@ export default function AdminPosyanduPage(){
               <RadarPing active={scanning}/>
               
               <div style={{marginTop:40}}>
-                <button 
-                  onClick={scanning?stopNFC:startNFC} 
-                  style={{width:"100%",background:scanning?"#FFE4E6":"linear-gradient(135deg, #F43F5E 0%, #E11D48 100%)",color:scanning?"#E11D48":"white",border:scanning?"2px solid #FECACA":"none",borderRadius:20,padding:"20px",fontSize:18,fontWeight:900,cursor:"pointer",boxShadow:scanning?"none":"0 12px 25px rgba(225,29,72,0.3)",transition:"all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)"}}
-                  onMouseEnter={e => !scanning && (e.currentTarget.style.transform = "scale(1.02)")}
-                  onMouseLeave={e => !scanning && (e.currentTarget.style.transform = "scale(1)")}
-                >
+                <button onClick={scanning?stopNFC:startNFC} style={{width:"100%",background:scanning?"#FFE4E6":"linear-gradient(135deg, #F43F5E 0%, #E11D48 100%)",color:scanning?"#E11D48":"white",border:scanning?"2px solid #FECACA":"none",borderRadius:20,padding:"20px",fontSize:18,fontWeight:900,cursor:"pointer",boxShadow:scanning?"none":"0 12px 25px rgba(225,29,72,0.3)",transition:"all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)"}}>
                   {scanning ? "⏹ HENTIKAN PEMINDAI" : "SENTUHKAN e-KTP SEKARANG ▶"}
                 </button>
-                <div style={{marginTop:16,fontSize:11,color:"#9CA3AF",fontWeight:600}}>Pastikan fitur NFC di ponsel Anda aktif</div>
               </div>
             </div>
-
             <CaraKerja />
           </div>
         )}
 
-        {/* ── DAFTAR ANAK (HIDDEN UNTIL SCAN) ── */}
         {authenticatedIbu && tab==="daftar"&&(
           <div>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
               <h3 style={{margin:0,fontSize:20,fontWeight:900,color:"#111827"}}>Buku KIA Balita Bunda <span style={{color:"#F43F5E"}}>({myAnakList.length})</span></h3>
-              <button onClick={()=>setShowFormAnak(!showFormAnak)} style={{background:"white",color:"#F43F5E",border:"none",borderRadius:16,padding:"12px 20px",fontSize:14,fontWeight:800,cursor:"pointer",boxShadow:"0 4px 12px rgba(244,63,94,0.15)"}}>
-                {showFormAnak?"✕ Tutup Pendaftaran":"+ Daftarkan Biodata Anak"}
-              </button>
+              <button onClick={()=>setShowFormAnak(!showFormAnak)} style={{background:"white",color:"#F43F5E",border:"none",borderRadius:16,padding:"12px 20px",fontSize:14,fontWeight:800,cursor:"pointer",boxShadow:"0 4px 12px rgba(244,63,94,0.15)"}}>{showFormAnak?"✕ Tutup Pendaftaran":"+ Daftarkan Balita"}</button>
             </div>
             
-            {showFormAnak&&(
+            {showFormAnak && (
               <div style={{background:"white",borderRadius:24,padding:32,boxShadow:"0 20px 40px -15px rgba(244,63,94,0.1)",marginBottom:24,border:"1px solid #FFF1F2"}}>
-                <h4 style={{margin:"0 0 24px",fontSize:18,fontWeight:900,color:"#111827",display:"flex",alignItems:"center",gap:10}}><span style={{fontSize:24}}>🍼</span> Daftarkan Sang Buah Hati</h4>
                 <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
-                  <div style={{opacity:0.6}}><label style={LS}>Nama Ibu (Identitas Kartu)</label><input value={authenticatedIbu.nama} disabled style={IS}/></div>
-                  <div><label style={LS}>Nama Buah Hati *</label><input value={formAnak.nama} onChange={e=>setFormAnak({...formAnak,nama:e.target.value,kk_id:authenticatedIbu.kk_id})} placeholder="Ketik nama lengkap..." style={IS}/></div>
-                  <div><label style={LS}>WhatsApp Bunda (Notifikasi)</label><input value={formAnak.no_wa_ibu || authenticatedIbu.no_wa || ""} onChange={e=>setFormAnak({...formAnak,no_wa_ibu:e.target.value})} placeholder="08xxxxxxxxxx" style={IS}/></div>
+                  <div><label style={LS}>Nama Buah Hati *</label><input value={formAnak.nama} onChange={e=>setFormAnak({...formAnak,nama:e.target.value,kk_id:authenticatedIbu.kk_id})} style={IS}/></div>
                   <div><label style={LS}>Tanggal Lahir *</label><input type="date" value={formAnak.tgl_lahir} onChange={e=>setFormAnak({...formAnak,tgl_lahir:e.target.value})} style={IS}/></div>
-                  <div><label style={LS}>Gender Hati</label><div style={{display:"flex",gap:8}}>{[{v:"L",l:"👦 Jagoan"},{v:"P",l:"👧 Putri"}].map(({v,l})=><button key={v} onClick={()=>setFormAnak({...formAnak,jenis_kelamin:v})} style={{flex:1,padding:"10px",borderRadius:12,border:`2px solid ${formAnak.jenis_kelamin===v?"#F43F5E":"#E5E7EB"}`,cursor:"pointer",background:formAnak.jenis_kelamin===v?"#FFF1F2":"#F9FAFB",color:formAnak.jenis_kelamin===v?"#F43F5E":"#6B7280",fontSize:13,fontWeight:800}}>{l}</button>)}</div></div>
+                  <div><label style={LS}>Gender</label><select value={formAnak.jenis_kelamin} onChange={e=>setFormAnak({...formAnak,jenis_kelamin:e.target.value})} style={IS}><option value="L">Laki-laki</option><option value="P">Perempuan</option></select></div>
                 </div>
-                <div style={{display:"flex",gap:12,marginTop:24}}>
-                  <button onClick={simpanAnak} disabled={loading} style={{flex:1,background:"linear-gradient(135deg, #F43F5E 0%, #E11D48 100%)",color:"white",border:"none",borderRadius:16,padding:"16px",fontSize:15,fontWeight:800,cursor:loading?"not-allowed":"pointer",boxShadow:"0 8px 20px rgba(225,29,72,0.3)"}}>{loading?"Menyiapkan Berkas...":"💖 Simpan Data Anak"}</button>
-                  <button onClick={()=>setShowFormAnak(false)} style={{padding:"16px 24px",background:"white",border:"2px solid #E5E7EB",borderRadius:16,fontSize:15,fontWeight:800,color:"#6B7280",cursor:"pointer"}}>Batalkan</button>
-                </div>
+                <button onClick={simpanAnak} disabled={loading} style={{width:"100%",marginTop:20,background:"#F43F5E",color:"white",border:"none",borderRadius:16,padding:"16px",fontSize:15,fontWeight:800}}>{loading?"Menyimpan...":"💖 Simpan Data Anak"}</button>
               </div>
             )}
             
-            <div style={{display:"grid",gridTemplateColumns:activeAnak?"1fr 1.6fr":"1fr",gap:24,alignItems:"start"}}>
+            <div style={{display:"grid",gridTemplateColumns:activeAnak?"1fr 1.6fr":"1fr",gap:24}}>
               <div style={{display:"flex",flexDirection:"column",gap:16}}>
-                {myAnakList.length===0?<div style={{background:"white",borderRadius:24,padding:40,textAlign:"center",color:"#9CA3AF",border:"2px dashed #E5E7EB"}}><div style={{fontSize:48,marginBottom:12}}>💤</div>Bunda belum mendaftarkan data balita.</div>
-                :myAnakList.map((a)=>{
-                  const last=tkList.filter(t=>t.anak_id===a.id)[0];
-                  const gz=last?statusGiziWHO(last.bb_kg,a.tgl_lahir):null;
-                  const sudah=imunList.filter(im=>im.anak_id===a.id&&im.status==="sudah").length;
-                  const total=imunList.filter(im=>im.anak_id===a.id).length;
-                  const isActive = activeAnak?.id===a.id;
-                  
-                  return(
-                    <div key={a.id} onClick={()=>setActiveAnak(isActive?null:a)} style={{padding:"20px",borderRadius:20,border:`2px solid ${isActive?"#FDA4AF":"white"}`,background:"white",cursor:"pointer",boxShadow:isActive?"0 12px 30px rgba(244,63,94,0.15)":"0 4px 12px rgba(0,0,0,0.03)",display:"flex",alignItems:"flex-start",gap:16,transition:"all 0.2s"}}>
-                      <div style={{width:48,height:48,borderRadius:16,background:a.jenis_kelamin==="L"?"#EFF6FF":"#FDF2F8",display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,flexShrink:0}}>
-                        {a.jenis_kelamin==="L"?"🪀":"🧸"}
-                      </div>
-                      <div style={{flex:1}}>
-                        <div style={{fontWeight:900,fontSize:16,color:"#111827",marginBottom:4}}>{a.nama}</div>
-                        <div style={{fontSize:13,color:"#6B7280",fontWeight:600}}>{hitungUmurLabel(a.tgl_lahir)} • {a.jenis_kelamin==="L"?"Jagoan":"Putri"} Bunda</div>
-                        <div style={{fontSize:12,color:"#9CA3AF",fontWeight:700,marginTop:8}}>💉 Vaksinasi {sudah}/{total}</div>
-                      </div>
-                      {gz&&<div style={{background:gz.color,color:"white",borderRadius:99,padding:"6px 12px",fontSize:11,fontWeight:800}}>{gz.status.toUpperCase()}</div>}
-                    </div>
-                  );
-                })}
+                {myAnakList.map((a)=>(
+                  <div key={a.id} onClick={()=>setActiveAnak(a)} style={{padding:20,borderRadius:20,background:"white",cursor:"pointer",border:`2px solid ${activeAnak?.id===a.id?"#F43F5E":"white"}`}}>
+                    <div style={{fontWeight:900}}>{a.nama}</div>
+                    <div style={{fontSize:12,color:"#6B7280"}}>{hitungUmurLabel(a.tgl_lahir)}</div>
+                  </div>
+                ))}
               </div>
-              
-              {activeAnak&&(
-                <div style={{animation:"fadeIn 0.3s ease-out"}}>
-                  <div style={{background:"white",borderRadius:28,padding:"24px 32px",marginBottom:24,boxShadow:"0 10px 30px rgba(244,63,94,0.1)",border:"1px solid #FFF1F2",position:"relative",overflow:"hidden"}}>
-                    <div style={{position:"absolute",top:0,left:0,bottom:0,width:8,background:"#F43F5E"}}/>
-                    <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
-                      <div>
-                        <div style={{fontWeight:900,fontSize:24,color:"#111827",letterSpacing:"-0.02em",marginBottom:6}}>{activeAnak.nama}</div>
-                        <div style={{fontSize:14,color:"#6B7280",fontWeight:600,display:"flex",gap:12,alignItems:"center"}}>
-                          <span style={{background:"#F3F4F6",padding:"4px 10px",borderRadius:8}}>🎂 {hitungUmurLabel(activeAnak.tgl_lahir)}</span>
-                        </div>
-                      </div>
-                      <div style={{display:"flex",gap:10}}>
-                        <button onClick={()=>{setTab("input");setFormTK({...formTK,anak_id:activeAnak.id});}} style={{background:"#FEF2F2",border:"none",borderRadius:12,padding:"10px 16px",color:"#E11D48",cursor:"pointer",fontSize:14,fontWeight:800}}>⚖️ Timbang</button>
-                        <button onClick={()=>setTab("imunisasi")} style={{background:"#FEF2F2",border:"none",borderRadius:12,padding:"10px 16px",color:"#E11D48",cursor:"pointer",fontSize:14,fontWeight:800}}>💉 Vaksin</button>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div style={{background:"white",borderRadius:28,padding:32,boxShadow:"0 10px 25px rgba(0,0,0,0.03)",border:"1px solid #E5E7EB",marginBottom:24}}>
-                    <h4 style={{margin:"0 0 20px",fontSize:15,fontWeight:900,color:"#111827",textTransform:"uppercase",letterSpacing:"0.1em",display:"flex",alignItems:"center",gap:10}}><span style={{fontSize:20}}>📈</span> Riwayat Tumbuh Kembang</h4>
-                    <GrafikBB data={activeTK} tgl_lahir={activeAnak.tgl_lahir}/>
-                  </div>
-                  
-                  <div style={{background:"white",borderRadius:28,border:"1px solid #E5E7EB",overflow:"hidden",boxShadow:"0 10px 25px rgba(0,0,0,0.03)"}}>
-                    <div style={{padding:"20px 24px",borderBottom:"1px solid #F3F4F6",background:"#F9FAFB"}}>
-                      <span style={{fontSize:14,fontWeight:800,color:"#374151",textTransform:"uppercase",letterSpacing:"0.05em"}}>Log Pencatatan Buku Gizi</span>
-                    </div>
-                    {activeTK.length===0?<div style={{padding:40,textAlign:"center",color:"#9CA3AF",fontSize:14,fontWeight:600}}>Buku log masih kosong buntik! 😊</div>
-                    :activeTK.map((tk,i)=>{
-                      const gz=statusGiziWHO(tk.bb_kg,activeAnak.tgl_lahir);
-                      return(
-                        <div key={tk.id} style={{padding:"16px 24px",borderBottom:i<activeTK.length-1?"1px solid #F3F4F6":"none",display:"flex",alignItems:"center",gap:16}}>
-                          <div style={{flex:1}}>
-                            <div style={{fontWeight:800,fontSize:15,color:"#111827",marginBottom:4}}>{fmtTgl(tk.tanggal)}</div>
-                            <div style={{fontSize:14,color:"#4B5563",fontWeight:600}}>⚖️ {tk.bb_kg} kg <span style={{color:"#D1D5DB",margin:"0 6px"}}>|</span> 📏 {tk.tb_cm||"-"} cm</div>
-                          </div>
-                          <div style={{background:gz.color,color:"white",borderRadius:99,padding:"6px 14px",fontSize:12,fontWeight:800}}>{gz.label}</div>
-                        </div>
-                      );
-                    })}
-                  </div>
+              {activeAnak && (
+                <div style={{background:"white",borderRadius:28,padding:32}}>
+                   <h4 style={{margin:"0 0 20px",fontWeight:900}}>📈 Kurva Pertumbuhan</h4>
+                   <GrafikBB data={activeTK} tgl_lahir={activeAnak.tgl_lahir}/>
+                   <div style={{marginTop:20}}>
+                     {activeTK.map(tk=>(
+                       <div key={tk.id} style={{padding:12,borderBottom:"1px solid #EEE",display:"flex",justifyContent:"space-between"}}>
+                         <span>{fmtTgl(tk.tanggal)}</span>
+                         <b>{tk.bb_kg} kg</b>
+                       </div>
+                     ))}
+                   </div>
                 </div>
               )}
             </div>
           </div>
         )}
 
-        {/* ── INPUT (HIDDEN UNTIL SCAN) ── */}
-        {authenticatedIbu && tab==="input"&&(
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:24}}>
-            <div style={{background:"white",borderRadius:28,padding:36,boxShadow:"0 20px 40px -15px rgba(244,63,94,0.1)",border:"1px solid #FFF1F2"}}>
-              <h3 style={{margin:"0 0 8px",fontSize:22,fontWeight:900,color:"#111827",display:"flex",alignItems:"center",gap:12}}>⚖️ Timbangan Balita</h3>
-              <p style={{margin:"0 0 28px",fontSize:14,color:"#6B7280",lineHeight:1.6,fontWeight:600}}>Catat angka berat badan akurat Si Kecil. Bunda berhak +{POIN_POSYANDU} Poin Apresiasi!</p>
-              
-              <div style={{marginBottom:20}}>
-                <label style={LS}>Pilih Buah Hati Bunda *</label>
-                <select value={formTK.anak_id} onChange={e=>setFormTK({...formTK,anak_id:e.target.value})} style={IS}>
-                  <option value="">-- Pilih Anak --</option>
-                  {myAnakList.map(a=><option key={a.id} value={a.id}>{a.nama}</option>)}
-                </select>
-              </div>
-              
-              {formTK.anak_id&&formTK.bb_kg&&(()=>{const anak=myAnakList.find(a=>a.id===formTK.anak_id);const gz=anak?statusGiziWHO(Number(formTK.bb_kg),anak.tgl_lahir):null;return gz?<div style={{padding:"12px 16px",background:gz.color+"1A",border:`2px solid ${gz.color}40`,borderRadius:16,marginBottom:20,fontSize:14,color:gz.color,fontWeight:800,display:"flex",alignItems:"center",gap:10}}><span style={{fontSize:18}}>🔬</span> Analisa Instan: <span style={{marginLeft:"auto"}}>{gz.label}</span></div>:null;})()}
-              
-              <div style={{marginBottom:20}}><label style={LS}>Tanggal Kontrol</label><input type="date" value={formTK.tanggal} onChange={e=>setFormTK({...formTK,tanggal:e.target.value})} style={IS}/></div>
-              
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:20}}>
-                {[{label:"Berat (kg) *",key:"bb_kg",ph:"Contoh: 8.5"},{label:"Tinggi (cm)",key:"tb_cm",ph:"Contoh: 75"},{label:"Lingk. Lengan",key:"lila_cm",ph:"cm"},{label:"Lingk. Kepala",key:"lk_cm",ph:"cm"}].map(f=>(
-                  <div key={f.key}><label style={LS}>{f.label}</label><input type="number" value={(formTK as any)[f.key]} onChange={e=>setFormTK({...formTK,[f.key]:e.target.value})} placeholder={f.ph} style={IS}/></div>
-                ))}
-              </div>
-              <div style={{marginBottom:24}}><label style={LS}>Pesan / Keluhan Bunda</label><textarea value={formTK.catatan} onChange={e=>setFormTK({...formTK,catatan:e.target.value})} placeholder="Catatan asupan ASI, MPASI, alergi dsb..." rows={3} style={{...IS,resize:"none"}}/></div>
-              <button onClick={simpanTK} disabled={loading} style={{width:"100%",background:loading?"#D1D5DB":"linear-gradient(135deg, #10B981 0%, #059669 100%)",color:"white",border:"none",borderRadius:16,padding:"16px",fontSize:16,fontWeight:900,cursor:loading?"not-allowed":"pointer",boxShadow:loading?"none":"0 8px 20px rgba(16,185,129,0.3)"}}>{loading?"Menyimpan Riwayat...":"💾 Kunci Data Sekecil"}</button>
-            </div>
-            
-            <div style={{display:"flex",flexDirection:"column",gap:20}}>
-              <div style={{background:"#F0FDF4",borderRadius:24,padding:28,border:"2px solid #BBF7D0"}}>
-                <h4 style={{margin:"0 0 16px",fontSize:15,fontWeight:900,color:"#064E3B",textTransform:"uppercase",letterSpacing:"0.05em",display:"flex",alignItems:"center",gap:10}}><span style={{fontSize:20}}>📏</span> Indikator Standar WHO</h4>
-                <div style={{display:"flex",flexDirection:"column",gap:12}}>
-                  {[{c:"#10B981",l:"Gizi Baik ✅",d:"Aman. Di atas 90% berat ideal usianya."},{c:"#F97316",l:"Gizi Kurang ⚠️",d:"75-90% batas normal. Perlu booster MPASI."},{c:"#EF4444",l:"Gizi Buruk 🚨",d:"Di bawah 75%! Tindakan medis segera direkomendasikan."},{c:"#F59E0B",l:"Gizi Lebih ⚠️",d:"Berlebih 110%. Konsultasi dini obesitas."}].map(g=>(
-                    <div key={g.l} style={{display:"flex",gap:12,alignItems:"center",background:"white",padding:"12px 16px",borderRadius:16}}>
-                      <div style={{width:14,height:14,borderRadius:"50%",background:g.c,flexShrink:0}}/>
-                      <div>
-                        <div style={{fontSize:14,fontWeight:800,color:g.c}}>{g.l}</div>
-                        <div style={{fontSize:12,color:"#6B7280",fontWeight:600}}>{g.d}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ── IMUNISASI (HIDDEN UNTIL SCAN) ── */}
-        {authenticatedIbu && tab==="imunisasi"&&(
-          <div style={{maxWidth:700,margin:"0 auto"}}>
-            {imunJatuhTempo.length>0&&(
-              <div style={{background:"#FEF2F2",border:"2px solid #FECACA",borderRadius:24,padding:"24px",marginBottom:24,boxShadow:"0 8px 20px rgba(239,68,68,0.1)"}}>
-                <div style={{fontWeight:900,fontSize:16,color:"#B91C1C",marginBottom:16,display:"flex",alignItems:"center",gap:10}}><span style={{fontSize:24}}>🚨</span> Jatuh Tempo Imunisasi Bunda!</div>
-                <div style={{display:"flex",flexDirection:"column",gap:10}}>
-                  {imunJatuhTempo.slice(0,5).map(im=>{
-                    const anak=myAnakList.find(a=>a.id===im.anak_id);
-                    const hari=Math.ceil((new Date(im.tanggal_jadwal).getTime()-new Date().getTime())/(1000*60*60*24));
-                    return(
-                      <div key={im.id} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"12px 16px",background:"white",borderRadius:12}}>
-                        <span style={{fontSize:15,color:"#111827",fontWeight:600}}><b>{anak?.nama}</b> <span style={{color:"#D1D5DB",margin:"0 8px"}}>|</span> {im.jenis}</span>
-                        <span style={{fontSize:14,color:"white",background:"#EF4444",padding:"4px 12px",borderRadius:99,fontWeight:800}}>{hari===0?"Sekarang!":hari===1?"Besok Pagi!":`${hari} Hari Terlewat`}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-            
-            <div style={{marginBottom:24}}>
-              <label style={LS}>Pilih Lembar KIA Bayi Bunda</label>
-              <select onChange={e=>setActiveAnak(myAnakList.find(a=>a.id===e.target.value)||null)} style={{...IS,background:"white",border:"2px solid #F43F5E",color:"#BE123C"}}>
-                <option value="">-- Cari Nama Anak --</option>
+        {authenticatedIbu && tab==="input" && (
+          <div style={{background:"white",borderRadius:28,padding:36}}>
+            <h3 style={{fontWeight:900,marginBottom:20}}>⚖️ Timbangan Balita</h3>
+            <div style={{marginBottom:20}}>
+              <label style={LS}>Pilih Buah Hati Bunda *</label>
+              <select value={formTK.anak_id} onChange={e=>setFormTK({...formTK,anak_id:e.target.value})} style={IS}>
+                <option value="">-- Pilih Anak --</option>
                 {myAnakList.map(a=><option key={a.id} value={a.id}>{a.nama}</option>)}
               </select>
             </div>
-            
-            {activeAnak&&(
-              <div style={{background:"white",borderRadius:28,border:"1px solid #E5E7EB",overflow:"hidden",boxShadow:"0 10px 30px rgba(0,0,0,0.05)"}}>
-                <div style={{padding:"24px 32px",borderBottom:"1px solid #F3F4F6",background:"#FFF1F2"}}>
-                  <div style={{fontWeight:900,fontSize:20,color:"#9F1239",marginBottom:4}}>Kartu Vaksin: {activeAnak.nama}</div>
-                  <div style={{fontSize:13,color:"#E11D48",fontWeight:700,marginBottom:12}}>Siklus dasar: {activeImun.filter(i=>i.status==="sudah").length}/{activeImun.length} Tahap Selesai</div>
-                  <div style={{height:10,background:"white",borderRadius:99,overflow:"hidden"}}>
-                    <div style={{height:"100%",width:`${activeImun.length>0?(activeImun.filter(i=>i.status==="sudah").length/activeImun.length)*100:0}%`,background:"linear-gradient(90deg, #F43F5E, #10B981)",borderRadius:99,transition:"width 1s cubic-bezier(0.4, 0, 0.2, 1)"}}/>
-                  </div>
-                </div>
-                
-                {activeImun.length===0?<div style={{padding:40,textAlign:"center",color:"#9CA3AF",fontSize:14,fontWeight:600}}>Data vaksin kosong.</div>
-                :activeImun.map((im,i)=>{
-                  const jadwal=JADWAL_IMUNISASI.find(j=>j.jenis===im.jenis);
-                  const lewat=im.status==="belum"&&new Date(im.tanggal_jadwal)<new Date();
-                  const SC={sudah:"#10B981",terlewat:"#9CA3AF",belum:lewat?"#EF4444":"#F59E0B"};
-                  const SL={sudah:"✅ Tuntas",terlewat:"❌ Gugur",belum:lewat?"⚠️ Terlewat!":"🕐 Terjadwal"};
-                  const sc=SC[im.status as keyof typeof SC]||"#9A8C85";
-                  
-                  return(
-                    <div key={im.id} style={{padding:"20px 32px",borderBottom:i<activeImun.length-1?"1px solid #F3F4F6":"none",display:"flex",alignItems:"center",gap:20,transition:"all 0.2s"}}>
-                      <div style={{fontSize:28,filter:im.status==="sudah"?"none":"grayscale(1) opacity(0.5)"}}>💉</div>
-                      <div style={{flex:1}}>
-                        <div style={{fontWeight:900,fontSize:16,color:"#111827",marginBottom:4}}>{jadwal?.label||im.jenis}</div>
-                        <div style={{fontSize:13,color:"#6B7280",fontWeight:600}}>Tenggat Fase: {fmtTgl(im.tanggal_jadwal)} {im.tanggal_realisasi&&<span style={{color:"#10B981"}}> • Disuntik: {fmtTgl(im.tanggal_realisasi)}</span>}</div>
-                      </div>
-                      <div style={{display:"flex",alignItems:"center",gap:10}}>
-                        <span style={{background:im.status==="sudah"?sc:sc+"15",color:im.status==="sudah"?"white":sc,borderRadius:8,padding:"6px 14px",fontSize:12,fontWeight:800}}>{SL[im.status as keyof typeof SL]}</span>
-                        {im.status==="belum"&&(
-                          <div style={{display:"flex",gap:8}}>
-                            <button onClick={()=>updateImunisasi(im.id)} style={{background:"#D1FAE5",border:"none",borderRadius:10,padding:"8px 12px",cursor:"pointer",fontSize:13,color:"#059669",fontWeight:800,boxShadow:"0 4px 10px rgba(16,185,129,0.2)"}}>Beri Vaksin</button>
-                            {lewat&&<button onClick={()=>tandaiTerlewat(im.id)} style={{background:"white",border:"2px solid #E5E7EB",borderRadius:10,padding:"8px 12px",cursor:"pointer",fontSize:13,color:"#9CA3AF",fontWeight:800}}>Lewati</button>}
-                          </div>
-                        )}
-                      </div>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
+              <div><label style={LS}>Berat (kg) *</label><input type="number" value={formTK.bb_kg} onChange={e=>setFormTK({...formTK,bb_kg:e.target.value})} style={IS}/></div>
+              <div><label style={LS}>Tinggi (cm)</label><input type="number" value={formTK.tb_cm} onChange={e=>setFormTK({...formTK,tb_cm:e.target.value})} style={IS}/></div>
+            </div>
+            <button onClick={simpanTK} disabled={loading} style={{width:"100%",marginTop:24,background:"#10B981",color:"white",border:"none",borderRadius:16,padding:"16px",fontSize:16,fontWeight:900}}>{loading?"Menyimpan...":"💾 Simpan Timbangan"}</button>
+          </div>
+        )}
+
+        {authenticatedIbu && tab==="imunisasi" && (
+          <div style={{background:"white",borderRadius:28,padding:32}}>
+            <h3 style={{fontWeight:900,marginBottom:20}}>💉 Kartu Vaksinasi</h3>
+            <select onChange={e=>setActiveAnak(myAnakList.find(a=>a.id===e.target.value)||null)} style={IS}>
+              <option value="">-- Pilih Anak --</option>
+              {myAnakList.map(a=><option key={a.id} value={a.id}>{a.nama}</option>)}
+            </select>
+            {activeAnak && (
+              <div style={{marginTop:20}}>
+                {activeImun.map(im=>(
+                  <div key={im.id} style={{padding:16,borderBottom:"1px solid #EEE",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                    <div>
+                      <div style={{fontWeight:800}}>{im.jenis}</div>
+                      <div style={{fontSize:12,color:"#6B7280"}}>Jadwal: {fmtTgl(im.tanggal_jadwal)}</div>
                     </div>
-                  );
-                })}
+                    {im.status==="belum" ? (
+                      <button onClick={()=>updateImunisasi(im.id)} style={{background:"#F43F5E",color:"white",border:"none",padding:"8px 16px",borderRadius:8}}>Beri Vaksin</button>
+                    ) : <span style={{color:"#10B981",fontWeight:800}}>TUNTAS ✅</span>}
+                  </div>
+                ))}
               </div>
             )}
           </div>
         )}
       </div>
-      <style>{`
-        @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.6;transform:scale(1.2)}}
-        @keyframes ping{0%{transform:scale(1);opacity:0.8}100%{transform:scale(1.6);opacity:0}}
-        @keyframes sweep { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-      `}</style>
     </div>
   );
 }
