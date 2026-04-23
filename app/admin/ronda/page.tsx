@@ -66,6 +66,27 @@ function StatusBadge({ label, color, pulse }:{ label:string; color:string; pulse
   );
 }
 
+// ─── CARA KERJA ──────────────────────────────────────────────────────────────
+function CaraKerja() {
+  const steps = [
+    { i:"01", t:"SIAGA PETUGAS", d:"Petugas ronda bersiap di pos dengan perlengkapan patroli." },
+    { i:"02", t:"TEMPEL KARTU", d:"Tempelkan e-KTP atau Kartu Warga pada sensor NFC di HP." },
+    { i:"03", t:"TERCATAT", d:"Sistem mencatat kehadiran & waktu patroli secara real-time." },
+    { i:"04", t:"BONUS POIN", d:"Petugas yang aktif akan mendapatkan poin apresiasi warga." },
+  ];
+  return (
+    <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(200px,1fr))", gap:16, marginTop:32 }}>
+      {steps.map(s => (
+        <div key={s.i} style={{ background:"linear-gradient(135deg,rgba(255,254,249,0.9),rgba(232,245,238,0.5))", padding:20, borderRadius:20, border:"1.5px solid rgba(47,143,78,0.12)", boxShadow:"0 4px 12px rgba(47,143,78,0.05)" }}>
+          <div style={{ fontSize:10, fontWeight:900, color:"#2F8F4E", marginBottom:8, opacity:0.6 }}>LANGKAH {s.i}</div>
+          <div style={{ fontSize:14, fontWeight:800, color:"#1C3A2B", marginBottom:6 }}>{s.t}</div>
+          <div style={{ fontSize:12, color:"rgba(47,143,78,0.7)", fontWeight:500, lineHeight:1.5 }}>{s.d}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 // ─── MAIN ─────────────────────────────────────────────────────────────────────
 export default function AdminRondaPage() {
   const [jadwal, setJadwal] = useState<Jadwal[]>([]);
@@ -609,6 +630,8 @@ export default function AdminRondaPage() {
                 </div>
               </div>
             </div>
+
+            <CaraKerja />
           </div>
         )}
 

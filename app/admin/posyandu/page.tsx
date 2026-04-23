@@ -86,6 +86,59 @@ function GrafikBB({data,tgl_lahir}:{data:TK[];tgl_lahir:string}){
   );
 }
 
+// ─── RADAR ANIMATION ─────────────────────────────────────────────────────────
+function RadarPing({ active }:{ active:boolean }) {
+  return (
+    <div style={{ position:"relative", width:140, height:140, margin:"0 auto" }}>
+      {[1,2,3].map(i => (
+        <div key={i} style={{
+          position:"absolute", inset:0, borderRadius:"50%",
+          border:`1px solid rgba(244,63,94,${active?0.3:0.1})`,
+          transform:`scale(${i*0.33})`, transformOrigin:"center",
+          animation: active ? `ping ${1+i*0.5}s infinite` : "none"
+        }}/>
+      ))}
+      {active && (
+        <div style={{
+          position:"absolute", inset:0, borderRadius:"50%",
+          background:"conic-gradient(from 0deg, transparent 270deg, rgba(244,63,94,0.15) 360deg)",
+          animation:"sweep 2s linear infinite",
+        }}/>
+      )}
+      <div style={{
+        position:"absolute", top:"50%", left:"50%",
+        transform:"translate(-50%,-50%)",
+        width:active?24:18, height:active?24:18,
+        borderRadius:"50%",
+        background:active?"#F43F5E":"#E5E7EB",
+        boxShadow:active?"0 0 25px #F43F5E, 0 0 50px rgba(244,63,94,0.3)":"none",
+        transition:"all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+      }}/>
+    </div>
+  );
+}
+
+// ─── CARA KERJA ──────────────────────────────────────────────────────────────
+function CaraKerja() {
+  const steps = [
+    { i:"01", t:"TEMPEL e-KTP", d:"Tempelkan e-KTP Bunda di belakang HP atau alat sensor NFC." },
+    { i:"02", t:"VERIFIKASI", d:"Sistem akan mencari data Bunda & Si Kecil secara otomatis." },
+    { i:"03", t:"TIMBANG", d:"Input berat & tinggi badan Si Kecil untuk pantau gizi." },
+    { i:"04", t:"DAPAT POIN", d:"Setiap kunjungan rutin Bunda akan mendapatkan Poin Posyandu." },
+  ];
+  return (
+    <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))", gap:16, marginTop:40 }}>
+      {steps.map(s => (
+        <div key={s.i} style={{ background:"white", padding:20, borderRadius:20, border:"1px solid #FFF1F2", boxShadow:"0 4px 12px rgba(244,63,94,0.05)" }}>
+          <div style={{ fontSize:10, fontWeight:900, color:"#F43F5E", marginBottom:8, opacity:0.5 }}>Langkah {s.i}</div>
+          <div style={{ fontSize:14, fontWeight:900, color:"#111827", marginBottom:6 }}>{s.t}</div>
+          <div style={{ fontSize:12, color:"#6B7280", fontWeight:600, lineHeight:1.5 }}>{s.d}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 const LS={fontSize:11,fontWeight:800 as const,color:"#9CA3AF",letterSpacing:"0.08em",textTransform:"uppercase" as const,display:"block",marginBottom:6};
 const IS={width:"100%",padding:"12px 16px",borderRadius:16,border:"2px solid #E5E7EB",fontSize:14,background:"#F9FAFB",outline:"none",boxSizing:"border-box" as const,fontFamily:"inherit",color:"#374151",fontWeight:600};
 
@@ -96,9 +149,10 @@ export default function AdminPosyanduPage(){
   const[kkList,setKkList]=useState<any[]>([]);
   const[ibuList,setIbuList]=useState<any[]>([]);
   const[activeAnak,setActiveAnak]=useState<Anak|null>(null);
-  const[tab,setTab]=useState<"daftar"|"scan"|"input"|"imunisasi">("daftar");
+  const[tab,setTab]=useState<"daftar"|"scan"|"input"|"imunisasi">("scan");
   const[scanning,setScanning]=useState(false);
   const[lastScan,setLastScan]=useState<{nama:string;namaAnak:string;poin:number}|null>(null);
+  const[authenticatedIbu, setAuthenticatedIbu] = useState<any|null>(null);
   const[formTK,setFormTK]=useState({anak_id:"",tanggal:new Date().toISOString().split("T")[0],bb_kg:"",tb_cm:"",lila_cm:"",lk_cm:"",catatan:""});
   const[formAnak,setFormAnak]=useState({nama:"",tgl_lahir:"",jenis_kelamin:"L",nama_ibu:"",no_wa_ibu:"",kk_id:""});
   const[showFormAnak,setShowFormAnak]=useState(false);
@@ -128,135 +182,104 @@ export default function AdminPosyanduPage(){
   }
   useEffect(()=>{fetchAll();},[]);
 
-  async function generateJadwal(anakId:string,tgl_lahir:string){
-    const rows=JADWAL_IMUNISASI.map(j=>({anak_id:anakId,jenis:j.jenis,usia_bulan:j.usia_bulan,tanggal_jadwal:tglDariUsia(tgl_lahir,j.usia_bulan),status:"belum"}));
-    await supabase.from("imunisasi").insert(rows);
-  }
-
-  async function simpanAnak(){
-    if(!formAnak.nama||!formAnak.tgl_lahir)return showToast("❌ Nama & tgl lahir wajib!",false);
-    if(!formAnak.kk_id)return showToast("❌ Pilih KK dulu!",false);
-    setLoading(true);
-    const{data,error}=await supabase.from("anak_posyandu").insert({...formAnak,nama_ibu:formAnak.nama_ibu||"-"}).select().single();
-    if(error)showToast(`❌ ${error.message}`,false);
-    else{
-      await generateJadwal(data.id,formAnak.tgl_lahir);
-      showToast("💕 Anak terdaftar + jadwal imunisasi dibuat! 💉");
-      setFormAnak({nama:"",tgl_lahir:"",jenis_kelamin:"L",nama_ibu:"",no_wa_ibu:"",kk_id:""});
-      setShowFormAnak(false);
-    }
-    setLoading(false);fetchAll();
-  }
-
-  async function simpanTK(){
-    if(!formTK.anak_id||!formTK.bb_kg)return showToast("❌ Pilih anak & isi BB!",false);
-    setLoading(true);
-    const anak=anakList.find(a=>a.id===formTK.anak_id)!;
-    const gz=statusGiziWHO(Number(formTK.bb_kg),anak.tgl_lahir);
-    const{error}=await supabase.from("tumbuh_kembang").insert({
-      anak_id:formTK.anak_id,tanggal:formTK.tanggal,
-      bb_kg:Number(formTK.bb_kg), tb_cm:formTK.tb_cm?Number(formTK.tb_cm):null,
-      lila_cm:formTK.lila_cm?Number(formTK.lila_cm):null, lk_cm:formTK.lk_cm?Number(formTK.lk_cm):null,
-      catatan:formTK.catatan||null,status_gizi:gz.status,
-    });
-    if(error){showToast(`❌ ${error.message}`,false);setLoading(false);return;}
-    if(gz.status==="buruk"||gz.status==="kurang")
-      setTimeout(()=>showToast(`🚨 ${anak.nama} — ${gz.label}! Segera rujuk ke bidan!`,false),600);
-    
-    const ibu=ibuList.find(a=>a.kk_id===anak.kk_id);
-    if(ibu){
-      const hariIni=new Date().toISOString().split("T")[0];
-      const{data:cek}=await supabase.from("riwayat_poin").select("id").eq("anggota_id",ibu.id).eq("sumber","posyandu").gte("created_at",`${hariIni}T00:00:00`).lte("created_at",`${hariIni}T23:59:59`).limit(1);
-      if(!cek||cek.length===0){
-        await supabase.from("anggota_kk").update({saldo_poin:(ibu.saldo_poin||0)+POIN_POSYANDU}).eq("id",ibu.id);
-        await supabase.from("riwayat_poin").insert({anggota_id:ibu.id,kk_id:anak.kk_id,jumlah:POIN_POSYANDU,jenis:"masuk",sumber:"posyandu",keterangan:`Posyandu Ceria — ${anak.nama} — ${formTK.tanggal}`});
-        showToast(`💕 Tersimpan! ${gz.label} | Ibu ${ibu.nama} +${POIN_POSYANDU} poin 🎉`);
-      }else showToast(`💕 Tersimpan! Status: ${gz.label}`);
-    }else showToast(`💕 Tersimpan! Status: ${gz.label}`);
-    setFormTK({...formTK,bb_kg:"",tb_cm:"",lila_cm:"",lk_cm:"",catatan:""});
-    setLoading(false);fetchAll();
-  }
-
   async function nfcAbsensi(nfcId:string){
     const id=nfcId.replace(/:/g,"").toUpperCase();
     const currentIbuList = ibuListRef.current;
     const ibu=currentIbuList.find(a=>a.nfc_id===id);
-    if(!ibu)return showToast(`❌ Kartu tidak terdaftar! (${id})`,false);
+    if(!ibu)return showToast(`❌ Bunda belum terdaftar di Sistem Desa! (${id})`,false);
     
     const anak=anakList.filter(a=>a.kk_id===ibu.kk_id);
-    if(anak.length===0)return showToast(`⚠️ Ibu ${ibu.nama} belum mendaftarkan sekecilnya`,false);
     
     const hariIni=new Date().toISOString().split("T")[0];
     const{data:cek}=await supabase.from("riwayat_poin").select("id").eq("anggota_id",ibu.id).eq("sumber","posyandu").gte("created_at",`${hariIni}T00:00:00`).lte("created_at",`${hariIni}T23:59:59`).limit(1);
-    if(cek&&cek.length>0)return showToast(`⚠️ Ibu ${ibu.nama} sudah scan kartu hari ini!`,false);
     
-    await supabase.from("anggota_kk").update({saldo_poin:(ibu.saldo_poin||0)+POIN_POSYANDU}).eq("id",ibu.id);
-    await supabase.from("riwayat_poin").insert({anggota_id:ibu.id,kk_id:ibu.kk_id,jumlah:POIN_POSYANDU,jenis:"masuk",sumber:"posyandu",keterangan:`Tap NFC Posyandu Ceria — ${hariIni}`});
-    setLastScan({nama:ibu.nama,namaAnak:anak.map(a=>a.nama).join(", "),poin:POIN_POSYANDU});
-    showToast(`💕 Selamat datang ibu ${ibu.nama}! +${POIN_POSYANDU} poin 🎉`);
+    if(!cek||cek.length===0){
+      await supabase.from("anggota_kk").update({saldo_poin:(ibu.saldo_poin||0)+POIN_POSYANDU}).eq("id",ibu.id);
+      await supabase.from("riwayat_poin").insert({anggota_id:ibu.id,kk_id:ibu.kk_id,jumlah:POIN_POSYANDU,jenis:"masuk",sumber:"posyandu",keterangan:`Tap NFC Posyandu Ceria — ${hariIni}`});
+      showToast(`💕 Selamat datang ibu ${ibu.nama}! +${POIN_POSYANDU} poin 🎉`);
+    } else {
+      showToast(`💕 Senang berjumpa lagi, Ibu ${ibu.nama}! ✨`);
+    }
+
+    setAuthenticatedIbu(ibu);
+    setTab("daftar"); // Langsung buka daftar anak setelah tap
+    setLastScan({nama:ibu.nama,namaAnak:anak.map(a=>a.nama).join(", ") || "Belum ada balita terdaftar",poin:POIN_POSYANDU});
     fetchAll();
   }
 
   async function startNFC(){
-    if(!("NDEFReader" in window))return showToast("⚠️ Pakai Chrome Android + aktifkan NFC dulu ya bunda!",false);
+    if(!("NDEFReader" in window))return showToast("⚠️ Gunakan Chrome di HP & Aktifkan NFC Bunda!",false);
     try{
       const ndef=new (window as any).NDEFReader();
       nfcRef.current=ndef;await ndef.scan();setScanning(true);
-      showToast("📡 NFC siap! Silakan ibu tempelkan kartu sehat...");
+      showToast("📡 KIOSK AKTIF! Silakan tempelkan e-KTP Bunda...");
       ndef.addEventListener("reading",({serialNumber}:any)=>nfcAbsensi(serialNumber));
     }catch(e:any){showToast(`❌ Gagal: ${e?.message||"Error"}`,false);setScanning(false);}
   }
   function stopNFC(){
     try{nfcRef.current?.stop?.();}catch{}
     setScanning(false);setLastScan(null);
-    showToast("Pemindai NFC dimatikan");
+    setAuthenticatedIbu(null);
+    setTab("scan");
+    showToast("Sesi berakhir, data dikunci kembali.");
   }
 
-  async function updateImunisasi(id:string){
-    await supabase.from("imunisasi").update({tanggal_realisasi:new Date().toISOString().split("T")[0],status:"sudah"}).eq("id",id);
-    showToast("💖 Vaksin masuk, Si Kecil kuat!");fetchAll();
-  }
-  async function tandaiTerlewat(id:string){
-    await supabase.from("imunisasi").update({status:"terlewat"}).eq("id",id);
-    showToast("⚠️ Vaksin ditandai terlewat");fetchAll();
-  }
-
+  // Filter list anak hanya untuk Ibu yang sedang login/tap
+  const myAnakList = authenticatedIbu ? anakList.filter(a => a.kk_id === authenticatedIbu.kk_id) : [];
   const activeTK=tkList.filter(t=>t.anak_id===activeAnak?.id);
   const activeImun=imunList.filter(i=>i.anak_id===activeAnak?.id);
-  const anakAlert=anakList.filter(a=>{const last=tkList.filter(t=>t.anak_id===a.id)[0];return last&&(statusGiziWHO(last.bb_kg,a.tgl_lahir).status==="buruk"||statusGiziWHO(last.bb_kg,a.tgl_lahir).status==="kurang");});
-  const imunJatuhTempo=imunList.filter(im=>{if(im.status!=="belum")return false;const diff=(new Date(im.tanggal_jadwal).getTime()-new Date().getTime())/(1000*60*60*24);return diff>=0&&diff<=30;});
+  const anakAlert=myAnakList.filter(a=>{const last=tkList.filter(t=>t.anak_id===a.id)[0];return last&&(statusGiziWHO(last.bb_kg,a.tgl_lahir).status==="buruk"||statusGiziWHO(last.bb_kg,a.tgl_lahir).status==="kurang");});
+  const imunJatuhTempo=imunList.filter(im=>{if(im.status!=="belum")return false;const anak=myAnakList.find(a=>a.id===im.anak_id);if(!anak)return false;const diff=(new Date(im.tanggal_jadwal).getTime()-new Date().getTime())/(1000*60*60*24);return diff>=0&&diff<=30;});
 
   return(
     <div style={{minHeight:"100vh",background:"#FFF1F2",fontFamily:"'Inter', system-ui, sans-serif"}}>
+      <style>{`
+        @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.6;transform:scale(1.2)}}
+        @keyframes ping{0%{transform:scale(1);opacity:0.8}100%{transform:scale(1.8);opacity:0}}
+        @keyframes sweep { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+      `}</style>
+
       {toast.msg&&<div style={{position:"fixed",top:20,left:"50%",transform:"translateX(-50%)",background:toast.ok?"#F43F5E":"#111827",color:"white",padding:"12px 24px",borderRadius:99,zIndex:999,fontSize:14,fontWeight:700,boxShadow:"0 10px 25px rgba(244,63,94,0.3)",width:"max-content"}}>{toast.msg}</div>}
 
       <header style={{background:"linear-gradient(135deg, #FDA4AF 0%, #F43F5E 100%)",color:"white",padding:"24px 24px 70px",borderBottomLeftRadius:40,borderBottomRightRadius:40,marginBottom:-40,boxShadow:"0 10px 30px rgba(244,63,94,0.2)",position:"relative",overflow:"hidden"}}>
         <div style={{position:"absolute",top:-20,right:-20,fontSize:160,opacity:0.1,transform:"rotate(15deg)"}}>🧸</div>
         
-        <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:24,position:"relative",zIndex:2}}>
-          <a href="/admin" style={{color:"rgba(255,255,255,0.9)",textDecoration:"none",fontSize:13,fontWeight:700,background:"rgba(0,0,0,0.15)",padding:"8px 16px",borderRadius:99}}>← Dashboard Admin</a>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:24,position:"relative",zIndex:2}}>
+          <div style={{display:"flex",alignItems:"center",gap:12}}>
+            <a href="/admin" style={{color:"rgba(255,255,255,0.9)",textDecoration:"none",fontSize:13,fontWeight:700,background:"rgba(0,0,0,0.15)",padding:"8px 16px",borderRadius:99}}>← Dashboard</a>
+            {authenticatedIbu && (
+              <div style={{background:"rgba(255,255,255,0.2)",padding:"8px 16px",borderRadius:99,fontSize:13,fontWeight:800,display:"flex",alignItems:"center",gap:8}}>
+                👩 Bunda {authenticatedIbu.nama} 
+                <button onClick={stopNFC} style={{background:"#FFF",border:"none",borderRadius:99,padding:"2px 8px",fontSize:10,fontWeight:900,color:"#F43F5E",cursor:"pointer"}}>SELESAI</button>
+              </div>
+            )}
+          </div>
+          {authenticatedIbu && <div style={{fontSize:16,fontWeight:900,color:"white",background:"rgba(0,0,0,0.1)",padding:"8px 16px",borderRadius:12}}>🏆 {authenticatedIbu.saldo_poin} POIN</div>}
         </div>
         
         <div style={{position:"relative",zIndex:2}}>
           <div style={{fontSize:12,fontWeight:800,letterSpacing:"0.15em",color:"#FFE4E6",marginBottom:8}}>CLINIC & MATERNITY CIBURIAL</div>
           <h1 style={{margin:"0 0 10px",fontSize:32,fontWeight:900,letterSpacing:"-0.02em"}}>Posyandu Ceria 👶</h1>
-          <p style={{margin:0,color:"rgba(255,255,255,0.9)",fontSize:15,maxWidth:450,lineHeight:1.6}}>Sentuhan kecil pagi ini, tumbuh kembang optimal esok hari. Pantau nutrisi dan imunisasi para balita desa tercinta.</p>
+          <p style={{margin:0,color:"rgba(255,255,255,0.9)",fontSize:15,maxWidth:450,lineHeight:1.6}}>Pantau tumbuh kembang si kecil dengan teknologi e-KTP. Privasi data terjamin hanya untuk Bunda.</p>
         </div>
       </header>
 
       <div style={{maxWidth:1000,margin:"0 auto",padding:"0 16px 40px",position:"relative",zIndex:10}}>
         
-        <div style={{display:"flex",gap:10,overflowX:"auto",paddingBottom:20,scrollbarWidth:"none"}}>
-          {(["daftar","scan","input","imunisasi"] as const).map(t=>(
-            <button key={t} onClick={()=>setTab(t)} style={{padding:"14px 24px",borderRadius:99,fontSize:14,fontWeight:800,border:"none",cursor:"pointer",background:tab===t?"white":"rgba(255,255,255,0.5)",color:tab===t?"#F43F5E":"#6B7280",boxShadow:tab===t?"0 8px 20px rgba(244,63,94,0.15)":"none",whiteSpace:"nowrap",display:"flex",alignItems:"center",gap:8,transition:"all 0.2s"}}>
-              {{daftar:"📋 Buku Balita",scan:"💳 Scan Bunda",input:"⚖️ Timbangan",imunisasi:"💉 Vaksin"}[t]}
-              {t==="scan"&&scanning&&<span style={{width:10,height:10,background:"#F43F5E",borderRadius:"50%",animation:"pulse 1s infinite"}}/>}
-              {t==="imunisasi"&&imunJatuhTempo.length>0&&<span style={{background:"#F43F5E",color:"white",borderRadius:"50%",width:20,height:20,fontSize:11,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:800}}>{imunJatuhTempo.length}</span>}
-            </button>
-          ))}
-        </div>
+        {/* Navigation Tabs (Only if identified) */}
+        {authenticatedIbu && (
+          <div style={{display:"flex",gap:10,overflowX:"auto",paddingBottom:20,scrollbarWidth:"none"}}>
+            {(["daftar","input","imunisasi"] as const).map(t=>(
+              <button key={t} onClick={()=>setTab(t)} style={{padding:"14px 24px",borderRadius:99,fontSize:14,fontWeight:800,border:"none",cursor:"pointer",background:tab===t?"white":"rgba(255,255,255,0.5)",color:tab===t?"#F43F5E":"#6B7280",boxShadow:tab===t?"0 8px 20px rgba(244,63,94,0.15)":"none",whiteSpace:"nowrap",display:"flex",alignItems:"center",gap:8,transition:"all 0.2s"}}>
+                {{daftar:"📋 Buku Balita",input:"⚖️ Timbangan",imunisasi:"💉 Vaksin"}[t]}
+                {t==="imunisasi"&&imunJatuhTempo.length>0&&<span style={{background:"#F43F5E",color:"white",borderRadius:"50%",width:20,height:20,fontSize:11,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:800}}>{imunJatuhTempo.length}</span>}
+              </button>
+            ))}
+          </div>
+        )}
 
-        {anakAlert.length>0&&(
+        {authenticatedIbu && anakAlert.length>0&&(
           <div style={{background:"#FEF2F2",border:"2px solid #FECACA",borderRadius:20,padding:"16px 20px",marginBottom:24,display:"flex",alignItems:"center",gap:16,boxShadow:"0 4px 12px rgba(254,202,202,0.5)"}}>
             <span style={{fontSize:28}}>🚨</span>
             <div>
@@ -266,43 +289,39 @@ export default function AdminPosyanduPage(){
           </div>
         )}
 
-        {/* ── NFC SCAN ── */}
-        {tab==="scan"&&(
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:24}}>
-            <div style={{background:"white",borderRadius:28,padding:32,boxShadow:"0 20px 40px -15px rgba(244,63,94,0.1)",textAlign:"center",border:"1px solid #FFF1F2"}}>
-              <div style={{width:64,height:64,background:"#FFE4E6",borderRadius:20,display:"flex",alignItems:"center",justifyContent:"center",fontSize:32,margin:"0 auto 20px"}}>🤱</div>
-              <h3 style={{margin:"0 0 8px",color:"#111827",fontSize:22,fontWeight:900}}>Verifikasi Kehadiran Bunda</h3>
-              <p style={{fontSize:14,color:"#6B7280",margin:"0 0 32px",lineHeight:1.6}}>Sentuhkan Kartu Warga ke belakang layar untuk absensi. Ibu akan otomatis menerima poin apresiasi kader kesejahteraan.</p>
+        {/* ── KIOSK SCAN MODE (LOCKED) ── */}
+        {!authenticatedIbu && (
+          <div style={{animation:"fadeIn 0.5s ease-out"}}>
+            <div style={{background:"white",borderRadius:32,padding:48,boxShadow:"0 25px 50px -12px rgba(244,63,94,0.15)",textAlign:"center",border:"1px solid #FFF1F2",maxWidth:600,margin:"0 auto"}}>
+              <h3 style={{margin:"0 0 12px",color:"#111827",fontSize:26,fontWeight:900}}>Selamat Datang Bunda! 👋</h3>
+              <p style={{fontSize:15,color:"#6B7280",margin:"0 0 40px",lineHeight:1.6}}>Silakan tempelkan **e-KTP Bunda** di sini untuk membuka data tumbuh kembang Si Kecil dan mencatat timbangan hari ini.</p>
               
-              <div style={{position:"relative",width:160,height:160,borderRadius:"50%",margin:"0 auto 30px",background:scanning?"#FFE4E6":"#F3F4F6",border:`4px ${scanning?"solid":"dashed"} ${scanning?"#F43F5E":"#D1D5DB"}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:60}}>
-                {scanning?"📡":"💳"}
-                {scanning&&<div style={{position:"absolute",inset:-10,borderRadius:"50%",border:"2px solid rgba(244,63,94,0.4)",animation:"ping 1.5s infinite"}}/>}
+              <RadarPing active={scanning}/>
+              
+              <div style={{marginTop:40}}>
+                <button 
+                  onClick={scanning?stopNFC:startNFC} 
+                  style={{width:"100%",background:scanning?"#FFE4E6":"linear-gradient(135deg, #F43F5E 0%, #E11D48 100%)",color:scanning?"#E11D48":"white",border:scanning?"2px solid #FECACA":"none",borderRadius:20,padding:"20px",fontSize:18,fontWeight:900,cursor:"pointer",boxShadow:scanning?"none":"0 12px 25px rgba(225,29,72,0.3)",transition:"all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)"}}
+                  onMouseEnter={e => !scanning && (e.currentTarget.style.transform = "scale(1.02)")}
+                  onMouseLeave={e => !scanning && (e.currentTarget.style.transform = "scale(1)")}
+                >
+                  {scanning ? "⏹ HENTIKAN PEMINDAI" : "SENTUHKAN e-KTP SEKARANG ▶"}
+                </button>
+                <div style={{marginTop:16,fontSize:11,color:"#9CA3AF",fontWeight:600}}>Pastikan fitur NFC di ponsel Anda aktif</div>
               </div>
-              
-              {lastScan&&(
-                <div style={{background:"#ECFDF5",border:"2px solid #A7F3D0",borderRadius:20,padding:"16px",marginBottom:20,textAlign:"left"}}>
-                  <div style={{fontWeight:800,fontSize:16,color:"#064E3B",marginBottom:4}}>💖 Halo, Ibu {lastScan.nama}!</div>
-                  <div style={{fontSize:13,color:"#059669",fontWeight:600}}>Data Sekecil: {lastScan.namaAnak}</div>
-                  <div style={{fontSize:15,color:"#10B981",fontWeight:900,marginTop:8}}>+ {lastScan.poin} Poin Sehat 🌟</div>
-                </div>
-              )}
-              <button 
-                onClick={scanning?stopNFC:startNFC} 
-                style={{width:"100%",background:scanning?"#FFE4E6":"linear-gradient(135deg, #F43F5E 0%, #E11D48 100%)",color:scanning?"#E11D48":"white",border:scanning?"2px solid #FECACA":"none",borderRadius:16,padding:"16px",fontSize:16,fontWeight:800,cursor:"pointer",boxShadow:scanning?"none":"0 8px 20px rgba(225,29,72,0.3)"}}
-              >
-                {scanning?"⏹ Matikan Pindai":"Mulai Pindai Kartu Bunda ▶"}
-              </button>
             </div>
+
+            <CaraKerja />
           </div>
         )}
 
-        {/* ── DAFTAR ANAK ── */}
-        {tab==="daftar"&&(
+        {/* ── DAFTAR ANAK (HIDDEN UNTIL SCAN) ── */}
+        {authenticatedIbu && tab==="daftar"&&(
           <div>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
-              <h3 style={{margin:0,fontSize:20,fontWeight:900,color:"#111827"}}>Buku KIA Balita <span style={{color:"#F43F5E"}}>({anakList.length})</span></h3>
+              <h3 style={{margin:0,fontSize:20,fontWeight:900,color:"#111827"}}>Buku KIA Balita Bunda <span style={{color:"#F43F5E"}}>({myAnakList.length})</span></h3>
               <button onClick={()=>setShowFormAnak(!showFormAnak)} style={{background:"white",color:"#F43F5E",border:"none",borderRadius:16,padding:"12px 20px",fontSize:14,fontWeight:800,cursor:"pointer",boxShadow:"0 4px 12px rgba(244,63,94,0.15)"}}>
-                {showFormAnak?"✕ Tutup Pendaftaran":"+ Daftarkan Biodata"}
+                {showFormAnak?"✕ Tutup Pendaftaran":"+ Daftarkan Biodata Anak"}
               </button>
             </div>
             
@@ -310,15 +329,11 @@ export default function AdminPosyanduPage(){
               <div style={{background:"white",borderRadius:24,padding:32,boxShadow:"0 20px 40px -15px rgba(244,63,94,0.1)",marginBottom:24,border:"1px solid #FFF1F2"}}>
                 <h4 style={{margin:"0 0 24px",fontSize:18,fontWeight:900,color:"#111827",display:"flex",alignItems:"center",gap:10}}><span style={{fontSize:24}}>🍼</span> Daftarkan Sang Buah Hati</h4>
                 <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
-                  <div><label style={LS}>Kepala Keluarga *</label><select value={formAnak.kk_id} onChange={e=>setFormAnak({...formAnak,kk_id:e.target.value})} style={IS}><option value="">-- Pilih KK --</option>{kkList.map(k=><option key={k.id} value={k.id}>{k.kepala_keluarga} (RT {k.rt})</option>)}</select></div>
-                  <div><label style={LS}>Nama Buah Hati *</label><input value={formAnak.nama} onChange={e=>setFormAnak({...formAnak,nama:e.target.value})} placeholder="Ketik nama lengkap..." style={IS}/></div>
-                  <div><label style={LS}>Nama Ibu Panggilan</label><input value={formAnak.nama_ibu} onChange={e=>setFormAnak({...formAnak,nama_ibu:e.target.value})} placeholder="Cth: Ibu Anis" style={IS}/></div>
-                  <div><label style={LS}>WhatsApp Bunda</label><input value={formAnak.no_wa_ibu} onChange={e=>setFormAnak({...formAnak,no_wa_ibu:e.target.value})} placeholder="08xxxxxxxxxx" style={IS}/></div>
+                  <div style={{opacity:0.6}}><label style={LS}>Nama Ibu (Identitas Kartu)</label><input value={authenticatedIbu.nama} disabled style={IS}/></div>
+                  <div><label style={LS}>Nama Buah Hati *</label><input value={formAnak.nama} onChange={e=>setFormAnak({...formAnak,nama:e.target.value,kk_id:authenticatedIbu.kk_id})} placeholder="Ketik nama lengkap..." style={IS}/></div>
+                  <div><label style={LS}>WhatsApp Bunda (Notifikasi)</label><input value={formAnak.no_wa_ibu || authenticatedIbu.no_wa || ""} onChange={e=>setFormAnak({...formAnak,no_wa_ibu:e.target.value})} placeholder="08xxxxxxxxxx" style={IS}/></div>
                   <div><label style={LS}>Tanggal Lahir *</label><input type="date" value={formAnak.tgl_lahir} onChange={e=>setFormAnak({...formAnak,tgl_lahir:e.target.value})} style={IS}/></div>
                   <div><label style={LS}>Gender Hati</label><div style={{display:"flex",gap:8}}>{[{v:"L",l:"👦 Jagoan"},{v:"P",l:"👧 Putri"}].map(({v,l})=><button key={v} onClick={()=>setFormAnak({...formAnak,jenis_kelamin:v})} style={{flex:1,padding:"10px",borderRadius:12,border:`2px solid ${formAnak.jenis_kelamin===v?"#F43F5E":"#E5E7EB"}`,cursor:"pointer",background:formAnak.jenis_kelamin===v?"#FFF1F2":"#F9FAFB",color:formAnak.jenis_kelamin===v?"#F43F5E":"#6B7280",fontSize:13,fontWeight:800}}>{l}</button>)}</div></div>
-                </div>
-                <div style={{marginTop:16,padding:"12px 16px",background:"#F0FDF4",borderRadius:12,fontSize:13,color:"#059669",fontWeight:600,display:"flex",alignItems:"center",gap:10}}>
-                  <span>📌</span> Jadwal imunisasi 9 bulan otomatis akan didaftarkan sistem.
                 </div>
                 <div style={{display:"flex",gap:12,marginTop:24}}>
                   <button onClick={simpanAnak} disabled={loading} style={{flex:1,background:"linear-gradient(135deg, #F43F5E 0%, #E11D48 100%)",color:"white",border:"none",borderRadius:16,padding:"16px",fontSize:15,fontWeight:800,cursor:loading?"not-allowed":"pointer",boxShadow:"0 8px 20px rgba(225,29,72,0.3)"}}>{loading?"Menyiapkan Berkas...":"💖 Simpan Data Anak"}</button>
@@ -328,10 +343,9 @@ export default function AdminPosyanduPage(){
             )}
             
             <div style={{display:"grid",gridTemplateColumns:activeAnak?"1fr 1.6fr":"1fr",gap:24,alignItems:"start"}}>
-              
               <div style={{display:"flex",flexDirection:"column",gap:16}}>
-                {anakList.length===0?<div style={{background:"white",borderRadius:24,padding:40,textAlign:"center",color:"#9CA3AF",border:"2px dashed #E5E7EB"}}><div style={{fontSize:48,marginBottom:12}}>💤</div>Belum ada sekecil yang tercatat.</div>
-                :anakList.map((a)=>{
+                {myAnakList.length===0?<div style={{background:"white",borderRadius:24,padding:40,textAlign:"center",color:"#9CA3AF",border:"2px dashed #E5E7EB"}}><div style={{fontSize:48,marginBottom:12}}>💤</div>Bunda belum mendaftarkan data balita.</div>
+                :myAnakList.map((a)=>{
                   const last=tkList.filter(t=>t.anak_id===a.id)[0];
                   const gz=last?statusGiziWHO(last.bb_kg,a.tgl_lahir):null;
                   const sudah=imunList.filter(im=>im.anak_id===a.id&&im.status==="sudah").length;
@@ -340,15 +354,15 @@ export default function AdminPosyanduPage(){
                   
                   return(
                     <div key={a.id} onClick={()=>setActiveAnak(isActive?null:a)} style={{padding:"20px",borderRadius:20,border:`2px solid ${isActive?"#FDA4AF":"white"}`,background:"white",cursor:"pointer",boxShadow:isActive?"0 12px 30px rgba(244,63,94,0.15)":"0 4px 12px rgba(0,0,0,0.03)",display:"flex",alignItems:"flex-start",gap:16,transition:"all 0.2s"}}>
-                      <div style={{width:48,height:48,borderRadius:16,background:a.jenis_kelamin==="L"?"#EFF6FF":"#FDF2F8",display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,flexShrink:0,boxShadow:a.jenis_kelamin==="L"?"0 4px 12px rgba(59,130,246,0.15)":"0 4px 12px rgba(236,72,153,0.15)"}}>
+                      <div style={{width:48,height:48,borderRadius:16,background:a.jenis_kelamin==="L"?"#EFF6FF":"#FDF2F8",display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,flexShrink:0}}>
                         {a.jenis_kelamin==="L"?"🪀":"🧸"}
                       </div>
                       <div style={{flex:1}}>
                         <div style={{fontWeight:900,fontSize:16,color:"#111827",marginBottom:4}}>{a.nama}</div>
-                        <div style={{fontSize:13,color:"#6B7280",fontWeight:600}}>{hitungUmurLabel(a.tgl_lahir)} • Bunda {a.nama_ibu}</div>
+                        <div style={{fontSize:13,color:"#6B7280",fontWeight:600}}>{hitungUmurLabel(a.tgl_lahir)} • {a.jenis_kelamin==="L"?"Jagoan":"Putri"} Bunda</div>
                         <div style={{fontSize:12,color:"#9CA3AF",fontWeight:700,marginTop:8}}>💉 Vaksinasi {sudah}/{total}</div>
                       </div>
-                      {gz&&<div style={{background:gz.color,color:"white",borderRadius:99,padding:"6px 12px",fontSize:11,fontWeight:800,boxShadow:`0 4px 10px ${gz.color}40`,whiteSpace:"nowrap"}}>{gz.status.toUpperCase()}</div>}
+                      {gz&&<div style={{background:gz.color,color:"white",borderRadius:99,padding:"6px 12px",fontSize:11,fontWeight:800}}>{gz.status.toUpperCase()}</div>}
                     </div>
                   );
                 })}
@@ -363,7 +377,6 @@ export default function AdminPosyanduPage(){
                         <div style={{fontWeight:900,fontSize:24,color:"#111827",letterSpacing:"-0.02em",marginBottom:6}}>{activeAnak.nama}</div>
                         <div style={{fontSize:14,color:"#6B7280",fontWeight:600,display:"flex",gap:12,alignItems:"center"}}>
                           <span style={{background:"#F3F4F6",padding:"4px 10px",borderRadius:8}}>🎂 {hitungUmurLabel(activeAnak.tgl_lahir)}</span>
-                          <span>Bunda: <b>{activeAnak.nama_ibu}</b></span>
                         </div>
                       </div>
                       <div style={{display:"flex",gap:10}}>
@@ -402,16 +415,22 @@ export default function AdminPosyanduPage(){
           </div>
         )}
 
-        {/* ── INPUT ── */}
-        {tab==="input"&&(
+        {/* ── INPUT (HIDDEN UNTIL SCAN) ── */}
+        {authenticatedIbu && tab==="input"&&(
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:24}}>
             <div style={{background:"white",borderRadius:28,padding:36,boxShadow:"0 20px 40px -15px rgba(244,63,94,0.1)",border:"1px solid #FFF1F2"}}>
               <h3 style={{margin:"0 0 8px",fontSize:22,fontWeight:900,color:"#111827",display:"flex",alignItems:"center",gap:12}}>⚖️ Timbangan Balita</h3>
-              <p style={{margin:"0 0 28px",fontSize:14,color:"#6B7280",lineHeight:1.6,fontWeight:600}}>Pencatatan angka berat badan akurat. Bunda berhak +{POIN_POSYANDU} Poin Apresiasi atas kontribusinya hari ini!</p>
+              <p style={{margin:"0 0 28px",fontSize:14,color:"#6B7280",lineHeight:1.6,fontWeight:600}}>Catat angka berat badan akurat Si Kecil. Bunda berhak +{POIN_POSYANDU} Poin Apresiasi!</p>
               
-              <div style={{marginBottom:20}}><label style={LS}>Nama Si Kecil *</label><select value={formTK.anak_id} onChange={e=>setFormTK({...formTK,anak_id:e.target.value})} style={IS}><option value="">-- Coba ketik & pilih anak --</option>{anakList.map(a=><option key={a.id} value={a.id}>{a.nama}</option>)}</select></div>
+              <div style={{marginBottom:20}}>
+                <label style={LS}>Pilih Buah Hati Bunda *</label>
+                <select value={formTK.anak_id} onChange={e=>setFormTK({...formTK,anak_id:e.target.value})} style={IS}>
+                  <option value="">-- Pilih Anak --</option>
+                  {myAnakList.map(a=><option key={a.id} value={a.id}>{a.nama}</option>)}
+                </select>
+              </div>
               
-              {formTK.anak_id&&formTK.bb_kg&&(()=>{const anak=anakList.find(a=>a.id===formTK.anak_id);const gz=anak?statusGiziWHO(Number(formTK.bb_kg),anak.tgl_lahir):null;return gz?<div style={{padding:"12px 16px",background:gz.color+"1A",border:`2px solid ${gz.color}40`,borderRadius:16,marginBottom:20,fontSize:14,color:gz.color,fontWeight:800,display:"flex",alignItems:"center",gap:10}}><span style={{fontSize:18}}>🔬</span> Analisa Instan: <span style={{marginLeft:"auto"}}>{gz.label}</span></div>:null;})()}
+              {formTK.anak_id&&formTK.bb_kg&&(()=>{const anak=myAnakList.find(a=>a.id===formTK.anak_id);const gz=anak?statusGiziWHO(Number(formTK.bb_kg),anak.tgl_lahir):null;return gz?<div style={{padding:"12px 16px",background:gz.color+"1A",border:`2px solid ${gz.color}40`,borderRadius:16,marginBottom:20,fontSize:14,color:gz.color,fontWeight:800,display:"flex",alignItems:"center",gap:10}}><span style={{fontSize:18}}>🔬</span> Analisa Instan: <span style={{marginLeft:"auto"}}>{gz.label}</span></div>:null;})()}
               
               <div style={{marginBottom:20}}><label style={LS}>Tanggal Kontrol</label><input type="date" value={formTK.tanggal} onChange={e=>setFormTK({...formTK,tanggal:e.target.value})} style={IS}/></div>
               
@@ -428,7 +447,7 @@ export default function AdminPosyanduPage(){
               <div style={{background:"#F0FDF4",borderRadius:24,padding:28,border:"2px solid #BBF7D0"}}>
                 <h4 style={{margin:"0 0 16px",fontSize:15,fontWeight:900,color:"#064E3B",textTransform:"uppercase",letterSpacing:"0.05em",display:"flex",alignItems:"center",gap:10}}><span style={{fontSize:20}}>📏</span> Indikator Standar WHO</h4>
                 <div style={{display:"flex",flexDirection:"column",gap:12}}>
-                  {[{c:"#10B981",l:"Gizi Baik ✅",d:"Aman. Di atas 90% berat ideal usianya."},{c:"#F97316",l:"Gizi Kurang ⚠️",d:"75-90% batas normal. Perlu booster MPASI."},{c:"#EF4444",l:"Gizi Buruk 🚨",d:"Di bawah 75%! Tindakan medis segera direkomendasikan."},{c:"#F59E0B",l:"Gizi Lebih ⚠️",d:"Berlebih 110%. Konsultasi untuk pencegahan dini obesitas."}].map(g=>(
+                  {[{c:"#10B981",l:"Gizi Baik ✅",d:"Aman. Di atas 90% berat ideal usianya."},{c:"#F97316",l:"Gizi Kurang ⚠️",d:"75-90% batas normal. Perlu booster MPASI."},{c:"#EF4444",l:"Gizi Buruk 🚨",d:"Di bawah 75%! Tindakan medis segera direkomendasikan."},{c:"#F59E0B",l:"Gizi Lebih ⚠️",d:"Berlebih 110%. Konsultasi dini obesitas."}].map(g=>(
                     <div key={g.l} style={{display:"flex",gap:12,alignItems:"center",background:"white",padding:"12px 16px",borderRadius:16}}>
                       <div style={{width:14,height:14,borderRadius:"50%",background:g.c,flexShrink:0}}/>
                       <div>
@@ -443,15 +462,15 @@ export default function AdminPosyanduPage(){
           </div>
         )}
 
-        {/* ── IMUNISASI ── */}
-        {tab==="imunisasi"&&(
+        {/* ── IMUNISASI (HIDDEN UNTIL SCAN) ── */}
+        {authenticatedIbu && tab==="imunisasi"&&(
           <div style={{maxWidth:700,margin:"0 auto"}}>
             {imunJatuhTempo.length>0&&(
               <div style={{background:"#FEF2F2",border:"2px solid #FECACA",borderRadius:24,padding:"24px",marginBottom:24,boxShadow:"0 8px 20px rgba(239,68,68,0.1)"}}>
-                <div style={{fontWeight:900,fontSize:16,color:"#B91C1C",marginBottom:16,display:"flex",alignItems:"center",gap:10}}><span style={{fontSize:24}}>🚨</span> Jatuh Tempo Imunisasi!</div>
+                <div style={{fontWeight:900,fontSize:16,color:"#B91C1C",marginBottom:16,display:"flex",alignItems:"center",gap:10}}><span style={{fontSize:24}}>🚨</span> Jatuh Tempo Imunisasi Bunda!</div>
                 <div style={{display:"flex",flexDirection:"column",gap:10}}>
                   {imunJatuhTempo.slice(0,5).map(im=>{
-                    const anak=anakList.find(a=>a.id===im.anak_id);
+                    const anak=myAnakList.find(a=>a.id===im.anak_id);
                     const hari=Math.ceil((new Date(im.tanggal_jadwal).getTime()-new Date().getTime())/(1000*60*60*24));
                     return(
                       <div key={im.id} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"12px 16px",background:"white",borderRadius:12}}>
@@ -465,10 +484,10 @@ export default function AdminPosyanduPage(){
             )}
             
             <div style={{marginBottom:24}}>
-              <label style={LS}>Pilih Lembar KIA Bayi</label>
-              <select onChange={e=>setActiveAnak(anakList.find(a=>a.id===e.target.value)||null)} style={{...IS,background:"white",border:"2px solid #F43F5E",color:"#BE123C"}}>
+              <label style={LS}>Pilih Lembar KIA Bayi Bunda</label>
+              <select onChange={e=>setActiveAnak(myAnakList.find(a=>a.id===e.target.value)||null)} style={{...IS,background:"white",border:"2px solid #F43F5E",color:"#BE123C"}}>
                 <option value="">-- Cari Nama Anak --</option>
-                {anakList.map(a=><option key={a.id} value={a.id}>{a.nama}</option>)}
+                {myAnakList.map(a=><option key={a.id} value={a.id}>{a.nama}</option>)}
               </select>
             </div>
             
@@ -482,7 +501,7 @@ export default function AdminPosyanduPage(){
                   </div>
                 </div>
                 
-                {activeImun.length===0?<div style={{padding:40,textAlign:"center",color:"#9CA3AF",fontSize:14,fontWeight:600}}>Data vaksin kosong. Harap sinkronisasi sistem pendaftaran.</div>
+                {activeImun.length===0?<div style={{padding:40,textAlign:"center",color:"#9CA3AF",fontSize:14,fontWeight:600}}>Data vaksin kosong.</div>
                 :activeImun.map((im,i)=>{
                   const jadwal=JADWAL_IMUNISASI.find(j=>j.jenis===im.jenis);
                   const lewat=im.status==="belum"&&new Date(im.tanggal_jadwal)<new Date();
@@ -513,6 +532,11 @@ export default function AdminPosyanduPage(){
             )}
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
       </div>
       <style>{`
         @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.6;transform:scale(1.2)}}
