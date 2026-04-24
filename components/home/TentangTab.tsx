@@ -247,11 +247,19 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
                 tag: "KESEHATAN"
               },
               { 
+                title: "Zakat Digital", 
+                desc: "Kiosk DKM untuk cek kewajiban & hak Zakat Fitrah keluarga secara instan.", 
+                icon: "🕌", 
+                link: "/zakat",
+                color: "#B8943F",
+                tag: "DKM / SOSIAL"
+              },
+              { 
                 title: "Layanan Aduan", 
                 desc: "Laporkan masalah fasilitas publik langsung ke tim eksekutif lapangan.", 
                 icon: "📢", 
                 link: "/pengaduan",
-                color: "#B8943F",
+                color: "#2D5A40",
                 tag: "RESPONS CEPAT"
               }
             ].map((item, i) => (
