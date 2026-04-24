@@ -2,25 +2,13 @@
 import { useState, useEffect } from "react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
-interface ZakatRow { id:string; kk_id:string; tahun:number; jumlah_jiwa:number; jenis:string; nominal_kg:number; nominal_uang:number; tgl_bayar:string; keluarga:{kepala_keluarga:string;rt:string;golongan_zakat:string}; }
-interface KK { id:string; kepala_keluarga:string; rt:string; golongan_zakat:string; kategori_mustahiq:string; no_wa:string; }
-interface Anggota { id:string; kk_id:string; nama:string; hubungan:string; jumlah_jiwa?:number; }
+interface ZakatRow { id:string; kk_id:string; tahun:number; jumlah_jiwa:number; jenis:string; nominal_kg:number; nominal_uang:number; infaq_uang:number; tgl_bayar:string; keluarga:{kepala_keluarga:string;rt:string;golongan_zakat:string}; }
+interface KK { id:string; kepala_keluarga:string; rt:string; golongan_zakat:string; kategori_mustahiq:string; no_wa:string; is_yatim?:boolean; }
 
 const HARGA_BERAS = 15000;
 const TAHUN_INI = new Date().getFullYear();
 
-// Distribusi zakat berdasarkan 8 asnaf (%)
-const ASNAF_DISTRIBUSI = [
-  { key:"fakir",      label:"Fakir",        pct:25, icon:"🏚️", desc:"Tidak punya apa-apa" },
-  { key:"miskin",     label:"Miskin",       pct:25, icon:"🧑‍🦯", desc:"Punya tapi kurang" },
-  { key:"amil",       label:"Amil",         pct:12.5, icon:"🕌", desc:"Pengurus zakat" },
-  { key:"muallaf",    label:"Muallaf",      pct:12.5, icon:"🤲", desc:"Baru masuk Islam" },
-  { key:"gharimin",   label:"Gharimin",     pct:12.5, icon:"💸", desc:"Terlilit hutang" },
-  { key:"fisabilillah",label:"Fisabilillah",pct:6.25, icon:"⚔️", desc:"Di jalan Allah" },
-  { key:"ibnu_sabil", label:"Ibnu Sabil",   pct:6.25, icon:"🧳", desc:"Musafir terlantar" },
-];
-
-const emptyForm = { kk_id:"", tahun:TAHUN_INI, jumlah_jiwa:1, jenis:"beras", nominal_kg:0, nominal_uang:0, tgl_bayar:new Date().toISOString().split("T")[0] };
+const emptyForm = { kk_id:"", tahun:TAHUN_INI, jumlah_jiwa:1, jenis:"beras", nominal_kg:0, nominal_uang:0, infaq_uang:0, tgl_bayar:new Date().toISOString().split("T")[0] };
 
 const LS={fontSize:11,fontWeight:700 as const,color:"#6b7c6d",letterSpacing:"0.06em",textTransform:"uppercase" as const,display:"block",marginBottom:4};
 const IS={width:"100%",padding:"9px 12px",borderRadius:10,border:"1.5px solid rgba(45,90,64,0.2)",fontSize:13,background:"#fafaf8",outline:"none",boxSizing:"border-box" as const,fontFamily:"inherit"};
@@ -28,27 +16,30 @@ const IS={width:"100%",padding:"9px 12px",borderRadius:10,border:"1.5px solid rg
 export default function AdminZakatV2Page(){
   const[kkList,setKkList]=useState<KK[]>([]);
   const[zakatList,setZakatList]=useState<ZakatRow[]>([]);
+  const[anggotaList,setAnggotaList]=useState<any[]>([]);
   const[form,setForm]=useState(emptyForm);
-  const[tab,setTab]=useState<"input"|"rekap"|"distribusi"|"muzakki"|"mustahiq">("rekap");
+  const[tab,setTab]=useState<"input"|"rekap"|"distribusi"|"infaq_khusus">("rekap");
   const[loading,setLoading]=useState(false);
   const[toast,setToast]=useState({msg:"",ok:true});
   const[tahunFilter,setTahunFilter]=useState(TAHUN_INI);
+  const[jatahKgPerJiwa,setJatahKgPerJiwa]=useState(2.0);
 
   function showToast(msg:string,ok=true){setToast({msg,ok});setTimeout(()=>setToast({msg:"",ok:true}),3500);}
 
   async function fetchAll(){
     if(!isSupabaseReady())return;
-    const[kk,z]=await Promise.all([
-      supabase.from("keluarga").select("id,kepala_keluarga,rt,golongan_zakat,kategori_mustahiq,no_wa").order("rt").order("kepala_keluarga"),
+    const[kk,z,ang]=await Promise.all([
+      supabase.from("keluarga").select("id,kepala_keluarga,rt,golongan_zakat,kategori_mustahiq,no_wa,is_yatim").order("rt").order("kepala_keluarga"),
       supabase.from("zakat_fitrah").select("*,keluarga(kepala_keluarga,rt,golongan_zakat)").order("tgl_bayar",{ascending:false}),
+      supabase.from("anggota_kk").select("id,kk_id"),
     ]);
     if(kk.data)setKkList(kk.data as KK[]);
     if(z.data)setZakatList(z.data as any);
+    if(ang.data)setAnggotaList(ang.data);
   }
 
   useEffect(()=>{fetchAll();},[]);
 
-  // Auto-hitung nominal
   function hitungZakat(){
     if(form.jenis==="beras")return{kg:form.jumlah_jiwa*2.5,uang:form.jumlah_jiwa*2.5*HARGA_BERAS};
     return{kg:0,uang:form.jumlah_jiwa*40000};
@@ -56,197 +47,166 @@ export default function AdminZakatV2Page(){
 
   async function simpan(){
     if(!form.kk_id)return showToast("❌ Pilih warga dulu!",false);
-    // Cek sudah bayar tahun ini
-    const sudah=zakatList.find(z=>z.kk_id===form.kk_id&&z.tahun===form.tahun);
-    if(sudah)return showToast("⚠️ KK ini sudah bayar zakat tahun "+form.tahun,false);
     setLoading(true);
     const{kg,uang}=hitungZakat();
     const{error}=await supabase.from("zakat_fitrah").insert({...form,nominal_kg:kg,nominal_uang:uang});
     if(error)showToast(`❌ ${error.message}`,false);
-    else{showToast("✅ Zakat tercatat!");setForm(emptyForm);}
+    else{showToast("✅ Data berhasil disimpan!");setForm(emptyForm);}
     setLoading(false);fetchAll();
   }
 
-  // Data kalkulasi
+  // Update status yatim/penerima infaq
+  async function toggleYatim(id:string, val:boolean){
+    const{error}=await supabase.from("keluarga").update({is_yatim: !val}).eq("id", id);
+    if(!error) fetchAll();
+  }
+
   const zakatTahunIni=zakatList.filter(z=>z.tahun===tahunFilter);
   const totalKg=zakatTahunIni.filter(z=>z.jenis==="beras").reduce((s,z)=>s+Number(z.nominal_kg),0);
-  const totalUang=zakatTahunIni.reduce((s,z)=>s+Number(z.nominal_uang),0);
-  const totalJiwa=zakatTahunIni.reduce((s,z)=>s+z.jumlah_jiwa,0);
-
-  const muzakkiList=kkList.filter(k=>k.golongan_zakat==="muzakki");
+  const totalUangZakat=zakatTahunIni.reduce((s,z)=>s+Number(z.nominal_uang),0);
+  const totalInfaq=zakatTahunIni.reduce((s,z)=>s+Number(z.infaq_uang||0),0);
+  
   const mustahiqList=kkList.filter(k=>k.golongan_zakat==="mustahiq");
+  const yatimList=kkList.filter(k=>k.is_yatim);
+  
+  const totalJiwaMustahiq = mustahiqList.reduce((acc, kk) => acc + (anggotaList.filter(a => a.kk_id === kk.id).length || 1), 0);
+
   const sudahBayar=new Set(zakatTahunIni.map(z=>z.kk_id));
-  const belumBayar=muzakkiList.filter(k=>!sudahBayar.has(k.id));
+  const belumBayar=kkList.filter(k=>!sudahBayar.has(k.id));
 
-  // Kalkulasi distribusi
-  const totalUangDistribusi=totalUang*(1-0.125); // kurangi bagian amil
-  const distribusiPerAsnaf=ASNAF_DISTRIBUSI.map(a=>({
-    ...a,
-    nominal:Math.round((totalUang*a.pct)/100),
-    penerima:mustahiqList.filter(k=>k.kategori_mustahiq===a.key).length,
-  }));
-
-  const{kg:prevKg,uang:prevUang}=hitungZakat();
+  const {kg:prevKg,uang:prevUang}=hitungZakat();
 
   return(
-    <div style={{minHeight:"100vh",background:"#f5f0e8",fontFamily:"'Segoe UI',system-ui,sans-serif"}}>
-      {toast.msg&&<div style={{position:"fixed",top:20,left:"50%",transform:"translateX(-50%)",background:toast.ok?"#2d5a40":"#dc3545",color:"white",padding:"10px 20px",borderRadius:12,zIndex:999,fontSize:14,boxShadow:"0 4px 20px rgba(0,0,0,0.15)",maxWidth:"85vw",textAlign:"center"}}>{toast.msg}</div>}
+    <div style={{minHeight:"100vh",background:"#f5f0e8",fontFamily:"system-ui,sans-serif"}}>
+      {toast.msg&&<div style={{position:"fixed",top:20,left:"50%",transform:"translateX(-50%)",background:toast.ok?"#2d5a40":"#dc3545",color:"white",padding:"10px 20px",borderRadius:12,zIndex:999,fontSize:14,boxShadow:"0 4px 20px rgba(0,0,0,0.15)"}}>{toast.msg}</div>}
 
       <header style={{background:"#f5f0e8",borderBottom:"1px solid rgba(45,90,64,0.12)",padding:"14px 20px",position:"sticky",top:0,zIndex:10,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
         <div style={{display:"flex",alignItems:"center",gap:12}}>
           <a href="/admin" style={{color:"#6b7c6d",textDecoration:"none",fontSize:13}}>← Admin</a>
-          <span style={{color:"#c8bfaa"}}>|</span>
           <div>
-            <div style={{fontWeight:800,fontSize:15,color:"#1a2e1f"}}>🕌 Zakat & Sumbangan</div>
-            <div style={{fontSize:10,color:"#7a9a7e",textTransform:"uppercase",letterSpacing:"0.08em"}}>{zakatTahunIni.length} KK bayar · {belumBayar.length} belum</div>
+            <div style={{fontWeight:800,fontSize:15,color:"#1a2e1f"}}>🕌 Zakat & Infaq Ciburial</div>
+            <div style={{fontSize:10,color:"#7a9a7e",textTransform:"uppercase"}}>Periode {tahunFilter}</div>
           </div>
         </div>
-        <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
-          {(["rekap","input","distribusi","muzakki","mustahiq"] as const).map(t=>(
-            <button key={t} onClick={()=>setTab(t)} style={{padding:"5px 11px",borderRadius:20,fontSize:11,fontWeight:600,border:"1.5px solid rgba(45,90,64,0.2)",cursor:"pointer",background:tab===t?"#2d5a40":"transparent",color:tab===t?"white":"#6b7c6d"}}>
-              {{rekap:"📊 Rekap",input:"📥 Input",distribusi:"⚖️ Distribusi",muzakki:"✅ Muzakki",mustahiq:"🤲 Mustahiq"}[t]}
+        <div style={{display:"flex",gap:6}}>
+          {(["rekap","input","distribusi","infaq_khusus"] as const).map(t=>(
+            <button key={t} onClick={()=>setTab(t)} style={{padding:"6px 12px",borderRadius:20,fontSize:11,fontWeight:700,border:"1.5px solid rgba(45,90,64,0.2)",cursor:"pointer",background:tab===t?"#2d5a40":"transparent",color:tab===t?"white":"#6b7c6d"}}>
+              {{rekap:"📊 Rekap",input:"📥 Input",distribusi:"⚖️ Pembagian Zakat",infaq_khusus:"🧡 Alokasi Infaq"}[t]}
             </button>
           ))}
         </div>
       </header>
 
-      <div style={{maxWidth:960,margin:"0 auto",padding:"20px 16px"}}>
-
-        {/* Filter tahun */}
-        <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16}}>
-          <span style={{fontSize:13,color:"#6b7c6d",fontWeight:600}}>Tahun:</span>
-          {[TAHUN_INI,TAHUN_INI-1,TAHUN_INI-2].map(t=>(
-            <button key={t} onClick={()=>setTahunFilter(t)} style={{padding:"5px 14px",borderRadius:20,fontSize:12,fontWeight:600,border:"1.5px solid rgba(45,90,64,0.2)",cursor:"pointer",background:tahunFilter===t?"#2d5a40":"white",color:tahunFilter===t?"white":"#6b7c6d"}}>{t}</button>
-          ))}
-        </div>
+      <div style={{maxWidth:1000,margin:"0 auto",padding:"24px 16px"}}>
 
         {/* Stats cards */}
-        <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12,marginBottom:20}}>
-          {[
-            {i:"🏠",v:`${zakatTahunIni.length} KK`,l:"Sudah Bayar",c:"#2d5a40"},
-            {i:"❌",v:`${belumBayar.length} KK`,l:"Belum Bayar",c:"#dc3545"},
-            {i:"🌾",v:`${totalKg.toFixed(1)} kg`,l:"Total Beras",c:"#b8943f"},
-            {i:"💰",v:`Rp${(totalUang/1000000).toFixed(1)}jt`,l:"Total Nilai",c:"#1a3a6b"},
-          ].map(s=>(
-            <div key={s.l} style={{background:"white",borderRadius:14,padding:"14px 16px",border:`1px solid ${s.c}20`,boxShadow:"0 1px 6px rgba(0,0,0,0.04)",borderLeft:`4px solid ${s.c}`}}>
-              <div style={{fontSize:20,marginBottom:6}}>{s.i}</div>
-              <div style={{fontSize:20,fontWeight:900,color:s.c}}>{s.v}</div>
-              <div style={{fontSize:11,color:"#7a9a7e",textTransform:"uppercase",letterSpacing:"0.06em"}}>{s.l}</div>
-            </div>
-          ))}
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(220px, 1fr))",gap:16,marginBottom:24}}>
+          <div style={{background:"white",borderRadius:16,padding:20,borderLeft:"5px solid #2d5a40",boxShadow:"0 2px 8px rgba(0,0,0,0.05)"}}>
+             <div style={{fontSize:11,fontWeight:800,color:"#999",marginBottom:8}}>TOTAL ZAKAT (BERAS)</div>
+             <div style={{fontSize:24,fontWeight:900,color:"#2d5a40"}}>{totalKg.toFixed(1)} <span style={{fontSize:14,fontWeight:600}}>kg</span></div>
+          </div>
+          <div style={{background:"white",borderRadius:16,padding:20,borderLeft:"5px solid #1a3a6b",boxShadow:"0 2px 8px rgba(0,0,0,0.05)"}}>
+             <div style={{fontSize:11,fontWeight:800,color:"#999",marginBottom:8}}>TOTAL ZAKAT (UANG)</div>
+             <div style={{fontSize:24,fontWeight:900,color:"#1a3a6b"}}>Rp {totalUangZakat.toLocaleString("id-ID")}</div>
+          </div>
+          <div style={{background:"white",borderRadius:16,padding:20,borderLeft:"5px solid #b8943f",boxShadow:"0 2px 8px rgba(0,0,0,0.05)"}}>
+             <div style={{fontSize:11,fontWeight:800,color:"#999",marginBottom:8}}>TOTAL INFAQ TERKUMPUL</div>
+             <div style={{fontSize:24,fontWeight:900,color:"#b8943f"}}>Rp {totalInfaq.toLocaleString("id-ID")}</div>
+          </div>
+          <div style={{background:"white",borderRadius:16,padding:20,borderLeft:"5px solid #dc3545",boxShadow:"0 2px 8px rgba(0,0,0,0.05)"}}>
+             <div style={{fontSize:11,fontWeight:800,color:"#999",marginBottom:8}}>BELUM SETOR</div>
+             <div style={{fontSize:24,fontWeight:900,color:"#dc3545"}}>{belumBayar.length} <span style={{fontSize:14,fontWeight:600}}>KK</span></div>
+          </div>
         </div>
 
         {/* ── REKAP TAB ── */}
         {tab==="rekap"&&(
-          <div>
-            {/* Alert belum bayar */}
-            {belumBayar.length>0&&(
-              <div style={{background:"rgba(220,53,69,0.07)",border:"1px solid rgba(220,53,69,0.2)",borderRadius:12,padding:"12px 16px",marginBottom:16,display:"flex",alignItems:"center",gap:10}}>
-                <span style={{fontSize:18}}>⚠️</span>
-                <span style={{fontSize:13,color:"#dc3545"}}><strong>{belumBayar.length} muzakki</strong> belum bayar zakat {tahunFilter}: {belumBayar.slice(0,3).map(k=>k.kepala_keluarga).join(", ")}{belumBayar.length>3&&` +${belumBayar.length-3} lainnya`}</span>
-              </div>
-            )}
-
-            {/* Progress bayar */}
-            <div style={{background:"white",borderRadius:16,padding:18,border:"1px solid rgba(45,90,64,0.1)",boxShadow:"0 1px 6px rgba(0,0,0,0.04)",marginBottom:16}}>
-              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
-                <span style={{fontWeight:700,fontSize:14,color:"#1a2e1f"}}>Progress Pembayaran {tahunFilter}</span>
-                <span style={{fontSize:13,fontWeight:700,color:"#2d5a40"}}>{muzakkiList.length>0?Math.round((zakatTahunIni.length/muzakkiList.length)*100):0}%</span>
-              </div>
-              <div style={{height:10,background:"rgba(45,90,64,0.1)",borderRadius:6,overflow:"hidden"}}>
-                <div style={{height:"100%",width:`${muzakkiList.length>0?(zakatTahunIni.length/muzakkiList.length)*100:0}%`,background:"linear-gradient(90deg,#2d5a40,#4a8c5c)",borderRadius:6,transition:"width 0.8s"}}/>
-              </div>
-              <div style={{display:"flex",justifyContent:"space-between",marginTop:6,fontSize:11,color:"#7a9a7e"}}>
-                <span>{zakatTahunIni.length} sudah bayar</span>
-                <span>{muzakkiList.length} total muzakki</span>
-              </div>
+          <div style={{background:"white",borderRadius:20,border:"1px solid rgba(0,0,0,0.05)",overflow:"hidden"}}>
+            <div style={{padding:"18px 24px",borderBottom:"1px solid #eee",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+               <h3 style={{fontSize:14,fontWeight:800,color:"#1a2e1f"}}>LOG AKTIVITAS SETORAN</h3>
+               <div style={{fontSize:12,color:"#666"}}>{zakatTahunIni.length} Entri ditemukan</div>
             </div>
-
-            {/* List pembayaran */}
-            <div style={{background:"white",borderRadius:16,border:"1px solid rgba(45,90,64,0.1)",overflow:"hidden",boxShadow:"0 1px 6px rgba(0,0,0,0.04)"}}>
-              <div style={{padding:"12px 18px",borderBottom:"1px solid rgba(45,90,64,0.08)",display:"flex",justifyContent:"space-between"}}>
-                <span style={{fontSize:12,fontWeight:700,color:"#6b7c6d",textTransform:"uppercase",letterSpacing:"0.06em"}}>Riwayat Pembayaran</span>
-                <span style={{fontSize:12,color:"#7a9a7e"}}>{totalJiwa} jiwa · {totalKg.toFixed(1)}kg beras</span>
-              </div>
-              {zakatTahunIni.length===0?(
-                <div style={{padding:40,textAlign:"center",color:"#a8b5a9"}}>Belum ada pembayaran zakat {tahunFilter}</div>
-              ):zakatTahunIni.map((z,i)=>(
-                <div key={z.id} style={{padding:"12px 18px",borderBottom:i<zakatTahunIni.length-1?"1px solid rgba(45,90,64,0.07)":"none",display:"flex",alignItems:"center",gap:12}}>
-                  <div style={{fontSize:20}}>{z.jenis==="beras"?"🌾":"💰"}</div>
-                  <div style={{flex:1}}>
-                    <div style={{fontWeight:600,fontSize:14,color:"#1a2e1f"}}>{z.keluarga?.kepala_keluarga}</div>
-                    <div style={{fontSize:12,color:"#7a9a7e"}}>RT {z.keluarga?.rt} · {z.jumlah_jiwa} jiwa · {new Date(z.tgl_bayar).toLocaleDateString("id-ID")}</div>
-                  </div>
-                  <div style={{fontWeight:800,fontSize:15,color:"#2d5a40"}}>
-                    {z.jenis==="beras"?`${z.nominal_kg}kg`:`Rp${(z.nominal_uang/1000).toFixed(0)}rb`}
-                  </div>
+            {zakatTahunIni.length===0?(
+              <div style={{padding:60,textAlign:"center",color:"#999"}}>Belum ada data masuk.</div>
+            ):zakatTahunIni.map((z,i)=>(
+              <div key={z.id} style={{padding:"16px 24px",borderBottom:i<zakatTahunIni.length-1?"1px solid #f5f5f5":"none",display:"flex",alignItems:"center",gap:16}}>
+                <div style={{width:44,height:44,borderRadius:12,background:"#f9f9f7",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20}}>{z.jenis==="beras"?"🌾":"💰"}</div>
+                <div style={{flex:1}}>
+                  <div style={{fontWeight:700,fontSize:15,color:"#1a2e1f"}}>{z.keluarga?.kepala_keluarga}</div>
+                  <div style={{fontSize:12,color:"#777"}}>RT {z.keluarga?.rt} · {new Date(z.tgl_bayar).toLocaleDateString("id-ID")}</div>
                 </div>
-              ))}
-            </div>
+                <div style={{textAlign:"right"}}>
+                  <div style={{fontWeight:800,fontSize:15,color:"#2d5a40"}}>{z.jenis==="beras"?`${z.nominal_kg}kg Beras`:`Rp${z.nominal_uang.toLocaleString()}`}</div>
+                  {z.infaq_uang > 0 && <div style={{fontSize:11,fontWeight:700,color:"#b8943f"}}>+ Infaq Rp{z.infaq_uang.toLocaleString()}</div>}
+                </div>
+              </div>
+            ))}
           </div>
         )}
 
         {/* ── INPUT TAB ── */}
         {tab==="input"&&(
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
-            <div style={{background:"white",borderRadius:16,padding:20,border:"1px solid rgba(45,90,64,0.1)",boxShadow:"0 1px 6px rgba(0,0,0,0.04)"}}>
-              <h3 style={{margin:"0 0 16px",color:"#1a2e1f",fontSize:15}}>📥 Input Zakat Fitrah</h3>
-              <div style={{marginBottom:12}}>
-                <label style={LS}>Warga / KK *</label>
-                <select value={form.kk_id} onChange={e=>setForm({...form,kk_id:e.target.value})} style={IS}>
-                  <option value="">-- Pilih warga --</option>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(320px, 1fr))",gap:20}}>
+            <div style={{background:"white",borderRadius:20,padding:28,boxShadow:"0 4px 12px rgba(0,0,0,0.03)"}}>
+              <h3 style={{margin:"0 0 24px",color:"#1a2e1f",fontSize:17,fontWeight:800}}>📥 Form Setoran Zakat & Infaq</h3>
+              <div style={{marginBottom:16}}>
+                <label style={LS}>Kepala Keluarga *</label>
+                <select value={form.kk_id} onChange={e=>{
+                  const jml = anggotaList.filter(a => a.kk_id === e.target.value).length || 1;
+                  setForm({...form, kk_id:e.target.value, jumlah_jiwa: jml});
+                }} style={IS}>
+                  <option value="">-- Pilih KK --</option>
                   {kkList.map(k=>(
-                    <option key={k.id} value={k.id} style={{color:sudahBayar.has(k.id)?"#a8b5a9":"inherit"}}>
+                    <option key={k.id} value={k.id} style={{color:sudahBayar.has(k.id)?"#bbb":"inherit"}}>
                       {k.kepala_keluarga} (RT {k.rt}){sudahBayar.has(k.id)?" ✅":""}
                     </option>
                   ))}
                 </select>
               </div>
-              <div style={{marginBottom:12}}>
-                <label style={LS}>Jumlah Jiwa *</label>
-                <input type="number" min="1" value={form.jumlah_jiwa} onChange={e=>setForm({...form,jumlah_jiwa:Number(e.target.value)})} style={IS}/>
-              </div>
-              <div style={{marginBottom:16}}>
-                <label style={LS}>Jenis Zakat</label>
-                <div style={{display:"flex",gap:8}}>
-                  {[{v:"beras",l:"🌾 Beras"},{v:"uang",l:"💰 Uang"}].map(({v,l})=>(
-                    <button key={v} onClick={()=>setForm({...form,jenis:v})} style={{flex:1,padding:"9px",borderRadius:10,border:"1.5px solid rgba(45,90,64,0.2)",cursor:"pointer",background:form.jenis===v?"#2d5a40":"transparent",color:form.jenis===v?"white":"#2d5a40",fontSize:13,fontWeight:600}}>{l}</button>
-                  ))}
+              
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:16}}>
+                <div>
+                  <label style={LS}>Jiwa</label>
+                  <input type="number" value={form.jumlah_jiwa} onChange={e=>setForm({...form,jumlah_jiwa:Number(e.target.value)})} style={IS}/>
+                </div>
+                <div>
+                  <label style={LS}>Jenis Zakat</label>
+                  <select value={form.jenis} onChange={e=>setForm({...form,jenis:e.target.value})} style={IS}>
+                    <option value="beras">🌾 Beras</option>
+                    <option value="uang">💰 Uang</option>
+                  </select>
                 </div>
               </div>
-              <div style={{marginBottom:12}}>
-                <label style={LS}>Tanggal Bayar</label>
-                <input type="date" value={form.tgl_bayar} onChange={e=>setForm({...form,tgl_bayar:e.target.value})} style={IS}/>
-              </div>
 
-              {/* Preview */}
-              <div style={{background:"rgba(45,90,64,0.06)",border:"1px solid rgba(45,90,64,0.15)",borderRadius:12,padding:"12px 16px",marginBottom:16}}>
-                <div style={{fontSize:12,color:"#7a9a7e",marginBottom:4}}>Estimasi Zakat</div>
-                <div style={{fontWeight:900,fontSize:18,color:"#2d5a40"}}>
-                  {form.jenis==="beras"?`${prevKg.toFixed(1)} kg beras`:`Rp ${prevUang.toLocaleString("id-ID")}`}
+              <div style={{background:"#f9f9f7",padding:20,borderRadius:14,marginBottom:20,border:"1px solid #eee"}}>
+                <div style={{display:"flex",justifyContent:"space-between",marginBottom:10}}>
+                   <span style={{fontSize:12,fontWeight:700,color:"#777"}}>WAJIB ZAKAT</span>
+                   <span style={{fontSize:14,fontWeight:900,color:"#2d5a40"}}>{form.jenis==="beras"?`${prevKg} kg`:`Rp ${prevUang.toLocaleString()}`}</span>
                 </div>
-                <div style={{fontSize:12,color:"#7a9a7e"}}>{form.jumlah_jiwa} jiwa × {form.jenis==="beras"?"2.5 kg":"Rp 40.000"}</div>
+                <label style={LS}>TAMBAH INFAQ (OPSIONAL)</label>
+                <div style={{position:"relative"}}>
+                   <span style={{position:"absolute",left:12,top:10,fontSize:13,fontWeight:700,color:"#aaa"}}>Rp</span>
+                   <input type="number" placeholder="0" value={form.infaq_uang} onChange={e=>setForm({...form,infaq_uang:Number(e.target.value)})} 
+                    style={{...IS, paddingLeft:35, fontSize:15, fontWeight:800, color:"#b8943f", border:"1.5px solid #b8943f40"}}/>
+                </div>
               </div>
 
-              <button onClick={simpan} disabled={loading} style={{width:"100%",background:loading?"#a8b5a9":"#2d5a40",color:"white",border:"none",borderRadius:10,padding:"11px",fontSize:14,fontWeight:600,cursor:loading?"not-allowed":"pointer"}}>
-                {loading?"Menyimpan...":"💾 Simpan Zakat"}
+              <button onClick={simpan} disabled={loading} style={{width:"100%",background:loading?"#ccc":"#2d5a40",color:"white",border:"none",borderRadius:12,padding:"14px",fontSize:14,fontWeight:800,cursor:"pointer",boxShadow:"0 4px 12px rgba(45,90,64,0.2)"}}>
+                {loading?"Memproses...":"💾 SIMPAN DATA"}
               </button>
             </div>
 
-            {/* Belum bayar list */}
-            <div>
-              <h4 style={{margin:"0 0 12px",fontSize:13,fontWeight:700,color:"#dc3545"}}>❌ Muzakki Belum Bayar ({belumBayar.length})</h4>
-              <div style={{background:"white",borderRadius:16,border:"1px solid rgba(45,90,64,0.1)",overflow:"hidden",maxHeight:400,overflowY:"auto"}}>
-                {belumBayar.length===0?(
-                  <div style={{padding:24,textAlign:"center",color:"#2d5a40",fontWeight:600}}>🎉 Semua muzakki sudah bayar!</div>
-                ):belumBayar.map((k,i)=>(
-                  <div key={k.id} onClick={()=>setForm({...form,kk_id:k.id})}
-                    style={{padding:"12px 16px",borderBottom:i<belumBayar.length-1?"1px solid rgba(45,90,64,0.07)":"none",cursor:"pointer",background:form.kk_id===k.id?"rgba(45,90,64,0.06)":"transparent",display:"flex",alignItems:"center",gap:10}}>
-                    <div style={{flex:1}}>
-                      <div style={{fontWeight:600,fontSize:13,color:"#1a2e1f"}}>{k.kepala_keluarga}</div>
-                      <div style={{fontSize:11,color:"#7a9a7e"}}>RT {k.rt}</div>
+            <div style={{background:"white",borderRadius:20,overflow:"hidden"}}>
+              <div style={{padding:"16px 20px",background:"#dc3545",color:"white",fontSize:11,fontWeight:900,letterSpacing:".1em"}}>WARGA BELUM SETOR ({belumBayar.length})</div>
+              <div style={{maxHeight:500,overflowY:"auto"}}>
+                {belumBayar.map(k=>(
+                  <div key={k.id} onClick={()=>setForm({...form, kk_id:k.id, jumlah_jiwa: anggotaList.filter(a => a.kk_id === k.id).length || 1})}
+                    style={{padding:"12px 20px",borderBottom:"1px solid #f5f5f5",cursor:"pointer",background:form.kk_id===k.id?"#fff9f0":"white",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                    <div>
+                      <div style={{fontWeight:700,fontSize:13}}>{k.kepala_keluarga}</div>
+                      <div style={{fontSize:11,color:"#999"}}>RT {k.rt}</div>
                     </div>
-                    <span style={{fontSize:12,color:"#2d5a40",fontWeight:600}}>Pilih →</span>
+                    <span style={{fontSize:10,fontWeight:800,color:"#dc3545"}}>PILIH →</span>
                   </div>
                 ))}
               </div>
@@ -256,153 +216,84 @@ export default function AdminZakatV2Page(){
 
         {/* ── DISTRIBUSI TAB ── */}
         {tab==="distribusi"&&(
-          <div>
-            <div style={{background:"white",borderRadius:16,padding:20,border:"1px solid rgba(45,90,64,0.1)",boxShadow:"0 1px 6px rgba(0,0,0,0.04)",marginBottom:16}}>
-              <h3 style={{margin:"0 0 4px",fontSize:15,color:"#1a2e1f",fontWeight:800}}>⚖️ Distribusi Zakat {tahunFilter}</h3>
-              <p style={{margin:"0 0 20px",fontSize:12,color:"#7a9a7e"}}>Berdasarkan 8 Asnaf (golongan penerima zakat)</p>
-
-              {/* Total */}
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12,marginBottom:20}}>
-                {[
-                  {l:"Total Terkumpul",v:`Rp${(totalUang/1000).toFixed(0)}rb`,i:"💰"},
-                  {l:"Untuk Distribusi",v:`Rp${(totalUang*0.875/1000).toFixed(0)}rb`,i:"📤"},
-                  {l:"Bagian Amil (12.5%)",v:`Rp${(totalUang*0.125/1000).toFixed(0)}rb`,i:"🕌"},
-                ].map(s=>(
-                  <div key={s.l} style={{background:"rgba(45,90,64,0.05)",borderRadius:12,padding:"12px 14px"}}>
-                    <div style={{fontSize:20,marginBottom:4}}>{s.i}</div>
-                    <div style={{fontWeight:800,fontSize:16,color:"#2d5a40"}}>{s.v}</div>
-                    <div style={{fontSize:11,color:"#7a9a7e"}}>{s.l}</div>
-                  </div>
-                ))}
+          <div style={{display:"flex",flexDirection:"column",gap:20}}>
+            <div style={{background:"white",borderRadius:20,padding:24}}>
+              <h3 style={{margin:"0 0 16px",fontSize:16,fontWeight:800}}>⚖️ Rencana Distribusi Zakat (Beras/Uang Zakat)</h3>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(250px,1fr))",gap:16,marginBottom:24}}>
+                 <div style={{background:"#f9f9f7",padding:16,borderRadius:12}}>
+                    <div style={LS}>Jatah Per Jiwa (Kg)</div>
+                    <input type="number" step="0.1" value={jatahKgPerJiwa} onChange={e=>setJatahKgPerJiwa(Number(e.target.value))} style={IS}/>
+                 </div>
+                 <div style={{background:"#f9f9f7",padding:16,borderRadius:12}}>
+                    <div style={LS}>Alokasi Operasional Desa/Masjid (%)</div>
+                    <div style={{fontSize:18,fontWeight:900,color:"#2d5a40"}}>12.5% <span style={{fontSize:11,color:"#999",fontWeight:600}}> (Rp {(totalUangZakat * 0.125).toLocaleString()})</span></div>
+                 </div>
               </div>
-
-              {/* Per asnaf */}
-              {distribusiPerAsnaf.map(a=>(
-                <div key={a.key} style={{display:"flex",alignItems:"center",gap:14,padding:"12px 0",borderBottom:"1px solid rgba(45,90,64,0.08)"}}>
-                  <div style={{fontSize:24,width:36,textAlign:"center",flexShrink:0}}>{a.icon}</div>
-                  <div style={{flex:1}}>
-                    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
-                      <span style={{fontWeight:700,fontSize:13,color:"#1a2e1f"}}>{a.label}</span>
-                      <span style={{fontSize:13,fontWeight:800,color:"#2d5a40"}}>Rp{(a.nominal/1000).toFixed(0)}rb ({a.pct}%)</span>
-                    </div>
-                    <div style={{height:6,background:"rgba(45,90,64,0.1)",borderRadius:4,overflow:"hidden",marginBottom:4}}>
-                      <div style={{height:"100%",width:`${a.pct*4}%`,background:"#2d5a40",borderRadius:4}}/>
-                    </div>
-                    <div style={{fontSize:11,color:"#7a9a7e"}}>{a.desc} · {a.penerima} penerima terdaftar</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Penerima per asnaf */}
-            <div style={{background:"white",borderRadius:16,padding:18,border:"1px solid rgba(45,90,64,0.1)",boxShadow:"0 1px 6px rgba(0,0,0,0.04)"}}>
-              <h4 style={{margin:"0 0 14px",fontSize:13,fontWeight:700,color:"#1a2e1f"}}>🤲 Daftar Penerima Zakat</h4>
-              {mustahiqList.length===0?(
-                <div style={{textAlign:"center",padding:20,color:"#a8b5a9",fontSize:13}}>
-                  Belum ada data mustahiq. Update golongan zakat di Data Warga.
-                </div>
-              ):(
-                <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))",gap:10}}>
+              
+              <div style={{background:"#2d5a4008",padding:20,borderRadius:16,border:"1px solid #2d5a4020"}}>
+                <h4 style={{margin:"0 0 12px",fontSize:13,fontWeight:800,color:"#2d5a40"}}>Penerima Hak Zakat (Mustahiq)</h4>
+                <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))",gap:12}}>
                   {mustahiqList.map(k=>{
-                    const asnaf=ASNAF_DISTRIBUSI.find(a=>a.key===k.kategori_mustahiq);
-                    const totalMustahiqKat=mustahiqList.filter(m=>m.kategori_mustahiq===k.kategori_mustahiq).length;
-                    const bagian=asnaf?Math.round((totalUang*asnaf.pct/100)/Math.max(totalMustahiqKat,1)):0;
+                    const jiwa = anggotaList.filter(a => a.kk_id === k.id).length || 1;
                     return(
-                      <div key={k.id} style={{background:"rgba(45,90,64,0.04)",borderRadius:12,padding:"12px 14px",border:"1px solid rgba(45,90,64,0.1)"}}>
-                        <div style={{fontWeight:700,fontSize:13,color:"#1a2e1f"}}>{k.kepala_keluarga}</div>
-                        <div style={{fontSize:11,color:"#7a9a7e",marginTop:2}}>RT {k.rt} · {asnaf?.label||k.kategori_mustahiq||"Belum dikategorikan"}</div>
-                        {bagian>0&&<div style={{fontSize:12,fontWeight:700,color:"#2d5a40",marginTop:4}}>≈ Rp{bagian.toLocaleString("id-ID")}</div>}
+                      <div key={k.id} style={{background:"white",padding:14,borderRadius:12,border:"1px solid #eee",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                        <div>
+                          <div style={{fontWeight:700,fontSize:14}}>{k.kepala_keluarga}</div>
+                          <div style={{fontSize:11,color:"#999"}}>{jiwa} Jiwa · RT {k.rt}</div>
+                        </div>
+                        <div style={{textAlign:"right"}}>
+                           <div style={{fontSize:14,fontWeight:900,color:"#2d5a40"}}>{(jiwa * jatahKgPerJiwa).toFixed(1)} kg</div>
+                           <div style={{fontSize:10,fontWeight:700,color:"#bbb"}}>{k.kategori_mustahiq?.toUpperCase()}</div>
+                        </div>
                       </div>
                     );
                   })}
                 </div>
-              )}
+              </div>
             </div>
           </div>
         )}
 
-        {/* ── MUZAKKI TAB ── */}
-        {tab==="muzakki"&&(
-          <div>
-            <div style={{display:"flex",gap:12,marginBottom:16}}>
-              <div style={{background:"white",borderRadius:14,padding:"14px 18px",border:"1px solid rgba(45,90,64,0.1)",flex:1}}>
-                <div style={{fontSize:22,fontWeight:900,color:"#2d5a40"}}>{muzakkiList.length}</div>
-                <div style={{fontSize:11,color:"#7a9a7e",textTransform:"uppercase"}}>Total Muzakki</div>
-              </div>
-              <div style={{background:"white",borderRadius:14,padding:"14px 18px",border:"1px solid rgba(45,90,64,0.1)",flex:1}}>
-                <div style={{fontSize:22,fontWeight:900,color:"#2d5a40"}}>{zakatTahunIni.length}</div>
-                <div style={{fontSize:11,color:"#7a9a7e",textTransform:"uppercase"}}>Sudah Bayar {tahunFilter}</div>
-              </div>
-              <div style={{background:"white",borderRadius:14,padding:"14px 18px",border:"1px solid rgba(220,53,69,0.15)",flex:1}}>
-                <div style={{fontSize:22,fontWeight:900,color:"#dc3545"}}>{belumBayar.length}</div>
-                <div style={{fontSize:11,color:"#7a9a7e",textTransform:"uppercase"}}>Belum Bayar</div>
-              </div>
-            </div>
-            <div style={{background:"white",borderRadius:16,border:"1px solid rgba(45,90,64,0.1)",overflow:"hidden"}}>
-              {muzakkiList.map((k,i)=>{
-                const bayar=zakatTahunIni.find(z=>z.kk_id===k.id);
-                return(
-                  <div key={k.id} style={{padding:"12px 18px",borderBottom:i<muzakkiList.length-1?"1px solid rgba(45,90,64,0.07)":"none",display:"flex",alignItems:"center",gap:12}}>
-                    <div style={{width:8,height:8,borderRadius:"50%",background:bayar?"#2d5a40":"#dc3545",flexShrink:0}}/>
-                    <div style={{flex:1}}>
-                      <div style={{fontWeight:600,fontSize:14,color:"#1a2e1f"}}>{k.kepala_keluarga}</div>
-                      <div style={{fontSize:11,color:"#7a9a7e"}}>RT {k.rt}</div>
-                    </div>
-                    {bayar?(
-                      <div style={{textAlign:"right"}}>
-                        <div style={{fontSize:13,fontWeight:700,color:"#2d5a40"}}>✅ Sudah</div>
-                        <div style={{fontSize:11,color:"#7a9a7e"}}>{bayar.jenis==="beras"?`${bayar.nominal_kg}kg`:`Rp${(bayar.nominal_uang/1000).toFixed(0)}rb`}</div>
-                      </div>
-                    ):(
-                      <div style={{background:"rgba(220,53,69,0.08)",color:"#dc3545",border:"1px solid rgba(220,53,69,0.2)",borderRadius:20,padding:"3px 10px",fontSize:11,fontWeight:600}}>Belum</div>
-                    )}
-                  </div>
-                );
-              })}
-              {muzakkiList.length===0&&(
-                <div style={{padding:40,textAlign:"center",color:"#a8b5a9"}}>
-                  Belum ada muzakki. Update golongan zakat di Data Warga.
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* ── MUSTAHIQ TAB ── */}
-        {tab==="mustahiq"&&(
-          <div>
-            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(140px,1fr))",gap:10,marginBottom:16}}>
-              {ASNAF_DISTRIBUSI.map(a=>{
-                const jml=mustahiqList.filter(k=>k.kategori_mustahiq===a.key).length;
-                return(
-                  <div key={a.key} style={{background:"white",borderRadius:14,padding:"14px 12px",border:"1px solid rgba(45,90,64,0.1)",textAlign:"center"}}>
-                    <div style={{fontSize:24,marginBottom:4}}>{a.icon}</div>
-                    <div style={{fontSize:20,fontWeight:900,color:"#2d5a40"}}>{jml}</div>
-                    <div style={{fontSize:11,color:"#7a9a7e"}}>{a.label}</div>
-                  </div>
-                );
-              })}
+        {/* ── ALOKASI INFAQ TAB ── */}
+        {tab==="infaq_khusus"&&(
+          <div style={{display:"flex",flexDirection:"column",gap:20}}>
+            <div style={{background:"linear-gradient(135deg,#b8943f,#d4ac5a)",padding:32,borderRadius:24,color:"white"}}>
+               <div style={{fontSize:12,fontWeight:800,letterSpacing:".1em",opacity:0.8}}>DANA INFAQ TERKUMPUL</div>
+               <div style={{fontSize:42,fontWeight:900,marginTop:8}}>Rp {totalInfaq.toLocaleString("id-ID")}</div>
+               <p style={{marginTop:16,fontSize:14,opacity:0.9,lineHeight:1.6,maxWidth:500}}>Dana ini bersifat fleksibel. Prioritas utama Ciburial: Santunan Anak Yatim, Piatu, dan Perbaikan Sarana Fasilitas Desa.</p>
             </div>
 
-            <div style={{background:"white",borderRadius:16,border:"1px solid rgba(45,90,64,0.1)",overflow:"hidden"}}>
-              <div style={{padding:"12px 18px",borderBottom:"1px solid rgba(45,90,64,0.08)"}}>
-                <span style={{fontSize:12,fontWeight:700,color:"#6b7c6d",textTransform:"uppercase",letterSpacing:"0.06em"}}>Daftar Mustahiq ({mustahiqList.length} KK)</span>
-              </div>
-              {mustahiqList.length===0?(
-                <div style={{padding:40,textAlign:"center",color:"#a8b5a9"}}>Belum ada mustahiq terdaftar. Update di Data Warga → Golongan Zakat.</div>
-              ):mustahiqList.map((k,i)=>{
-                const asnaf=ASNAF_DISTRIBUSI.find(a=>a.key===k.kategori_mustahiq);
-                return(
-                  <div key={k.id} style={{padding:"12px 18px",borderBottom:i<mustahiqList.length-1?"1px solid rgba(45,90,64,0.07)":"none",display:"flex",alignItems:"center",gap:12}}>
-                    <div style={{fontSize:22}}>{asnaf?.icon||"🤲"}</div>
-                    <div style={{flex:1}}>
-                      <div style={{fontWeight:600,fontSize:14,color:"#1a2e1f"}}>{k.kepala_keluarga}</div>
-                      <div style={{fontSize:11,color:"#7a9a7e"}}>RT {k.rt} · {asnaf?.label||"Belum dikategorikan"}</div>
-                    </div>
-                    <div style={{fontSize:11,color:"#7a9a7e"}}>{asnaf?.desc||""}</div>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:20}}>
+               <div style={{background:"white",borderRadius:20,padding:24}}>
+                  <h3 style={{margin:"0 0 20px",fontSize:15,fontWeight:800}}>🍊 Daftar Penerima Santunan (Yatim/Piatu)</h3>
+                  <div style={{display:"flex",flexDirection:"column",gap:10}}>
+                     {yatimList.length === 0 ? (
+                       <div style={{textAlign:"center",padding:30,color:"#ccc"}}>Klik ikon 🧡 pada data warga untuk menambah ke daftar ini.</div>
+                     ) : yatimList.map(y => (
+                       <div key={y.id} style={{padding:14,background:"#fff9f0",borderRadius:12,border:"1px solid #b8943f20",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                          <div>
+                            <div style={{fontWeight:700,fontSize:14}}>{y.kepala_keluarga}</div>
+                            <div style={{fontSize:11,color:"#999"}}>RT {y.rt} · {anggotaList.filter(a=>a.kk_id===y.id).length} Jiwa</div>
+                          </div>
+                          <button onClick={()=>toggleYatim(y.id, true)} style={{background:"none",border:"none",color:"#dc3545",cursor:"pointer",fontSize:18}}>✕</button>
+                       </div>
+                     ))}
                   </div>
-                );
-              })}
+               </div>
+
+               <div style={{background:"white",borderRadius:20,padding:24}}>
+                  <h3 style={{margin:"0 0 20px",fontSize:15,fontWeight:800}}>👥 Pilih Warga untuk Santunan</h3>
+                  <div style={{maxHeight:400,overflowY:"auto"}}>
+                     {kkList.map(k => (
+                       <div key={k.id} style={{padding:"10px 0",borderBottom:"1px solid #f5f5f5",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                          <div style={{fontSize:13,fontWeight:600}}>{k.kepala_keluarga} <span style={{fontSize:10,color:"#999"}}>(RT {k.rt})</span></div>
+                          {!k.is_yatim && (
+                            <button onClick={()=>toggleYatim(k.id, false)} style={{padding:"5px 10px",borderRadius:8,border:"1px solid #eee",background:"white",fontSize:10,fontWeight:700,cursor:"pointer"}}>+ TAMBAH 🧡</button>
+                          )}
+                       </div>
+                     ))}
+                  </div>
+               </div>
             </div>
           </div>
         )}
