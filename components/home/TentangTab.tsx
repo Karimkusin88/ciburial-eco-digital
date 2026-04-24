@@ -211,34 +211,105 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
         </div>
       </div>
 
-      {/* STATS - HEROIC */}
-      <section className="sec" style={{ background: "linear-gradient(135deg,rgba(79,191,126,.04) 0%,rgba(47,143,78,.02) 100%)", padding: "clamp(60px,8vw,100px) clamp(16px,4vw,32px)", borderTop: "2px solid rgba(47,143,78,.1)" }}>
-        <div style={{ maxWidth: 1320, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))", gap: 2 }}>
-          {[
-            { v: totalJiwa !== null ? totalJiwa.toLocaleString() : "450", l: "Jiwa", s: "Total Populasi", icon: "👥" },
-            { v: "3", l: "RT", s: "Rukun Tetangga", icon: "🏘️" },
-            { v: "55%", l: "Pemuda/Pemudi", s: "Gen. Penerus", icon: "⚡" },
-            { v: "5", l: "Divisi", s: "Tim Lapangan", icon: "🎯" },
-            { v: "7", l: "Program", s: "Unggulan", icon: "🚀" },
-            { v: "250jt", l: "Target", s: "RAB 2026", icon: "💰" },
-          ].map((s, i) => (
-            <div key={i} className={`rv d${i + 1}`} style={{ padding: "32px 18px", textAlign: "center", borderRight: i < 5 ? "1px solid rgba(47,143,78,.08)" : "none", position: "relative", transition: "all .3s ease", cursor: "pointer" }}
-              onMouseEnter={e => {
-                (e.currentTarget as HTMLElement).style.transform = "translateY(-4px)";
-                (e.currentTarget as HTMLElement).style.background = "rgba(79,191,126,.08)";
-              }}
-              onMouseLeave={e => {
-                (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
-                (e.currentTarget as HTMLElement).style.background = "transparent";
-              }}
-            >
-              <div style={{ fontSize: 28, marginBottom: 10 }}>{s.icon}</div>
-              <div className="fnt" style={{ fontSize: "clamp(28px,4vw,52px)", fontWeight: 300, color: "#2F8F4E", lineHeight: 1, marginBottom: 8 }}>{s.v}</div>
-              <div style={{ fontSize: 13, fontWeight: 700, color: "#5A4A40", marginBottom: 4 }}>{s.l}</div>
-              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#9A8C85" }}>{s.s}</div>
-            </div>
-          ))}
+      {/* CIBURIAL SMART HUB — DIGITAL SERVICES */}
+      <section className="sec" style={{ padding: "clamp(60px,8vw,100px) clamp(16px,4vw,32px)", background: "linear-gradient(180deg, rgba(232,245,238,0.5) 0%, #FAF8F3 100%)" }}>
+        <div style={{ maxWidth: 1320, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 48 }}>
+            <span className="badge-heroic" style={{ padding: "6px 14px", fontSize: 10, borderRadius: 99, background: "rgba(47,143,78,0.1)", color: "#2F8F4E", border: "1px solid rgba(47,143,78,0.2)", fontWeight: 800, letterSpacing: "0.1em" }}>DIGITAL TRANSFORMATION</span>
+            <h2 className="fnt" style={{ fontSize: "clamp(28px,4vw,48px)", fontWeight: 300, color: "#1C3A2B", marginTop: 16, marginBottom: 12 }}>Ciburial Smart Hub</h2>
+            <p style={{ color: "#5A4A40", fontSize: 15, maxWidth: 600, margin: "0 auto", fontWeight: 500, lineHeight: 1.6 }}>Pusat kendali dan layanan warga berbasis teknologi untuk transparansi dan efisiensi desa.</p>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
+            {[
+              { 
+                title: "E-Voting", 
+                desc: "Partisipasi warga dalam pengambilan keputusan desa secara digital & aman.", 
+                icon: "🗳️", 
+                link: "/voting",
+                color: "#2F8F4E",
+                tag: "MUSYAWARAH"
+              },
+              { 
+                title: "Monitoring Ronda", 
+                desc: "Pantauan keamanan lingkungan real-time berbasis kartu warga NFC.", 
+                icon: "🔦", 
+                link: "/ronda",
+                color: "#1C3A2B",
+                tag: "KEAMANAN"
+              },
+              { 
+                title: "Posyandu Pintar", 
+                desc: "Sistem tracking gizi dan kesehatan balita mandiri untuk Bunda cerdas.", 
+                icon: "👶", 
+                link: "/posyandu",
+                color: "#8B2020",
+                tag: "KESEHATAN"
+              },
+              { 
+                title: "Layanan Aduan", 
+                desc: "Laporkan masalah fasilitas publik langsung ke tim eksekutif lapangan.", 
+                icon: "📢", 
+                link: "/pengaduan",
+                color: "#B8943F",
+                tag: "RESPONS CEPAT"
+              }
+            ].map((item, i) => (
+              <a key={i} href={item.link} style={{ textDecoration: "none", color: "inherit" }} className="hub-card-link">
+                <div className="card-heroic" style={{ 
+                  height: "100%", 
+                  padding: "40px 32px", 
+                  background: "white", 
+                  border: "1.5px solid rgba(0,0,0,0.04)",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 20,
+                  transition: "all 0.4s cubic-bezier(0.22, 1, 0.36, 1)",
+                  position: "relative",
+                  overflow: "hidden"
+                }}>
+                  {/* Decorative Gradient Background on Hover */}
+                  <div className="hover-gradient" style={{ 
+                    position: "absolute", 
+                    top: 0, left: 0, width: "100%", height: "4px", 
+                    background: `linear-gradient(90deg, transparent, ${item.color}, transparent)`,
+                    opacity: 0.6
+                  }} />
+
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                    <div style={{ 
+                      width: 64, height: 64, borderRadius: 16, 
+                      background: `${item.color}10`, 
+                      display: "flex", alignItems: "center", justifyContent: "center", 
+                      fontSize: 32,
+                      boxShadow: `0 8px 20px ${item.color}15`
+                    }}>{item.icon}</div>
+                    <span style={{ fontSize: 9, fontWeight: 900, letterSpacing: "0.1em", color: item.color, background: `${item.color}08`, padding: "4px 10px", borderRadius: 6, border: `1px solid ${item.color}20` }}>{item.tag}</span>
+                  </div>
+
+                  <div>
+                    <h3 style={{ fontSize: 20, fontWeight: 800, color: "#1C3A2B", marginBottom: 8 }}>{item.title}</h3>
+                    <p style={{ fontSize: 14, color: "#5A4A40", lineHeight: 1.6, fontWeight: 500, opacity: 0.8 }}>{item.desc}</p>
+                  </div>
+
+                  <div style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 8, color: item.color, fontSize: 12, fontWeight: 800, letterSpacing: "0.05em" }}>
+                    BUKA LAYANAN <span style={{ transition: "transform 0.3s" }} className="arrow">→</span>
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
         </div>
+        <style>{`
+          .hub-card-link:hover .card-heroic {
+            transform: translateY(-10px);
+            box-shadow: 0 24px 48px rgba(0,0,0,0.06);
+            border-color: rgba(47,143,78,0.2);
+          }
+          .hub-card-link:hover .arrow {
+            transform: translateX(6px);
+          }
+        `}</style>
       </section>
 
 
