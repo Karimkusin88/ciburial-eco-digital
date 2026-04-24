@@ -26,8 +26,9 @@ export default function AdminZakatV2Page(){
   const[tahunFilter,setTahunFilter]=useState(TAHUN_INI);
   const[jatahKgPerJiwa,setJatahKgPerJiwa]=useState(2.0);
   
-  // State manual override untuk distribusi
-  const[excludeList,setExcludeList]=useState<Set<string>>(new Set());
+  // State form HARUS ada di sini
+  const[form,setForm]=useState(emptyForm);
+
   const[selectedKKForYatim,setSelectedKKForYatim]=useState<string>("");
 
   function showToast(msg:string,ok=true){setToast({msg,ok});setTimeout(()=>setToast({msg:"",ok:true}),3500);}
@@ -57,7 +58,7 @@ export default function AdminZakatV2Page(){
     if(!form.kk_id)return showToast("❌ Pilih warga dulu!",false);
     setLoading(true);
     const{kg,uang}=hitungZakat();
-    const payload = {
+    const payload:any = {
        kk_id: form.kk_id,
        tahun: form.tahun,
        jumlah_jiwa: form.jumlah_jiwa,
@@ -83,6 +84,13 @@ export default function AdminZakatV2Page(){
     if(!error) { showToast("🗑️ Data dihapus"); fetchAll(); }
   }
 
+  async function toggleMustahiq(kkId: string, currentStatus: string) {
+    const nextStatus = currentStatus === "mustahiq" ? "muzakki" : "mustahiq";
+    const { error } = await supabase.from("keluarga").update({ golongan_zakat: nextStatus }).eq("id", kkId);
+    if (error) showToast("❌ Gagal update status", false);
+    else { showToast(`✅ Status KK diperbarui ke ${nextStatus}`); fetchAll(); }
+  }
+
   async function toggleYatimIndividu(id:string, val:boolean){
     const {error} = await supabase.from("anggota_kk").update({is_yatim: !val}).eq("id", id);
     if(!error) fetchAll();
@@ -94,7 +102,7 @@ export default function AdminZakatV2Page(){
   const totalUangZakat = zakatTahunIni.reduce((s,z)=>s+Number(z.nominal_uang),0);
   const totalInfaq = zakatTahunIni.reduce((s,z)=>s+Number(z.infaq_uang||0),0);
   
-  const mustahiqList = kkList.filter(k=> (k.golongan_zakat==="mustahiq" && !excludeList.has(k.id)) || (k.golongan_zakat!=="mustahiq" && excludeList.has(k.id)) );
+  const mustahiqList = kkList.filter(k=> k.golongan_zakat==="mustahiq");
   const totalJiwaMustahiq = mustahiqList.reduce((acc, kk) => acc + (anggotaList.filter(a => a.kk_id === kk.id).length || 1), 0);
   const totalKgTargetDistribusi = totalJiwaMustahiq * jatahKgPerJiwa;
   const totalKgKeluar = ambilList.filter(a=>a.tipe==='zakat_beras').reduce((s,a)=>s+Number(a.jumlah),0);
@@ -223,12 +231,14 @@ export default function AdminZakatV2Page(){
             </div>
             <div style={{background:"white",borderRadius:20,overflow:"hidden"}}>
               <div style={{padding:"16px 20px",background:"#dc3545",color:"white",fontSize:11,fontWeight:900}}>BELUM SETOR ({belumBayar.length})</div>
-              {belumBayar.map(k=>(
-                <div key={k.id} onClick={()=>setForm({...form, kk_id:k.id, jumlah_jiwa: anggotaList.filter(a => a.kk_id === k.id).length || 1})} style={{padding:"12px 20px",borderBottom:"1px solid #f5f5f5",cursor:"pointer",display:"flex",justifyContent:"space-between"}}>
-                  <div><div style={{fontWeight:700,fontSize:13}}>{k.kepala_keluarga}</div><div style={{fontSize:11,color:"#999"}}>RT {k.rt}</div></div>
-                  <span style={{fontSize:10,fontWeight:800,color:"#dc3545"}}>PILIH →</span>
-                </div>
-              ))}
+              <div style={{maxHeight:500, overflowY:"auto"}}>
+                {belumBayar.map(k=>(
+                    <div key={k.id} onClick={()=>setForm({...form, kk_id:k.id, jumlah_jiwa: anggotaList.filter(a => a.kk_id === k.id).length || 1})} style={{padding:"12px 20px",borderBottom:"1px solid #f5f5f5",cursor:"pointer",display:"flex",justifyContent:"space-between"}}>
+                    <div><div style={{fontWeight:700,fontSize:13}}>{k.kepala_keluarga}</div><div style={{fontSize:11,color:"#999"}}>RT {k.rt}</div></div>
+                    <span style={{fontSize:10,fontWeight:800,color:"#dc3545"}}>PILIH →</span>
+                    </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
@@ -243,14 +253,18 @@ export default function AdminZakatV2Page(){
              </div>
              <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(300px, 1fr))", gap:12}}>
                 {kkList.map(k => {
-                   const isExcluded = excludeList.has(k.id);
-                   const isMustahiqOriginal = k.golongan_zakat === "mustahiq";
+                   const isMustahiq = k.golongan_zakat === "mustahiq";
                    const jiwa = anggotaList.filter(a => a.kk_id === k.id).length || 1;
-                   if(isExcluded && !isMustahiqOriginal) return null;
                    return (
-                      <div key={k.id} style={{padding:16, background: isExcluded ? "#f9f9f9" : "white", border: isExcluded ? "1px solid #eee" : "1.5px solid #2d5a4030", borderRadius:12, display:"flex", justifyContent:"space-between", opacity: isExcluded ? 0.5 : 1}}>
-                         <div><div style={{fontWeight:700}}>{k.kepala_keluarga} {isMustahiqOriginal && "🤲"}</div><div style={{fontSize:11,color:"#999"}}>{jiwa} Jiwa · RT {k.rt}</div>{!isExcluded && <div style={{fontSize:14, fontWeight:900, color:"#2d5a40", marginTop:4}}>{(jiwa * jatahKgPerJiwa).toFixed(1)} kg</div>}</div>
-                         <button onClick={()=>{const n=new Set(excludeList); if(n.has(k.id))n.delete(k.id); else n.add(k.id); setExcludeList(n);}} style={{padding:"6px 10px", borderRadius:8, border:"none", background: isExcluded ? "#2d5a40" : "#fff0f0", color: isExcluded ? "white" : "#dc3545", fontSize:10, fontWeight:800, cursor:"pointer"}}>{isExcluded ? "+ MASUK" : "✕ HAPUS"}</button>
+                      <div key={k.id} style={{padding:16, background: isMustahiq ? "white" : "#f9f9f9", border: isMustahiq ? "1.5px solid #2d5a40" : "1px solid #eee", borderRadius:12, display:"flex", justifyContent:"space-between", opacity: isMustahiq ? 1 : 0.6}}>
+                         <div>
+                            <div style={{fontWeight:700}}>{k.kepala_keluarga} {isMustahiq && "🤲"}</div>
+                            <div style={{fontSize:11,color:"#999"}}>RT {k.rt} · {jiwa} Jiwa</div>
+                            {isMustahiq && <div style={{fontSize:14, fontWeight:900, color:"#2d5a40", marginTop:4}}>{(jiwa * jatahKgPerJiwa).toFixed(1)} kg</div>}
+                         </div>
+                         <button onClick={()=>toggleMustahiq(k.id, k.golongan_zakat)} style={{padding:"6px 10px", borderRadius:8, border:"none", background: isMustahiq ? "#fff0f0" : "#2d5a40", color: isMustahiq ? "#dc3545" : "white", fontSize:10, fontWeight:800, cursor:"pointer"}}>
+                            {isMustahiq ? "✕ HAPUS" : "+ MASUK"}
+                         </button>
                       </div>
                    )
                 })}
@@ -266,7 +280,7 @@ export default function AdminZakatV2Page(){
                 <label style={LS}>Pilih KK</label>
                 <select value={selectedKKForYatim} onChange={e=>setSelectedKKForYatim(e.target.value)} style={IS}>
                    <option value="">-- Pilih KK --</option>
-                   {kkList.map(k=>(<option key={k.id} value={k.id}>{k.kepala_keluarga}</option>))}
+                   {kkList.map(k=>(<option key={k.id} value={k.id}>{k.kepala_keluarga} (RT {k.rt})</option>))}
                 </select>
                 {selectedKKForYatim && (
                    <div style={{marginTop:20, background:"#f9f9f7", padding:16, borderRadius:12}}>
@@ -295,12 +309,14 @@ export default function AdminZakatV2Page(){
         {tab==="pengambilan"&&(
           <div style={{background:"white",borderRadius:20,overflow:"hidden"}}>
             <div style={{padding:"18px 24px",background:"#2d5a40", color:"white"}}><h3 style={{fontSize:14,fontWeight:800}}>LOG PENYALURAN REAL-TIME</h3></div>
-            {ambilList.map(a=>(
-               <div key={a.id} style={{padding:"14px 24px",borderBottom:"1px solid #f5f5f5",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                  <div><div style={{fontWeight:700}}>{a.keluarga?.kepala_keluarga}</div><div style={{fontSize:11,color:"#999"}}>{a.tipe==='zakat_beras'?'Beras Zakat':'Santunan Uang'} · {new Date(a.tgl_ambil).toLocaleString()}</div></div>
-                  <div style={{fontWeight:900,color:"#2d5a40"}}>{a.jumlah} {a.tipe==='zakat_beras'?'kg':'Rp'}</div>
-               </div>
-            ))}
+            <div style={{maxHeight:600, overflowY:"auto"}}>
+                {ambilList.map(a=>(
+                <div key={a.id} style={{padding:"14px 24px",borderBottom:"1px solid #f5f5f5",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                    <div><div style={{fontWeight:700}}>{a.keluarga?.kepala_keluarga}</div><div style={{fontSize:11,color:"#999"}}>{a.tipe==='zakat_beras'?'Beras Zakat':'Santunan Uang'} · {new Date(a.tgl_ambil).toLocaleString()}</div></div>
+                    <div style={{fontWeight:900,color:"#2d5a40"}}>{a.jumlah} {a.tipe==='zakat_beras'?'kg':'Rp'}</div>
+                </div>
+                ))}
+            </div>
           </div>
         )}
 
