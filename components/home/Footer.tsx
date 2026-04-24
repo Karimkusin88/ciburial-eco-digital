@@ -32,14 +32,6 @@ export default function Footer({ onNavigate }: FooterProps) {
               onMouseEnter={e => (e.currentTarget.style.color = "var(--cr)")}
               onMouseLeave={e => (e.currentTarget.style.color = "rgba(250,248,243,.38)")}
             >📅 Kalender Kegiatan</a>
-            <a href="/pengaduan" style={{ fontSize: 12, fontWeight: 500, color: "rgba(250,248,243,.38)", textDecoration: "none", transition: "color .2s" }}
-              onMouseEnter={e => (e.currentTarget.style.color = "var(--cr)")}
-              onMouseLeave={e => (e.currentTarget.style.color = "rgba(250,248,243,.38)")}
-            >📢 Pengaduan Warga</a>
-            <a href="/voting" style={{ fontSize: 12, fontWeight: 500, color: "rgba(250,248,243,.38)", textDecoration: "none", transition: "color .2s" }}
-              onMouseEnter={e => (e.currentTarget.style.color = "var(--cr)")}
-              onMouseLeave={e => (e.currentTarget.style.color = "rgba(250,248,243,.38)")}
-            >🗳️ Voting</a>
             <a href="/tukar-poin" style={{ fontSize: 12, fontWeight: 500, color: "rgba(250,248,243,.38)", textDecoration: "none", transition: "color .2s" }}
               onMouseEnter={e => (e.currentTarget.style.color = "var(--cr)")}
               onMouseLeave={e => (e.currentTarget.style.color = "rgba(250,248,243,.38)")}
