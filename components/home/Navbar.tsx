@@ -51,20 +51,6 @@ export default function Navbar({ tab, checkout, scrolled, onNavigate }: NavbarPr
                   <div style={{ fontSize: 10, color: "var(--tm)", fontWeight: 500 }}>Agenda & jadwal kampung</div>
                 </div>
               </a>
-              <a href="/pengaduan" className="drop-item">
-                <span style={{ fontSize: 18 }}>📢</span>
-                <div>
-                  <div style={{ fontWeight: 700, color: "var(--tp)" }}>Pengaduan Warga</div>
-                  <div style={{ fontSize: 10, color: "var(--tm)", fontWeight: 500 }}>Laporkan masalah kampung</div>
-                </div>
-              </a>
-              <a href="/voting" className="drop-item">
-                <span style={{ fontSize: 18 }}>🗳️</span>
-                <div>
-                  <div style={{ fontWeight: 700, color: "var(--tp)" }}>Voting</div>
-                  <div style={{ fontSize: 10, color: "var(--tm)", fontWeight: 500 }}>Suara warga Ciburial</div>
-                </div>
-              </a>
               <div style={{ height: 1, background: "var(--bo)", margin: "4px 0" }} />
               <a href="/tukar-poin" className="drop-item">
                 <span style={{ fontSize: 18 }}>♻️</span>
@@ -119,11 +105,9 @@ export default function Navbar({ tab, checkout, scrolled, onNavigate }: NavbarPr
           <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".15em", textTransform: "uppercase", color: "var(--tm)", marginBottom: 8 }}>Layanan Warga</div>
           {[
             { href: "/kalender", icon: "📅", title: "Kalender Kegiatan", sub: "Agenda & jadwal kampung" },
-            { href: "/pengaduan", icon: "📢", title: "Pengaduan Warga", sub: "Laporkan masalah kampung" },
-            { href: "/voting", icon: "🗳️", title: "Voting", sub: "Suara warga Ciburial" },
             { href: "/tukar-poin", icon: "♻️", title: "Tukar Poin", sub: "Klaim reward Bank Sampah" },
-          ].map((item, i) => (
-            <a key={i} href={item.href} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 0", textDecoration: "none", borderBottom: i < 3 ? "1px solid rgba(229,224,216,.5)" : "none" }}>
+          ].map((item, i, arr) => (
+            <a key={i} href={item.href} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 0", textDecoration: "none", borderBottom: i < arr.length - 1 ? "1px solid rgba(229,224,216,.5)" : "none" }}>
               <span style={{ fontSize: 18 }}>{item.icon}</span>
               <div>
                 <div style={{ fontSize: 12, fontWeight: 700, color: "var(--tp)", letterSpacing: ".04em", textTransform: "uppercase" }}>{item.title}</div>
