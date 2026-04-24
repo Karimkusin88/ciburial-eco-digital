@@ -167,7 +167,7 @@ export default function ZakatKioskPage() {
           </div>
         </div>
         <div style={{ textAlign: "right" }}>
-          <div style={{ fontSize: 16, fontWeight: 900 }}>TAHUN {TAHUN_INI}</div>
+          <div style={{ fontSize: 14, fontWeight: 800, color: "#B8943F" }}>OPERASIONAL DKM</div>
           <div style={{ fontSize: 10, color: "rgba(250,248,243,0.4)" }}>{jam.toLocaleTimeString("id-ID")}</div>
         </div>
       </header>
@@ -254,7 +254,12 @@ export default function ZakatKioskPage() {
                         <div style={{ fontSize: 32, fontWeight: 900, marginBottom: 20 }}>{hasilScan.totalJatahBeras.toFixed(1)} <span style={{ fontSize: 16, opacity: 0.5 }}>kg</span></div>
                         
                         {!hasilScan.sudahAmbilBeras && (
-                          <button onClick={() => konfirmasiAmil('zakat_beras', hasilScan.totalJatahBeras)} style={{ width: "100%", padding: "14px", borderRadius: 12, border: "none", background: "#2d5a40", color: "white", fontSize: 13, fontWeight: 800, cursor: "pointer" }}>KONFIRMASI PENYERAHAN</button>
+                          <button 
+                            disabled={loading} 
+                            onClick={() => konfirmasiAmil('zakat_beras', hasilScan.totalJatahBeras)} 
+                            style={{ width: "100%", padding: "14px", borderRadius: 12, border: "none", background: loading ? "#333" : "#2d5a40", color: "white", fontSize: 13, fontWeight: 800, cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}>
+                            {loading ? "MEMPROSES..." : "KONFIRMASI PENYERAHAN"}
+                          </button>
                         )}
                     </div>
                   )}
@@ -268,7 +273,12 @@ export default function ZakatKioskPage() {
                         </div>
                         <div style={{ fontSize: 24, fontWeight: 900, color: "#fff", marginBottom: 16 }}>Rp {hasilScan.totalSantunanUang.toLocaleString()}</div>
                         {!hasilScan.sudahAmbilUang && (
-                          <button onClick={() => konfirmasiAmil('santunan_uang', hasilScan.totalSantunanUang)} style={{ width: "100%", padding: "12px", borderRadius: 10, border: "1px solid #4fbf7e", background: "none", color: "#4fbf7e", fontSize: 12, fontWeight: 800, cursor: "pointer" }}>KONFIRMASI PENYERAHAN UANG</button>
+                          <button 
+                            disabled={loading} 
+                            onClick={() => konfirmasiAmil('santunan_uang', hasilScan.totalSantunanUang)} 
+                            style={{ width: "100%", padding: "12px", borderRadius: 10, border: "1px solid #4fbf7e", background: "none", color: "#4fbf7e", fontSize: 12, fontWeight: 800, cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}>
+                            {loading ? "MEMPROSES..." : "KONFIRMASI PENYERAHAN UANG"}
+                          </button>
                         )}
                     </div>
                   )}
