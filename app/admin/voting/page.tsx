@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import "../admin-styles-heroic.css";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 interface VotingItem {
@@ -152,7 +153,7 @@ export default function AdminVotingPage() {
   }
 
   return (
-    <div style={{minHeight:"100vh",background:"#F8FAFC",fontFamily:"'Inter',system-ui,sans-serif"}}>
+    <div className="admin-page heroic-bg" style={{ minHeight: "100vh", fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
       {/* Toast Notification */}
       {toast.msg&&<div style={{position:"fixed",top:20,left:"50%",transform:"translateX(-50%)",background:toast.type==="success"?"#059669":toast.type==="error"?"#DC2626":"#1E293B",color:"white",padding:"12px 24px",borderRadius:99,zIndex:999,fontSize:14,fontWeight:700,boxShadow:"0 10px 25px rgba(0,0,0,0.2)",display:"flex",alignItems:"center",gap:8}}>
         {toast.type==="success"?"🎉":toast.type==="error"?"🚨":"ℹ️"} {toast.msg}

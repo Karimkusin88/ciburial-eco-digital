@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import "../admin-styles-heroic.css";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 interface Order {
@@ -177,14 +178,14 @@ export default function AdminOrdersPage() {
 
   if (loading) {
     return (
-      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg,#FAF8F3,#F0EFE8)" }}>
+      <div className="admin-page heroic-bg" style={{ minHeight: "100vh", fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
         <div style={{ fontSize: 48 }}>⏳ Memuat pesanan...</div>
       </div>
     );
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "linear-gradient(135deg,#FAF8F3,#F0EFE8)", paddingTop: 80, paddingBottom: 40 }}>
+    <div className="admin-page heroic-bg" style={{ minHeight: "100vh", fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 20px" }}>
         {/* Header */}
         <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 32 }}>
@@ -233,7 +234,7 @@ export default function AdminOrdersPage() {
         </div>
 
         {/* Orders Table */}
-        <div style={{ background: "white", borderRadius: 16, border: "1.5px solid rgba(47,143,78,.12)", overflow: "hidden", boxShadow: "0 4px 16px rgba(47,143,78,.06)" }}>
+        <div className="card-heroic">
           {filtered.length === 0 ? (
             <div style={{ padding: 60, textAlign: "center", color: "rgba(47,143,78,.2)" }}>
               <div style={{ fontSize: 48, marginBottom: 16 }}>📭</div>

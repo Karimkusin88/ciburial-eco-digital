@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import "../admin-styles-heroic.css";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 interface Anak { id:string; nama:string; tgl_lahir:string; jenis_kelamin:string; nama_ibu:string; no_wa_ibu:string; kk_id:string; }
@@ -227,7 +228,7 @@ export default function AdminPosyanduPage(){
   const imunJatuhTempo=imunList.filter(im=>{if(im.status!=="belum")return false;const diff=(new Date(im.tanggal_jadwal).getTime()-new Date().getTime())/(1000*60*60*24);return diff>=0&&diff<=30;});
 
   return(
-    <div style={{minHeight:"100vh",background:"#FFF1F2",fontFamily:"'Inter', system-ui, sans-serif"}}>
+    <div className="admin-page heroic-bg" style={{ minHeight: "100vh", fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
       {toast.msg&&<div style={{position:"fixed",top:20,left:"50%",transform:"translateX(-50%)",background:toast.ok?"#F43F5E":"#111827",color:"white",padding:"12px 24px",borderRadius:99,zIndex:999,fontSize:14,fontWeight:700,boxShadow:"0 10px 25px rgba(244,63,94,0.3)",width:"max-content"}}>{toast.msg}</div>}
 
       <header style={{background:"linear-gradient(135deg, #FDA4AF 0%, #F43F5E 100%)",color:"white",padding:"24px 24px 70px",borderBottomLeftRadius:40,borderBottomRightRadius:40,marginBottom:-40,boxShadow:"0 10px 30px rgba(244,63,94,0.2)",position:"relative",overflow:"hidden"}}>
@@ -248,7 +249,7 @@ export default function AdminPosyanduPage(){
         
         <div style={{display:"flex",gap:10,overflowX:"auto",paddingBottom:20,scrollbarWidth:"none"}}>
           {(["daftar","scan","input","imunisasi"] as const).map(t=>(
-            <button key={t} onClick={()=>setTab(t)} style={{padding:"14px 24px",borderRadius:99,fontSize:14,fontWeight:800,border:"none",cursor:"pointer",background:tab===t?"white":"rgba(255,255,255,0.5)",color:tab===t?"#F43F5E":"#6B7280",boxShadow:tab===t?"0 8px 20px rgba(244,63,94,0.15)":"none",whiteSpace:"nowrap",display:"flex",alignItems:"center",gap:8,transition:"all 0.2s"}}>
+            <button key={t} onClick={()=>setTab(t)} className="btn-heroic" style={{}}>
               {{daftar:"📋 Buku Balita",scan:"💳 Scan Bunda",input:"⚖️ Timbangan",imunisasi:"💉 Vaksin"}[t]}
               {t==="scan"&&scanning&&<span style={{width:10,height:10,background:"#F43F5E",borderRadius:"50%",animation:"pulse 1s infinite"}}/>}
               {t==="imunisasi"&&imunJatuhTempo.length>0&&<span style={{background:"#F43F5E",color:"white",borderRadius:"50%",width:20,height:20,fontSize:11,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:800}}>{imunJatuhTempo.length}</span>}
@@ -269,7 +270,7 @@ export default function AdminPosyanduPage(){
         {/* ── NFC SCAN ── */}
         {tab==="scan"&&(
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:24}}>
-            <div style={{background:"white",borderRadius:28,padding:32,boxShadow:"0 20px 40px -15px rgba(244,63,94,0.1)",textAlign:"center",border:"1px solid #FFF1F2"}}>
+            <div className="card-heroic">
               <div style={{width:64,height:64,background:"#FFE4E6",borderRadius:20,display:"flex",alignItems:"center",justifyContent:"center",fontSize:32,margin:"0 auto 20px"}}>🤱</div>
               <h3 style={{margin:"0 0 8px",color:"#111827",fontSize:22,fontWeight:900}}>Verifikasi Kehadiran Bunda</h3>
               <p style={{fontSize:14,color:"#6B7280",margin:"0 0 32px",lineHeight:1.6}}>Sentuhkan Kartu Warga ke belakang layar untuk absensi. Ibu akan otomatis menerima poin apresiasi kader kesejahteraan.</p>
@@ -421,7 +422,7 @@ export default function AdminPosyanduPage(){
                 ))}
               </div>
               <div style={{marginBottom:24}}><label style={LS}>Pesan / Keluhan Bunda</label><textarea value={formTK.catatan} onChange={e=>setFormTK({...formTK,catatan:e.target.value})} placeholder="Catatan asupan ASI, MPASI, alergi dsb..." rows={3} style={{...IS,resize:"none"}}/></div>
-              <button onClick={simpanTK} disabled={loading} style={{width:"100%",background:loading?"#D1D5DB":"linear-gradient(135deg, #10B981 0%, #059669 100%)",color:"white",border:"none",borderRadius:16,padding:"16px",fontSize:16,fontWeight:900,cursor:loading?"not-allowed":"pointer",boxShadow:loading?"none":"0 8px 20px rgba(16,185,129,0.3)"}}>{loading?"Menyimpan Riwayat...":"💾 Kunci Data Sekecil"}</button>
+              <button onClick={simpanTK} disabled={loading} className="btn-heroic" style={{ width:"100%" }}>{loading?"Menyimpan Riwayat...":"💾 Kunci Data Sekecil"}</button>
             </div>
             
             <div style={{display:"flex",flexDirection:"column",gap:20}}>

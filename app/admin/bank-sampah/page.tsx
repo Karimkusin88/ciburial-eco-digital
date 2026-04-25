@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import "../admin-styles-heroic.css";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 interface Saldo { kk_id: string; total_poin: number; total_setor_kg: number; keluarga: { kepala_keluarga: string; rt: string; } }
@@ -45,18 +46,26 @@ export default function AdminBankSampahPage() {
     setLoading(true);
     const jenis = jenisList.find(j => j.id === form.jenis_sampah_id)!;
     const poin = Math.round(Number(form.berat_kg) * jenis.poin_per_kg);
+    
+    // 1. Catat transaksi sampah
     await supabase.from("setor_sampah").insert({ ...form, berat_kg: Number(form.berat_kg), poin_didapat: poin });
-    // Update saldo
-    const { data: existing } = await supabase.from("saldo_poin").select("*").eq("kk_id", form.kk_id).single();
-    if (existing) {
-      await supabase.from("saldo_poin").update({
-        total_poin: existing.total_poin + poin,
-        total_setor_kg: Number(existing.total_setor_kg) + Number(form.berat_kg),
-        last_update: new Date().toISOString(),
-      }).eq("kk_id", form.kk_id);
-    } else {
-      await supabase.from("saldo_poin").insert({ kk_id: form.kk_id, total_poin: poin, total_setor_kg: Number(form.berat_kg) });
+    
+    // 2. Update saldo poin pakai library terpusat
+    const { data: anggota } = await supabase.from("anggota_kk").select("id").eq("kk_id", form.kk_id).limit(1).single();
+    if (!anggota) {
+      setLoading(false);
+      return showToast("❌ Gagal menemukan data anggota untuk KK ini.");
     }
+
+    const { tambahPoin } = await import("@/lib/ecoReward");
+    await tambahPoin({
+      anggotaId: anggota.id,
+      kkId: form.kk_id,
+      jumlah: poin,
+      sumber: "bank_sampah",
+      keterangan: `Setor ${form.berat_kg}kg sampah ${jenis.kategori}`
+    });
+    
     showToast(`✅ Berhasil! +${poin} poin untuk ${kkList.find(k => k.id === form.kk_id)?.kepala_keluarga}`);
     setForm(emptySetor);
     setLoading(false);
@@ -75,7 +84,7 @@ export default function AdminBankSampahPage() {
   const KATICON: Record<string, string> = { plastik: "♻️", kertas: "📄", logam: "🔧", organik: "🌿", elektronik: "💻" };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f5f0e8", fontFamily: "'Segoe UI',system-ui,sans-serif" }}>
+    <div className="admin-page heroic-bg" style={{ minHeight: "100vh", fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
       {toast && <div style={{ position: "fixed", top: 20, left: "50%", transform: "translateX(-50%)", background: "#2d5a40", color: "white", padding: "10px 20px", borderRadius: 12, zIndex: 999, fontSize: 14, boxShadow: "0 4px 20px rgba(0,0,0,0.15)" }}>{toast}</div>}
 
       <header style={{ background: "#f5f0e8", borderBottom: "1px solid rgba(45,90,64,0.12)", padding: "14px 20px", position: "sticky", top: 0, zIndex: 10, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -101,10 +110,10 @@ export default function AdminBankSampahPage() {
         {/* SETOR */}
         {tab === "setor" && (
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-            <div style={{ background: "white", borderRadius: 16, padding: 20, border: "1px solid rgba(45,90,64,0.1)", boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
+            <div className="card-heroic">
               <h3 style={{ margin: "0 0 16px", color: "#1a2e1f", fontSize: 15 }}>📥 Input Setor Sampah</h3>
               <div style={{ marginBottom: 12 }}>
-                <label style={{ fontSize: 11, fontWeight: 700, color: "#6b7c6d", letterSpacing: "0.06em", textTransform: "uppercase", display: "block", marginBottom: 4 }}>Warga / KK *</label>
+                <label className="form-label-heroic">Warga / KK *</label>
                 <select value={form.kk_id} onChange={e => setForm({ ...form, kk_id: e.target.value })}
                   style={{ width: "100%", padding: "9px 12px", borderRadius: 10, border: "1.5px solid rgba(45,90,64,0.2)", fontSize: 13, background: "#fafaf8", outline: "none" }}>
                   <option value="">-- Pilih warga --</option>
@@ -112,7 +121,7 @@ export default function AdminBankSampahPage() {
                 </select>
               </div>
               <div style={{ marginBottom: 12 }}>
-                <label style={{ fontSize: 11, fontWeight: 700, color: "#6b7c6d", letterSpacing: "0.06em", textTransform: "uppercase", display: "block", marginBottom: 4 }}>Jenis Sampah *</label>
+                <label className="form-label-heroic">Jenis Sampah *</label>
                 <select value={form.jenis_sampah_id} onChange={e => setForm({ ...form, jenis_sampah_id: e.target.value })}
                   style={{ width: "100%", padding: "9px 12px", borderRadius: 10, border: "1.5px solid rgba(45,90,64,0.2)", fontSize: 13, background: "#fafaf8", outline: "none" }}>
                   <option value="">-- Pilih jenis --</option>
@@ -124,7 +133,7 @@ export default function AdminBankSampahPage() {
                 </select>
               </div>
               <div style={{ marginBottom: 16 }}>
-                <label style={{ fontSize: 11, fontWeight: 700, color: "#6b7c6d", letterSpacing: "0.06em", textTransform: "uppercase", display: "block", marginBottom: 4 }}>Berat (kg) *</label>
+                <label className="form-label-heroic">Berat (kg) *</label>
                 <input type="number" step="0.1" value={form.berat_kg} onChange={e => setForm({ ...form, berat_kg: e.target.value })} placeholder="2.5"
                   style={{ width: "100%", padding: "9px 12px", borderRadius: 10, border: "1.5px solid rgba(45,90,64,0.2)", fontSize: 13, background: "#fafaf8", outline: "none", boxSizing: "border-box" }} />
               </div>
@@ -137,13 +146,13 @@ export default function AdminBankSampahPage() {
                   <span style={{ fontSize: 12, color: "#7a9a7e" }}> akan ditambahkan</span>
                 </div>
               )}
-              <button onClick={simpanSetor} disabled={loading} style={{ width: "100%", background: "#2d5a40", color: "white", border: "none", borderRadius: 10, padding: "11px", fontSize: 14, fontWeight: 600, cursor: loading ? "not-allowed" : "pointer" }}>
+              <button onClick={simpanSetor} disabled={loading} className="btn-heroic">
                 {loading ? "Menyimpan..." : "💾 Catat Setoran"}
               </button>
             </div>
 
             {/* Tabel poin sampah */}
-            <div style={{ background: "white", borderRadius: 16, padding: 20, border: "1px solid rgba(45,90,64,0.1)", boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
+            <div className="card-heroic">
               <h3 style={{ margin: "0 0 14px", color: "#1a2e1f", fontSize: 15 }}>📊 Tabel Poin Sampah</h3>
               {Object.entries(jenisByKat).map(([kat, items]) => (
                 <div key={kat} style={{ marginBottom: 14 }}>
@@ -162,7 +171,7 @@ export default function AdminBankSampahPage() {
 
         {/* SALDO */}
         {tab === "saldo" && (
-          <div style={{ background: "white", borderRadius: 16, border: "1px solid rgba(45,90,64,0.1)", overflow: "hidden", boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
+          <div className="card-heroic">
             {saldoList.length === 0 ? (
               <div style={{ padding: 40, textAlign: "center", color: "#a8b5a9" }}>Belum ada setoran</div>
             ) : saldoList.map((s, i) => (
@@ -185,7 +194,7 @@ export default function AdminBankSampahPage() {
         {tab === "tukar" && (
           <div>
             {penukaran.length === 0 ? (
-              <div style={{ background: "white", borderRadius: 16, padding: 40, textAlign: "center", border: "1px solid rgba(45,90,64,0.1)", color: "#a8b5a9" }}>
+              <div className="card-heroic">
                 Tidak ada permintaan penukaran pending
               </div>
             ) : penukaran.map(p => (
@@ -207,7 +216,7 @@ export default function AdminBankSampahPage() {
         {/* LEADERBOARD */}
         {tab === "leaderboard" && (
           <div>
-            <div style={{ background: "white", borderRadius: 16, padding: 20, border: "1px solid rgba(45,90,64,0.1)", boxShadow: "0 1px 6px rgba(0,0,0,0.04)", marginBottom: 16 }}>
+            <div className="card-heroic">
               <h3 style={{ margin: "0 0 4px", color: "#1a2e1f", fontSize: 16, fontWeight: 800 }}>🏆 Top Penabung Sampah</h3>
               <p style={{ margin: "0 0 16px", color: "#7a9a7e", fontSize: 12 }}>Warga terbaik dalam menjaga lingkungan Ciburial!</p>
               {saldoList.slice(0, 10).map((s, i) => (

@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import "../admin-styles-heroic.css";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 interface Stat { label: string; value: string | number; icon: string; sub?: string; color?: string; }
@@ -67,7 +68,7 @@ export default function DashboardPage() {
   }));
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f5f0e8", fontFamily: "'Segoe UI',system-ui,sans-serif" }}>
+    <div className="admin-page heroic-bg" style={{ minHeight: "100vh", fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
       <header style={{ background: "#f5f0e8", borderBottom: "1px solid rgba(45,90,64,0.12)", padding: "14px 20px", position: "sticky", top: 0, zIndex: 10, display: "flex", alignItems: "center", gap: 12 }}>
         <a href="/admin" style={{ color: "#6b7c6d", textDecoration: "none", fontSize: 13 }}>← Admin</a>
         <span style={{ color: "#c8bfaa" }}>|</span>
@@ -97,7 +98,7 @@ export default function DashboardPage() {
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
               {/* Transaksi terbaru */}
-              <div style={{ background: "white", borderRadius: 16, padding: 20, border: "1px solid rgba(45,90,64,0.1)", boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
+              <div className="card-heroic">
                 <h3 style={{ margin: "0 0 14px", fontSize: 14, fontWeight: 700, color: "#1a2e1f" }}>💰 Transaksi Terbaru</h3>
                 {transaksi.length === 0 ? <div style={{ color: "#a8b5a9", fontSize: 13 }}>Belum ada data</div> :
                   transaksi.map((t: any, i: number) => (
@@ -116,7 +117,7 @@ export default function DashboardPage() {
               </div>
 
               {/* Status Pengaduan */}
-              <div style={{ background: "white", borderRadius: 16, padding: 20, border: "1px solid rgba(45,90,64,0.1)", boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
+              <div className="card-heroic">
                 <h3 style={{ margin: "0 0 14px", fontSize: 14, fontWeight: 700, color: "#1a2e1f" }}>📢 Status Pengaduan</h3>
                 {pengaduanByStatus.map(p => {
                   const total = pengaduan.length || 1;
@@ -142,7 +143,7 @@ export default function DashboardPage() {
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
               {/* Bank Sampah Stats */}
-              <div style={{ background: "white", borderRadius: 16, padding: 20, border: "1px solid rgba(45,90,64,0.1)", boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
+              <div className="card-heroic">
                 <h3 style={{ margin: "0 0 14px", fontSize: 14, fontWeight: 700, color: "#1a2e1f" }}>♻️ Bank Sampah</h3>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                   {[
@@ -161,7 +162,7 @@ export default function DashboardPage() {
               </div>
 
               {/* Quick Links */}
-              <div style={{ background: "white", borderRadius: 16, padding: 20, border: "1px solid rgba(45,90,64,0.1)", boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
+              <div className="card-heroic">
                 <h3 style={{ margin: "0 0 14px", fontSize: 14, fontWeight: 700, color: "#1a2e1f" }}>⚡ Akses Cepat</h3>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                   {[

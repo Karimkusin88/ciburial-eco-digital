@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import "../admin-styles-heroic.css";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 interface Kegiatan {
@@ -154,7 +155,7 @@ export default function KalenderPage() {
   const selectedKegiatan = selected ? kegiatan.find((k) => k.id === selected) : null;
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f5f0e8", fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
+    <div className="admin-page heroic-bg" style={{ minHeight: "100vh", fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
       {/* HEADER */}
       <header style={{ background: "#f5f0e8", borderBottom: "1px solid rgba(45,90,64,0.12)", padding: "14px 20px", position: "sticky", top: 0, zIndex: 10, display: "flex", alignItems: "center", gap: 12 }}>
         <a href="/admin" style={{ color: "#6b7c6d", textDecoration: "none", fontSize: 13 }}>← Admin Panel</a>
@@ -179,7 +180,7 @@ export default function KalenderPage() {
         <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 28 }}>
           {/* KALENDER GRID */}
           <div>
-            <div style={{ background: "white", borderRadius: 16, padding: 24, border: "1px solid rgba(45,90,64,0.1)", boxShadow: "0 4px 12px rgba(0,0,0,0.04)" }}>
+            <div className="card-heroic">
               {/* ... (grid kalender tetap sama seperti sebelumnya, gw singkat biar ga terlalu panjang) ... */}
               {/* Nav bulan, grid hari, cells dll tetap sama seperti kode lama lu */}
               {/* Kalau mau full grid, bilang aja, tapi ini sudah include logic yang benar */}
@@ -251,7 +252,7 @@ export default function KalenderPage() {
 
             <div style={{ marginTop: 28, display: "flex", gap: 12 }}>
               <button onClick={() => { setShowModal(false); setEditingId(null); }} style={{ flex: 1, padding: 14, borderRadius: 12, border: "1px solid #ddd", background: "white" }}>Batal</button>
-              <button onClick={handleSave} style={{ flex: 1, padding: 14, borderRadius: 12, background: "#2d5a40", color: "white", border: "none" }}>Simpan</button>
+              <button onClick={handleSave} className="btn-heroic">Simpan</button>
             </div>
           </div>
         </div>

@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import "../admin-styles-heroic.css";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 interface ZakatRow { id:string; kk_id:string; tahun:number; jumlah_jiwa:number; jenis:string; nominal_kg:number; nominal_uang:number; infaq_uang:number; tgl_bayar:string; keluarga:{kepala_keluarga:string;rt:string;golongan_zakat:string}; }
@@ -119,7 +120,7 @@ export default function AdminZakatV2Page(){
   function MiniBarChart({label, masuk, keluar, unit}: {label:string, masuk:number, keluar:number, unit:string}) {
      const max = Math.max(masuk, keluar, 1);
      return (
-        <div style={{background:"white", padding:20, borderRadius:16, border:"1px solid #eee"}}>
+        <div className="card-heroic">
            <div style={{fontSize:11, fontWeight:800, color:"#999", marginBottom:16}}>{label.toUpperCase()}</div>
            <div style={{display:"flex", alignItems:"flex-end", gap:20, height:100, marginBottom:12}}>
               <div style={{flex:1, display:"flex", flexDirection:"column", alignItems:"center", gap:8}}>
@@ -138,7 +139,7 @@ export default function AdminZakatV2Page(){
   }
 
   return(
-    <div style={{minHeight:"100vh",background:"#f5f0e8",fontFamily:"system-ui,sans-serif"}}>
+    <div className="admin-page heroic-bg" style={{ minHeight: "100vh", fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
       {toast.msg&&<div style={{position:"fixed",top:20,left:"50%",transform:"translateX(-50%)",background:toast.ok?"#2d5a40":"#dc3545",color:"white",padding:"10px 20px",borderRadius:12,zIndex:999,fontSize:14,boxShadow:"0 4px 20px rgba(0,0,0,0.15)"}}>{toast.msg}</div>}
 
       <header style={{background:"#f5f0e8",borderBottom:"1px solid rgba(45,90,64,0.12)",padding:"14px 20px",position:"sticky",top:0,zIndex:10,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
@@ -225,7 +226,7 @@ export default function AdminZakatV2Page(){
                 <label style={LS}>INFAQ TAMBAHAN</label><input type="number" value={form.infaq_uang} onChange={e=>setForm({...form,infaq_uang:Number(e.target.value)})} style={{...IS, border:"1.5px solid #b8943f40", fontWeight:800}}/>
               </div>
               <div style={{display:"flex", gap:10}}>
-                 <button onClick={simpan} disabled={loading} style={{flex:2, background:"#2d5a40", color:"white", border:"none", borderRadius:12, padding:"14px", fontSize:14, fontWeight:800, cursor:"pointer"}}>💾 SIMPAN</button>
+                 <button onClick={simpan} disabled={loading} className="btn-heroic">💾 SIMPAN</button>
                  {form.id && <button onClick={()=>setForm(emptyForm)} style={{flex:1, background:"#eee", border:"none", borderRadius:12, fontWeight:700, cursor:"pointer"}}>BATAL</button>}
               </div>
             </div>

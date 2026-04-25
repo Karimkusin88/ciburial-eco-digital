@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import "../admin-styles-heroic.css";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 // ─── TYPES ───────────────────────────────────────────────────────────────────
@@ -215,7 +216,7 @@ export default function AdminRondaPage() {
   const jadwalHariIni = jadwal.filter(j => j.tanggal === hariIni);
 
   return (
-    <div style={{ minHeight:"100vh", background:"linear-gradient(135deg,#FAF8F3 0%,#F0EFE8 100%)", fontFamily:"'Inter','Courier New',sans-serif", color:"#1C3A2B", position:"relative", overflow:"hidden" }}>
+    <div className="admin-page heroic-bg" style={{ minHeight: "100vh", fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
 
       {/* Background grid pattern */}
       <div style={{ position:"fixed", inset:0, backgroundImage:"linear-gradient(rgba(47,143,78,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(47,143,78,0.03) 1px,transparent 1px)", backgroundSize:"40px 40px", pointerEvents:"none", zIndex:0 }}/>
@@ -474,7 +475,7 @@ export default function AdminRondaPage() {
                 { icon:"🏆", val:`${absensi.length*POIN_RONDA}`, label:"TOTAL POIN RONDA", color:"#B8943F" },
                 { icon:"📅", val:jadwal.length, label:"TOTAL JADWAL", color:"#7B68A6" },
               ].map(s => (
-                <div key={s.label} className="ronda-card" style={{ background:"linear-gradient(135deg,rgba(255,254,249,0.8),rgba(232,245,238,0.4))", borderRadius:14, padding:"16px 14px" }}>
+                <div key={s.label} className="card-heroic stat-box-heroic">
                   <div style={{ fontSize:22, marginBottom:8 }}>{s.icon}</div>
                   <div style={{ fontFamily:"'Rajdhani',sans-serif", fontSize:28, fontWeight:700, color:s.color, lineHeight:1 }}>{s.val}</div>
                   <div style={{ fontSize:9, color:"rgba(47,143,78,0.5)", letterSpacing:"0.12em", marginTop:4, fontWeight:500 }}>{s.label}</div>
@@ -548,7 +549,7 @@ export default function AdminRondaPage() {
                   </div>
                 )}
 
-                <button onClick={scanning?stopNFC:startNFC} className="scan-btn"
+                <button onClick={scanning?stopNFC:startNFC} className="btn-heroic"
                   style={{ width:"100%", marginTop:lastScan?0:20, padding:"13px", borderRadius:12, border:`1.5px solid ${scanning?"rgba(184,72,48,0.4)":"rgba(47,143,78,0.3)"}`, background:scanning?"rgba(184,72,48,0.1)":"linear-gradient(135deg,#2F8F4E,#4FBF7E)", color:scanning?"#B8472F":"#FFF", fontSize:12, fontWeight:700, cursor:"pointer", letterSpacing:"0.1em", fontFamily:"'Inter',sans-serif" }}>
                   {scanning ? "⏹ STOP SCANNING" : "▶ AKTIFKAN NFC"}
                 </button>
@@ -568,7 +569,7 @@ export default function AdminRondaPage() {
                     <option value="">-- Pilih warga --</option>
                     {kkList.map(k => <option key={k.id} value={k.id}>{k.kepala_keluarga} (RT {k.rt})</option>)}
                   </select>
-                  <button onClick={()=>{ if(manualKK){ catatAbsensi(manualKK,"manual"); setManualKK(""); } }} className="scan-btn"
+                  <button onClick={()=>{ if(manualKK){ catatAbsensi(manualKK,"manual"); setManualKK(""); } }} className="btn-heroic"
                     style={{ width:"100%", padding:"10px", borderRadius:10, border:"1.5px solid rgba(47,143,78,0.3)", background:"linear-gradient(135deg,#2F8F4E,#4FBF7E)", color:"#FFF", fontSize:11, fontWeight:700, letterSpacing:"0.1em", fontFamily:"'Inter',sans-serif", boxShadow:"0 2px 6px rgba(47,143,78,0.2)" }}>
                     ✓ CATAT HADIR
                   </button>
@@ -591,7 +592,7 @@ export default function AdminRondaPage() {
                           <div style={{ fontSize:10, color:"rgba(47,143,78,0.5)", fontWeight:500 }}>{a.metode==="nfc"?"e-KTP/NFC":"Manual"} · {new Date(a.waktu_tap).toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"})}</div>
                         </div>
                         <div style={{ fontSize:11, color:"#2F8F4E", fontWeight:700 }}>+{POIN_RONDA}</div>
-                        <button onClick={() => deleteAbsensi(a.id, a.nama, a.kk_id)} className="scan-btn"
+                        <button onClick={() => deleteAbsensi(a.id, a.nama, a.kk_id)} className="btn-heroic"
                           style={{ padding:"5px 10px", borderRadius:6, border:"1px solid rgba(184,72,48,0.3)", background:"rgba(184,72,48,0.08)", color:"#B8472F", fontSize:10, fontWeight:600, letterSpacing:"0.08em", fontFamily:"'Inter',sans-serif", cursor:"pointer", transition:"all 0.2s ease" }}
                           onMouseEnter={e => (e.currentTarget.style.background = "rgba(184,72,48,0.15)")}
                           onMouseLeave={e => (e.currentTarget.style.background = "rgba(184,72,48,0.08)")}>
@@ -639,16 +640,16 @@ export default function AdminRondaPage() {
               </div>
 
               <div style={{ display:"flex", flexDirection:"column", gap:8, marginBottom:16 }}>
-                <button onClick={buatJadwal} className="scan-btn"
+                <button onClick={buatJadwal} className="btn-heroic"
                   style={{ width:"100%", padding:"11px", borderRadius:12, border:"1.5px solid rgba(47,143,78,0.3)", background:"linear-gradient(135deg,#2F8F4E,#4FBF7E)", color:"#FFF", fontSize:12, fontWeight:700, letterSpacing:"0.1em", fontFamily:"'Inter',sans-serif", boxShadow:"0 2px 8px rgba(47,143,78,0.2)", transition:"all 0.3s ease" }}>
                   + BUAT 1 JADWAL
                 </button>
                 <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
-                  <button onClick={() => generateJadwalRange(7)} className="scan-btn"
+                  <button onClick={() => generateJadwalRange(7)} className="btn-heroic"
                     style={{ padding:"10px", borderRadius:12, border:"1.5px solid rgba(79,191,126,0.4)", background:"rgba(79,191,126,0.12)", color:"#2F8F4E", fontSize:11, fontWeight:700, letterSpacing:"0.08em", fontFamily:"'Inter',sans-serif", boxShadow:"0 2px 8px rgba(47,143,78,0.1)", transition:"all 0.3s ease" }}>
                     📅 1 MINGGU
                   </button>
-                  <button onClick={() => generateJadwalRange(30)} className="scan-btn"
+                  <button onClick={() => generateJadwalRange(30)} className="btn-heroic"
                     style={{ padding:"10px", borderRadius:12, border:"1.5px solid rgba(79,191,126,0.4)", background:"rgba(79,191,126,0.12)", color:"#2F8F4E", fontSize:11, fontWeight:700, letterSpacing:"0.08em", fontFamily:"'Inter',sans-serif", boxShadow:"0 2px 8px rgba(47,143,78,0.1)", transition:"all 0.3s ease" }}>
                     📆 1 BULAN
                   </button>

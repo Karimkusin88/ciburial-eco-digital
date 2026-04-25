@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import "../admin-styles-heroic.css";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 interface KK { id:string; no_kk:string; kepala_keluarga:string; alamat:string; rt:string; rw:string; no_wa:string; nfc_id:string; status:string; golongan_zakat:string; kategori_mustahiq:string; pekerjaan_kepala:string; tgl_lahir_kepala:string; }
@@ -200,7 +201,7 @@ export default function AdminWargaPage(){
   const activeAnggota=activeKK?(anggotaMap[activeKK]||[]):[];
 
   return(
-    <div style={{minHeight:"100vh",background:"#f5f0e8",fontFamily:"'Segoe UI',system-ui,sans-serif"}}>
+    <div className="admin-page heroic-bg" style={{ minHeight: "100vh", fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
       {toast.msg&&<div style={{position:"fixed",top:20,left:"50%",transform:"translateX(-50%)",background:toast.ok?"#2d5a40":"#dc3545",color:"white",padding:"10px 20px",borderRadius:12,zIndex:999,fontSize:14,boxShadow:"0 4px 20px rgba(0,0,0,0.15)",maxWidth:"85vw",textAlign:"center"}}>{toast.msg}</div>}
 
       <header style={{background:"#f5f0e8",borderBottom:"1px solid rgba(45,90,64,0.12)",padding:"14px 20px",position:"sticky",top:0,zIndex:10,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
@@ -233,7 +234,7 @@ export default function AdminWargaPage(){
 
         {/* Form KK */}
         {showFormKK&&(
-          <div style={{background:"white",borderRadius:16,padding:20,border:"1px solid rgba(45,90,64,0.12)",boxShadow:"0 2px 12px rgba(0,0,0,0.06)",marginBottom:20}}>
+          <div className="card-heroic">
             <h3 style={{margin:"0 0 16px",color:"#1a2e1f",fontSize:15}}>{editKKId?"✏️ Edit KK":"➕ Tambah KK Baru"}</h3>
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
               {[{label:"No. KK *",key:"no_kk",ph:"3204xxxxxxxxxxxx"},{label:"Kepala Keluarga *",key:"kepala_keluarga",ph:"Nama lengkap"},{label:"No. WhatsApp",key:"no_wa",ph:"08xxxxxxxxxx"},{label:"NFC Card ID",key:"nfc_id",ph:"ID chip NFC"}].map(f=>(
@@ -259,7 +260,7 @@ export default function AdminWargaPage(){
               {formKK.golongan_zakat==="mustahiq"&&<div><label style={LS}>Kategori Mustahiq</label><select value={formKK.kategori_mustahiq} onChange={e=>setFormKK({...formKK,kategori_mustahiq:e.target.value})} style={IS}><option value="">-- Pilih --</option>{KATEGORI_MUSTAHIQ.map(k=><option key={k.v} value={k.v}>{k.l}</option>)}</select></div>}
             </div>
             <div style={{display:"flex",gap:10,marginTop:16}}>
-              <button onClick={simpanKK} disabled={loading} style={{flex:1,background:"#2d5a40",color:"white",border:"none",borderRadius:10,padding:"10px",fontSize:14,fontWeight:600,cursor:loading?"not-allowed":"pointer"}}>{loading?"Menyimpan...":editKKId?"💾 Update":"💾 Simpan"}</button>
+              <button onClick={simpanKK} disabled={loading} className="btn-heroic">{loading?"Menyimpan...":editKKId?"💾 Update":"💾 Simpan"}</button>
               <button onClick={()=>{setShowFormKK(false);setFormKK(emptyKK);setEditKKId(null);}} style={{padding:"10px 20px",background:"transparent",border:"1.5px solid rgba(45,90,64,0.2)",borderRadius:10,fontSize:14,color:"#6b7c6d",cursor:"pointer"}}>Batal</button>
             </div>
           </div>
@@ -283,7 +284,7 @@ export default function AdminWargaPage(){
         <div style={{display:"grid",gridTemplateColumns:activeKK?"1fr 1.4fr":"1fr",gap:16}}>
 
           {/* List KK */}
-          <div style={{background:"white",borderRadius:16,border:"1px solid rgba(45,90,64,0.1)",overflow:"hidden",boxShadow:"0 1px 6px rgba(0,0,0,0.04)"}}>
+          <div className="card-heroic">
             {filtered.length===0?(
               <div style={{padding:40,textAlign:"center",color:"#a8b5a9"}}>{search?"Tidak ada hasil":"Belum ada data warga"}</div>
             ):filtered.map((kk,i)=>{
@@ -333,7 +334,7 @@ export default function AdminWargaPage(){
 
               {/* Form Anggota */}
               {showFormAnggota&&(
-                <div style={{background:"white",borderRadius:16,padding:18,border:"1px solid rgba(45,90,64,0.12)",boxShadow:"0 2px 12px rgba(0,0,0,0.06)",marginBottom:12}}>
+                <div className="card-heroic">
                   <h4 style={{margin:"0 0 14px",color:"#1a2e1f",fontSize:14}}>{editAnggotaId?"✏️ Edit Anggota":"➕ Tambah Anggota"}</h4>
                   <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
                     <div style={{gridColumn:"1/-1"}}><label style={LS}>Nama Lengkap *</label><input value={formAnggota.nama} onChange={e=>setFormAnggota({...formAnggota,nama:e.target.value})} placeholder="Nama lengkap" style={IS}/></div>
@@ -351,14 +352,14 @@ export default function AdminWargaPage(){
                     </div>
                   )}
                   <div style={{display:"flex",gap:10,marginTop:14}}>
-                    <button onClick={simpanAnggota} disabled={loading} style={{flex:1,background:"#2d5a40",color:"white",border:"none",borderRadius:10,padding:"10px",fontSize:14,fontWeight:600,cursor:loading?"not-allowed":"pointer"}}>{loading?"Menyimpan...":editAnggotaId?"💾 Update":"💾 Simpan"}</button>
+                    <button onClick={simpanAnggota} disabled={loading} className="btn-heroic">{loading?"Menyimpan...":editAnggotaId?"💾 Update":"💾 Simpan"}</button>
                     <button onClick={()=>{setShowFormAnggota(false);setFormAnggota(emptyAnggota);setEditAnggotaId(null);}} style={{padding:"10px 16px",background:"transparent",border:"1.5px solid rgba(45,90,64,0.2)",borderRadius:10,fontSize:14,color:"#6b7c6d",cursor:"pointer"}}>Batal</button>
                   </div>
                 </div>
               )}
 
               {/* List Anggota */}
-              <div style={{background:"white",borderRadius:16,border:"1px solid rgba(45,90,64,0.1)",overflow:"hidden",boxShadow:"0 1px 6px rgba(0,0,0,0.04)"}}>
+              <div className="card-heroic">
                 <div style={{padding:"12px 16px",borderBottom:"1px solid rgba(45,90,64,0.08)"}}>
                   <span style={{fontSize:12,fontWeight:700,color:"#6b7c6d",textTransform:"uppercase",letterSpacing:"0.06em"}}>Anggota ({activeAnggota.length} jiwa)</span>
                 </div>

@@ -748,6 +748,9 @@ export default function AdminPage() {
                         {href:"/admin/ronda",i:"🔦",l:"RONDA NFC"},
                         {href:"/admin/zakat",i:"🕌",l:"ZAKAT"},
                         {href:"/admin/dashboard",i:"📊",l:"ANALYTICS"},
+                        {href:"/admin/orders",i:"📦",l:"PESANAN"},
+                        {href:"/admin/kalender",i:"📅",l:"KALENDER"},
+                        {href:"/admin/voting",i:"🗳️",l:"VOTING"},
                       ].map(l=>(
                         <a key={l.href} href={l.href} style={{display:"flex",alignItems:"center",gap:10,padding:"14px",borderRadius:12,background:"rgba(255,255,255,0.1)",border:"1px solid rgba(255,255,255,0.1)",textDecoration:"none",color:"white",fontSize:12,fontWeight:800, transition: "all 0.3s"}} 
                         onMouseOver={e => {e.currentTarget.style.background = "rgba(255,255,255,0.2)"; e.currentTarget.style.transform = "translateX(4px)"}}
