@@ -63,7 +63,8 @@ export default function AdminBankSampahPage() {
       kkId: form.kk_id,
       jumlah: poin,
       sumber: "bank_sampah",
-      keterangan: `Setor ${form.berat_kg}kg sampah ${jenis.kategori}`
+      keterangan: `Setor ${form.berat_kg}kg sampah ${jenis.kategori}`,
+      beratKg: Number(form.berat_kg)
     });
     
     showToast(`✅ Berhasil! +${poin} poin untuk ${kkList.find(k => k.id === form.kk_id)?.kepala_keluarga}`);

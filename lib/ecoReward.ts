@@ -26,15 +26,17 @@ export async function tambahPoin({
   jumlah,
   sumber,
   keterangan,
+  beratKg = 0,
 }: {
   anggotaId: string;
   kkId: string;
   jumlah: number;
   sumber: string;
   keterangan: string;
+  beratKg?: number;
 }) {
   try {
-    // 1. Ambil saldo sekarang
+    // 1. Ambil saldo anggota sekarang
     const { data: anggota } = await supabase
       .from("anggota_kk")
       .select("saldo_poin, nama")
@@ -45,13 +47,13 @@ export async function tambahPoin({
 
     const saldoBaru = (anggota.saldo_poin || 0) + jumlah;
 
-    // 2. Update saldo
+    // 2. Update saldo individu
     await supabase
       .from("anggota_kk")
       .update({ saldo_poin: saldoBaru })
       .eq("id", anggotaId);
 
-    // 3. Catat riwayat
+    // 3. Catat riwayat individu
     await supabase.from("riwayat_poin").insert({
       anggota_id: anggotaId,
       kk_id: kkId,
@@ -60,6 +62,27 @@ export async function tambahPoin({
       sumber,
       keterangan,
     });
+
+    // 4. Update Saldo Poin Global Keluarga (Tabel saldo_poin)
+    const { data: existingSaldo } = await supabase
+      .from("saldo_poin")
+      .select("*")
+      .eq("kk_id", kkId)
+      .single();
+
+    if (existingSaldo) {
+      await supabase.from("saldo_poin").update({
+        total_poin: (existingSaldo.total_poin || 0) + jumlah,
+        total_setor_kg: (existingSaldo.total_setor_kg || 0) + beratKg,
+        last_update: new Date().toISOString(),
+      }).eq("kk_id", kkId);
+    } else {
+      await supabase.from("saldo_poin").insert({ 
+        kk_id: kkId, 
+        total_poin: jumlah, 
+        total_setor_kg: beratKg 
+      });
+    }
 
     return {
       ok: true,
