@@ -154,15 +154,21 @@ export default function AdminRondaPage() {
 
     // Tambah poin
     if (ang?.id) {
-      await supabase.from("anggota_kk").update({ saldo_poin:(ang.saldo_poin||0)+POIN_RONDA }).eq("id", ang.id);
-      await supabase.from("riwayat_poin").insert({ anggota_id:ang.id, kk_id:realKKId, jumlah:POIN_RONDA, jenis:"masuk", sumber:"ronda", keterangan:`Ronda malam — ${new Date().toLocaleDateString("id-ID")}` });
+      const { tambahPoin } = await import("@/lib/ecoReward");
+      await tambahPoin({
+        anggotaId: ang.id,
+        kkId: realKKId,
+        jumlah: 30, // POIN_RONDA
+        sumber: "ronda",
+        keterangan: `Ronda malam — ${new Date().toLocaleDateString("id-ID")}`
+      });
     }
 
-    const waktu = new Date().toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"});
-    setLastScan({ nama, poin:POIN_RONDA, waktu });
-    showToast(`✅ ${nama} HADIR! +${POIN_RONDA} poin`);
+    const waktu = new Date().toLocaleTimeString("id-ID", { hour:"2-digit", minute:"2-digit" });
+    setLastScan({ nama, poin:30, waktu });
+    showToast(`✅ ${nama} tercatat! +30 Poin`);
     fetchAll();
-  }
+    }
 
   async function deleteAbsensi(absensiId: string, nama: string, kk_id: string) {
     if (!confirm(`Hapus absen ${nama}? Poin akan dikurangi.`)) return;

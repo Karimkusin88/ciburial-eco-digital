@@ -41,7 +41,7 @@ const KAT_MAP: Record<string, { l: string; i: string }> = {
 
 export default function TukarPoinPage() {
   const [hadiahList, setHadiahList] = useState<Hadiah[]>([]);
-  const [selectedKK, setSelectedKK] = useState<{ id: string; nama: string; rt: string } | null>(null);
+  const [selectedKK, setSelectedKK] = useState<{ id: string; nama: string; rt: string; kk_id: string } | null>(null);
   const [saldo, setSaldo] = useState<Saldo | null>(null);
   const [riwayat, setRiwayat] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -66,36 +66,70 @@ export default function TukarPoinPage() {
     const { data } = await supabase.from("katalog_hadiah").select("*").eq("aktif", true).order("poin_dibutuhkan");
     const dbHadiah = data ? (data as Hadiah[]) : [];
     
-    // Gabung DB dengan ATM_ITEMS, jangan duplikat
-    const existingNames = dbHadiah.map((h) => h.nama);
-    const combined = [...dbHadiah, ...ATM_ITEMS.filter(h => !existingNames.includes(h.nama))];
-    setHadiahList(combined);
+    // Gabung DB dengan ATM_ITEMS, hapus duplikat (termasuk yang namanya mirip)
+    const existingNames = dbHadiah.map((h) => h.nama.toLowerCase().replace(/\s+/g, ''));
+    const combined = [...dbHadiah];
+    
+    for (const item of ATM_ITEMS) {
+      const normalized = item.nama.toLowerCase().replace(/\s+/g, '');
+      if (!existingNames.includes(normalized)) {
+        combined.push(item);
+        existingNames.push(normalized);
+      }
+    }
+    
+    // Filter manual untuk membuang duplikat jika di DB ada yang double
+    const uniqueList: Hadiah[] = [];
+    const seenNames = new Set();
+    for (const item of combined) {
+      const normalized = item.nama.toLowerCase().replace(/\s+/g, '');
+      if (!seenNames.has(normalized)) {
+        uniqueList.push(item);
+        seenNames.add(normalized);
+      }
+    }
+
+    setHadiahList(uniqueList.sort((a, b) => a.poin_dibutuhkan - b.poin_dibutuhkan));
   }
 
-  async function fetchSaldo(kkId: string) {
-    if (!isSupabaseReady() || !kkId) return;
-    const { data } = await supabase.from("saldo_poin").select("*").eq("kk_id", kkId).single();
-    setSaldo(data as Saldo || { total_poin: 0, total_setor_kg: 0 });
-    const { data: r } = await supabase.from("penukaran_poin").select("*,katalog_hadiah(nama,kategori)").eq("kk_id", kkId).order("tgl_request", { ascending: false });
-    if (r) setRiwayat(r);
+  async function fetchSaldo(anggotaId: string, kkId: string) {
+    if (!isSupabaseReady() || !anggotaId) return;
+    const { data: anggota } = await supabase.from("anggota_kk").select("saldo_poin").eq("id", anggotaId).single();
+    const { data: saldoKK } = await supabase.from("saldo_poin").select("total_setor_kg").eq("kk_id", kkId).single();
+    
+    setSaldo({ 
+      total_poin: anggota?.saldo_poin || 0, 
+      total_setor_kg: saldoKK?.total_setor_kg || 0 
+    });
+    
+    const { data: r } = await supabase.from("penukaran_poin").select("*,katalog_hadiah(nama,kategori)").eq("anggota_id", anggotaId).order("tgl_request", { ascending: false });
+    // Fallback baca kk_id juga jika kolom anggota_id belum ada/kosong di data lama
+    const { data: rKK } = await supabase.from("penukaran_poin").select("*,katalog_hadiah(nama,kategori)").eq("kk_id", kkId).order("tgl_request", { ascending: false });
+    
+    // Gabung riwayat dan hilangkan duplikat
+    const allRiwayat = [...(r || []), ...(rKK || [])];
+    const uniqueRiwayat = Array.from(new Map(allRiwayat.map(item => [item.id, item])).values());
+    uniqueRiwayat.sort((a: any, b: any) => new Date(b.tgl_request).getTime() - new Date(a.tgl_request).getTime());
+    
+    setRiwayat(uniqueRiwayat);
   }
 
   useEffect(() => { fetchHadiah(); }, []);
 
   useEffect(() => {
-    if (selectedKK) fetchSaldo(selectedKK.id);
+    if (selectedKK) fetchSaldo(selectedKK.id, selectedKK.kk_id!);
     else setSaldo(null);
   }, [selectedKK]);
 
   async function nfcAbsensi(nfcId: string) {
     const id = nfcId.replace(/:/g, "").toUpperCase();
-    const { data: anggota } = await supabase.from("anggota_kk").select("kk_id, nama, nfc_id").eq("nfc_id", id).single();
+    const { data: anggota } = await supabase.from("anggota_kk").select("id, kk_id, nama, nfc_id, tgl_lahir").eq("nfc_id", id).single();
     
     if (!anggota) return showToast(`❌ Kartu tidak terdaftar! (${id})`, "error");
     
     const { data: kk } = await supabase.from("keluarga").select("id,kepala_keluarga,rt").eq("id", anggota.kk_id).single();
     if (kk) {
-      setSelectedKK({ id: kk.id, nama: kk.kepala_keluarga, rt: kk.rt });
+      setSelectedKK({ id: anggota.id, nama: anggota.nama, rt: kk.rt, kk_id: kk.id } as any);
       showToast(`👋 Halo ${anggota.nama}! Selamat datang di ATM Poin.`);
     }
   }
@@ -140,8 +174,13 @@ export default function TukarPoinPage() {
     }
     
     if (hadiahId) {
-      await supabase.from("penukaran_poin").insert({ kk_id: selectedKK.id, hadiah_id: hadiahId, poin_dipakai: h.poin_dibutuhkan, status: "pending" });
-      await supabase.from("saldo_poin").update({ total_poin: saldo.total_poin - h.poin_dibutuhkan }).eq("kk_id", selectedKK.id);
+      await supabase.from("penukaran_poin").insert({ 
+        kk_id: selectedKK.kk_id, 
+        hadiah_id: hadiahId, 
+        poin_dipakai: h.poin_dibutuhkan, 
+        status: "pending" 
+      });
+      await supabase.from("anggota_kk").update({ saldo_poin: saldo.total_poin - h.poin_dibutuhkan }).eq("id", selectedKK.id);
       showToast(`✅ Transaksi ${h.nama} berhasil diproses!`);
     } else {
       showToast("Gagal mencatat transaksi katalog, silakan coba lagi.", "error");
@@ -149,7 +188,7 @@ export default function TukarPoinPage() {
     
     setConfirm(null);
     setLoading(false);
-    fetchSaldo(selectedKK.id);
+    fetchSaldo(selectedKK.id, selectedKK.kk_id!);
   }
 
   return (

@@ -169,8 +169,8 @@ export default function AdminPosyanduPage(){
       const hariIni=new Date().toISOString().split("T")[0];
       const{data:cek}=await supabase.from("riwayat_poin").select("id").eq("anggota_id",ibu.id).eq("sumber","posyandu").gte("created_at",`${hariIni}T00:00:00`).lte("created_at",`${hariIni}T23:59:59`).limit(1);
       if(!cek||cek.length===0){
-        await supabase.from("anggota_kk").update({saldo_poin:(ibu.saldo_poin||0)+POIN_POSYANDU}).eq("id",ibu.id);
-        await supabase.from("riwayat_poin").insert({anggota_id:ibu.id,kk_id:anak.kk_id,jumlah:POIN_POSYANDU,jenis:"masuk",sumber:"posyandu",keterangan:`Posyandu Ceria — ${anak.nama} — ${formTK.tanggal}`});
+        const { tambahPoin } = await import("@/lib/ecoReward");
+        await tambahPoin({ anggotaId: ibu.id, kkId: anak.kk_id, jumlah: POIN_POSYANDU, sumber: "posyandu", keterangan: `Posyandu Ceria — ${anak.nama} — ${formTK.tanggal}` });
         showToast(`💕 Tersimpan! ${gz.label} | Ibu ${ibu.nama} +${POIN_POSYANDU} poin 🎉`);
       }else showToast(`💕 Tersimpan! Status: ${gz.label}`);
     }else showToast(`💕 Tersimpan! Status: ${gz.label}`);
@@ -190,14 +190,14 @@ export default function AdminPosyanduPage(){
     const hariIni=new Date().toISOString().split("T")[0];
     const{data:cek}=await supabase.from("riwayat_poin").select("id").eq("anggota_id",ibu.id).eq("sumber","posyandu").gte("created_at",`${hariIni}T00:00:00`).lte("created_at",`${hariIni}T23:59:59`).limit(1);
     if(cek&&cek.length>0)return showToast(`⚠️ Ibu ${ibu.nama} sudah scan kartu hari ini!`,false);
-    
-    await supabase.from("anggota_kk").update({saldo_poin:(ibu.saldo_poin||0)+POIN_POSYANDU}).eq("id",ibu.id);
-    await supabase.from("riwayat_poin").insert({anggota_id:ibu.id,kk_id:ibu.kk_id,jumlah:POIN_POSYANDU,jenis:"masuk",sumber:"posyandu",keterangan:`Tap NFC Posyandu Ceria — ${hariIni}`});
+
+    const { tambahPoin } = await import("@/lib/ecoReward");
+    await tambahPoin({ anggotaId: ibu.id, kkId: ibu.kk_id, jumlah: POIN_POSYANDU, sumber: "posyandu", keterangan: `Tap NFC Posyandu Ceria — ${hariIni}` });
+
     setLastScan({nama:ibu.nama,namaAnak:anak.map(a=>a.nama).join(", "),poin:POIN_POSYANDU});
     showToast(`💕 Selamat datang ibu ${ibu.nama}! +${POIN_POSYANDU} poin 🎉`);
     fetchAll();
-  }
-
+    }
   async function startNFC(){
     if(!("NDEFReader" in window))return showToast("⚠️ Pakai Chrome Android + aktifkan NFC dulu ya bunda!",false);
     try{
