@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
-import { TabType, Kegiatan, Produk, Transaksi, Iklan, DEF_KEG, DEF_PROD, DEF_TX, DEF_IKLAN, ALOKASI } from "@/components/home/types";
+import { TabType, Kegiatan, Produk, Transaksi, Testimoni, Iklan, DEF_KEG, DEF_PROD, DEF_TX, DEF_TESTIMONI, DEF_IKLAN, ALOKASI } from "@/components/home/types";
 import Navbar from "@/components/home/Navbar";
 import TentangTab from "@/components/home/TentangTab";
 import KegiatanTab from "@/components/home/KegiatanTab";
@@ -10,7 +10,6 @@ import ProposalTab from "@/components/home/ProposalTab";
 import TransparansiTab from "@/components/home/TransparansiTab";
 import MarketplaceTab from "@/components/home/MarketplaceTab";
 import Footer from "@/components/home/Footer";
-import FloatingWidget from "@/components/home/FloatingWidget";
 
 export default function Home() {
   const [tab, setTab] = useState<TabType>("tentang");
@@ -19,6 +18,7 @@ export default function Home() {
   const [kegiatan, setKegiatan] = useState<Kegiatan[]>(DEF_KEG);
   const [produk, setProduk] = useState<Produk[]>(DEF_PROD);
   const [transaksi, setTransaksi] = useState<Transaksi[]>(DEF_TX);
+  const [testimoni, setTestimoni] = useState<Testimoni[]>(DEF_TESTIMONI);
   const [iklan, setIklan] = useState<Iklan[]>(DEF_IKLAN);
   const [dataLoad, setDataLoad] = useState(false);
 
@@ -41,11 +41,15 @@ export default function Home() {
       if (p.data?.length) setProduk(p.data as Produk[]);
       if (t.data?.length) setTransaksi(t.data as Transaksi[]);
       
+      // Fetch testimoni (catch error if table doesn't exist yet)
+      let tm: any = { data: null };
       let ikl: any = { data: null };
       try {
+        tm = await supabase.from("testimoni").select("*").order("created_at", { ascending: false });
         ikl = await supabase.from("iklan").select("*").order("created_at", { ascending: false });
       } catch (e) {}
       
+      if (tm && tm.data && tm.data.length > 0) setTestimoni(tm.data as Testimoni[]);
       if (ikl && ikl.data && ikl.data.length > 0) setIklan(ikl.data as Iklan[]);
 
       setDataLoad(false);
@@ -66,12 +70,17 @@ export default function Home() {
       jumlah: total,
     };
     
+    // Optimistic update
     setTransaksi((prev) => [{ ...payload, id: crypto.randomUUID() } as Transaksi, ...prev]);
+
+    // Insert directly (webhook also checks for duplicates to prevent double counting)
     await supabase.from("transaksi").insert(payload);
   };
 
   // keuangan
   const totMasuk = transaksi.filter(t => t.tipe === "masuk").reduce((s, t) => s + t.jumlah, 0);
+  const totKeluar = transaksi.filter(t => t.tipe === "keluar").reduce((s, t) => s + t.jumlah, 0);
+  const saldo = totMasuk - totKeluar;
   const totTarget = ALOKASI.reduce((s, a) => s + a.target, 0); // 250.000.000
 
   return (
@@ -79,12 +88,7 @@ export default function Home() {
       <Navbar tab={tab} checkout={checkout} scrolled={scrolled} onNavigate={go} />
 
       {tab === "tentang" && !checkout && (
-        <TentangTab 
-          onNavigate={go} 
-          onPaymentSuccess={handlePaymentSuccess} 
-          totMasuk={totMasuk}
-          totTarget={totTarget}
-        />
+        <TentangTab onNavigate={go} testimoni={testimoni} onPaymentSuccess={handlePaymentSuccess} />
       )}
 
       {tab === "kegiatan" && (
@@ -111,7 +115,6 @@ export default function Home() {
       )}
 
       <Footer onNavigate={go} />
-      <FloatingWidget />
     </main>
   );
 }
