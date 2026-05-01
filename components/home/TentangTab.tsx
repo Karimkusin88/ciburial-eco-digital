@@ -60,14 +60,18 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
   const [showStory, setShowStory] = useState(false);
   const [selectedDonationMethod, setSelectedDonationMethod] = useState<string | null>(null);
   const [popoverPos, setPopoverPos] = useState({ top: 0, left: 0 });
+  const [openTime, setOpenTime] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
-      if (selectedDonationMethod) setSelectedDonationMethod(null);
+      // Hanya tutup jika sudah terbuka lebih dari 500ms untuk hindari instan close
+      if (selectedDonationMethod && Date.now() - openTime > 500) {
+        setSelectedDonationMethod(null);
+      }
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [selectedDonationMethod]);
+  }, [selectedDonationMethod, openTime]);
 
   // Calculate saldo from transaksi
   const totMasuk = transaksi.filter(t => t.tipe === "masuk").reduce((s, t) => s + t.jumlah, 0);
@@ -686,13 +690,21 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
                       bayarDonasi();
                     } else {
                       const rect = e.currentTarget.getBoundingClientRect();
-                      // Posisikan di samping kanan untuk desktop, di bawah untuk mobile
                       const isMobile = window.innerWidth < 768;
+                      let top = rect.top;
+                      let left = rect.right + 20;
+
                       if (isMobile) {
-                        setPopoverPos({ top: rect.bottom + 10, left: rect.left });
+                        top = rect.bottom + 10;
+                        left = Math.max(10, rect.left);
+                        if (top + 300 > window.innerHeight) top = rect.top - 310;
                       } else {
-                        setPopoverPos({ top: rect.top, left: rect.right + 20 });
+                        if (left + 330 > window.innerWidth) left = rect.left - 340;
+                        if (top + 300 > window.innerHeight) top = window.innerHeight - 320;
                       }
+
+                      setPopoverPos({ top, left });
+                      setOpenTime(Date.now());
                       setSelectedDonationMethod(m.id);
                     }
                   }} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "14px 16px", background: "rgba(255,255,255,.08)", borderRadius: 12, border: "1px solid rgba(255,255,255,.12)", cursor: loadingDonasi && m.id === "midtrans" ? "wait" : "pointer", transition: "all .2s", opacity: m.id === "midtrans" && loadingDonasi ? 0.6 : 1, position: "relative" }}
@@ -739,7 +751,7 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
 
       {/* DONASI DETAIL POPOVER */}
       {selectedDonationMethod && (
-        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999, background: "transparent" }} onClick={() => setSelectedDonationMethod(null)}>
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999, background: "rgba(0,0,0,0)" }} onClick={() => setSelectedDonationMethod(null)}>
           <div style={{ 
             position: "fixed", 
             top: popoverPos.top, 
@@ -748,7 +760,7 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
             background: "linear-gradient(135deg,rgba(255,254,249,1) 0%,rgba(232,245,238,1) 100%)", 
             borderRadius: 16, 
             border: "1.5px solid rgba(47,143,78,0.25)", 
-            boxShadow: "0 12px 40px rgba(28,58,43,0.2)", 
+            boxShadow: "0 12px 40px rgba(28,58,43,0.3)", 
             padding: "24px 20px", 
             animation: "slideIn .3s cubic-bezier(.22,1,.36,1)",
             zIndex: 10000 
