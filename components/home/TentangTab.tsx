@@ -639,47 +639,62 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
             <div style={{ background: "var(--fo)", padding: "60px 52px" }}>
               <div className="dl" />
               <h2 className="fnt" style={{ fontSize: 36, fontWeight: 300, color: "var(--cr)", lineHeight: 1.15, letterSpacing: "-.02em", marginBottom: 14 }}>Donasi<br />Kemakmuran<br />Kampung</h2>
-              <p style={{ fontSize: 13, lineHeight: 1.85, color: "rgba(250,248,243,.5)", marginBottom: 32 }}>
+              <p style={{ fontSize: 13, lineHeight: 1.85, color: "rgba(250,248,243,.5)", marginBottom: 28 }}>
                 Target RAB Global <strong style={{ color: "var(--gl)" }}>Rp 250.000.000</strong>.<br />
                 Dukung Balai Warga, Smart Farming, Learning Hub, Smart PJU, dan Internet Desa.
               </p>
-              <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 22 }}>
+
+              {/* PROGRESS BAR */}
+              <div style={{ marginBottom: 28 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "rgba(250,248,243,.6)" }}>Progress Donasi</span>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: "var(--gl)" }}>{((saldo / 250000000) * 100).toFixed(1)}%</span>
+                </div>
+                <div style={{ width: "100%", height: 12, background: "rgba(255,255,255,.12)", borderRadius: 99, overflow: "hidden", boxShadow: "inset 0 1px 3px rgba(0,0,0,.2)" }}>
+                  <div style={{ width: `${Math.min((saldo / 250000000) * 100, 100)}%`, height: "100%", background: "linear-gradient(90deg, #4FBF7E, var(--gl))", borderRadius: 99, transition: "width 1s cubic-bezier(.22,1,.36,1)", boxShadow: "0 0 12px rgba(79,191,126,.6)" }} />
+                </div>
+                <div style={{ fontSize: 10, color: "rgba(250,248,243,.45)", marginTop: 6 }}>
+                  {((saldo / 1000000).toFixed(1))} dari 250 juta terkumpul
+                </div>
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 24 }}>
                 {[
-                  { id: "midtrans", icon: "📱", l: "QRIS & E-Wallet", s: "Otomatis via Midtrans", rek: "Silakan Klik Kotak Ini Untuk Donasi Otomatis →" },
-                  { id: "bank", icon: "🏦", l: "Transfer Bank", s: "Rekening Resmi DKM", rek: "SeaBank:90135555066 a.n Ubay Rahmat H" },
-                  { id: "crypto", icon: "🌐", l: "Crypto / Web3", s: "EVM-Compatible Wallet", rek: "0x71723715478b344164e992b49ae1fCEb6467888B" }
+                  { id: "midtrans", icon: "📱", l: "QRIS & E-Wallet", s: "Donasi Instan via Midtrans" },
+                  { id: "bank", icon: "🏦", l: "Transfer Bank", s: "Rekening Resmi DKM" },
+                  { id: "crypto", icon: "🌐", l: "Crypto / Web3", s: "EVM-Compatible Wallet" }
                 ].map((m, i) => (
-                  <div key={i} onClick={m.id === "midtrans" ? bayarDonasi : undefined} style={{ display: "flex", alignItems: "flex-start", gap: 14, padding: "13px 18px", background: "rgba(255,255,255,.06)", borderRadius: 12, border: "1px solid rgba(255,255,255,.09)", cursor: m.id === "midtrans" ? (loadingDonasi ? "wait" : "pointer") : "default", transition: "background .2s", opacity: m.id === "midtrans" && loadingDonasi ? 0.6 : 1 }}
-                    onMouseEnter={e => m.id === "midtrans" ? (e.currentTarget.style.background = "rgba(255,255,255,.11)") : undefined}
-                    onMouseLeave={e => m.id === "midtrans" ? (e.currentTarget.style.background = "rgba(255,255,255,.06)") : undefined}
+                  <div key={i} onClick={m.id === "midtrans" ? bayarDonasi : undefined} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "14px 16px", background: "rgba(255,255,255,.08)", borderRadius: 12, border: "1px solid rgba(255,255,255,.12)", cursor: m.id === "midtrans" ? (loadingDonasi ? "wait" : "pointer") : "default", transition: "all .2s", opacity: m.id === "midtrans" && loadingDonasi ? 0.6 : 1 }}
+                    onMouseEnter={e => m.id === "midtrans" ? (e.currentTarget.style.background = "rgba(255,255,255,.15)", e.currentTarget.style.transform = "translateX(4px)") : undefined}
+                    onMouseLeave={e => m.id === "midtrans" ? (e.currentTarget.style.background = "rgba(255,255,255,.08)", e.currentTarget.style.transform = "translateX(0)") : undefined}
                   >
-                    <span style={{ fontSize: 22, marginTop: 2 }}>{m.icon}</span>
+                    <span style={{ fontSize: 24, marginTop: 0 }}>{m.icon}</span>
                     <div style={{ display: "flex", flexDirection: "column", gap: 2, width: "100%" }}>
                       <div style={{ fontSize: 13, fontWeight: 700, color: "var(--cr)" }}>{m.l}</div>
-                      <div style={{ fontSize: 11, color: "rgba(250,248,243,.38)" }}>{m.s}</div>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: "var(--gl)", letterSpacing: "0.5px", marginTop: 2 }}>{m.id === "midtrans" && loadingDonasi ? "⏳ MEMUAT MIDTRANS..." : m.rek}</div>
+                      <div style={{ fontSize: 11, color: "rgba(250,248,243,.55)" }}>{m.s}</div>
+                      {m.id === "midtrans" && loadingDonasi && <div style={{ fontSize: 11, fontWeight: 600, color: "var(--gl)" }}>⏳ Memuat...</div>}
                     </div>
                   </div>
                 ))}
               </div>
               <div style={{ display: "flex", gap: 14, flexWrap: "wrap", alignItems: "center" }}>
-                <button onClick={() => onNavigate("transparansi")} style={{ padding: "10px 20px", borderRadius: 99, fontSize: 11, fontWeight: 700, letterSpacing: ".09em", textTransform: "uppercase", border: "1px solid rgba(255,255,255,.18)", background: "transparent", color: "rgba(250,248,243,.55)", cursor: "pointer", transition: "all .2s" }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,.08)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--cr)"; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; (e.currentTarget as HTMLButtonElement).style.color = "rgba(250,248,243,.55)"; }}
+                <button onClick={() => onNavigate("transparansi")} style={{ padding: "11px 22px", borderRadius: 99, fontSize: 11, fontWeight: 700, letterSpacing: ".09em", textTransform: "uppercase", border: "1.5px solid rgba(79,191,126,.4)", background: "rgba(79,191,126,.15)", color: "var(--cr)", cursor: "pointer", transition: "all .2s" }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(79,191,126,.25)"; (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(79,191,126,.6)"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(79,191,126,.15)"; (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(79,191,126,.4)"; }}
                 >
                   Lihat Transparansi Dana →
                 </button>
               </div>
             </div>
-            <div style={{ background: "var(--ea)", padding: "60px 52px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-              <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--go)", marginBottom: 20 }}>Doa untuk Donatur</div>
-              <p dir="rtl" className="fnt" style={{ fontSize: "clamp(18px,2.8vw,27px)", lineHeight: 1.9, color: "var(--cr)", fontWeight: 400, marginBottom: 22 }}>
+            <div style={{ background: "linear-gradient(135deg,rgba(47,143,78,.05) 0%,rgba(79,191,126,.05) 100%)", padding: "60px 52px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+              <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: "#2F8F4E", marginBottom: 20 }}>Doa untuk Donatur</div>
+              <p dir="rtl" className="fnt" style={{ fontSize: "clamp(18px,2.8vw,27px)", lineHeight: 1.9, color: "#1C3A2B", fontWeight: 400, marginBottom: 22 }}>
                 رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ
               </p>
-              <p style={{ fontSize: 13, fontStyle: "italic", lineHeight: 1.85, color: "rgba(250,248,243,.48)", marginBottom: 14 }}>
+              <p style={{ fontSize: 13, fontStyle: "italic", lineHeight: 1.85, color: "#5A4A40", marginBottom: 14 }}>
                 &quot;Ya Tuhan kami, berilah mereka kebaikan di dunia dan di akhirat, serta lindungilah dari siksa neraka.&quot;
               </p>
-              <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--gl)", opacity: .65 }}>QS. Al-Baqarah: 201</span>
+              <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: "#2F8F4E", opacity: .65 }}>QS. Al-Baqarah: 201</span>
             </div>
           </div>
         </div>

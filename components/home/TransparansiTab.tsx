@@ -449,6 +449,45 @@ export default function TransparansiTab() {
               Data diperbarui otomatis secara real-time via Supabase. Pertanyaan terkait keuangan: <strong>ciburial.smarthub@gmail.com</strong>
             </div>
           </div>
+
+          {/* METODE DONASI & WALLET */}
+          <div style={{ marginTop: 40, padding: 0 }}>
+            <h3 className="fnt" style={{ fontSize: 24, fontWeight: 300, color: "#1C3A2B", marginBottom: 24, borderBottom: "2px solid rgba(47,143,78,.2)", paddingBottom: 12 }}>Metode Donasi & Penerima</h3>
+            
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20 }}>
+              {[
+                { 
+                  icon: "📱", 
+                  title: "QRIS & E-Wallet", 
+                  desc: "Donasi instan melalui Midtrans (dukungan semua e-wallet populer)",
+                  detail: "Klik tombol 'Donasi' di halaman utama"
+                },
+                { 
+                  icon: "🏦", 
+                  title: "Transfer Bank", 
+                  desc: "Rekening resmi untuk donasi melalui perbankan",
+                  detail: "SeaBank: 90135555066\na.n Ubay Rahmat H"
+                },
+                { 
+                  icon: "🌐", 
+                  title: "Crypto / Web3", 
+                  desc: "Untuk donasi menggunakan aset digital",
+                  detail: "0x71723715478b344164e992b49ae1fCEb6467888B\n(EVM-Compatible)"
+                }
+              ].map((m, i) => (
+                <div key={i} style={{ padding: 20, background: "rgba(47,143,78,.04)", border: "1.5px solid rgba(47,143,78,.12)", borderRadius: 14, display: "flex", flexDirection: "column", gap: 12 }}>
+                  <div style={{ fontSize: 32 }}>{m.icon}</div>
+                  <div>
+                    <h4 style={{ fontSize: 14, fontWeight: 700, color: "#1C3A2B", marginBottom: 6 }}>{m.title}</h4>
+                    <p style={{ fontSize: 12, color: "#5A4A40", lineHeight: 1.6, marginBottom: 10 }}>{m.desc}</p>
+                    <div style={{ padding: 12, background: "rgba(255,255,255,.6)", borderRadius: 8, border: "1px solid rgba(47,143,78,.1)", fontSize: 12, color: "#1C3A2B", fontFamily: "monospace", fontWeight: 500, lineHeight: 1.6, whiteSpace: "pre-wrap", wordBreak: "break-all" }}>
+                      {m.detail}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
