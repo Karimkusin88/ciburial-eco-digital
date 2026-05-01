@@ -4,11 +4,13 @@ import { useState, useEffect } from "react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 import CommunityDashboard from "@/components/home/CommunityDashboard";
+import { Transaksi, DEF_TX } from "./types";
 
 
 interface TentangTabProps {
   onNavigate: (t: TabType) => void;
   testimoni?: Testimoni[];
+  transaksi?: Transaksi[];
   onPaymentSuccess?: (total: number, isMkt: boolean, orderId: string, payType: string) => void;
 }
 
@@ -51,11 +53,16 @@ const divisi = [
   },
 ];
 
-export default function TentangTab({ onNavigate, testimoni = [], onPaymentSuccess }: TentangTabProps) {
+export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF_TX, onPaymentSuccess }: TentangTabProps) {
   const [loadingDonasi, setLoadingDonasi] = useState(false);
   const [totalJiwa, setTotalJiwa] = useState<number | null>(null);
   const [pengurusDb, setPengurusDb] = useState<any[]>([]);
   const [showStory, setShowStory] = useState(false);
+
+  // Calculate saldo from transaksi
+  const totMasuk = transaksi.filter(t => t.tipe === "masuk").reduce((s, t) => s + t.jumlah, 0);
+  const totKeluar = transaksi.filter(t => t.tipe === "keluar").reduce((s, t) => s + t.jumlah, 0);
+  const saldo = totMasuk - totKeluar;
 
   useEffect(() => {
     if (!isSupabaseReady()) return;

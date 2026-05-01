@@ -97,7 +97,7 @@ export default function Home() {
       <Navbar tab={tab} checkout={checkout} scrolled={scrolled} onNavigate={go} />
 
       {tab === "tentang" && !checkout && (
-        <TentangTab onNavigate={go} testimoni={testimoni} onPaymentSuccess={handlePaymentSuccess} />
+        <TentangTab onNavigate={go} testimoni={testimoni} transaksi={transaksi} onPaymentSuccess={handlePaymentSuccess} />
       )}
 
       {tab === "kegiatan" && (
