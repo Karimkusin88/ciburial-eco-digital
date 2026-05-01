@@ -255,102 +255,133 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
             <p style={{ color: "#5A4A40", fontSize: 15, maxWidth: 600, margin: "0 auto", fontWeight: 500, lineHeight: 1.6 }}>Pusat kendali dan layanan warga berbasis teknologi untuk transparansi dan efisiensi desa.</p>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24, maxWidth: 1200 }} className="grid-2x3-hub">
             {[
               { 
                 title: "E-Voting", 
-                desc: "Partisipasi warga dalam pengambilan keputusan desa secara digital & aman.", 
+                desc: "Musyawarah digital & aman",
                 icon: "🗳️", 
                 link: "/voting",
                 color: "#2F8F4E",
-                tag: "MUSYAWARAH"
-              },
-              { 
-                title: "Monitoring Ronda", 
-                desc: "Pantauan keamanan lingkungan real-time berbasis kartu warga NFC.", 
-                icon: "🔦", 
-                link: "/ronda",
-                color: "#1C3A2B",
-                tag: "KEAMANAN"
+                tag: "MUSYAWARAH",
+                comingSoon: false
               },
               { 
                 title: "Posyandu Pintar", 
-                desc: "Sistem tracking gizi dan kesehatan balita mandiri untuk Bunda cerdas.", 
+                desc: "Tracking gizi & kesehatan balita",
                 icon: "👶", 
                 link: "/posyandu",
                 color: "#8B2020",
-                tag: "KESEHATAN"
+                tag: "KESEHATAN",
+                comingSoon: false
+              },
+              { 
+                title: "Monitoring Ronda", 
+                desc: "Keamanan real-time berbasis NFC",
+                icon: "🔦", 
+                link: "/ronda",
+                color: "#1C3A2B",
+                tag: "KEAMANAN",
+                comingSoon: false
               },
               { 
                 title: "Zakat Digital", 
-                desc: "Kiosk DKM untuk cek kewajiban & hak Zakat Fitrah keluarga secara instan.", 
+                desc: "Cek kewajiban & hak Zakat",
                 icon: "🕌", 
                 link: "/zakat",
                 color: "#B8943F",
-                tag: "DKM / SOSIAL"
+                tag: "DKM / SOSIAL",
+                comingSoon: false
               },
               { 
                 title: "Layanan Aduan", 
-                desc: "Laporkan masalah fasilitas publik langsung ke tim eksekutif lapangan.", 
+                desc: "Lapor masalah fasilitas publik",
                 icon: "📢", 
                 link: "/pengaduan",
                 color: "#2D5A40",
-                tag: "RESPONS CEPAT"
+                tag: "RESPONS CEPAT",
+                comingSoon: false
+              },
+              { 
+                title: "Coming Soon", 
+                desc: "Fitur dan layanan terbaru",
+                icon: "✨", 
+                link: "#",
+                color: "#9B7D4C",
+                tag: "SOON",
+                comingSoon: true
               }
             ].map((item, i) => (
-              <a key={i} href={item.link} style={{ textDecoration: "none", color: "inherit" }} className="hub-card-link">
+              <a key={i} href={item.link} style={{ textDecoration: "none", color: "inherit", pointerEvents: item.comingSoon ? "none" : "auto" }} className="hub-card-link">
                 <div className="card-heroic" style={{ 
                   height: "100%", 
-                  padding: "40px 32px", 
-                  background: "white", 
-                  border: "1.5px solid rgba(0,0,0,0.04)",
+                  padding: "32px 24px", 
+                  background: item.comingSoon ? "linear-gradient(135deg,rgba(250,248,243,.5),rgba(232,245,238,.3))" : "white", 
+                  border: `1.5px solid ${item.comingSoon ? "rgba(155,125,76,.2)" : "rgba(0,0,0,0.04)"}`,
                   display: "flex",
                   flexDirection: "column",
-                  gap: 20,
+                  gap: 16,
                   transition: "all 0.4s cubic-bezier(0.22, 1, 0.36, 1)",
                   position: "relative",
-                  overflow: "hidden"
+                  overflow: "hidden",
+                  opacity: item.comingSoon ? 0.7 : 1
                 }}>
                   {/* Decorative Gradient Background on Hover */}
                   <div className="hover-gradient" style={{ 
                     position: "absolute", 
-                    top: 0, left: 0, width: "100%", height: "4px", 
+                    top: 0, left: 0, width: "100%", height: "3px", 
                     background: `linear-gradient(90deg, transparent, ${item.color}, transparent)`,
                     opacity: 0.6
                   }} />
 
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                     <div style={{ 
-                      width: 64, height: 64, borderRadius: 16, 
+                      width: 56, height: 56, borderRadius: 12, 
                       background: `${item.color}10`, 
                       display: "flex", alignItems: "center", justifyContent: "center", 
-                      fontSize: 32,
+                      fontSize: 28,
                       boxShadow: `0 8px 20px ${item.color}15`
                     }}>{item.icon}</div>
-                    <span style={{ fontSize: 9, fontWeight: 900, letterSpacing: "0.1em", color: item.color, background: `${item.color}08`, padding: "4px 10px", borderRadius: 6, border: `1px solid ${item.color}20` }}>{item.tag}</span>
+                    {item.comingSoon ? (
+                      <span style={{ fontSize: 8, fontWeight: 900, letterSpacing: "0.1em", color: item.color, background: `${item.color}15`, padding: "5px 10px", borderRadius: 6, border: `1.5px solid ${item.color}40`, textTransform: "uppercase" }}>Soon</span>
+                    ) : (
+                      <span style={{ fontSize: 8, fontWeight: 900, letterSpacing: "0.1em", color: item.color, background: `${item.color}08`, padding: "4px 10px", borderRadius: 6, border: `1px solid ${item.color}20` }}>{item.tag}</span>
+                    )}
                   </div>
 
                   <div>
-                    <h3 style={{ fontSize: 20, fontWeight: 800, color: "#1C3A2B", marginBottom: 8 }}>{item.title}</h3>
-                    <p style={{ fontSize: 14, color: "#5A4A40", lineHeight: 1.6, fontWeight: 500, opacity: 0.8 }}>{item.desc}</p>
+                    <h3 style={{ fontSize: 16, fontWeight: 700, color: "#1C3A2B", marginBottom: 4 }}>{item.title}</h3>
+                    <p style={{ fontSize: 12, color: "#5A4A40", lineHeight: 1.5, fontWeight: 500 }}>{item.desc}</p>
                   </div>
 
-                  <div style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 8, color: item.color, fontSize: 12, fontWeight: 800, letterSpacing: "0.05em" }}>
-                    BUKA LAYANAN <span style={{ transition: "transform 0.3s" }} className="arrow">→</span>
-                  </div>
+                  {!item.comingSoon && (
+                    <div style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 6, color: item.color, fontSize: 11, fontWeight: 700, letterSpacing: "0.05em" }}>
+                      BUKA <span style={{ transition: "transform 0.3s" }} className="arrow">→</span>
+                    </div>
+                  )}
                 </div>
               </a>
             ))}
           </div>
         </div>
         <style>{`
+          @media (max-width: 768px) {
+            .grid-2x3-hub {
+              grid-template-columns: repeat(2, 1fr) !important;
+            }
+          }
+          @media (max-width: 480px) {
+            .grid-2x3-hub {
+              grid-template-columns: 1fr !important;
+            }
+          }
           .hub-card-link:hover .card-heroic {
-            transform: translateY(-10px);
-            box-shadow: 0 24px 48px rgba(0,0,0,0.06);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
             border-color: rgba(47,143,78,0.2);
           }
           .hub-card-link:hover .arrow {
-            transform: translateX(6px);
+            transform: translateX(4px);
           }
         `}</style>
       </section>
