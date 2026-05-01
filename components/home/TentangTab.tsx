@@ -1,10 +1,8 @@
 "use client";
-import dynamic from "next/dynamic";
 import { TabType, Testimoni } from "./types";
 import { useState, useEffect } from "react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
-const CuacaSholatWidget = dynamic(() => import("@/components/CuacaSholatWidget"), { ssr: false });
 import CommunityDashboard from "@/components/home/CommunityDashboard";
 
 
@@ -591,13 +589,6 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
           `}</style>
         </section>
       )}
-
-      {/* WIDGET CUACA & SHOLAT */}
-      <section className="sec" style={{ padding: "clamp(32px,4vw,52px) clamp(16px,4vw,32px) 0" }}>
-        <div style={{ maxWidth: 1320, margin: "0 auto" }}>
-          <CuacaSholatWidget />
-        </div>
-      </section>
 
       {/* DONASI SPLIT */}
       <section className="sec" style={{ padding: "0 clamp(16px,4vw,32px) clamp(48px,8vw,104px)" }}>

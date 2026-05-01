@@ -2,6 +2,9 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { DM_Sans, Cormorant_Garamond } from 'next/font/google'
 import Script from 'next/script'
+import dynamic from 'next/dynamic'
+
+const CuacaSholatWidget = dynamic(() => import('@/components/CuacaSholatWidget'), { ssr: false });
 
 // Font utama untuk body text (dipakai di seluruh halaman)
 const dmSans = DM_Sans({ 
@@ -45,6 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="id">
       <body className={`${dmSans.variable} ${cormorant.variable} font-sans bg-[#FDFBF7] text-[#3E322D] antialiased`}>
         {children}
+        <CuacaSholatWidget />
         <Script 
           src={process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION === "true" ? "https://app.midtrans.com/snap/snap.js" : "https://app.sandbox.midtrans.com/snap/snap.js"}
           data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY}

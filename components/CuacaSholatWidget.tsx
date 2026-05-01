@@ -38,6 +38,7 @@ export default function CuacaSholatWidget() {
   const [sholat, setSholat] = useState<Sholat | null>(null);
   const [now, setNow] = useState(new Date());
   const [loading, setLoading] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 60000);
@@ -103,69 +104,103 @@ export default function CuacaSholatWidget() {
   const next = sholatBerikutnya();
 
   return (
-    <div style={{ fontFamily: "'Segoe UI',system-ui,sans-serif" }}>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-        {/* Cuaca */}
-        <div style={{ background: "linear-gradient(135deg, #2d5a40 0%, #4a8c5c 100%)", borderRadius: 20, padding: 20, color: "white" }}>
-          <div style={{ fontSize: 11, opacity: 0.7, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>
-            📍 {KOTA}
-          </div>
-          {loading ? (
-            <div style={{ opacity: 0.5, fontSize: 14 }}>Memuat cuaca...</div>
-          ) : cuaca && (
-            <>
-              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
-                <div style={{ fontSize: 48 }}>{cuaca.icon}</div>
-                <div>
-                  <div style={{ fontSize: 36, fontWeight: 900, lineHeight: 1 }}>{cuaca.suhu}°C</div>
-                  <div style={{ fontSize: 14, opacity: 0.85 }}>{cuaca.deskripsi}</div>
-                </div>
-              </div>
-              <div style={{ display: "flex", gap: 16, fontSize: 12, opacity: 0.75 }}>
-                <span>💧 {cuaca.kelembaban}%</span>
-                <span>💨 {cuaca.angin} km/j</span>
-              </div>
-              <div style={{ marginTop: 10, fontSize: 12, opacity: 0.6 }}>
-                {HARI_ID[now.getDay()]}, {now.getDate()} {BULAN_ID[now.getMonth()]} {now.getFullYear()}
-              </div>
-            </>
-          )}
-        </div>
+    <div className="fixed bottom-6 right-6 z-[100] flex flex-col items-end gap-4" style={{ fontFamily: "'Segoe UI',system-ui,sans-serif" }}>
+      {/* Widget Content Container */}
+      {isOpen && (
+        <div className="animate-masuk bg-white rounded-3xl p-5 shadow-[0_20px_60px_rgba(28,58,43,0.25)] border border-[rgba(45,90,64,0.12)] w-[min(90vw,650px)] relative">
+          <button 
+            onClick={() => setIsOpen(false)}
+            className="absolute top-4 right-4 text-[var(--ts)] hover:text-[var(--fo)] transition-colors"
+          >
+            ✕
+          </button>
 
-        {/* Jadwal Sholat */}
-        <div style={{ background: "white", borderRadius: 20, padding: 20, border: "1px solid rgba(45,90,64,0.12)", boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: "#1a2e1f" }}>🕌 Jadwal Sholat</div>
-            {next && (
-              <div style={{ background: "rgba(45,90,64,0.08)", borderRadius: 20, padding: "3px 10px", fontSize: 11, color: "#2d5a40", fontWeight: 600 }}>
-                {next.nama} {next.waktu}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Cuaca */}
+            <div style={{ background: "linear-gradient(135deg, #2d5a40 0%, #4a8c5c 100%)", borderRadius: 20, padding: 20, color: "white" }}>
+              <div style={{ fontSize: 11, opacity: 0.7, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>
+                📍 {KOTA}
               </div>
-            )}
-          </div>
-          {sholat && (
-            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              {[
-                { nama: "Subuh", waktu: sholat.subuh, icon: "🌙" },
-                { nama: "Dzuhur", waktu: sholat.dzuhur, icon: "☀️" },
-                { nama: "Ashar", waktu: sholat.ashar, icon: "🌤️" },
-                { nama: "Maghrib", waktu: sholat.maghrib, icon: "🌆" },
-                { nama: "Isya", waktu: sholat.isya, icon: "⭐" },
-              ].map(s => {
-                const isNext = next?.nama === s.nama;
-                return (
-                  <div key={s.nama} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "6px 10px", borderRadius: 10, background: isNext ? "rgba(45,90,64,0.08)" : "transparent", border: isNext ? "1px solid rgba(45,90,64,0.15)" : "1px solid transparent" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <span style={{ fontSize: 14 }}>{s.icon}</span>
-                      <span style={{ fontSize: 13, fontWeight: isNext ? 700 : 400, color: isNext ? "#2d5a40" : "#1a2e1f" }}>{s.nama}</span>
+              {loading ? (
+                <div style={{ opacity: 0.5, fontSize: 14 }}>Memuat cuaca...</div>
+              ) : cuaca && (
+                <>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+                    <div style={{ fontSize: 42 }}>{cuaca.icon}</div>
+                    <div>
+                      <div style={{ fontSize: 32, fontWeight: 900, lineHeight: 1 }}>{cuaca.suhu}°C</div>
+                      <div style={{ fontSize: 13, opacity: 0.85 }}>{cuaca.deskripsi}</div>
                     </div>
-                    <span style={{ fontSize: 14, fontWeight: 700, color: isNext ? "#2d5a40" : "#6b7c6d" }}>{s.waktu}</span>
                   </div>
-                );
-              })}
+                  <div style={{ display: "flex", gap: 16, fontSize: 11, opacity: 0.75 }}>
+                    <span>💧 {cuaca.kelembaban}%</span>
+                    <span>💨 {cuaca.angin} km/j</span>
+                  </div>
+                  <div style={{ marginTop: 10, fontSize: 11, opacity: 0.6 }}>
+                    {HARI_ID[now.getDay()]}, {now.getDate()} {BULAN_ID[now.getMonth()]} {now.getFullYear()}
+                  </div>
+                </>
+              )}
             </div>
-          )}
+
+            {/* Jadwal Sholat */}
+            <div style={{ background: "#f8faf9", borderRadius: 20, padding: 20, border: "1px solid rgba(45,90,64,0.08)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "#1a2e1f" }}>🕌 Jadwal Sholat</div>
+                {next && (
+                  <div style={{ background: "rgba(45,90,64,0.1)", borderRadius: 20, padding: "2px 8px", fontSize: 10, color: "#2d5a40", fontWeight: 700 }}>
+                    {next.nama} {next.waktu}
+                  </div>
+                )}
+              </div>
+              {sholat && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                  {[
+                    { nama: "Subuh", waktu: sholat.subuh, icon: "🌙" },
+                    { nama: "Dzuhur", waktu: sholat.dzuhur, icon: "☀️" },
+                    { nama: "Ashar", waktu: sholat.ashar, icon: "🌤️" },
+                    { nama: "Maghrib", waktu: sholat.maghrib, icon: "🌆" },
+                    { nama: "Isya", waktu: sholat.isya, icon: "⭐" },
+                  ].map(s => {
+                    const isNext = next?.nama === s.nama;
+                    return (
+                      <div key={s.nama} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "5px 8px", borderRadius: 8, background: isNext ? "rgba(45,90,64,0.08)" : "transparent", border: isNext ? "1px solid rgba(45,90,64,0.1)" : "1px solid transparent" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                          <span style={{ fontSize: 13 }}>{s.icon}</span>
+                          <span style={{ fontSize: 12, fontWeight: isNext ? 700 : 500, color: isNext ? "#2d5a40" : "#1a2e1f" }}>{s.nama}</span>
+                        </div>
+                        <span style={{ fontSize: 12, fontWeight: 700, color: isNext ? "#2d5a40" : "#6b7c6d" }}>{s.waktu}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Toggle FAB */}
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 active:scale-95 group relative ${isOpen ? 'bg-white text-[var(--fo)]' : 'bg-gradient-to-br from-[var(--fo)] to-[var(--accent)] text-white glow'}`}
+      >
+        {isOpen ? (
+          <span className="text-xl font-bold">✕</span>
+        ) : (
+          <div className="flex flex-col items-center">
+            <span className="text-xl group-hover:scale-125 transition-transform">🕌</span>
+            <span className="text-[8px] font-black uppercase tracking-tighter mt-[-2px] opacity-80">Info</span>
+          </div>
+        )}
+        
+        {/* Tooltip on hover */}
+        {!isOpen && (
+          <div className="absolute right-full mr-4 bg-[var(--fo)] text-white px-3 py-1.5 rounded-lg text-[10px] font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl border border-white/10 uppercase tracking-widest">
+            Cuaca & Sholat
+          </div>
+        )}
+      </button>
     </div>
   );
 }
