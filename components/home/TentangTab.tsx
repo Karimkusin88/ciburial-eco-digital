@@ -328,6 +328,17 @@ export default function TentangTab({ onNavigate, testimoni = [], onPaymentSucces
             <p style={{ fontSize: 14, lineHeight: 1.8, color: "#5A4A40", marginBottom: 24, fontWeight: 500 }}>
               Empat pilar yang menjadi cetak biru (<em>blueprint</em>) peradaban desa modern Ciburial — <strong style={{ color: "#2F8F4E" }}>makmur, mandiri, tangguh</strong>, dan melek teknologi.
             </p>
+            <a href="#proposal" style={{ display: "inline-flex", alignItems: "center", gap: 8, fontSize: 13, fontWeight: 600, color: "#2F8F4E", textDecoration: "none", padding: "10px 16px", borderRadius: 8, background: "rgba(47,143,78,.08)", border: "1px solid rgba(47,143,78,.2)", transition: "all .3s ease", cursor: "pointer" }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLElement).style.background = "rgba(47,143,78,.15)";
+                (e.currentTarget as HTMLElement).style.transform = "translateX(4px)";
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLElement).style.background = "rgba(47,143,78,.08)";
+                (e.currentTarget as HTMLElement).style.transform = "translateX(0)";
+              }}>
+              Lihat Proposal Lengkap <span style={{ fontSize: 16 }}>→</span>
+            </a>
           </div>
           <div style={{ flex: 1, minWidth: 260, display: "flex", flexDirection: "column", gap: 14 }}>
             {[
