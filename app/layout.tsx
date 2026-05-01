@@ -2,9 +2,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { DM_Sans, Cormorant_Garamond } from 'next/font/google'
 import Script from 'next/script'
-import dynamic from 'next/dynamic'
-
-const CuacaSholatWidget = dynamic(() => import('@/components/CuacaSholatWidget'), { ssr: false });
+import FloatingWidgetWrapper from '@/components/FloatingWidgetWrapper'
 
 // Font utama untuk body text (dipakai di seluruh halaman)
 const dmSans = DM_Sans({ 
