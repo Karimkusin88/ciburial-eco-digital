@@ -59,6 +59,15 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
   const [pengurusDb, setPengurusDb] = useState<any[]>([]);
   const [showStory, setShowStory] = useState(false);
   const [selectedDonationMethod, setSelectedDonationMethod] = useState<string | null>(null);
+  const [popoverPos, setPopoverPos] = useState({ top: 0, left: 0 });
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (selectedDonationMethod) setSelectedDonationMethod(null);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [selectedDonationMethod]);
 
   // Calculate saldo from transaksi
   const totMasuk = transaksi.filter(t => t.tipe === "masuk").reduce((s, t) => s + t.jumlah, 0);
@@ -672,13 +681,21 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
                   { id: "bank", icon: "🏦", l: "Transfer Bank", s: "Rekening Resmi DKM", detail: "SeaBank: 90135555066\na.n Ubay Rahmat H" },
                   { id: "crypto", icon: "🌐", l: "Crypto / Web3", s: "EVM-Compatible Wallet", detail: "0x71723715478b344164e992b49ae1fCEb6467888B" }
                 ].map((m, i) => (
-                  <div key={i} onClick={() => {
+                  <div key={i} onClick={(e) => {
                     if (m.id === "midtrans") {
                       bayarDonasi();
                     } else {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      // Posisikan di samping kanan untuk desktop, di bawah untuk mobile
+                      const isMobile = window.innerWidth < 768;
+                      if (isMobile) {
+                        setPopoverPos({ top: rect.bottom + 10, left: rect.left });
+                      } else {
+                        setPopoverPos({ top: rect.top, left: rect.right + 20 });
+                      }
                       setSelectedDonationMethod(m.id);
                     }
-                  }} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "14px 16px", background: "rgba(255,255,255,.08)", borderRadius: 12, border: "1px solid rgba(255,255,255,.12)", cursor: loadingDonasi && m.id === "midtrans" ? "wait" : "pointer", transition: "all .2s", opacity: m.id === "midtrans" && loadingDonasi ? 0.6 : 1 }}
+                  }} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "14px 16px", background: "rgba(255,255,255,.08)", borderRadius: 12, border: "1px solid rgba(255,255,255,.12)", cursor: loadingDonasi && m.id === "midtrans" ? "wait" : "pointer", transition: "all .2s", opacity: m.id === "midtrans" && loadingDonasi ? 0.6 : 1, position: "relative" }}
                     onMouseEnter={e => {
                       e.currentTarget.style.background = "rgba(255,255,255,.15)";
                       e.currentTarget.style.transform = "translateX(4px)";
@@ -720,62 +737,79 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
         </div>
       </section>
 
-      {/* DONASI DETAIL MODAL */}
+      {/* DONASI DETAIL POPOVER */}
       {selectedDonationMethod && (
-        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999, background: "rgba(28,58,43,.5)", backdropFilter: "blur(8px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }} onClick={() => setSelectedDonationMethod(null)}>
-          <div style={{ background: "linear-gradient(135deg,rgba(255,254,249,1) 0%,rgba(232,245,238,1) 100%)", borderRadius: 16, maxWidth: 360, width: "100%", border: "1.5px solid rgba(47,143,78,.2)", boxShadow: "0 12px 40px rgba(28,58,43,.2)", position: "relative", padding: "32px 24px", animation: "slideUp .3s cubic-bezier(.22,1,.36,1)" }} onClick={(e) => e.stopPropagation()}>
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999, background: "transparent" }} onClick={() => setSelectedDonationMethod(null)}>
+          <div style={{ 
+            position: "fixed", 
+            top: popoverPos.top, 
+            left: popoverPos.left, 
+            width: "min(320px, 90vw)", 
+            background: "linear-gradient(135deg,rgba(255,254,249,1) 0%,rgba(232,245,238,1) 100%)", 
+            borderRadius: 16, 
+            border: "1.5px solid rgba(47,143,78,0.25)", 
+            boxShadow: "0 12px 40px rgba(28,58,43,0.2)", 
+            padding: "24px 20px", 
+            animation: "slideIn .3s cubic-bezier(.22,1,.36,1)",
+            zIndex: 10000 
+          }} onClick={(e) => e.stopPropagation()}>
             
             {/* Close Button */}
-            <button onClick={() => setSelectedDonationMethod(null)} style={{ position: "absolute", top: 10, right: 10, width: 28, height: 28, borderRadius: "50%", background: "rgba(47,143,78,.1)", border: "none", color: "#1C3A2B", fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all .2s" }} onMouseEnter={e => { e.currentTarget.style.background = "rgba(47,143,78,.2)"; }} onMouseLeave={e => { e.currentTarget.style.background = "rgba(47,143,78,.1)"; }}>✕</button>
+            <button onClick={() => setSelectedDonationMethod(null)} style={{ position: "absolute", top: 8, right: 8, width: 24, height: 24, borderRadius: "50%", background: "rgba(47,143,78,.1)", border: "none", color: "#1C3A2B", fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
 
             {/* Content */}
             {selectedDonationMethod === "bank" && (
-              <div style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 36, marginBottom: 12 }}>🏦</div>
-                <h3 style={{ fontSize: 18, fontWeight: 700, color: "#1C3A2B", marginBottom: 10 }}>Transfer Bank</h3>
-                <p style={{ fontSize: 12, color: "#5A4A40", lineHeight: 1.5, marginBottom: 16 }}>Rekening resmi DKM Ciburial</p>
-                
-                <div style={{ background: "rgba(47,143,78,.08)", border: "1.5px solid rgba(47,143,78,.2)", borderRadius: 10, padding: 14, marginBottom: 16 }}>
-                  <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: "#2F8F4E", marginBottom: 6 }}>Nomor Rekening</div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: "#1C3A2B", fontFamily: "monospace", marginBottom: 10 }}>90135555066</div>
-                  <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "#5A4A40", marginBottom: 6 }}>Atas Nama</div>
-                  <div style={{ fontSize: 12, fontWeight: 600, color: "#1C3A2B", fontFamily: "monospace" }}>Ubay Rahmat H</div>
+              <div style={{ textAlign: "left" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+                  <span style={{ fontSize: 28 }}>🏦</span>
+                  <h3 style={{ fontSize: 16, fontWeight: 700, color: "#1C3A2B" }}>Transfer Bank</h3>
                 </div>
                 
-                <div style={{ fontSize: 10, color: "#5A4A40", background: "rgba(184,148,63,.08)", border: "1px solid rgba(184,148,63,.2)", borderRadius: 8, padding: 10, lineHeight: 1.5 }}>
-                  💡 SeaBank • Transfer gratis
+                <div style={{ background: "rgba(47,143,78,.08)", border: "1.5px solid rgba(47,143,78,.15)", borderRadius: 10, padding: 12, marginBottom: 12 }}>
+                  <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: "#2F8F4E", marginBottom: 4 }}>Nomor Rekening</div>
+                  <div style={{ fontSize: 15, fontWeight: 800, color: "#1C3A2B", fontFamily: "monospace", letterSpacing: "1px" }}>90135555066</div>
+                  <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "#5A4A40", marginTop: 8, marginBottom: 2 }}>Atas Nama</div>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: "#1C3A2B" }}>Ubay Rahmat H</div>
+                </div>
+                
+                <div style={{ fontSize: 10, color: "#5A4A40", background: "rgba(184,148,63,.08)", border: "1px solid rgba(184,148,63,.15)", borderRadius: 8, padding: 8, lineHeight: 1.4 }}>
+                  💡 SeaBank (901) • Transfer gratis
                 </div>
               </div>
             )}
 
             {selectedDonationMethod === "crypto" && (
-              <div style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 36, marginBottom: 12 }}>🌐</div>
-                <h3 style={{ fontSize: 18, fontWeight: 700, color: "#1C3A2B", marginBottom: 10 }}>Crypto / Web3</h3>
-                <p style={{ fontSize: 12, color: "#5A4A40", lineHeight: 1.5, marginBottom: 16 }}>EVM-compatible wallet</p>
+              <div style={{ textAlign: "left" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+                  <span style={{ fontSize: 28 }}>🌐</span>
+                  <h3 style={{ fontSize: 16, fontWeight: 700, color: "#1C3A2B" }}>Crypto / Web3</h3>
+                </div>
                 
-                <div style={{ background: "rgba(47,143,78,.08)", border: "1.5px solid rgba(47,143,78,.2)", borderRadius: 10, padding: 14, marginBottom: 16 }}>
-                  <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: "#2F8F4E", marginBottom: 6 }}>Wallet Address</div>
-                  <div style={{ fontSize: 10, fontWeight: 700, color: "#1C3A2B", fontFamily: "monospace", wordBreak: "break-all", lineHeight: 1.4, marginBottom: 10 }}>
-                    0x717237154...888B
+                <div style={{ background: "rgba(47,143,78,.08)", border: "1.5px solid rgba(47,143,78,.15)", borderRadius: 10, padding: 12, marginBottom: 12 }}>
+                  <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: "#2F8F4E", marginBottom: 4 }}>Wallet Address (EVM)</div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "#1C3A2B", fontFamily: "monospace", wordBreak: "break-all", lineHeight: 1.4, marginBottom: 10 }}>
+                    0x71723715478b344164e992b49ae1fCEb6467888B
                   </div>
                   <button onClick={() => {
                     navigator.clipboard.writeText("0x71723715478b344164e992b49ae1fCEb6467888B");
                     alert("✓ Wallet address copied!");
-                  }} style={{ width: "100%", padding: "8px 12px", background: "rgba(47,143,78,.15)", border: "1px solid rgba(47,143,78,.3)", borderRadius: 8, color: "#2F8F4E", fontWeight: 600, fontSize: 10, cursor: "pointer", transition: "all .2s" }} onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(47,143,78,.25)"; }} onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(47,143,78,.15)"; }}>
-                    📋 Copy Full Address
+                  }} style={{ width: "100%", padding: "8px 12px", background: "rgba(47,143,78,.15)", border: "1px solid rgba(47,143,78,.25)", borderRadius: 8, color: "#2F8F4E", fontWeight: 700, fontSize: 10, cursor: "pointer", transition: "all .2s" }}>
+                    📋 Copy Address
                   </button>
                 </div>
                 
-                <div style={{ fontSize: 10, color: "#5A4A40", background: "rgba(184,148,63,.08)", border: "1px solid rgba(184,148,63,.2)", borderRadius: 8, padding: 10, lineHeight: 1.5 }}>
-                  💡 Ethereum, Polygon, BSC +
+                <div style={{ fontSize: 10, color: "#5A4A40", background: "rgba(184,148,63,.08)", border: "1px solid rgba(184,148,63,.15)", borderRadius: 8, padding: 8, lineHeight: 1.4 }}>
+                  💡 Ethereum, Polygon, BSC, ARB, OP
                 </div>
               </div>
             )}
           </div>
 
           <style>{`
-            @keyframes slideUp { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+            @keyframes slideIn { from { transform: translateX(12px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+            @media (max-width: 768px) {
+              @keyframes slideIn { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+            }
           `}</style>
         </div>
       )}
