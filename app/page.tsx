@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 import { TabType, Kegiatan, Produk, Transaksi, Testimoni, Iklan, DEF_KEG, DEF_PROD, DEF_TX, DEF_TESTIMONI, DEF_IKLAN, ALOKASI } from "@/components/home/types";
@@ -21,6 +22,7 @@ export default function Home() {
   const [testimoni, setTestimoni] = useState<Testimoni[]>(DEF_TESTIMONI);
   const [iklan, setIklan] = useState<Iklan[]>(DEF_IKLAN);
   const [dataLoad, setDataLoad] = useState(false);
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     const f = () => setScrolled(window.scrollY > 40);
@@ -55,6 +57,13 @@ export default function Home() {
       setDataLoad(false);
     })();
   }, []);
+
+  useEffect(() => {
+    const tabParam = searchParams.get("tab");
+    if (tabParam && ["tentang", "kegiatan", "proposal", "transparansi", "marketplace"].includes(tabParam)) {
+      setTab(tabParam as TabType);
+    }
+  }, [searchParams]);
 
   const go = (t: TabType) => { 
     setTab(t); 
