@@ -691,21 +691,27 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
                     } else {
                       const rect = e.currentTarget.getBoundingClientRect();
                       const isMobile = window.innerWidth < 768;
+                      
                       let top = rect.top;
-                      let left = rect.right + 20;
+                      let left = isMobile ? rect.left : rect.right + 20;
 
                       if (isMobile) {
                         top = rect.bottom + 10;
-                        left = Math.max(10, rect.left);
-                        if (top + 300 > window.innerHeight) top = rect.top - 310;
+                        // Jika di bawah gak muat, taruh di atas tombol
+                        if (top + 320 > window.innerHeight) top = Math.max(10, rect.top - 330);
+                        // Mastiin gak off-screen kiri/kanan
+                        left = Math.max(10, Math.min(window.innerWidth - 330, left));
                       } else {
-                        if (left + 330 > window.innerWidth) left = rect.left - 340;
-                        if (top + 300 > window.innerHeight) top = window.innerHeight - 320;
+                        // Jika di kanan gak muat, taruh di kiri tombol
+                        if (left + 330 > window.innerWidth) left = Math.max(10, rect.left - 330);
+                        // Jika di bawah gak muat, geser ke atas
+                        if (top + 320 > window.innerHeight) top = Math.max(10, window.innerHeight - 330);
                       }
 
                       setPopoverPos({ top, left });
                       setOpenTime(Date.now());
                       setSelectedDonationMethod(m.id);
+                      e.stopPropagation();
                     }
                   }} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "14px 16px", background: "rgba(255,255,255,.08)", borderRadius: 12, border: "1px solid rgba(255,255,255,.12)", cursor: loadingDonasi && m.id === "midtrans" ? "wait" : "pointer", transition: "all .2s", opacity: m.id === "midtrans" && loadingDonasi ? 0.6 : 1, position: "relative" }}
                     onMouseEnter={e => {
@@ -751,19 +757,19 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
 
       {/* DONASI DETAIL POPOVER */}
       {selectedDonationMethod && (
-        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999, background: "rgba(0,0,0,0)" }} onClick={() => setSelectedDonationMethod(null)}>
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, zIndex: 10000, background: "rgba(0,0,0,0.1)", backdropFilter: "blur(2px)" }} onClick={() => setSelectedDonationMethod(null)}>
           <div style={{ 
             position: "fixed", 
             top: popoverPos.top, 
             left: popoverPos.left, 
             width: "min(320px, 90vw)", 
-            background: "linear-gradient(135deg,rgba(255,254,249,1) 0%,rgba(232,245,238,1) 100%)", 
+            background: "white", 
             borderRadius: 16, 
-            border: "1.5px solid rgba(47,143,78,0.25)", 
-            boxShadow: "0 12px 40px rgba(28,58,43,0.3)", 
+            border: "1.5px solid var(--accent)", 
+            boxShadow: "0 20px 50px rgba(0,0,0,0.25)", 
             padding: "24px 20px", 
             animation: "slideIn .3s cubic-bezier(.22,1,.36,1)",
-            zIndex: 10000 
+            zIndex: 10001 
           }} onClick={(e) => e.stopPropagation()}>
             
             {/* Close Button */}
