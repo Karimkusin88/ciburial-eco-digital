@@ -722,8 +722,8 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
 
       {/* DONASI DETAIL MODAL */}
       {selectedDonationMethod && (
-        <div style={{ position: "fixed", inset: 0, zIndex: 9999, background: "rgba(28,58,43,.5)", backdropFilter: "blur(8px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }} onClick={() => setSelectedDonationMethod(null)}>
-          <div style={{ flexShrink: 0, background: "linear-gradient(135deg,rgba(255,254,249,1) 0%,rgba(232,245,238,1) 100%)", borderRadius: 16, maxWidth: 360, width: "100%", border: "1.5px solid rgba(47,143,78,.2)", boxShadow: "0 12px 40px rgba(28,58,43,.2)", position: "relative", padding: "32px 24px", animation: "slideUp .3s cubic-bezier(.22,1,.36,1)" }} onClick={(e) => e.stopPropagation()}>
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999, background: "rgba(28,58,43,.5)", backdropFilter: "blur(8px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }} onClick={() => setSelectedDonationMethod(null)}>
+          <div style={{ background: "linear-gradient(135deg,rgba(255,254,249,1) 0%,rgba(232,245,238,1) 100%)", borderRadius: 16, maxWidth: 360, width: "100%", border: "1.5px solid rgba(47,143,78,.2)", boxShadow: "0 12px 40px rgba(28,58,43,.2)", position: "relative", padding: "32px 24px", animation: "slideUp .3s cubic-bezier(.22,1,.36,1)" }} onClick={(e) => e.stopPropagation()}>
             
             {/* Close Button */}
             <button onClick={() => setSelectedDonationMethod(null)} style={{ position: "absolute", top: 10, right: 10, width: 28, height: 28, borderRadius: "50%", background: "rgba(47,143,78,.1)", border: "none", color: "#1C3A2B", fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all .2s" }} onMouseEnter={e => { e.currentTarget.style.background = "rgba(47,143,78,.2)"; }} onMouseLeave={e => { e.currentTarget.style.background = "rgba(47,143,78,.1)"; }}>✕</button>
