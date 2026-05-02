@@ -758,74 +758,68 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
       {/* DONASI DETAIL POPOVER */}
       {selectedDonationMethod && (
         <div 
-          style={{ position: "fixed", inset: 0, zIndex: 10000, background: "rgba(0,0,0,0.2)" }} 
+          style={{ position: "fixed", inset: 0, zIndex: 10000, background: "rgba(0,0,0,0.1)" }} 
           onClick={() => setSelectedDonationMethod(null)}
         >
           <div 
             style={{ 
               position: "fixed", 
-              top: `${Math.max(10, Math.min(popoverPos.top || 100, (typeof window !== 'undefined' ? window.innerHeight : 800) - 350))}px`, 
-              left: `${Math.max(10, Math.min(popoverPos.left || 20, (typeof window !== 'undefined' ? window.innerWidth : 1200) - 360))}px`, 
-              width: "340px", 
-              maxWidth: "92vw",
+              top: `${Math.max(20, Math.min(popoverPos.top, (typeof window !== 'undefined' ? window.innerHeight : 800) - 400))}px`, 
+              left: `${Math.max(20, Math.min(popoverPos.left, (typeof window !== 'undefined' ? window.innerWidth : 1200) - 380))}px`, 
+              width: "min(360px, 90vw)", 
               background: "#FFFFFF", 
               borderRadius: "20px", 
-              border: "2px solid #2F8F4E", 
-              boxShadow: "0 25px 50px rgba(0,0,0,0.3)", 
+              border: "3px solid #2F8F4E", 
+              boxShadow: "0 20px 50px rgba(0,0,0,0.3)", 
               padding: "24px", 
-              animation: "slideIn .3s ease-out",
+              animation: "slideInSide 0.3s ease-out",
               zIndex: 10001,
-              color: "#1A1410",
-              overflow: "visible"
+              color: "#000000"
             }} 
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close Button */}
             <button 
               onClick={() => setSelectedDonationMethod(null)} 
-              style={{ position: "absolute", top: -12, right: -12, width: 32, height: 32, borderRadius: "50%", background: "#2F8F4E", border: "2px solid white", color: "white", fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "bold", boxShadow: "0 4px 12px rgba(0,0,0,0.2)" }}
+              style={{ position: "absolute", top: 12, right: 12, width: 28, height: 28, borderRadius: "50%", background: "#f3f4f6", border: "none", color: "#000", fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
             >
               ✕
             </button>
 
-            {/* Debug Label (Hapus nanti kalau sudah fix) */}
-            <div style={{ fontSize: '8px', color: '#ccc', position: 'absolute', bottom: 5, right: 10 }}>
-              ID: {selectedDonationMethod}
-            </div>
-
-            {selectedDonationMethod?.toString().trim().toLowerCase() === "bank" ? (
-              <div style={{ display: "block", color: "#000" }}>
+            {/* Content Logic */}
+            {(selectedDonationMethod.includes("bank")) ? (
+              <div>
                 <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
                   <span style={{ fontSize: 32 }}>🏦</span>
                   <div>
                     <h3 style={{ fontSize: 18, fontWeight: 800, color: "#1C3A2B", margin: 0 }}>Transfer Bank</h3>
-                    <p style={{ fontSize: 11, color: "#444", margin: 0 }}>Rekening Resmi DKM Ciburial</p>
+                    <p style={{ fontSize: 11, color: "#666", margin: 0 }}>Rekening DKM Ciburial</p>
                   </div>
                 </div>
                 
                 <div style={{ background: "#F1F5F9", borderRadius: 12, padding: 16, marginBottom: 16, border: "1px solid #E2E8F0" }}>
-                  <div style={{ fontSize: 10, fontWeight: 700, color: "#059669", marginBottom: 4 }}>NOMOR REKENING (SEABANK)</div>
-                  <div style={{ fontSize: 20, fontWeight: 800, color: "#000", fontFamily: "monospace", letterSpacing: "1px" }}>90135555066</div>
-                  <div style={{ fontSize: 10, fontWeight: 700, color: "#64748B", marginTop: 12, marginBottom: 2 }}>ATAS NAMA</div>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: "#000" }}>Ubay Rahmat H</div>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: "#059669", marginBottom: 4 }}>NOMOR REKENING</div>
+                  <div style={{ fontSize: 20, fontWeight: 800, color: "#000", fontFamily: "monospace" }}>90135555066</div>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: "#64748B", marginTop: 12, marginBottom: 2 }}>ATAS NAMA</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "#000" }}>UBAY RAHMAT H</div>
                 </div>
                 
                 <div style={{ fontSize: 11, color: "#166534", background: "#F0FDF4", padding: "10px", borderRadius: 8, border: "1px solid #BBF7D0" }}>
-                  💡 SeaBank (901) • Transfer gratis
+                  💡 SeaBank (901) • Gratis Biaya Admin
                 </div>
               </div>
-            ) : selectedDonationMethod?.toString().trim().toLowerCase() === "crypto" ? (
-              <div style={{ display: "block", color: "#000" }}>
+            ) : (selectedDonationMethod.includes("crypto")) ? (
+              <div>
                 <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
                   <span style={{ fontSize: 32 }}>🌐</span>
                   <div>
                     <h3 style={{ fontSize: 18, fontWeight: 800, color: "#1C3A2B", margin: 0 }}>Crypto / Web3</h3>
-                    <p style={{ fontSize: 11, color: "#444", margin: 0 }}>EVM-Compatible Wallet</p>
+                    <p style={{ fontSize: 11, color: "#666", margin: 0 }}>EVM Address</p>
                   </div>
                 </div>
                 
                 <div style={{ background: "#F1F5F9", borderRadius: 12, padding: 16, marginBottom: 16, border: "1px solid #E2E8F0" }}>
-                  <div style={{ fontSize: 10, fontWeight: 700, color: "#059669", marginBottom: 4 }}>WALLET ADDRESS</div>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: "#059669", marginBottom: 4 }}>WALLET ADDRESS</div>
                   <div style={{ fontSize: 11, fontWeight: 700, color: "#000", fontFamily: "monospace", wordBreak: "break-all", background: "#fff", padding: "8px", borderRadius: "6px", border: "1px solid #E2E8F0", marginBottom: 12 }}>
                     0x71723715478b344164e992b49ae1fCEb6467888B
                   </div>
@@ -836,24 +830,19 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
                     }} 
                     style={{ width: "100%", padding: "10px", background: "#2F8F4E", color: "white", border: "none", borderRadius: "8px", fontWeight: 700, cursor: "pointer" }}
                   >
-                    📋 Copy Address
+                    📋 SALIN ALAMAT
                   </button>
                 </div>
               </div>
             ) : (
-              <div style={{ padding: "20px", textAlign: "center", color: "#000" }}>
-                <div style={{ fontSize: '24px', marginBottom: '10px' }}>⚠️</div>
-                <div style={{ fontWeight: 'bold' }}>Metode tidak dikenal</div>
-                <div style={{ fontSize: '11px', color: '#666' }}>ID: {selectedDonationMethod?.toString()}</div>
+              <div style={{ textAlign: "center", padding: "20px", color: "#666" }}>
+                Memuat Info... ({selectedDonationMethod})
               </div>
             )}
           </div>
 
           <style>{`
-            @keyframes slideIn { from { transform: translateX(12px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-            @media (max-width: 768px) {
-              @keyframes slideIn { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-            }
+            @keyframes slideInSide { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
           `}</style>
         </div>
       )}
