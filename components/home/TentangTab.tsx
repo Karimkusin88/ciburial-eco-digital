@@ -745,6 +745,117 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
         </div>
       </section>
 
+      {/* DONASI DETAIL POPOVER */}
+      {selectedDonationMethod && (
+        <div 
+          style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, zIndex: 10000, background: "rgba(0,0,0,0.15)", backdropFilter: "blur(2px)" }} 
+          onClick={() => setSelectedDonationMethod(null)}
+        >
+          <div 
+            style={{ 
+              position: "fixed", 
+              top: Math.max(10, Math.min(popoverPos.top || 100, window.innerHeight - 320)), 
+              left: Math.max(10, Math.min(popoverPos.left || 20, window.innerWidth - 360)), 
+              width: "min(340px, 92vw)", 
+              maxHeight: "80vh",
+              overflowY: "auto",
+              background: "#FFFFFF", 
+              borderRadius: "20px", 
+              border: "2px solid #2F8F4E", 
+              boxShadow: "0 25px 50px -12px rgba(0,0,0,0.4)", 
+              padding: "24px", 
+              animation: "slideIn .3s cubic-bezier(.22,1,.36,1)",
+              zIndex: 10001,
+              color: "#1A1410"
+            }} 
+            onClick={(e) => e.stopPropagation()}
+          >
+            {console.log("🎯 Popover State:", { selectedDonationMethod, top: popoverPos.top, left: popoverPos.left })}
+            
+            {/* Close Button */}
+            <button 
+              onClick={() => setSelectedDonationMethod(null)} 
+              style={{ position: "absolute", top: 12, right: 12, width: 28, height: 28, borderRadius: "50%", background: "#F0FDF4", border: "1px solid #DCFCE7", color: "#166534", fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "bold" }}
+            >
+              ✕
+            </button>
+
+            {/* Render Berdasarkan ID Metode */}
+            {selectedDonationMethod === "bank" ? (
+              <div style={{ textAlign: "left" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+                  <span style={{ fontSize: 32 }}>🏦</span>
+                  <div>
+                    <h3 style={{ fontSize: 18, fontWeight: 800, color: "#1C3A2B", margin: 0 }}>Transfer Bank</h3>
+                    <p style={{ fontSize: 11, color: "#6B7280", margin: 0 }}>Rekening Resmi DKM Ciburial</p>
+                  </div>
+                </div>
+                
+                <div style={{ background: "#F8FAFC", border: "1.5px solid #E2E8F0", borderRadius: 12, padding: 16, marginBottom: 16 }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase", color: "#059669", marginBottom: 6 }}>Nomor Rekening (SeaBank)</div>
+                  <div style={{ fontSize: 18, fontWeight: 800, color: "#1E293B", fontFamily: "monospace", letterSpacing: "1.5px" }}>90135555066</div>
+                  
+                  <div style={{ height: "1px", background: "#E2E8F0", margin: "12px 0" }}></div>
+                  
+                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase", color: "#64748B", marginBottom: 4 }}>Atas Nama</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "#1E293B" }}>Ubay Rahmat H</div>
+                </div>
+                
+                <div style={{ fontSize: 11, color: "#166534", background: "#F0FDF4", border: "1px solid #BBF7D0", borderRadius: 8, padding: 10, display: "flex", gap: 8, alignItems: "center" }}>
+                  <span>💡</span>
+                  <span>SeaBank (Kode: 901) • Transfer sesama/e-wallet gratis.</span>
+                </div>
+              </div>
+            ) : selectedDonationMethod === "crypto" ? (
+              <div style={{ textAlign: "left" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+                  <span style={{ fontSize: 32 }}>🌐</span>
+                  <div>
+                    <h3 style={{ fontSize: 18, fontWeight: 800, color: "#1C3A2B", margin: 0 }}>Crypto / Web3</h3>
+                    <p style={{ fontSize: 11, color: "#6B7280", margin: 0 }}>EVM-Compatible Wallet</p>
+                  </div>
+                </div>
+                
+                <div style={{ background: "#F8FAFC", border: "1.5px solid #E2E8F0", borderRadius: 12, padding: 16, marginBottom: 16 }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase", color: "#059669", marginBottom: 6 }}>Wallet Address (Multi-Chain)</div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "#1E293B", fontFamily: "monospace", wordBreak: "break-all", lineHeight: 1.5, background: "#F1F5F9", padding: "8px", borderRadius: "6px", marginBottom: 12 }}>
+                    0x71723715478b344164e992b49ae1fCEb6467888B
+                  </div>
+                  <button 
+                    onClick={() => {
+                      navigator.clipboard.writeText("0x71723715478b344164e992b49ae1fCEb6467888B");
+                      alert("✓ Wallet address copied!");
+                    }} 
+                    style={{ width: "100%", padding: "10px", background: "#2F8F4E", border: "none", borderRadius: "8px", color: "white", fontWeight: 700, fontSize: 12, cursor: "pointer", transition: "all .2s", boxShadow: "0 4px 12px rgba(47,143,78,0.2)" }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "#1A5C32"; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "#2F8F4E"; }}
+                  >
+                    📋 Copy Address
+                  </button>
+                </div>
+                
+                <div style={{ fontSize: 11, color: "#166534", background: "#F0FDF4", border: "1px solid #BBF7D0", borderRadius: 8, padding: 10, display: "flex", gap: 8, alignItems: "center" }}>
+                  <span>💡</span>
+                  <span>Polygon, BSC, ETH, Base, Arbitrum, Optimism.</span>
+                </div>
+              </div>
+            ) : (
+              <div style={{ padding: "20px", textAlign: "center", color: "#66463F", background: "#FFF5F0", borderRadius: 12, border: "1px solid #FFDDD0" }}>
+                <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 8 }}>⚠️ Invalid Method</div>
+                <div style={{ fontSize: 11, color: "#8B6B63" }}>Method: <code style={{ background: "#FFE8DC", padding: "2px 6px", borderRadius: 4 }}>{selectedDonationMethod}</code></div>
+                <div style={{ fontSize: 10, marginTop: 8, color: "#A0837B" }}>Expected: "bank" or "crypto"</div>
+              </div>
+            )}
+          </div>
+
+          <style>{`
+            @keyframes slideIn { from { transform: translateX(12px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+            @media (max-width: 768px) {
+              @keyframes slideIn { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+            }
+          `}</style>
+        </div>
+      )}
       {/* STORY MODAL */}
       {showStory && (
         <div style={{ position: "fixed", inset: 0, zIndex: 9999, overflowY: "auto", background: "rgba(28,58,43,.7)", backdropFilter: "blur(12px)", padding: "clamp(40px,10vw,80px) 20px", animation: "storyFadeIn .3s ease", display: "block" }}>
