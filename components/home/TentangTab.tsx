@@ -764,9 +764,11 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
           <div 
             style={{ 
               position: "fixed", 
-              top: popoverPos.top || 100, 
-              left: popoverPos.left || 20, 
+              top: Math.max(10, Math.min(popoverPos.top || 100, window.innerHeight - 320)), 
+              left: Math.max(10, Math.min(popoverPos.left || 20, window.innerWidth - 360)), 
               width: "min(340px, 92vw)", 
+              maxHeight: "80vh",
+              overflowY: "auto",
               background: "#FFFFFF", 
               borderRadius: "20px", 
               border: "2px solid #2F8F4E", 
