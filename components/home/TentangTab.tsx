@@ -58,20 +58,7 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
   const [totalJiwa, setTotalJiwa] = useState<number | null>(null);
   const [pengurusDb, setPengurusDb] = useState<any[]>([]);
   const [showStory, setShowStory] = useState(false);
-  const [selectedDonationMethod, setSelectedDonationMethod] = useState<string | null>(null);
-  const [popoverPos, setPopoverPos] = useState({ top: 0, left: 0 });
-  const [openTime, setOpenTime] = useState(0);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      // Hanya tutup jika sudah terbuka lebih dari 500ms untuk hindari instan close
-      if (selectedDonationMethod && Date.now() - openTime > 500) {
-        setSelectedDonationMethod(null);
-      }
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [selectedDonationMethod, openTime]);
+  const [expandedDonation, setExpandedDonation] = useState<string | null>(null);
 
   // Calculate saldo from transaksi
   const totMasuk = transaksi.filter(t => t.tipe === "masuk").reduce((s, t) => s + t.jumlah, 0);
@@ -679,58 +666,61 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
                 </div>
               </div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 24 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 24 }}>
                 {[
-                  { id: "midtrans", icon: "📱", l: "QRIS & E-Wallet", s: "Donasi Instan via Midtrans", detail: "Silakan klik untuk memulai donasi" },
-                  { id: "bank", icon: "🏦", l: "Transfer Bank", s: "Rekening Resmi DKM", detail: "SeaBank: 90135555066\na.n Ubay Rahmat H" },
-                  { id: "crypto", icon: "🌐", l: "Crypto / Web3", s: "EVM-Compatible Wallet", detail: "0x71723715478b344164e992b49ae1fCEb6467888B" }
-                ].map((m, i) => (
-                  <div key={i} onClick={(e) => {
-                    if (m.id === "midtrans") {
-                      bayarDonasi();
-                    } else {
-                      const rect = e.currentTarget.getBoundingClientRect();
-                      const isMobile = window.innerWidth < 768;
+                  { id: "midtrans", icon: "📱", l: "QRIS & E-Wallet", s: "Donasi Instan via Midtrans" },
+                  { id: "bank", icon: "🏦", l: "Transfer Bank", s: "Rekening Resmi DKM Ciburial", rek: "90135555066", an: "Ubay Rahmat H", ket: "SeaBank (901)" },
+                  { id: "crypto", icon: "🌐", l: "Crypto / Web3", s: "EVM-Compatible Wallet", rek: "0x71723715478b344164e992b49ae1fCEb6467888B", an: "Multi-Chain", ket: "Polygon, BSC, ETH, dll." }
+                ].map((m, i) => {
+                  const isExp = expandedDonation === m.id;
+                  return (
+                    <div key={i} style={{ borderRadius: 16, overflow: "hidden", border: "1px solid rgba(255,255,255,.12)", transition: "all .3s" }}>
+                      <div 
+                        onClick={() => {
+                          if (m.id === "midtrans") bayarDonasi();
+                          else setExpandedDonation(isExp ? null : m.id);
+                        }} 
+                        style={{ display: "flex", alignItems: "center", gap: 14, padding: "16px 20px", background: isExp ? "rgba(255,255,255,.15)" : "rgba(255,255,255,.06)", cursor: "pointer", transition: "all .2s" }}
+                        onMouseEnter={e => { if(!isExp) e.currentTarget.style.background = "rgba(255,255,255,.12)"; }}
+                        onMouseLeave={e => { if(!isExp) e.currentTarget.style.background = "rgba(255,255,255,.06)"; }}
+                      >
+                        <span style={{ fontSize: 28 }}>{m.icon}</span>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: 14, fontWeight: 800, color: "var(--cr)" }}>{m.l}</div>
+                          <div style={{ fontSize: 11, color: "rgba(250,248,243,.5)" }}>{m.s}</div>
+                        </div>
+                        {m.id !== "midtrans" && (
+                          <span style={{ fontSize: 12, color: "var(--cr)", transform: isExp ? "rotate(180deg)" : "rotate(0)", transition: "transform .3s" }}>▼</span>
+                        )}
+                      </div>
                       
-                      let top = rect.top;
-                      let left = isMobile ? rect.left : rect.right + 20;
-
-                      if (isMobile) {
-                        top = rect.bottom + 10;
-                        // Jika di bawah gak muat, taruh di atas tombol
-                        if (top + 320 > window.innerHeight) top = Math.max(10, rect.top - 330);
-                        // Mastiin gak off-screen kiri/kanan
-                        left = Math.max(10, Math.min(window.innerWidth - 330, left));
-                      } else {
-                        // Jika di kanan gak muat, taruh di kiri tombol
-                        if (left + 330 > window.innerWidth) left = Math.max(10, rect.left - 330);
-                        // Jika di bawah gak muat, geser ke atas
-                        if (top + 320 > window.innerHeight) top = Math.max(10, window.innerHeight - 330);
-                      }
-
-                      setPopoverPos({ top, left });
-                      setOpenTime(Date.now());
-                      setSelectedDonationMethod(m.id);
-                      e.stopPropagation();
-                    }
-                  }} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "14px 16px", background: "rgba(255,255,255,.08)", borderRadius: 12, border: "1px solid rgba(255,255,255,.12)", cursor: loadingDonasi && m.id === "midtrans" ? "wait" : "pointer", transition: "all .2s", opacity: m.id === "midtrans" && loadingDonasi ? 0.6 : 1, position: "relative" }}
-                    onMouseEnter={e => {
-                      e.currentTarget.style.background = "rgba(255,255,255,.15)";
-                      e.currentTarget.style.transform = "translateX(4px)";
-                    }}
-                    onMouseLeave={e => {
-                      e.currentTarget.style.background = "rgba(255,255,255,.08)";
-                      e.currentTarget.style.transform = "translateX(0)";
-                    }}
-                  >
-                    <span style={{ fontSize: 24, marginTop: 0 }}>{m.icon}</span>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 2, width: "100%" }}>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: "var(--cr)" }}>{m.l}</div>
-                      <div style={{ fontSize: 11, color: "rgba(250,248,243,.55)" }}>{m.s}</div>
-                      {m.id === "midtrans" && loadingDonasi && <div style={{ fontSize: 11, fontWeight: 600, color: "var(--gl)" }}>⏳ Memuat...</div>}
+                      {/* Inline Details */}
+                      {isExp && m.rek && (
+                        <div style={{ background: "white", padding: "20px", color: "#000" }}>
+                          <div style={{ background: "#F1F5F9", padding: "16px", borderRadius: 12, border: "1px solid #E2E8F0" }}>
+                            <div style={{ fontSize: 9, fontWeight: 800, color: "#059669", marginBottom: 4 }}>{m.id === "bank" ? "NOMOR REKENING" : "WALLET ADDRESS"}</div>
+                            <div style={{ fontSize: m.id === "bank" ? 22 : 11, fontWeight: 900, fontFamily: "monospace", wordBreak: "break-all", color: "#000" }}>{m.rek}</div>
+                            <div style={{ fontSize: 9, fontWeight: 800, color: "#64748B", marginTop: 10, marginBottom: 2 }}>{m.id === "bank" ? "ATAS NAMA" : "NETWORK"}</div>
+                            <div style={{ fontSize: 14, fontWeight: 700, color: "#000" }}>{m.an}</div>
+                          </div>
+                          <div style={{ marginTop: 12, fontSize: 11, color: "#166534", background: "#F0FDF4", padding: "8px 12px", borderRadius: 8, border: "1px solid #BBF7D0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                            <span>💡 {m.ket}</span>
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                navigator.clipboard.writeText(m.rek!);
+                                alert("✓ Copied!");
+                              }}
+                              style={{ background: "#2F8F4E", border: "none", color: "white", padding: "4px 10px", borderRadius: 6, fontSize: 10, fontWeight: 700, cursor: "pointer" }}
+                            >
+                              SALIN
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
               <div style={{ display: "flex", gap: 14, flexWrap: "wrap", alignItems: "center" }}>
                 <button onClick={() => onNavigate("transparansi")} style={{ padding: "11px 22px", borderRadius: 99, fontSize: 11, fontWeight: 700, letterSpacing: ".09em", textTransform: "uppercase", border: "1.5px solid rgba(79,191,126,.4)", background: "rgba(79,191,126,.15)", color: "var(--cr)", cursor: "pointer", transition: "all .2s" }}
@@ -754,117 +744,6 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
           </div>
         </div>
       </section>
-
-      {/* DONASI DETAIL MODAL (CENTERED FOR STABILITY) */}
-      {selectedDonationMethod && (
-        <div 
-          style={{ 
-            position: "fixed", 
-            inset: 0, 
-            zIndex: 10000, 
-            background: "rgba(0,0,0,0.7)", 
-            backdropFilter: "blur(10px)", 
-            display: "flex", 
-            alignItems: "center", 
-            justifyContent: "center",
-            padding: "20px"
-          }} 
-          onClick={() => setSelectedDonationMethod(null)}
-        >
-          <div 
-            style={{ 
-              width: "400px", 
-              maxWidth: "100%", 
-              background: "#FFFFFF", 
-              borderRadius: "28px", 
-              padding: "40px 32px", 
-              position: "relative",
-              boxShadow: "0 25px 80px rgba(0,0,0,0.5)",
-              color: "#000000",
-              textAlign: "center",
-              animation: "modalZoom 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)"
-            }} 
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Close Button */}
-            <button 
-              onClick={() => setSelectedDonationMethod(null)} 
-              style={{ position: "absolute", top: 20, right: 20, width: 36, height: 36, borderRadius: "50%", background: "#f3f4f6", border: "none", color: "#000", fontSize: 20, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
-            >
-              ✕
-            </button>
-
-            {/* Content Switcher */}
-            {(() => {
-              const isBank = selectedDonationMethod.toLowerCase().includes("bank");
-              const isCrypto = selectedDonationMethod.toLowerCase().includes("crypto");
-
-              if (isBank) {
-                return (
-                  <div style={{ display: "block" }}>
-                    <div style={{ fontSize: 60, marginBottom: 20 }}>🏦</div>
-                    <h3 style={{ fontSize: 24, fontWeight: 900, color: "#1C3A2B", marginBottom: 8 }}>Transfer Bank</h3>
-                    <p style={{ fontSize: 14, color: "#666", marginBottom: 24 }}>Rekening Resmi DKM Ciburial</p>
-                    
-                    <div style={{ background: "#F8FAFC", border: "2px solid #E2E8F0", borderRadius: 20, padding: 24, marginBottom: 24 }}>
-                      <div style={{ fontSize: 11, fontWeight: 800, color: "#059669", letterSpacing: "0.1em", marginBottom: 8 }}>NOMOR REKENING (SEABANK)</div>
-                      <div style={{ fontSize: 26, fontWeight: 900, color: "#000000", fontFamily: "monospace", letterSpacing: "2px" }}>90135555066</div>
-                      
-                      <div style={{ height: "1px", background: "#E2E8F0", margin: "16px 0" }}></div>
-                      
-                      <div style={{ fontSize: 11, fontWeight: 800, color: "#64748B", letterSpacing: "0.1em", marginBottom: 4 }}>ATAS NAMA</div>
-                      <div style={{ fontSize: 18, fontWeight: 800, color: "#000000" }}>UBAY RAHMAT H</div>
-                    </div>
-                    
-                    <div style={{ fontSize: 12, color: "#166534", background: "#ECFDF5", border: "1px solid #A7F3D0", borderRadius: 12, padding: 12, lineHeight: 1.5 }}>
-                      💡 SeaBank (901) • Gratis Biaya Admin
-                    </div>
-                  </div>
-                );
-              }
-
-              if (isCrypto) {
-                return (
-                  <div style={{ display: "block" }}>
-                    <div style={{ fontSize: 60, marginBottom: 20 }}>🌐</div>
-                    <h3 style={{ fontSize: 24, fontWeight: 900, color: "#1C3A2B", marginBottom: 8 }}>Crypto / Web3</h3>
-                    <p style={{ fontSize: 14, color: "#666", marginBottom: 24 }}>EVM-Compatible Address</p>
-                    
-                    <div style={{ background: "#F8FAFC", border: "2px solid #E2E8F0", borderRadius: 20, padding: 24, marginBottom: 24 }}>
-                      <div style={{ fontSize: 11, fontWeight: 800, color: "#059669", letterSpacing: "0.1em", marginBottom: 12 }}>WALLET ADDRESS (MULTI-CHAIN)</div>
-                      <div style={{ fontSize: 12, fontWeight: 800, color: "#000000", fontFamily: "monospace", wordBreak: "break-all", background: "#FFF", padding: "12px", borderRadius: "10px", border: "1px solid #CBD5E1", marginBottom: 20, lineHeight: 1.4 }}>
-                        0x71723715478b344164e992b49ae1fCEb6467888B
-                      </div>
-                      <button 
-                        onClick={() => {
-                          navigator.clipboard.writeText("0x71723715478b344164e992b49ae1fCEb6467888B");
-                          alert("✓ Berhasil Disalin!");
-                        }} 
-                        style={{ width: "100%", padding: "14px", background: "#2F8F4E", color: "#FFFFFF", border: "none", borderRadius: "12px", fontWeight: 800, fontSize: 14, cursor: "pointer" }}
-                      >
-                        📋 SALIN ALAMAT
-                      </button>
-                    </div>
-                    
-                    <div style={{ fontSize: 11, color: "#666" }}>
-                      Mendukung Polygon, BSC, ETH, dll.
-                    </div>
-                  </div>
-                );
-              }
-
-              return <div style={{ color: "#000" }}>Metode tidak dikenal: {selectedDonationMethod}</div>;
-            })()}
-          </div>
-
-          <style>{`
-            @keyframes modalZoom { 
-              0% { transform: scale(0.9); opacity: 0; } 
-              100% { transform: scale(1); opacity: 1; } 
-            }
-          `}</style>
-        </div>
-      )}
 
       {/* STORY MODAL */}
       {showStory && (
