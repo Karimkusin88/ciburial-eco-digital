@@ -41,10 +41,16 @@ yarn-error.log*
 next-env.d.ts
 .agent/
 
-# AI instructions
+# AI instructions & Internal Docs
 GEMINI.md
 CLAUDE.md
 AGENTS.md
 MEMORY.md
+HEROIC_DESIGN_GUIDE.md
+PANDUAN_HEROIC_QUICK.md
+TEMPLATES_HEROIC.md
+IMPLEMENTATION_COMPLETE.md
+*.sql
 .gemini/
+
 
