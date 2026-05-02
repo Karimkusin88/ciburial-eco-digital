@@ -788,18 +788,23 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
               ✕
             </button>
 
-            {selectedDonationMethod === "bank" && (
-              <div style={{ display: "block" }}>
+            {/* Debug Label (Hapus nanti kalau sudah fix) */}
+            <div style={{ fontSize: '8px', color: '#ccc', position: 'absolute', bottom: 5, right: 10 }}>
+              ID: {selectedDonationMethod}
+            </div>
+
+            {selectedDonationMethod?.toString().trim().toLowerCase() === "bank" ? (
+              <div style={{ display: "block", color: "#000" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
                   <span style={{ fontSize: 32 }}>🏦</span>
                   <div>
                     <h3 style={{ fontSize: 18, fontWeight: 800, color: "#1C3A2B", margin: 0 }}>Transfer Bank</h3>
-                    <p style={{ fontSize: 11, color: "#666", margin: 0 }}>Rekening DKM Ciburial</p>
+                    <p style={{ fontSize: 11, color: "#444", margin: 0 }}>Rekening Resmi DKM Ciburial</p>
                   </div>
                 </div>
                 
                 <div style={{ background: "#F1F5F9", borderRadius: 12, padding: 16, marginBottom: 16, border: "1px solid #E2E8F0" }}>
-                  <div style={{ fontSize: 10, fontWeight: 700, color: "#059669", marginBottom: 4 }}>NOMOR REKENING</div>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: "#059669", marginBottom: 4 }}>NOMOR REKENING (SEABANK)</div>
                   <div style={{ fontSize: 20, fontWeight: 800, color: "#000", fontFamily: "monospace", letterSpacing: "1px" }}>90135555066</div>
                   <div style={{ fontSize: 10, fontWeight: 700, color: "#64748B", marginTop: 12, marginBottom: 2 }}>ATAS NAMA</div>
                   <div style={{ fontSize: 15, fontWeight: 700, color: "#000" }}>Ubay Rahmat H</div>
@@ -809,15 +814,13 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
                   💡 SeaBank (901) • Transfer gratis
                 </div>
               </div>
-            )}
-
-            {selectedDonationMethod === "crypto" && (
-              <div style={{ display: "block" }}>
+            ) : selectedDonationMethod?.toString().trim().toLowerCase() === "crypto" ? (
+              <div style={{ display: "block", color: "#000" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
                   <span style={{ fontSize: 32 }}>🌐</span>
                   <div>
                     <h3 style={{ fontSize: 18, fontWeight: 800, color: "#1C3A2B", margin: 0 }}>Crypto / Web3</h3>
-                    <p style={{ fontSize: 11, color: "#666", margin: 0 }}>EVM-Compatible Wallet</p>
+                    <p style={{ fontSize: 11, color: "#444", margin: 0 }}>EVM-Compatible Wallet</p>
                   </div>
                 </div>
                 
@@ -836,6 +839,12 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
                     📋 Copy Address
                   </button>
                 </div>
+              </div>
+            ) : (
+              <div style={{ padding: "20px", textAlign: "center", color: "#000" }}>
+                <div style={{ fontSize: '24px', marginBottom: '10px' }}>⚠️</div>
+                <div style={{ fontWeight: 'bold' }}>Metode tidak dikenal</div>
+                <div style={{ fontSize: '11px', color: '#666' }}>ID: {selectedDonationMethod?.toString()}</div>
               </div>
             )}
           </div>
