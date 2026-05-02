@@ -764,9 +764,11 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
               border: "2px solid #2F8F4E", 
               boxShadow: "0 25px 50px -12px rgba(0,0,0,0.4)", 
               padding: "24px", 
-              animation: "slideIn .3s cubic-bezier(.22,1,.36,1)",
               zIndex: 10001,
-              color: "#1A1410"
+              color: "#1A1410",
+              visibility: selectedDonationMethod ? "visible" : "hidden",
+              opacity: selectedDonationMethod ? 1 : 0,
+              transition: "opacity 0.3s ease"
             }} 
             onClick={(e) => e.stopPropagation()}
           >
@@ -849,9 +851,8 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
           </div>
 
           <style>{`
-            @keyframes slideIn { from { transform: translateX(12px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
             @media (max-width: 768px) {
-              @keyframes slideIn { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+              /* Mobile responsive adjustments handled inline */
             }
           `}</style>
         </div>
