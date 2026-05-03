@@ -131,7 +131,7 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
         <div style={{ position: "absolute", top: "-20%", left: "-10%", width: "600px", height: "600px", background: "radial-gradient(circle,rgba(184,148,63,.15) 0%,transparent 70%)", borderRadius: "50%", animation: "float 25s ease-in-out infinite reverse", zIndex: 0 }} />
 
         {/* Gradient Overlay */}
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg,rgba(28,58,43,.3) 0%,rgba(28,58,43,.2) 50%,rgba(28,58,43,.1) 100%)", pointerEvents: "none", zIndex: 1 }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg,rgba(28,58,43,.65) 0%,rgba(28,58,43,.55) 50%,rgba(28,58,43,.45) 100%)", pointerEvents: "none", zIndex: 1 }} />
 
         <div className="hero-content" style={{ position: "relative", zIndex: 2, maxWidth: 1000 }}>
           {/* Badge */}
@@ -144,16 +144,16 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
           {/* Content */}
           <div style={{ maxWidth: 900, margin: "0 auto", width: "100%", textAlign: "center" }}>
             <div className="h2" style={{ marginBottom: 12 }}>
-              <span style={{ fontSize: 13, fontWeight: 600, letterSpacing: ".15em", textTransform: "uppercase", color: "#4FBF7E", textShadow: "0 2px 8px rgba(47,143,78,.15)" }}>▼ Selamat Datang di ▼</span>
+              <span style={{ fontSize: 13, fontWeight: 600, letterSpacing: ".15em", textTransform: "uppercase", color: "#F5F1ED", textShadow: "0 2px 8px rgba(28,58,43,.3)" }}>▼ Selamat Datang di ▼</span>
             </div>
 
             {/* Main Title */}
-            <h1 className="fnt h3 hero-title" style={{ fontWeight: 200, lineHeight: 0.95, color: "#1C3A2B", letterSpacing: "-.04em", marginBottom: 12, fontSize: "clamp(56px,12vw,140px)", textShadow: "0 12px 32px rgba(28,58,43,.15)" }}>
+            <h1 className="fnt h3 hero-title" style={{ fontWeight: 200, lineHeight: 0.95, color: "#FFFFFF", letterSpacing: "-.04em", marginBottom: 12, fontSize: "clamp(56px,12vw,140px)", textShadow: "0 12px 32px rgba(28,58,43,.3)" }}>
               Ciburial
             </h1>
 
             {/* Subtitle */}
-            <h2 className="fnt h4 hero-sub" style={{ fontWeight: 500, fontStyle: "italic", background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", letterSpacing: "-.02em", marginBottom: 0, fontSize: "clamp(28px,5vw,54px)", textShadow: "0 2px 8px rgba(47,143,78,.1)" }}>
+            <h2 className="fnt h4 hero-sub" style={{ fontWeight: 500, fontStyle: "italic", color: "#F5F1ED", letterSpacing: "-.02em", marginBottom: 0, fontSize: "clamp(28px,5vw,54px)", textShadow: "0 4px 12px rgba(28,58,43,.4)" }}>
               Eco-Digital Village
             </h2>
 
@@ -162,21 +162,21 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
 
             {/* Tagline */}
             <div className="h5" style={{ marginBottom: 32 }}>
-              <p className="fnt" style={{ fontSize: "clamp(14px,2.5vw,22px)", fontWeight: 300, fontStyle: "italic", color: "#5A4A40", letterSpacing: ".01em", lineHeight: 1.6, textShadow: "0 2px 4px rgba(28,58,43,.05)" }}>
+              <p className="fnt" style={{ fontSize: "clamp(14px,2.5vw,22px)", fontWeight: 300, fontStyle: "italic", color: "#F5F1ED", letterSpacing: ".01em", lineHeight: 1.6, textShadow: "0 2px 8px rgba(28,58,43,.3)" }}>
                 Inovasi Desa Mandiri Berbasis Kearifan Lokal dan Teknologi Masa Depan
               </p>
             </div>
 
             {/* Description */}
             <div className="h5" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
-              <p style={{ maxWidth: 620, fontSize: "clamp(15px,2vw,18px)", fontWeight: 400, lineHeight: 1.9, color: "#5A4A40" }}>
+              <p style={{ maxWidth: 620, fontSize: "clamp(15px,2vw,18px)", fontWeight: 400, lineHeight: 1.9, color: "#F5F1ED" }}>
                 Memutus rantai ketertinggalan dengan <strong style={{ color: "#2F8F4E", fontWeight: 600 }}>digitalisasi hasil bumi</strong>, <strong style={{ color: "#2F8F4E", fontWeight: 600 }}>ekosistem sirkular</strong>, dan <strong style={{ color: "#2F8F4E", fontWeight: 600 }}>generasi muda yang melek teknologi</strong> — tanpa meninggalkan identitas kampung halaman.
               </p>
 
               {/* Tags */}
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "center" }}>
                 {["🌱 Pertanian Organik", "🐄 Peternakan Modern", "🎋 Kerajinan Bambu", "💡 Smart PJU", "♻️ Eco-Waste", "📚 Learning Hub", "🏛️ Balai Warga"].map(tag => (
-                  <span key={tag} className="badge-heroic" style={{ padding: "8px 14px", fontSize: 11, fontWeight: 600, borderRadius: 99, color: "#1C3A2B", background: "linear-gradient(135deg,rgba(47,143,78,.08),rgba(79,191,126,.08))", border: "1.5px solid rgba(47,143,78,.2)", transition: "all .3s ease", cursor: "default" }}>{tag}</span>
+                  <span key={tag} className="badge-heroic" style={{ padding: "8px 14px", fontSize: 11, fontWeight: 600, borderRadius: 99, color: "#1C3A2B", background: "rgba(255,255,255,.15)", border: "1.5px solid rgba(255,255,255,.3)", transition: "all .3s ease", cursor: "default" }}>{tag}</span>
                 ))}
               </div>
             </div>
