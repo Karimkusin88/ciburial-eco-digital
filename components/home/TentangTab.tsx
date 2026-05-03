@@ -125,7 +125,7 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
     <div className="pi">
 
       {/* HERO - HEROIC EDITION */}
-      <section className="hero-section" style={{ position: "relative", overflow: "hidden", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", backgroundImage: "url('/sawah.jpeg')", backgroundSize: "cover", backgroundPosition: "center", backgroundAttachment: "fixed" }}>
+      <section className="hero-section" style={{ position: "relative", overflow: "hidden", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", backgroundImage: "url('/padi.jpeg')", backgroundSize: "cover", backgroundPosition: "center", backgroundAttachment: "fixed" }}>
         {/* Background Animations */}
         <div style={{ position: "absolute", bottom: "-30%", right: "-15%", width: "800px", height: "800px", background: "radial-gradient(circle,rgba(47,143,78,.25) 0%,transparent 70%)", borderRadius: "50%", animation: "float 30s ease-in-out infinite", zIndex: 0 }} />
         <div style={{ position: "absolute", top: "-20%", left: "-10%", width: "600px", height: "600px", background: "radial-gradient(circle,rgba(184,148,63,.15) 0%,transparent 70%)", borderRadius: "50%", animation: "float 25s ease-in-out infinite reverse", zIndex: 0 }} />
