@@ -124,101 +124,260 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
   return (
     <div className="pi">
 
-      {/* HERO - HEROIC EDITION */}
-      <section className="hero-section" style={{ position: "relative", overflow: "hidden", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", backgroundImage: "url('/padi.jpeg')", backgroundSize: "cover", backgroundPosition: "center", backgroundAttachment: "fixed" }}>
-        {/* Background Animations */}
-        <div style={{ position: "absolute", bottom: "-30%", right: "-15%", width: "800px", height: "800px", background: "radial-gradient(circle,rgba(47,143,78,.25) 0%,transparent 70%)", borderRadius: "50%", animation: "float 30s ease-in-out infinite", zIndex: 0 }} />
-        <div style={{ position: "absolute", top: "-20%", left: "-10%", width: "600px", height: "600px", background: "radial-gradient(circle,rgba(184,148,63,.15) 0%,transparent 70%)", borderRadius: "50%", animation: "float 25s ease-in-out infinite reverse", zIndex: 0 }} />
+      {/* HERO - ELEGANT EDITION */}
+<section
+  className="hero-section"
+  style={{
+    position: "relative",
+    overflow: "hidden",
+    minHeight: "100vh",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundImage: "url('/padi.jpeg')",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundAttachment: "fixed",
+  }}
+>
+  {/* Overlay - lebih gelap dan dramatis */}
+  <div style={{
+    position: "absolute",
+    inset: 0,
+    background: "linear-gradient(170deg, rgba(15,35,25,0.72) 0%, rgba(27,67,50,0.78) 50%, rgba(10,28,18,0.90) 100%)",
+    zIndex: 1,
+  }} />
 
-        {/* Gradient Overlay */}
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg,rgba(28,58,43,.65) 0%,rgba(28,58,43,.55) 50%,rgba(28,58,43,.45) 100%)", pointerEvents: "none", zIndex: 1 }} />
+  {/* Grain texture - kesan premium */}
+  <div style={{
+    position: "absolute",
+    inset: 0,
+    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.06'/%3E%3C/svg%3E")`,
+    opacity: 0.4,
+    zIndex: 1,
+  }} />
 
-        <div className="hero-content" style={{ position: "relative", zIndex: 2, maxWidth: 1000 }}>
-          {/* Badge */}
-          <div className="h1" style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 40, justifyContent: "center" }}>
-            <div style={{ width: 40, height: 3, background: "linear-gradient(90deg,#2F8F4E,#4FBF7E)", borderRadius: 99, boxShadow: "0 0 20px rgba(47,143,78,.4)" }} />
-            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".15em", textTransform: "uppercase", color: "#2F8F4E", background: "rgba(79,191,126,.1)", padding: "8px 16px", borderRadius: 99, border: "1px solid rgba(47,143,78,.2)" }}>🌍 Kp. Ciburial, Garut — Est. 2026</span>
-            <div style={{ width: 40, height: 3, background: "linear-gradient(90deg,#4FBF7E,#2F8F4E)", borderRadius: 99, boxShadow: "0 0 20px rgba(47,143,78,.4)" }} />
-          </div>
+  <div className="hero-content" style={{ position: "relative", zIndex: 2, maxWidth: 900, width: "100%", textAlign: "center", padding: "0 24px" }}>
 
-          {/* Content */}
-          <div style={{ maxWidth: 900, margin: "0 auto", width: "100%", textAlign: "center" }}>
-            <div className="h2" style={{ marginBottom: 12 }}>
-              <span style={{ fontSize: 13, fontWeight: 600, letterSpacing: ".15em", textTransform: "uppercase", color: "#F5F1ED", textShadow: "0 2px 8px rgba(28,58,43,.3)" }}>▼ Selamat Datang di ▼</span>
-            </div>
+    {/* Badge - lebih minimalis */}
+    <div style={{ marginBottom: 32, display: "flex", alignItems: "center", justifyContent: "center", gap: 12 }}>
+      <div style={{ width: 32, height: 1, background: "rgba(149,213,178,0.5)" }} />
+      <span style={{
+        fontSize: 10,
+        fontWeight: 600,
+        letterSpacing: ".2em",
+        textTransform: "uppercase",
+        color: "#95D5B2",
+        padding: "6px 14px",
+        borderRadius: 99,
+        border: "1px solid rgba(149,213,178,0.25)",
+        background: "rgba(149,213,178,0.08)",
+      }}>
+        Kp. Ciburial, Garut — Est. 2026
+      </span>
+      <div style={{ width: 32, height: 1, background: "rgba(149,213,178,0.5)" }} />
+    </div>
 
-            {/* Main Title */}
-            <h1 className="fnt h3 hero-title" style={{ fontWeight: 200, lineHeight: 0.95, color: "#FFFFFF", letterSpacing: "-.04em", marginBottom: 12, fontSize: "clamp(56px,12vw,140px)", textShadow: "0 12px 32px rgba(28,58,43,.3)" }}>
-              Ciburial
-            </h1>
+    {/* Main Title */}
+    <h1
+      className="fnt hero-title"
+      style={{
+        fontWeight: 200,
+        lineHeight: 0.92,
+        color: "#FFFFFF",
+        letterSpacing: "-.04em",
+        marginBottom: 10,
+        fontSize: "clamp(64px,13vw,148px)",
+        textShadow: "0 8px 40px rgba(0,0,0,0.3)",
+      }}
+    >
+      Ciburial
+    </h1>
 
-            {/* Subtitle */}
-            <h2 className="fnt h4 hero-sub" style={{ fontWeight: 500, fontStyle: "italic", color: "#F5F1ED", letterSpacing: "-.02em", marginBottom: 0, fontSize: "clamp(28px,5vw,54px)", textShadow: "0 4px 12px rgba(28,58,43,.4)" }}>
-              Eco-Digital Village
-            </h2>
+    {/* Subtitle */}
+    <h2
+      className="fnt hero-sub"
+      style={{
+        fontWeight: 400,
+        fontStyle: "italic",
+        color: "#95D5B2",  // hijau sage
+        letterSpacing: "-.01em",
+        marginBottom: 0,
+        fontSize: "clamp(26px,5vw,52px)",
+        textShadow: "0 4px 16px rgba(0,0,0,0.2)",
+      }}
+    >
+      Eco-Digital Village
+    </h2>
 
-            {/* Divider */}
-            <div style={{ height: 3, background: "linear-gradient(90deg,transparent,#2F8F4E 25%,#4FBF7E 50%,#2F8F4E 75%,transparent)", margin: "28px auto", maxWidth: 200, boxShadow: "0 0 24px rgba(47,143,78,.2)" }} />
+    {/* Divider */}
+    <div style={{
+      height: 1,
+      background: "linear-gradient(90deg, transparent, rgba(149,213,178,0.6) 25%, rgba(149,213,178,0.8) 50%, rgba(149,213,178,0.6) 75%, transparent)",
+      margin: "28px auto",
+      maxWidth: 160,
+    }} />
 
-            {/* Tagline */}
-            <div className="h5" style={{ marginBottom: 32 }}>
-              <p className="fnt" style={{ fontSize: "clamp(14px,2.5vw,22px)", fontWeight: 300, fontStyle: "italic", color: "#F5F1ED", letterSpacing: ".01em", lineHeight: 1.6, textShadow: "0 2px 8px rgba(28,58,43,.3)" }}>
-                Inovasi Desa Mandiri Berbasis Kearifan Lokal dan Teknologi Masa Depan
-              </p>
-            </div>
+    {/* Tagline - italic, clean */}
+    <p
+      className="fnt"
+      style={{
+        fontSize: "clamp(14px,2vw,20px)",
+        fontWeight: 300,
+        fontStyle: "italic",
+        color: "rgba(255,255,255,0.75)",
+        letterSpacing: ".01em",
+        lineHeight: 1.7,
+        marginBottom: 16,
+        maxWidth: 560,
+        margin: "0 auto 16px",
+      }}
+    >
+      Inovasi Desa Mandiri Berbasis Kearifan Lokal dan Teknologi Masa Depan
+    </p>
 
-            {/* Description */}
-            <div className="h5" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
-              <p style={{ maxWidth: 620, fontSize: "clamp(15px,2vw,18px)", fontWeight: 400, lineHeight: 1.9, color: "#F5F1ED" }}>
-                Memutus rantai ketertinggalan dengan <strong style={{ color: "#2F8F4E", fontWeight: 600 }}>digitalisasi hasil bumi</strong>, <strong style={{ color: "#2F8F4E", fontWeight: 600 }}>ekosistem sirkular</strong>, dan <strong style={{ color: "#2F8F4E", fontWeight: 600 }}>generasi muda yang melek teknologi</strong> — tanpa meninggalkan identitas kampung halaman.
-              </p>
+    {/* Description */}
+    <p style={{
+      maxWidth: 580,
+      fontSize: "clamp(14px,1.8vw,17px)",
+      fontWeight: 400,
+      lineHeight: 1.9,
+      color: "rgba(255,255,255,0.7)",
+      margin: "0 auto 28px",
+    }}>
+      Memutus rantai ketertinggalan dengan{" "}
+      <strong style={{ color: "#95D5B2", fontWeight: 600 }}>digitalisasi hasil bumi</strong>,{" "}
+      <strong style={{ color: "#95D5B2", fontWeight: 600 }}>ekosistem sirkular</strong>, dan{" "}
+      <strong style={{ color: "#95D5B2", fontWeight: 600 }}>generasi muda yang melek teknologi</strong>{" "}
+      — tanpa meninggalkan identitas kampung halaman.
+    </p>
 
-              {/* Tags */}
-              <div style={{ display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "center" }}>
-                {["🌱 Pertanian Organik", "🐄 Peternakan Modern", "🎋 Kerajinan Bambu", "💡 Smart PJU", "♻️ Eco-Waste", "📚 Learning Hub", "🏛️ Balai Warga"].map(tag => (
-                  <span key={tag} className="badge-heroic" style={{ padding: "8px 14px", fontSize: 11, fontWeight: 600, borderRadius: 99, color: "#1C3A2B", background: "rgba(255,255,255,.15)", border: "1.5px solid rgba(255,255,255,.3)", transition: "all .3s ease", cursor: "default" }}>{tag}</span>
-                ))}
-              </div>
-            </div>
-          </div>
+    {/* Tags - kurangi jadi 4, hapus yang kurang penting */}
+    <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center", marginBottom: 44 }}>
+      {["🌱 Pertanian Organik", "🎋 Kerajinan Bambu", "♻️ Eco-Waste", "📚 Learning Hub"].map(tag => (
+        <span
+          key={tag}
+          style={{
+            padding: "6px 14px",
+            fontSize: 11,
+            fontWeight: 500,
+            borderRadius: 99,
+            color: "rgba(255,255,255,0.85)",
+            background: "rgba(255,255,255,0.08)",
+            border: "1px solid rgba(255,255,255,0.15)",
+            backdropFilter: "blur(4px)",
+          }}
+        >
+          {tag}
+        </span>
+      ))}
+    </div>
 
-          {/* CTA Button */}
-          <div style={{ marginTop: 52, display: "flex", justifyContent: "center", gap: 14, flexWrap: "wrap" }}>
-            <button className="btn-heroic" onClick={() => document.getElementById("content-start")?.scrollIntoView({ behavior: "smooth" })} style={{ padding: "14px 32px", fontSize: 12, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", border: "none", borderRadius: 8, background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", color: "white", cursor: "pointer", boxShadow: "0 12px 32px rgba(47,143,78,.3)", transition: "all .35s cubic-bezier(.22,1,.36,1)" }} onMouseEnter={e => (e.currentTarget.style.transform = "translateY(-4px)", e.currentTarget.style.boxShadow = "0 16px 48px rgba(47,143,78,.4)")} onMouseLeave={e => (e.currentTarget.style.transform = "translateY(0)", e.currentTarget.style.boxShadow = "0 12px 32px rgba(47,143,78,.3)")}>
-              Jelajahi Sekarang ↓
-            </button>
-            <button onClick={() => setShowStory(true)} style={{ padding: "14px 32px", fontSize: 12, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", border: "1.5px solid rgba(47,143,78,.4)", borderRadius: 8, background: "rgba(255,255,255,.6)", color: "#1C3A2B", cursor: "pointer", backdropFilter: "blur(8px)", transition: "all .35s cubic-bezier(.22,1,.36,1)", display: "flex", alignItems: "center", gap: 8 }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.background = "rgba(255,255,255,.9)"; e.currentTarget.style.boxShadow = "0 12px 32px rgba(47,143,78,.15)"; }} onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.background = "rgba(255,255,255,.6)"; e.currentTarget.style.boxShadow = "none"; }}>
-              <span style={{ fontSize: 16 }}>📖</span> Our Story
-            </button>
-          </div>
-        </div>
+    {/* CTA Buttons */}
+    <div style={{ display: "flex", justifyContent: "center", gap: 12, flexWrap: "wrap" }}>
+      <button
+        className="btn-heroic"
+        onClick={() => document.getElementById("content-start")?.scrollIntoView({ behavior: "smooth" })}
+        style={{
+          padding: "15px 36px",
+          fontSize: 12,
+          fontWeight: 700,
+          letterSpacing: ".1em",
+          textTransform: "uppercase",
+          border: "none",
+          borderRadius: 6,
+          background: "#95D5B2",  // sage green
+          color: "#1B4332",
+          cursor: "pointer",
+          boxShadow: "0 8px 28px rgba(149,213,178,0.25)",
+          transition: "all .35s cubic-bezier(.22,1,.36,1)",
+        }}
+        onMouseEnter={e => {
+          e.currentTarget.style.transform = "translateY(-3px)";
+          e.currentTarget.style.boxShadow = "0 14px 40px rgba(149,213,178,0.35)";
+          e.currentTarget.style.background = "#b0e0c8";
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.transform = "translateY(0)";
+          e.currentTarget.style.boxShadow = "0 8px 28px rgba(149,213,178,0.25)";
+          e.currentTarget.style.background = "#95D5B2";
+        }}
+      >
+        Jelajahi Sekarang
+      </button>
 
-        {/* Scroll Indicator */}
-        <div style={{ position: "absolute", bottom: 40, left: "50%", transform: "translateX(-50%)", zIndex: 2, animation: "bounce 2s ease-in-out infinite" }}>
-          <div style={{ fontSize: 24, animation: "bounce 2s ease-in-out infinite" }}>⬇</div>
-        </div>
+      <button
+        onClick={() => setShowStory(true)}
+        style={{
+          padding: "15px 36px",
+          fontSize: 12,
+          fontWeight: 700,
+          letterSpacing: ".1em",
+          textTransform: "uppercase",
+          border: "1px solid rgba(255,255,255,0.25)",
+          borderRadius: 6,
+          background: "rgba(255,255,255,0.08)",
+          color: "rgba(255,255,255,0.9)",
+          cursor: "pointer",
+          backdropFilter: "blur(12px)",
+          transition: "all .35s cubic-bezier(.22,1,.36,1)",
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+        }}
+        onMouseEnter={e => {
+          e.currentTarget.style.transform = "translateY(-3px)";
+          e.currentTarget.style.background = "rgba(255,255,255,0.15)";
+          e.currentTarget.style.borderColor = "rgba(255,255,255,0.4)";
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.transform = "translateY(0)";
+          e.currentTarget.style.background = "rgba(255,255,255,0.08)";
+          e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)";
+        }}
+      >
+        📖 Our Story
+      </button>
+    </div>
+  </div>
 
-        <style>{`
-          @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-12px); }
-          }
-        `}</style>
-      </section>
+  {/* Scroll Indicator - CSS arrow, bukan emoji */}
+  <div style={{
+    position: "absolute",
+    bottom: 36,
+    left: "50%",
+    transform: "translateX(-50%)",
+    zIndex: 2,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 6,
+    animation: "scrollBounce 2.5s ease-in-out infinite",
+  }}>
+    <span style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", letterSpacing: ".2em", textTransform: "uppercase", fontFamily: "sans-serif" }}>scroll</span>
+    <div style={{ width: 1, height: 40, background: "linear-gradient(to bottom, rgba(149,213,178,0.6), transparent)" }} />
+  </div>
 
-      {/* MARQUEE */}
-      <div id="content-start" style={{ background: "var(--fo)", overflow: "hidden", padding: "12px 0" }}>
-        <div className="mq" style={{ display: "flex", whiteSpace: "nowrap", width: "max-content" }}>
-          {[...Array(4)].map((_, i) => (
-            <span key={i} style={{ display: "flex", alignItems: "center", gap: 26, padding: "0 26px", color: "rgba(255,255,255,.38)", fontSize: 10, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase" }}>
-              {["Mandiri", "Berkelanjutan", "Inovatif", "Transparan", "Eco-Digital", "Gotong Royong", "Quantum Leap"].map((w, j) => (
-                <span key={j}>{w}{j < 6 && <span style={{ color: "var(--gl)", margin: "0 12px" }}>✦</span>}</span>
-              ))}
-            </span>
-          ))}
-        </div>
-      </div>
+  <style>{`
+    @keyframes scrollBounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); opacity: 1; }
+      50% { transform: translateX(-50%) translateY(8px); opacity: 0.5; }
+    }
+  `}</style>
+</section>
 
+{/* MARQUEE - fix jadi 2x bukan 4x */}
+<div id="content-start" style={{ background: "var(--fo)", overflow: "hidden", padding: "10px 0" }}>
+  <div className="mq" style={{ display: "flex", whiteSpace: "nowrap", width: "max-content" }}>
+    {[...Array(2)].map((_, i) => (  // 2x
+      <span key={i} style={{ display: "flex", alignItems: "center", gap: 24, padding: "0 24px", color: "rgba(255,255,255,0.35)", fontSize: 10, fontWeight: 600, letterSpacing: ".2em", textTransform: "uppercase" }}>
+        {["Mandiri", "Berkelanjutan", "Inovatif", "Transparan", "Eco-Digital", "Gotong Royong", "Quantum Leap"].map((w, j) => (
+          <span key={j}>{w}{j < 6 && <span style={{ color: "rgba(149,213,178,0.5)", margin: "0 10px" }}>✦</span>}</span>
+        ))}
+      </span>
+    ))}
+  </div>
+</div>
       {/* DENYUT NADI — Live Community Dashboard */}
       <CommunityDashboard />
 
