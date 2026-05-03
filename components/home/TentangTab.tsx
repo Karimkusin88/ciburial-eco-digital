@@ -125,13 +125,13 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
     <div className="pi">
 
       {/* HERO - HEROIC EDITION */}
-      <section className="hero-section" style={{ position: "relative", overflow: "hidden", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", backgroundImage: "url('/uploads/sawah.jpeg')", backgroundSize: "cover", backgroundPosition: "center", backgroundAttachment: "fixed" }}>
+      <section className="hero-section" style={{ position: "relative", overflow: "hidden", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", backgroundImage: "url('/sawah.jpeg')", backgroundSize: "cover", backgroundPosition: "center", backgroundAttachment: "fixed" }}>
         {/* Background Animations */}
         <div style={{ position: "absolute", bottom: "-30%", right: "-15%", width: "800px", height: "800px", background: "radial-gradient(circle,rgba(47,143,78,.25) 0%,transparent 70%)", borderRadius: "50%", animation: "float 30s ease-in-out infinite", zIndex: 0 }} />
         <div style={{ position: "absolute", top: "-20%", left: "-10%", width: "600px", height: "600px", background: "radial-gradient(circle,rgba(184,148,63,.15) 0%,transparent 70%)", borderRadius: "50%", animation: "float 25s ease-in-out infinite reverse", zIndex: 0 }} />
 
         {/* Gradient Overlay */}
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg,rgba(28,58,43,.65) 0%,rgba(28,58,43,.5) 50%,rgba(28,58,43,.4) 100%)", pointerEvents: "none", zIndex: 1 }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg,rgba(28,58,43,.45) 0%,rgba(28,58,43,.35) 50%,rgba(28,58,43,.25) 100%)", pointerEvents: "none", zIndex: 1 }} />
 
         <div className="hero-content" style={{ position: "relative", zIndex: 2, maxWidth: 1000 }}>
           {/* Badge */}
