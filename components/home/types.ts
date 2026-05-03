@@ -52,7 +52,6 @@ export interface Iklan {
 export const fRp = (n: number) => "Rp " + n.toLocaleString("id-ID");
 
 export const TABS = [
-  { key: "tentang" as TabType, label: "Tentang Kampung" },
   { key: "kegiatan" as TabType, label: "Kegiatan" },
   { key: "proposal" as TabType, label: "Proposal" },
   { key: "transparansi" as TabType, label: "Transparansi Dana" },

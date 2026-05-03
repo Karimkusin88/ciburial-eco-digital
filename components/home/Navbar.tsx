@@ -52,11 +52,19 @@ export default function Navbar({ tab, checkout, scrolled, onNavigate }: NavbarPr
                 </div>
               </a>
               <div style={{ height: 1, background: "var(--bo)", margin: "4px 0" }} />
-              <a href="/tukar-poin" className="drop-item">
-                <span style={{ fontSize: 18 }}>♻️</span>
+              <a href="/info-harian" className="drop-item">
+                <span style={{ fontSize: 18 }}>📰</span>
                 <div>
-                  <div style={{ fontWeight: 700, color: "var(--tp)" }}>Tukar Poin</div>
-                  <div style={{ fontSize: 10, color: "var(--tm)", fontWeight: 500 }}>Klaim reward Bank Sampah</div>
+                  <div style={{ fontWeight: 700, color: "var(--tp)" }}>Info Harian</div>
+                  <div style={{ fontSize: 10, color: "var(--tm)", fontWeight: 500 }}>Dukungan & liputan terbaru</div>
+                </div>
+              </a>
+              <div style={{ height: 1, background: "var(--bo)", margin: "4px 0" }} />
+              <a href="/tentang" className="drop-item">
+                <span style={{ fontSize: 18 }}>ℹ️</span>
+                <div>
+                  <div style={{ fontWeight: 700, color: "var(--tp)" }}>Tentang</div>
+                  <div style={{ fontSize: 10, color: "var(--tm)", fontWeight: 500 }}>Profil Ciburial Eco-Digital</div>
                 </div>
               </a>
             </div>
@@ -105,7 +113,8 @@ export default function Navbar({ tab, checkout, scrolled, onNavigate }: NavbarPr
           <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".15em", textTransform: "uppercase", color: "var(--tm)", marginBottom: 8 }}>Layanan Warga</div>
           {[
             { href: "/kalender", icon: "📅", title: "Kalender Kegiatan", sub: "Agenda & jadwal kampung" },
-            { href: "/tukar-poin", icon: "♻️", title: "Tukar Poin", sub: "Klaim reward Bank Sampah" },
+            { href: "/info-harian", icon: "📰", title: "Info Harian", sub: "Dukungan & liputan terbaru" },
+            { href: "/tentang", icon: "ℹ️", title: "Tentang", sub: "Profil Ciburial Eco-Digital" },
           ].map((item, i, arr) => (
             <a key={i} href={item.href} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 0", textDecoration: "none", borderBottom: i < arr.length - 1 ? "1px solid rgba(229,224,216,.5)" : "none" }}>
               <span style={{ fontSize: 18 }}>{item.icon}</span>

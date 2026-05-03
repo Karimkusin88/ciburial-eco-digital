@@ -32,10 +32,14 @@ export default function Footer({ onNavigate }: FooterProps) {
               onMouseEnter={e => (e.currentTarget.style.color = "var(--cr)")}
               onMouseLeave={e => (e.currentTarget.style.color = "rgba(250,248,243,.38)")}
             >📅 Kalender Kegiatan</a>
-            <a href="/tukar-poin" style={{ fontSize: 12, fontWeight: 500, color: "rgba(250,248,243,.38)", textDecoration: "none", transition: "color .2s" }}
+            <a href="/info-harian" style={{ fontSize: 12, fontWeight: 500, color: "rgba(250,248,243,.38)", textDecoration: "none", transition: "color .2s" }}
               onMouseEnter={e => (e.currentTarget.style.color = "var(--cr)")}
               onMouseLeave={e => (e.currentTarget.style.color = "rgba(250,248,243,.38)")}
-            >♻️ Tukar Poin</a>
+            >📰 Info Harian</a>
+            <a href="/tentang" style={{ fontSize: 12, fontWeight: 500, color: "rgba(250,248,243,.38)", textDecoration: "none", transition: "color .2s" }}
+              onMouseEnter={e => (e.currentTarget.style.color = "var(--cr)")}
+              onMouseLeave={e => (e.currentTarget.style.color = "rgba(250,248,243,.38)")}
+            >ℹ️ Tentang</a>
             <a href="/ai" style={{ fontSize: 12, fontWeight: 500, color: "rgba(122,173,138,.6)", textDecoration: "none", transition: "color .2s" }}
               onMouseEnter={e => (e.currentTarget.style.color = "#7aad8a")}
               onMouseLeave={e => (e.currentTarget.style.color = "rgba(122,173,138,.6)")}
