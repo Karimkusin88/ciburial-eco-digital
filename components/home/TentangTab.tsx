@@ -131,7 +131,7 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
         <div style={{ position: "absolute", top: "-20%", left: "-10%", width: "600px", height: "600px", background: "radial-gradient(circle,rgba(184,148,63,.15) 0%,transparent 70%)", borderRadius: "50%", animation: "float 25s ease-in-out infinite reverse", zIndex: 0 }} />
 
         {/* Gradient Overlay */}
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg,rgba(28,58,43,.45) 0%,rgba(28,58,43,.35) 50%,rgba(28,58,43,.25) 100%)", pointerEvents: "none", zIndex: 1 }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg,rgba(28,58,43,.3) 0%,rgba(28,58,43,.2) 50%,rgba(28,58,43,.1) 100%)", pointerEvents: "none", zIndex: 1 }} />
 
         <div className="hero-content" style={{ position: "relative", zIndex: 2, maxWidth: 1000 }}>
           {/* Badge */}
