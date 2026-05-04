@@ -371,22 +371,52 @@ export default function VotingPage() {
               Anda memasuki Bilik Suara Resmi. Untuk menjaga keadilan pemilihan, <b>hanya warga terdaftar (DPT) berusia 18+ tahun</b> yang dapat memberikan suara menggunakan <b>Kartu Warga NFC Ciburial</b>.
             </p>
 
-            {!scanning ? (
-              <>
-                <button onClick={startNFC} style={{ width: "100%", padding: "20px", background: C.green, color: "white", border: "none", borderRadius: 18, fontSize: 17, fontWeight: 900, cursor: "pointer", boxShadow: `0 10px 25px rgba(45,90,64,.3)`, marginBottom: 20 }}>
-                  <span style={{ fontSize: 22, display: "block", marginBottom: 6 }}>💳</span>
-                  Tempelkan Kartu Warga (Tap NFC)
-                </button>
-                <button onClick={() => setActiveVoting(null)} style={{ color: C.lightGreen, background: "transparent", border: "none", fontWeight: 700, fontSize: 14, cursor: "pointer" }}>← Kembali ke Daftar Agenda</button>
-              </>
-            ) : (
-              <div style={{ padding: "40px 20px", background: "rgba(45,90,64,.05)", borderRadius: 24, border: `2px dashed ${C.green}` }}>
-                <div style={{ width: 80, height: 80, background: C.green, borderRadius: "50%", margin: "0 auto 20px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 30, animation: "pulse 1.5s infinite", boxShadow: `0 0 30px rgba(45,90,64,.4)` }}>📡</div>
-                <div style={{ fontWeight: 800, fontSize: 17, color: C.green, marginBottom: 8 }}>Menunggu Pindaian NFC...</div>
-                <div style={{ fontSize: 14, color: C.lightGreen, lineHeight: 1.6 }}>Dekatkan Kartu DPT Ciburial ke punggung handphone atau tablet petugas TPS.</div>
-                <button onClick={stopNFC} style={{ marginTop: 20, padding: "10px 24px", background: "transparent", color: C.red, border: `1px solid ${C.red}`, borderRadius: 99, fontSize: 13, fontWeight: 800, cursor: "pointer" }}>⏹ Batalkan</button>
+            {/* NFC Circle — seragam dengan Learning Hub & Ronda */}
+            <div style={{ position: "relative", width: 140, height: 140, margin: "0 auto 24px" }}>
+              {scanning && <>
+                <div style={{ position: "absolute", inset: 0, borderRadius: "50%", border: "2px solid rgba(45,90,64,0.5)", animation: "pulse-ring-v 2.2s ease-out infinite" }} />
+                <div style={{ position: "absolute", inset: 0, borderRadius: "50%", border: "1px solid rgba(45,90,64,0.25)", animation: "pulse-ring-v 2.2s ease-out infinite 0.5s" }} />
+                <div style={{ position: "absolute", inset: 0, borderRadius: "50%", border: "1px solid rgba(45,90,64,0.12)", animation: "pulse-ring-v 2.2s ease-out infinite 1s" }} />
+              </>}
+              <div style={{
+                position: "absolute", inset: 0, borderRadius: "50%",
+                background: scanning ? `rgba(45,90,64,0.1)` : C.cream,
+                border: `2px solid ${scanning ? "rgba(45,90,64,0.6)" : "rgba(45,90,64,0.2)"}`,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                transition: "all 0.5s",
+                boxShadow: scanning ? "0 0 32px rgba(45,90,64,0.2)" : "none",
+              }}>
+                <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke={scanning ? C.green : "rgba(45,90,64,0.4)"} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" style={{ transition: "stroke 0.5s" }}>
+                  <path d="M2 7V5a2 2 0 0 1 2-2h2"/><path d="M2 17v2a2 2 0 0 0 2 2h2"/>
+                  <path d="M22 7V5a2 2 0 0 0-2-2h-2"/><path d="M22 17v2a2 2 0 0 1-2 2h-2"/>
+                  <rect x="7" y="7" width="10" height="10" rx="1.5"/>
+                </svg>
               </div>
-            )}
+            </div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: scanning ? C.green : C.lightGreen, marginBottom: 20, transition: "color 0.4s" }}>
+              {scanning ? "Tempelkan e-KTP ke belakang HP..." : "NFC Scanner Belum Aktif"}
+            </div>
+            <button onClick={scanning ? stopNFC : startNFC}
+              style={{
+                padding: "14px 32px", borderRadius: 12, border: scanning ? `1px solid ${C.red}40` : "none",
+                background: scanning ? "rgba(192,57,43,0.06)" : `linear-gradient(135deg, ${C.darkGreen}, ${C.green})`,
+                color: scanning ? C.red : "white", fontSize: 13, fontWeight: 800,
+                cursor: "pointer", fontFamily: "inherit",
+                boxShadow: scanning ? "none" : "0 10px 28px rgba(45,90,64,0.3)",
+                letterSpacing: ".06em", marginBottom: 12,
+              }}>
+              {scanning ? "⏹ Stop Scanning" : "⬡ Aktifkan NFC e-KTP"}
+            </button>
+            <div style={{ marginBottom: 12 }}>
+              <button onClick={() => setActiveVoting(null)} style={{ color: C.lightGreen, background: "transparent", border: "none", fontWeight: 700, fontSize: 13, cursor: "pointer" }}>← Kembali ke Daftar Agenda</button>
+            </div>
+            {!scanning && <div style={{ fontSize: 10, color: C.lightGreen, opacity: 0.5 }}>Chrome Android · NFC harus aktif</div>}
+            <style>{`
+              @keyframes pulse-ring-v {
+                0%  { transform: scale(0.85); opacity: 0.75; }
+                100% { transform: scale(2.2); opacity: 0; }
+              }
+            `}</style>
 
             <div style={{ marginTop: 24, fontSize: 12, color: C.lightGreen, background: C.cream, borderRadius: 12, padding: "12px 16px", fontWeight: 600, lineHeight: 1.6 }}>
               🔒 Identitas Anda digunakan <b>hanya</b> untuk pengecekan Hak Pilih (anti coblos ganda). Suara Anda terekam secara anonim dan tidak dapat dilacak.

@@ -229,14 +229,45 @@ export default function PosyanduKioskPage() {
                 Tempelkan **e-KTP Bunda** untuk membuka data KIA & mencatat timbangan hari ini.
               </p>
 
-              <RadarPing active={scanning} />
-
-              <div style={{ marginTop: 48 }}>
-                <button onClick={scanning ? stopNFC : startNFC} className="posyandu-btn"
-                  style={{ width: "100%", background: scanning ? "#FFE4E6" : "linear-gradient(135deg,#F43F5E,#E11D48)", color: scanning ? "#E11D48" : "white", border: scanning ? "2px solid #FECACA" : "none", borderRadius: 20, padding: 20, fontSize: 18, fontWeight: 900, boxShadow: scanning ? "none" : "0 12px 25px rgba(225,29,72,0.3)" }}>
-                  {scanning ? "⏹ HENTIKAN PEMINDAI" : "SENTUHKAN e-KTP SEKARANG ▶"}
-                </button>
+              {/* NFC Circle — seragam Learning Hub & Ronda */}
+              <div style={{ position: "relative", width: 140, height: 140, margin: "0 auto 20px" }}>
+                {scanning && <>
+                  <div style={{ position: "absolute", inset: 0, borderRadius: "50%", border: "2px solid rgba(244,63,94,0.5)", animation: "nfc-pulse 2.2s ease-out infinite" }} />
+                  <div style={{ position: "absolute", inset: 0, borderRadius: "50%", border: "1px solid rgba(244,63,94,0.25)", animation: "nfc-pulse 2.2s ease-out infinite 0.5s" }} />
+                  <div style={{ position: "absolute", inset: 0, borderRadius: "50%", border: "1px solid rgba(244,63,94,0.12)", animation: "nfc-pulse 2.2s ease-out infinite 1s" }} />
+                </>}
+                <div style={{
+                  position: "absolute", inset: 0, borderRadius: "50%",
+                  background: scanning ? "rgba(244,63,94,0.08)" : "white",
+                  border: `2px solid ${scanning ? "rgba(244,63,94,0.6)" : "rgba(244,63,94,0.2)"}`,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  transition: "all 0.5s",
+                  boxShadow: scanning ? "0 0 32px rgba(244,63,94,0.2)" : "none",
+                }}>
+                  <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke={scanning ? "#F43F5E" : "rgba(244,63,94,0.4)"} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" style={{ transition: "stroke 0.5s" }}>
+                    <path d="M2 7V5a2 2 0 0 1 2-2h2"/><path d="M2 17v2a2 2 0 0 0 2 2h2"/>
+                    <path d="M22 7V5a2 2 0 0 0-2-2h-2"/><path d="M22 17v2a2 2 0 0 1-2 2h-2"/>
+                    <rect x="7" y="7" width="10" height="10" rx="1.5"/>
+                  </svg>
+                </div>
               </div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: scanning ? "#F43F5E" : "#9CA3AF", marginBottom: 20, transition: "color 0.4s", textAlign: "center" }}>
+                {scanning ? "Tempelkan e-KTP ke belakang HP..." : "NFC Scanner Belum Aktif"}
+              </div>
+              <button onClick={scanning ? stopNFC : startNFC} className="posyandu-btn"
+                style={{ width: "100%", borderRadius: 14, padding: "16px 24px", border: scanning ? "1px solid rgba(244,63,94,0.3)" : "none",
+                  background: scanning ? "rgba(244,63,94,0.05)" : "linear-gradient(135deg,#F43F5E,#E11D48)",
+                  color: scanning ? "#F43F5E" : "white", fontSize: 15, fontWeight: 800,
+                  boxShadow: scanning ? "none" : "0 10px 25px rgba(225,29,72,0.3)" }}>
+                {scanning ? "⏹ Stop Scanning" : "⬡ Aktifkan NFC e-KTP"}
+              </button>
+              {!scanning && <div style={{ marginTop: 10, fontSize: 10, color: "#9CA3AF", textAlign: "center" }}>Chrome Android · NFC harus aktif</div>}
+              <style>{`
+                @keyframes nfc-pulse {
+                  0%  { transform: scale(0.85); opacity: 0.75; }
+                  100% { transform: scale(2.2); opacity: 0; }
+                }
+              `}</style>
             </div>
 
             <CaraKerja />

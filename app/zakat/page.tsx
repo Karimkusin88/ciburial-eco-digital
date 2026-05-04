@@ -185,13 +185,50 @@ export default function ZakatKioskPage() {
             <div style={{ display: "flex", gap: 32, flexWrap: "wrap", alignItems: "center" }}>
                {/* LEFT: SCANNER */}
                <div className="heroic-card" style={{ flex: "1 1 350px", padding: "60px 40px", textAlign: "center" }}>
-                  <RadarPing active={scanning} color="#B8943F" />
-                  <h2 style={{ marginTop: 40, fontSize: 24, fontWeight: 900 }}>{scanning ? "Menunggu Tap..." : "Kiosk Standby"}</h2>
-                  {!scanning ? (
-                    <button onClick={startNFC} style={{ marginTop: 32, padding: "20px 40px", borderRadius: 20, background: "linear-gradient(135deg, #B8943F, #D4AC5A)", color: "#1A1410", border: "none", fontSize: 16, fontWeight: 900, cursor: "pointer", boxShadow: "0 10px 30px rgba(184,148,63,0.4)" }}>MULAI SCAN KARTU</button>
-                  ) : (
-                    <button onClick={() => setScanning(false)} style={{ marginTop: 32, padding: "12px 24px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "#999", borderRadius: 12, cursor: "pointer" }}>Matikan Sensor</button>
-                  )}
+                  {/* NFC Circle — seragam Learning Hub & Ronda */}
+                  <div style={{ position: "relative", width: 140, height: 140, margin: "0 auto 20px" }}>
+                    {scanning && <>
+                      <div style={{ position: "absolute", inset: 0, borderRadius: "50%", border: "2px solid rgba(184,148,63,0.5)", animation: "nfc-pulse-z 2.2s ease-out infinite" }} />
+                      <div style={{ position: "absolute", inset: 0, borderRadius: "50%", border: "1px solid rgba(184,148,63,0.25)", animation: "nfc-pulse-z 2.2s ease-out infinite 0.5s" }} />
+                      <div style={{ position: "absolute", inset: 0, borderRadius: "50%", border: "1px solid rgba(184,148,63,0.12)", animation: "nfc-pulse-z 2.2s ease-out infinite 1s" }} />
+                    </>}
+                    <div style={{
+                      position: "absolute", inset: 0, borderRadius: "50%",
+                      background: scanning ? "rgba(184,148,63,0.12)" : "rgba(255,255,255,0.04)",
+                      border: `2px solid ${scanning ? "rgba(184,148,63,0.7)" : "rgba(184,148,63,0.25)"}`,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      transition: "all 0.5s",
+                      backdropFilter: "blur(12px)",
+                      boxShadow: scanning ? "0 0 40px rgba(184,148,63,0.25)" : "none",
+                    }}>
+                      <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke={scanning ? "#B8943F" : "rgba(184,148,63,0.4)"} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" style={{ transition: "stroke 0.5s" }}>
+                        <path d="M2 7V5a2 2 0 0 1 2-2h2"/><path d="M2 17v2a2 2 0 0 0 2 2h2"/>
+                        <path d="M22 7V5a2 2 0 0 0-2-2h-2"/><path d="M22 17v2a2 2 0 0 1-2 2h-2"/>
+                        <rect x="7" y="7" width="10" height="10" rx="1.5"/>
+                      </svg>
+                    </div>
+                  </div>
+                  <h2 style={{ marginTop: 8, fontSize: 20, fontWeight: 800, color: scanning ? "#D4AC5A" : "#FAF8F3" }}>
+                    {scanning ? "Tempelkan e-KTP ke HP..." : "Kiosk Standby"}
+                  </h2>
+                  <div style={{ fontSize: 12, color: "rgba(250,248,243,0.35)", marginBottom: 24, marginTop: 4 }}>
+                    {scanning ? "Chrome Android · NFC harus aktif" : "Tap NFC e-KTP untuk mulai"}
+                  </div>
+                  <button onClick={scanning ? () => setScanning(false) : startNFC}
+                    style={{ padding: "14px 32px", borderRadius: 12,
+                      border: scanning ? "1px solid rgba(184,148,63,0.3)" : "none",
+                      background: scanning ? "rgba(184,148,63,0.08)" : "linear-gradient(135deg, #B8943F, #D4AC5A)",
+                      color: scanning ? "#D4AC5A" : "#1A1410", fontSize: 14, fontWeight: 800,
+                      cursor: "pointer", letterSpacing: ".06em",
+                      boxShadow: scanning ? "none" : "0 10px 30px rgba(184,148,63,0.4)" }}>
+                    {scanning ? "⏹ Stop Scanning" : "⬡ Aktifkan NFC e-KTP"}
+                  </button>
+                  <style>{`
+                    @keyframes nfc-pulse-z {
+                      0%  { transform: scale(0.85); opacity: 0.75; }
+                      100% { transform: scale(2.2); opacity: 0; }
+                    }
+                  `}</style>
                </div>
 
                {/* RIGHT: LIVE DATA CHART */}
