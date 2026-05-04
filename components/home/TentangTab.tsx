@@ -411,13 +411,13 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
                 comingSoon: false
               },
               { 
-                title: "Coming Soon", 
-                desc: "Fitur dan layanan terbaru",
-                icon: "✨", 
-                link: "#",
-                color: "#9B7D4C",
-                tag: "SOON",
-                comingSoon: true
+                title: "Learning Hub", 
+                desc: "E-Perpus, Lab Komputer & video pelatihan digital",
+                icon: "📚", 
+                link: "/learning-hub",
+                color: "#2563EB",
+                tag: "PENDIDIKAN",
+                comingSoon: false
               }
             ].map((item, i) => (
               <a key={i} href={item.link} style={{ textDecoration: "none", color: "inherit", pointerEvents: item.comingSoon ? "none" : "auto" }} className="hub-card-link">
