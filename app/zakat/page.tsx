@@ -179,12 +179,12 @@ export default function ZakatKioskPage() {
         </div>
       </header>
 
-      <main style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "40px", zIndex: 10 }}>
+      <main style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "clamp(20px, 4vw, 40px)", zIndex: 10 }}>
         <div style={{ width: "100%", maxWidth: 850 }}>
           {!hasilScan ? (
             <div style={{ display: "flex", gap: 32, flexWrap: "wrap", alignItems: "center" }}>
                {/* LEFT: SCANNER */}
-               <div className="heroic-card" style={{ flex: "1 1 350px", padding: "60px 40px", textAlign: "center" }}>
+               <div className="heroic-card" style={{ flex: "1 1 350px", padding: "clamp(30px, 6vw, 60px) clamp(20px, 4vw, 40px)", textAlign: "center" }}>
                   {/* NFC Circle — seragam Learning Hub & Ronda */}
                   <div style={{ position: "relative", width: 140, height: 140, margin: "0 auto 20px" }}>
                     {scanning && <>
@@ -235,7 +235,7 @@ export default function ZakatKioskPage() {
                <div style={{ flex: "1 1 350px", display: "flex", flexDirection: "column", gap: 20 }}>
                   <div style={{ fontSize: 12, fontWeight: 900, color: "#B8943F", letterSpacing: "0.2em" }}>TRANSPARANSI REAL-TIME</div>
                   <LiveZakatChart terkumpul={totalTerkumpulBeras} disalurkan={totalDisalurkanBeras} />
-                  <div className="heroic-card" style={{ padding: "20px 24px", border: "1px solid rgba(47,143,78,0.2)" }}>
+                  <div className="heroic-card" style={{ padding: "clamp(16px, 4vw, 20px) clamp(16px, 4vw, 24px)", border: "1px solid rgba(47,143,78,0.2)" }}>
                      <div style={{ fontSize: 10, fontWeight: 800, color: "#4FBF7E", letterSpacing: "0.1em", marginBottom: 8 }}>INFAQ TERKUMPUL</div>
                      <div style={{ fontSize: 28, fontWeight: 900, color: "#FAF8F3" }}>Rp {totalInfaq.toLocaleString()}</div>
                      <div style={{ fontSize: 11, color: "rgba(250,248,243,0.4)", marginTop: 8 }}>Dana sosial & santunan anak yatim desa.</div>
@@ -243,7 +243,7 @@ export default function ZakatKioskPage() {
                </div>
             </div>
           ) : (
-            <div className="heroic-card" style={{ padding: "48px", animation: "slideIn 0.5s ease", border: "2px solid #B8943F" }}>
+            <div className="heroic-card" style={{ padding: "clamp(24px, 5vw, 48px)", animation: "slideIn 0.5s ease", border: "2px solid #B8943F" }}>
                {/* (Hasil Scan UI tetap lengkap seperti sebelumnya) */}
                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 32 }}>
                   <div><div style={{ fontSize: 11, fontWeight: 800, color: "#B8943F" }}>IDENTITAS WARGA</div><div style={{ fontSize: 32, fontWeight: 900 }}>{hasilScan.kepala}</div><div style={{ fontSize: 14, opacity: 0.5 }}>RT {hasilScan.rt} · {hasilScan.jiwa} Jiwa</div></div>

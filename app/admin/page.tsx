@@ -446,10 +446,10 @@ export default function AdminPage() {
   /* ══════ PASSWORD GATE ══════ */
   if (!auth) return (
     <div className="admin-page heroic-bg">
-      <div style={{ minHeight:"100vh", display:"flex", alignItems:"center", justifyContent:"center", padding:"24px" }}>
-        <div className="card-heroic" style={{ width:"100%", maxWidth:420, padding:"48px 40px", textAlign:"center" }}>
+      <div style={{ minHeight:"100vh", display:"flex", alignItems:"center", justifyContent:"center", padding:"clamp(16px, 4vw, 24px)" }}>
+        <div className="card-heroic" style={{ width:"100%", maxWidth:420, padding:"clamp(32px, 6vw, 48px) clamp(24px, 5vw, 40px)", textAlign:"center" }}>
           <div className="float-heroic" style={{ width:80, height:80, borderRadius:"50%", background:"linear-gradient(135deg, #2F8F4E, #4FBF7E)", display:"flex", alignItems:"center", justifyContent:"center", margin:"0 auto 24px", fontSize:32, boxShadow: "0 10px 30px rgba(47,143,78,0.3)" }}>🌿</div>
-          <h1 className="section-title-heroic" style={{ fontSize:36, marginBottom:8 }}>Admin Panel</h1>
+          <h1 className="section-title-heroic" style={{ fontSize:"clamp(28px, 6vw, 36px)", marginBottom:8 }}>Admin Panel</h1>
           <p className="section-subtitle-heroic" style={{ marginBottom:32 }}>Ciburial Eco-Digital Village</p>
           
           <div className="form-group-heroic" style={{ marginBottom: 24 }}>
@@ -482,7 +482,7 @@ export default function AdminPage() {
       <header style={{ 
         background: "rgba(28, 58, 43, 0.95)", 
         backdropFilter: "blur(12px)",
-        padding: "0 32px", 
+        padding: "0 clamp(16px, 4vw, 32px)", 
         height: 72, 
         display: "flex", 
         alignItems: "center", 
@@ -522,7 +522,7 @@ export default function AdminPage() {
         </div>
       </header>
 
-      <main style={{ maxWidth: 1280, margin: "0 auto", padding: "40px 32px 100px" }}>
+      <main style={{ maxWidth: 1280, margin: "0 auto", padding: "clamp(24px, 4vw, 40px) clamp(16px, 4vw, 32px) 100px" }}>
 
         {/* ── Supabase warning ── */}
         {!isSupabaseReady() && (
@@ -648,7 +648,7 @@ export default function AdminPage() {
             <div className="float-heroic-subtle">
               {/* Banner ultah hari ini heroic */}
               {ultahHari.length>0 && (
-                <div className="pulse-glow-heroic" style={{background:"linear-gradient(135deg, #2F8F4E, #4FBF7E)", borderRadius:16, padding:"20px 28px", marginBottom:32, color:"white", display:"flex", alignItems:"center", gap:20, border: "none" }}>
+                <div className="pulse-glow-heroic" style={{background:"linear-gradient(135deg, #2F8F4E, #4FBF7E)", borderRadius:16, padding:"clamp(16px, 4vw, 20px) clamp(20px, 5vw, 28px)", marginBottom:32, color:"white", display:"flex", alignItems:"center", gap:20, border: "none" }}>
                   <span className="float-heroic" style={{fontSize:40}}>🎂</span>
                   <div>
                     <div style={{fontWeight:900, fontSize:18, letterSpacing: "-0.02em"}}>HARI SPESIAL DESA! 🎉</div>
@@ -713,7 +713,7 @@ export default function AdminPage() {
               </div>
 
               {/* Aktivitas & Quick Links Heroic */}
-              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(400px, 1fr))",gap:24}}>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(min(100%, 400px), 1fr))",gap:24}}>
                 {/* Aktivitas realtime */}
                 <div className="card-heroic">
                   <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:24}}>
@@ -722,7 +722,7 @@ export default function AdminPage() {
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                     {aktivitas.length===0?(
-                      <div style={{textAlign:"center",padding:40,color:"#9A8C85",fontSize:13, fontWeight: 600}}>Menunggu aktivitas warga...</div>
+                      <div style={{textAlign:"center",padding:"clamp(24px, 5vw, 40px)",color:"#9A8C85",fontSize:13, fontWeight: 600}}>Menunggu aktivitas warga...</div>
                     ):aktivitas.map((a:any,i:number)=>(
                       <div key={a.id} style={{display:"flex",gap:16,paddingBottom:16,borderBottom:i<aktivitas.length-1?"1px solid rgba(47,143,78,0.1)":"none",alignItems:"flex-start"}}>
                         <div style={{width:40, height:40, borderRadius:10, background:"rgba(47,143,78,0.1)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:20, flexShrink:0}}>{ICON[a.sumber]||"📌"}</div>

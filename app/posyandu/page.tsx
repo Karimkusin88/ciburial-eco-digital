@@ -206,7 +206,7 @@ export default function PosyanduKioskPage() {
         </div>
       )}
 
-      <div style={{ maxWidth: 600, margin: "0 auto", padding: "0 20px", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+      <div style={{ maxWidth: 600, margin: "0 auto", padding: "0 clamp(16px, 4vw, 20px)", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
 
         <header style={{ textAlign: "center", paddingTop: 48, marginBottom: 32 }}>
           <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".25em", color: "#F43F5E", marginBottom: 8, textTransform: "uppercase" }}>
@@ -223,7 +223,7 @@ export default function PosyanduKioskPage() {
         {/* ─── SCAN STEP (LOCKED) ─── */}
         {step === "scan" && (
           <div style={{ animation: "slide-up 0.5s ease" }}>
-            <div style={{ background: "white", borderRadius: 32, padding: "48px 32px", boxShadow: "0 20px 50px rgba(244,63,94,0.15)", textAlign: "center", border: "1px solid #FFF1F2" }}>
+            <div style={{ background: "white", borderRadius: 32, padding: "clamp(24px, 5vw, 48px) clamp(16px, 4vw, 32px)", boxShadow: "0 20px 50px rgba(244,63,94,0.15)", textAlign: "center", border: "1px solid #FFF1F2" }}>
               <h3 style={{ margin: "0 0 12px", fontSize: 24, fontWeight: 900, color: "#111827" }}>Selamat Datang Bunda!</h3>
               <p style={{ margin: "0 0 40px", fontSize: 15, color: "#6B7280", fontWeight: 600, lineHeight: 1.6 }}>
                 Tempelkan **e-KTP Bunda** untuk membuka data KIA & mencatat timbangan hari ini.
@@ -283,7 +283,7 @@ export default function PosyanduKioskPage() {
             </div>
             
             {myAnakList.length === 0 ? (
-              <div style={{ background: "white", borderRadius: 24, padding: 40, textAlign: "center", color: "#9CA3AF", border: "2px dashed #FECACA" }}>
+              <div style={{ background: "white", borderRadius: 24, padding: "clamp(24px, 5vw, 40px)", textAlign: "center", color: "#9CA3AF", border: "2px dashed #FECACA" }}>
                 <div style={{ fontSize: 48, marginBottom: 12 }}>💤</div>
                 Bunda belum mendaftarkan data balita.<br/>Silakan hubungi Kader Posyandu.
               </div>
@@ -291,7 +291,7 @@ export default function PosyanduKioskPage() {
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                 {myAnakList.map(a => (
                   <button key={a.id} onClick={() => { setSelectedAnak(a); setStep("input"); }} className="posyandu-btn"
-                    style={{ background: "white", borderRadius: 24, padding: 24, border: "1.5px solid #E5E7EB", display: "flex", alignItems: "center", gap: 16, width: "100%", textAlign: "left", boxShadow: "0 4px 12px rgba(0,0,0,0.04)" }}>
+                    style={{ background: "white", borderRadius: 24, padding: "clamp(16px, 4vw, 24px)", border: "1.5px solid #E5E7EB", display: "flex", alignItems: "center", gap: 16, width: "100%", textAlign: "left", boxShadow: "0 4px 12px rgba(0,0,0,0.04)" }}>
                     <div style={{ width: 56, height: 56, borderRadius: 18, background: a.jenis_kelamin === "L" ? "#EFF6FF" : "#FDF2F8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28 }}>
                       {a.jenis_kelamin === "L" ? "👦" : "👧"}
                     </div>
@@ -312,7 +312,7 @@ export default function PosyanduKioskPage() {
           <div style={{ flex: 1, animation: "slide-up 0.4s ease" }}>
             <button onClick={() => setStep("select")} style={{ background: "none", border: "none", color: "#F43F5E", fontSize: 14, fontWeight: 800, cursor: "pointer", marginBottom: 20, display: "flex", alignItems: "center", gap: 6 }}>← Pilih Anak Lain</button>
 
-            <div style={{ background: "white", borderRadius: 28, padding: 32, boxShadow: "0 15px 35px rgba(244,63,94,0.1)", border: "1px solid #FFF1F2" }}>
+            <div style={{ background: "white", borderRadius: 28, padding: "clamp(20px, 4vw, 32px)", boxShadow: "0 15px 35px rgba(244,63,94,0.1)", border: "1px solid #FFF1F2" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 32 }}>
                 <div style={{ width: 52, height: 52, borderRadius: 16, background: selectedAnak.jenis_kelamin === "L" ? "#EFF6FF" : "#FDF2F8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24 }}>
                   {selectedAnak.jenis_kelamin === "L" ? "👦" : "👧"}
@@ -344,7 +344,7 @@ export default function PosyanduKioskPage() {
               </div>
 
               <button onClick={simpanTK} disabled={loading} className="posyandu-btn"
-                style={{ width: "100%", background: loading ? "#D1D5DB" : "linear-gradient(135deg,#10B981,#059669)", color: "white", border: "none", borderRadius: 20, padding: 20, fontSize: 17, fontWeight: 900, boxShadow: loading ? "none" : "0 10px 25px rgba(16,185,129,0.3)" }}>
+                style={{ width: "100%", background: loading ? "#D1D5DB" : "linear-gradient(135deg,#10B981,#059669)", color: "white", border: "none", borderRadius: 20, padding: "clamp(16px, 4vw, 20px)", fontSize: 17, fontWeight: 900, boxShadow: loading ? "none" : "0 10px 25px rgba(16,185,129,0.3)" }}>
                 {loading ? "MENYIMPAN..." : "💾 KUNCI DATA TIMBANGAN"}
               </button>
             </div>
@@ -363,7 +363,7 @@ export default function PosyanduKioskPage() {
               Data {selectedAnak?.nama} sudah tercatat.<br/>Bunda mendapat +{POIN_POSYANDU} Poin Sehat!
             </p>
             <button onClick={resetAll} className="posyandu-btn"
-              style={{ background: "linear-gradient(135deg,#F43F5E,#E11D48)", color: "white", border: "none", borderRadius: 20, padding: "20px 60px", fontSize: 18, fontWeight: 900, boxShadow: "0 12px 25px rgba(225,29,72,0.3)" }}>
+              style={{ background: "linear-gradient(135deg,#F43F5E,#E11D48)", color: "white", border: "none", borderRadius: 20, padding: "clamp(16px, 4vw, 20px) clamp(30px, 6vw, 60px)", fontSize: 18, fontWeight: 900, boxShadow: "0 12px 25px rgba(225,29,72,0.3)" }}>
               SELESAI ✓
             </button>
           </div>

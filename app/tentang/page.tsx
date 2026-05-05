@@ -59,9 +59,9 @@ export default function TentangPage() {
   }, []);
 
   return (
-    <main style={{ minHeight: "100dvh", background: "var(--cr)", paddingBottom: 60 }}>
+    <main style={{ minHeight: "100dvh", background: "var(--cr)", paddingBottom: "clamp(30px, 6vw, 60px)" }}>
       {/* HEADER PAGE */}
-      <header style={{ background: "var(--fo)", padding: "clamp(40px,6vw,60px) 20px 80px", textAlign: "center", position: "relative", overflow: "hidden" }}>
+      <header style={{ background: "var(--fo)", padding: "clamp(40px,6vw,60px) 20px clamp(40px, 8vw, 80px)", textAlign: "center", position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.05, backgroundImage: "radial-gradient(circle at 2px 2px, rgba(255,255,255,1) 1px, transparent 0)", backgroundSize: "24px 24px" }} />
         <div style={{ position: "relative", zIndex: 1 }}>
           <h1 className="fnt" style={{ fontSize: "clamp(32px, 5vw, 48px)", fontWeight: 300, color: "var(--cw)", letterSpacing: "-.02em", marginBottom: 12 }}>Tentang Kami</h1>

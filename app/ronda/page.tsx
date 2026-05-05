@@ -191,7 +191,7 @@ export default function RondaKioskPage() {
           gap: 16px;
           flex: 1;
           overflow: hidden;
-          padding: 0 24px 24px;
+          padding: 0 clamp(16px, 4vw, 24px) clamp(16px, 4vw, 24px);
         }
         @media (max-width: 768px) {
           .kiosk-grid {
@@ -221,7 +221,7 @@ export default function RondaKioskPage() {
       {/* ══════════════════════════════════════
           TOP BAR — Logo · Clock · Date
       ══════════════════════════════════════ */}
-      <header style={{ position:"relative", zIndex:1, padding:"18px 24px 0", display:"flex", alignItems:"center", justifyContent:"space-between", flexShrink:0 }}>
+      <header style={{ position:"relative", zIndex:1, padding:"clamp(12px, 3vw, 18px) clamp(16px, 4vw, 24px) 0", display:"flex", alignItems:"center", justifyContent:"space-between", flexShrink:0 }}>
         {/* Brand */}
         <div>
           <div style={{ fontSize:9, fontWeight:700, letterSpacing:".25em", color:"rgba(47,143,78,0.4)", textTransform:"uppercase" }}>Ciburial Eco-Digital</div>
@@ -267,7 +267,7 @@ export default function RondaKioskPage() {
       {/* ══════════════════════════════════════
           ACTIVE SCHEDULE BANNER
       ══════════════════════════════════════ */}
-      <div style={{ position:"relative", zIndex:1, padding:"14px 24px 0", flexShrink:0 }}>
+      <div style={{ position:"relative", zIndex:1, padding:"clamp(10px, 3vw, 14px) clamp(16px, 4vw, 24px) 0", flexShrink:0 }}>
         {activeJadwalData ? (
           <div className="glass-card-green" style={{ padding:"12px 18px", display:"flex", alignItems:"center", gap:12, borderRadius:14 }}>
             <div style={{ flexShrink:0 }}>
@@ -306,7 +306,7 @@ export default function RondaKioskPage() {
 
           {/* NFC Scanner Zone */}
           <div className="glass-card" style={{
-            padding:"36px 24px",
+            padding:"clamp(24px, 5vw, 36px) clamp(16px, 4vw, 24px)",
             textAlign:"center",
             borderColor: scanning ? "rgba(47,143,78,0.45)" : "rgba(255,255,255,0.065)",
             transition:"border-color 0.5s",
@@ -404,7 +404,7 @@ export default function RondaKioskPage() {
           {/* List Body */}
           <div style={{ flex:1, overflowY:"auto" }}>
             {hadir.length === 0 ? (
-              <div style={{ padding:"56px 24px", textAlign:"center" }}>
+              <div style={{ padding:"clamp(36px, 6vw, 56px) clamp(16px, 4vw, 24px)", textAlign:"center" }}>
                 <div style={{ fontSize:40, marginBottom:14, opacity:0.12 }}>🌙</div>
                 <div style={{ fontSize:13, color:"rgba(232,245,238,0.22)", fontWeight:500 }}>Belum ada yang absen</div>
                 <div style={{ fontSize:11, color:"rgba(232,245,238,0.12)", marginTop:6 }}>Tap e-KTP untuk catat kehadiran</div>

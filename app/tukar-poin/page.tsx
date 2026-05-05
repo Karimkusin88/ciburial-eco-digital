@@ -230,10 +230,10 @@ export default function TukarPoinPage() {
         </div>
       </header>
 
-      <div style={{ maxWidth: 800, margin: "0 auto", padding: "32px 20px" }}>
+      <div style={{ maxWidth: 800, margin: "0 auto", padding: "clamp(24px, 5vw, 32px) clamp(16px, 4vw, 20px)" }}>
         
         {/* Identitas Kiosk NFC Style */}
-        <div style={{ background: "white", border: "1px solid rgba(47,143,78,0.15)", borderRadius: 24, padding: "32px", marginBottom: 32, boxShadow: "0 10px 40px rgba(0,0,0,0.05)", position: "relative", overflow: "hidden" }}>
+        <div style={{ background: "white", border: "1px solid rgba(47,143,78,0.15)", borderRadius: 24, padding: "clamp(24px, 5vw, 32px)", marginBottom: 32, boxShadow: "0 10px 40px rgba(0,0,0,0.05)", position: "relative", overflow: "hidden" }}>
           
           <div style={{ display: "flex", flexWrap: "wrap", gap: 24 }}>
             {/* Kolom Kiri: NFC Tap Area */}
@@ -354,7 +354,7 @@ export default function TukarPoinPage() {
               })}
             </div>
             {hadiahList.filter(h => h.kategori === tab).length === 0 && (
-              <div style={{ textAlign: "center", padding: 60, color: "#6B7C6D", background: "white", borderRadius: 24, border: "1px dashed rgba(47,143,78,0.2)", fontWeight: 700 }}>
+              <div style={{ textAlign: "center", padding: "clamp(30px, 6vw, 60px)", color: "#6B7C6D", background: "white", borderRadius: 24, border: "1px dashed rgba(47,143,78,0.2)", fontWeight: 700 }}>
                 Katalog belum tersedia untuk kategori ini.
               </div>
             )}
@@ -365,9 +365,9 @@ export default function TukarPoinPage() {
         {tab === "riwayat" && (
           <div>
             {!selectedKK ? (
-              <div style={{ textAlign: "center", padding: 60, color: "#6B7C6D", background: "white", borderRadius: 24, border: "1px dashed rgba(47,143,78,0.2)", fontWeight: 700 }}>Tap e-KTP dulu untuk lihat riwayat</div>
+              <div style={{ textAlign: "center", padding: "clamp(30px, 6vw, 60px)", color: "#6B7C6D", background: "white", borderRadius: 24, border: "1px dashed rgba(47,143,78,0.2)", fontWeight: 700 }}>Tap e-KTP dulu untuk lihat riwayat</div>
             ) : riwayat.length === 0 ? (
-              <div style={{ textAlign: "center", padding: 60, color: "#6B7C6D", background: "white", borderRadius: 24, border: "1px dashed rgba(47,143,78,0.2)", fontWeight: 700 }}>Belum ada riwayat penukaran</div>
+              <div style={{ textAlign: "center", padding: "clamp(30px, 6vw, 60px)", color: "#6B7C6D", background: "white", borderRadius: 24, border: "1px dashed rgba(47,143,78,0.2)", fontWeight: 700 }}>Belum ada riwayat penukaran</div>
             ) : (
               <div style={{ background: "white", borderRadius: 24, border: "1px solid rgba(47,143,78,0.15)", overflow: "hidden", boxShadow: "0 10px 40px rgba(0,0,0,0.03)" }}>
                 {riwayat.map((r, i) => {

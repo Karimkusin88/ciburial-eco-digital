@@ -380,7 +380,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
   if (orderDone) {
     return (
       <div style={{ minHeight:"100vh", display:"flex", alignItems:"center", justifyContent:"center", background:"linear-gradient(135deg,rgba(250,248,243,.8),rgba(255,254,249,.9))", padding:20 }}>
-        <div style={{ background:"white", borderRadius:24, padding:40, maxWidth:480, width:"100%", textAlign:"center", boxShadow:"0 20px 60px rgba(47,143,78,.1)", border:"1.5px solid rgba(47,143,78,.15)" }}>
+        <div style={{ background:"white", borderRadius:24, padding:"clamp(24px, 5vw, 40px)", maxWidth:480, width:"100%", textAlign:"center", boxShadow:"0 20px 60px rgba(47,143,78,.1)", border:"1.5px solid rgba(47,143,78,.15)" }}>
           <div style={{ fontSize:60, marginBottom:16 }}>🎉</div>
           <h2 style={{ margin:"0 0 8px", color:"#1C3A2B", fontSize:24, fontWeight:800 }}>Pesanan Berhasil!</h2>
           <p style={{ color:"#5A4A40", fontSize:14, margin:"0 0 20px", lineHeight:1.6 }}>
@@ -408,7 +408,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
   // ─── TAMPILAN CHECKOUT ──────────────────────────────────────────────────
   if (showCheckout) {
     return (
-      <div className="pi" style={{ paddingTop:"clamp(64px,10vw,120px)", paddingBottom:80, minHeight:"100vh", background:"linear-gradient(135deg,rgba(250,248,243,.5),rgba(255,254,249,.8))" }}>
+      <div className="pi" style={{ paddingTop:"clamp(64px,10vw,120px)", paddingBottom:"clamp(40px, 8vw, 80px)", minHeight:"100vh", background:"linear-gradient(135deg,rgba(250,248,243,.5),rgba(255,254,249,.8))" }}>
         <div style={{ maxWidth:720, margin:"0 auto", padding:"0 clamp(16px,3vw,28px)" }}>
           <button onClick={()=>setShowCheckout(false)} style={{ display:"flex", alignItems:"center", gap:6, background:"none", border:"none", cursor:"pointer", fontSize:14, fontWeight:700, color:"#2F8F4E", padding:"6px 0", marginBottom:20 }}>
             ← Kembali ke Keranjang
@@ -535,7 +535,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
     const items = trackedOrder ? (typeof trackedOrder.items === "string" ? JSON.parse(trackedOrder.items) : trackedOrder.items) : [];
 
     return (
-      <div className="pi" style={{ paddingTop: "clamp(64px,10vw,120px)", paddingBottom: 80, minHeight: "100vh", background: "linear-gradient(135deg,rgba(250,248,243,.5) 0%,rgba(255,254,249,.8) 100%)" }}>
+      <div className="pi" style={{ paddingTop: "clamp(64px,10vw,120px)", paddingBottom: "clamp(40px, 8vw, 80px)", minHeight: "100vh", background: "linear-gradient(135deg,rgba(250,248,243,.5) 0%,rgba(255,254,249,.8) 100%)" }}>
         <div style={{ maxWidth: 600, margin: "0 auto", padding: "0 clamp(16px,3vw,28px)" }}>
           <button onClick={() => setShowTracking(false)} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", fontSize: 14, fontWeight: 700, color: "#2F8F4E", padding: "6px 0", marginBottom: 24 }}>
             ← Kembali ke Marketplace
@@ -616,7 +616,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
     };
 
     return (
-      <div className="pi" style={{ paddingTop: "clamp(64px,10vw,120px)", paddingBottom: 80, minHeight: "100vh", background: "linear-gradient(135deg,rgba(250,248,243,.5) 0%,rgba(255,254,249,.8) 100%)" }}>
+      <div className="pi" style={{ paddingTop: "clamp(64px,10vw,120px)", paddingBottom: "clamp(40px, 8vw, 80px)", minHeight: "100vh", background: "linear-gradient(135deg,rgba(250,248,243,.5) 0%,rgba(255,254,249,.8) 100%)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 clamp(16px,3vw,28px)" }}>
           {/* Close Button */}
           <button onClick={() => { setSelectedProduct(null); setDetailQty(1); setActivePhotoIndex(0); }} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", fontSize: 14, fontWeight: 700, color: "#2F8F4E", padding: "6px 0", marginBottom: 24, transition: "all 0.3s" }}

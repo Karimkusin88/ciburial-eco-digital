@@ -195,7 +195,7 @@ export default function VotingPage() {
       {/* Konfirmasi Modal */}
       {konfirmasi && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(26,46,31,.95)", zIndex: 999, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <div style={{ background: C.white, borderRadius: 28, padding: 40, maxWidth: 480, width: "100%", textAlign: "center", animation: "zoomIn .3s ease" }}>
+          <div style={{ background: C.white, borderRadius: 28, padding: "clamp(24px, 5vw, 40px)", maxWidth: 480, width: "100%", textAlign: "center", animation: "zoomIn .3s ease" }}>
             <div style={{ fontSize: 44, marginBottom: 12 }}>🔒</div>
             <h2 style={{ margin: "0 0 8px", fontSize: 22, color: C.darkGreen, fontWeight: 900 }}>Kunci Pilihan Anda?</h2>
             <p style={{ color: C.lightGreen, fontSize: 14, margin: "0 0 24px", lineHeight: 1.7 }}>Pilihan yang disahkan tidak bisa diubah atau dibatalkan oleh siapapun. Pastikan ini adalah keputusan terbaik Anda.</p>
@@ -235,7 +235,7 @@ export default function VotingPage() {
         )}
       </header>
 
-      <main style={{ maxWidth: 1000, margin: "0 auto", padding: "36px 20px" }}>
+      <main style={{ maxWidth: 1000, margin: "0 auto", padding: "clamp(24px, 5vw, 36px) clamp(16px, 4vw, 20px)" }}>
 
         {/* ===== LOBBY: Pilih Agenda ===== */}
         {!activeVoting && (
@@ -244,7 +244,7 @@ export default function VotingPage() {
             <div style={{ borderRadius: 24, overflow: "hidden", marginBottom: 32, position: "relative", height: 280, background: C.darkGreen, boxShadow: "0 15px 40px rgba(0,0,0,.15)" }}>
               <img src={slide.foto} alt="motivasi" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.45, transition: "opacity .5s" }} />
               <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(26,46,31,.95) 0%, rgba(26,46,31,.2) 100%)" }} />
-              <div style={{ position: "relative", zIndex: 2, padding: "36px 40px", height: "100%", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+              <div style={{ position: "relative", zIndex: 2, padding: "clamp(24px, 5vw, 36px) clamp(20px, 4vw, 40px)", height: "100%", display: "flex", flexDirection: "column", justifyContent: "center" }}>
                 <div style={{ fontSize: 11, color: C.gold, fontWeight: 900, letterSpacing: "0.2em", marginBottom: 12, textTransform: "uppercase" }}>💬 Pesan Motivasi Pemilihan</div>
                 <blockquote style={{ margin: 0, fontSize: 22, fontWeight: 800, color: "white", lineHeight: 1.5, maxWidth: 600, fontStyle: "italic" }}>"{slide.kutipan}"</blockquote>
                 <div style={{ marginTop: 16, fontSize: 13, color: C.gold, fontWeight: 700 }}>— {slide.nama}</div>
@@ -269,14 +269,14 @@ export default function VotingPage() {
             <h2 style={{ fontSize: 24, fontWeight: 900, color: C.darkGreen, marginBottom: 20 }}>Agenda Pemilihan Terbuka 📋</h2>
 
             {votings.length === 0 ? (
-              <div style={{ textAlign: "center", padding: "60px 20px", background: C.white, borderRadius: 20, border: `1px dashed ${C.lightGreen}` }}>
+              <div style={{ textAlign: "center", padding: "clamp(30px, 6vw, 60px) clamp(16px, 4vw, 20px)", background: C.white, borderRadius: 20, border: `1px dashed ${C.lightGreen}` }}>
                 <div style={{ fontSize: 40, marginBottom: 12 }}>📭</div>
                 <div style={{ color: C.lightGreen, fontWeight: 700, fontSize: 15 }}>Tidak ada agenda pemilihan yang aktif saat ini.</div>
               </div>
             ) : votings.map(v => {
               const { tipe, text } = parseJudul(v.judul);
               return (
-                <div key={v.id} onClick={() => bukaBilik(v)} style={{ background: C.white, borderRadius: 20, padding: "28px 32px", marginBottom: 16, display: "flex", alignItems: "center", justifyContent: "space-between", border: `1px solid rgba(45,90,64,.12)`, boxShadow: "0 8px 20px rgba(0,0,0,.04)", cursor: "pointer", transition: "all .2s" }}>
+                <div key={v.id} onClick={() => bukaBilik(v)} style={{ background: C.white, borderRadius: 20, padding: "clamp(20px, 4vw, 28px) clamp(16px, 4vw, 32px)", marginBottom: 16, display: "flex", alignItems: "center", justifyContent: "space-between", border: `1px solid rgba(45,90,64,.12)`, boxShadow: "0 8px 20px rgba(0,0,0,.04)", cursor: "pointer", transition: "all .2s" }}>
                   <div>
                     <span style={{ background: tipe === "PEMILU" ? "rgba(45,90,64,.1)" : "rgba(184,148,63,.1)", color: tipe === "PEMILU" ? C.green : C.gold, padding: "5px 12px", borderRadius: 8, fontSize: 11, fontWeight: 900, letterSpacing: ".05em" }}>
                       {tipe === "PEMILU" ? "🗳️ KOTAK PEMILU" : "⚖️ MUSYAWARAH"}
@@ -364,7 +364,7 @@ export default function VotingPage() {
 
         {/* ===== BILIK: Verifikasi NFC ===== */}
         {activeVoting && !terverifikasi && (
-          <div style={{ maxWidth: 560, margin: "0 auto", background: C.white, borderRadius: 28, padding: 48, boxShadow: "0 20px 50px rgba(0,0,0,.08)", textAlign: "center", animation: "zoomIn .3s ease" }}>
+          <div style={{ maxWidth: 560, margin: "0 auto", background: C.white, borderRadius: 28, padding: "clamp(24px, 5vw, 48px)", boxShadow: "0 20px 50px rgba(0,0,0,.08)", textAlign: "center", animation: "zoomIn .3s ease" }}>
             <div style={{ fontSize: 52, marginBottom: 16 }}>🏛️</div>
             <h2 style={{ margin: "0 0 8px", fontSize: 24, fontWeight: 900, color: C.darkGreen }}>{parseJudul(activeVoting.judul).text}</h2>
             <p style={{ color: C.lightGreen, fontSize: 14, lineHeight: 1.7, margin: "0 0 36px" }}>

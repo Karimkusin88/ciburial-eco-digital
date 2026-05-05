@@ -53,7 +53,7 @@ export default function KalenderPage() {
 
   return (
     <div style={{ minHeight: "100vh", background: "#f5f0e8", fontFamily: "'Segoe UI',system-ui,sans-serif" }}>
-      <header style={{ background: "#f5f0e8", borderBottom: "1px solid rgba(45,90,64,0.12)", padding: "14px 20px", position: "sticky", top: 0, zIndex: 10, display: "flex", alignItems: "center", gap: 12 }}>
+      <header style={{ background: "#f5f0e8", borderBottom: "1px solid rgba(45,90,64,0.12)", padding: "clamp(12px, 3vw, 14px) clamp(16px, 4vw, 20px)", position: "sticky", top: 0, zIndex: 10, display: "flex", alignItems: "center", gap: 12 }}>
         <a href="/" style={{ color: "#6b7c6d", textDecoration: "none", fontSize: 13 }}>← Beranda</a>
         <span style={{ color: "#c8bfaa" }}>|</span>
         <div>
@@ -62,12 +62,12 @@ export default function KalenderPage() {
         </div>
       </header>
 
-      <div style={{ maxWidth: 900, margin: "0 auto", padding: "20px 16px" }}>
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "clamp(16px, 4vw, 20px) clamp(12px, 3vw, 16px)" }}>
         <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 20 }}>
 
           {/* Kalender */}
           <div>
-            <div style={{ background: "white", borderRadius: 16, padding: 20, border: "1px solid rgba(45,90,64,0.1)", boxShadow: "0 1px 6px rgba(0,0,0,0.04)", marginBottom: 16 }}>
+            <div style={{ background: "white", borderRadius: 16, padding: "clamp(16px, 4vw, 20px)", border: "1px solid rgba(45,90,64,0.1)", boxShadow: "0 1px 6px rgba(0,0,0,0.04)", marginBottom: 16 }}>
               {/* Nav bulan */}
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
                 <button onClick={() => { if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y - 1); } else setViewMonth(m => m - 1); }}
@@ -124,7 +124,7 @@ export default function KalenderPage() {
           {/* List kegiatan */}
           <div>
             {selectedKegiatan && (
-              <div style={{ background: "#2d5a40", borderRadius: 16, padding: 20, marginBottom: 14, color: "white" }}>
+              <div style={{ background: "#2d5a40", borderRadius: 16, padding: "clamp(16px, 4vw, 20px)", marginBottom: 14, color: "white" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                   <div>
                     <div style={{ fontSize: 11, opacity: 0.7, marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.06em" }}>{selectedKegiatan.kategori}</div>
@@ -147,7 +147,7 @@ export default function KalenderPage() {
             </h3>
 
             {filtered.length === 0 ? (
-              <div style={{ background: "white", borderRadius: 16, padding: 40, textAlign: "center", border: "1px solid rgba(45,90,64,0.1)", color: "#a8b5a9" }}>
+              <div style={{ background: "white", borderRadius: 16, padding: "clamp(24px, 5vw, 40px)", textAlign: "center", border: "1px solid rgba(45,90,64,0.1)", color: "#a8b5a9" }}>
                 Belum ada kegiatan bulan ini
               </div>
             ) : filtered.map(k => {
@@ -155,7 +155,7 @@ export default function KalenderPage() {
               const tgl = new Date(k.tanggal);
               return (
                 <div key={k.id} onClick={() => setSelected(k.id)}
-                  style={{ background: "white", borderRadius: 14, padding: "14px 16px", marginBottom: 10, border: `1.5px solid ${selected === k.id ? color : "rgba(45,90,64,0.1)"}`, cursor: "pointer", boxShadow: "0 1px 6px rgba(0,0,0,0.04)", display: "flex", gap: 14 }}>
+                  style={{ background: "white", borderRadius: 14, padding: "clamp(12px, 3vw, 14px) clamp(14px, 4vw, 16px)", marginBottom: 10, border: `1.5px solid ${selected === k.id ? color : "rgba(45,90,64,0.1)"}`, cursor: "pointer", boxShadow: "0 1px 6px rgba(0,0,0,0.04)", display: "flex", gap: 14 }}>
                   <div style={{ background: color + "15", border: `1px solid ${color}30`, borderRadius: 10, padding: "8px 10px", textAlign: "center", minWidth: 44, flexShrink: 0 }}>
                     <div style={{ fontSize: 18, fontWeight: 900, color, lineHeight: 1 }}>{tgl.getDate()}</div>
                     <div style={{ fontSize: 9, color, textTransform: "uppercase", fontWeight: 600 }}>{BULAN[tgl.getMonth()].slice(0, 3)}</div>

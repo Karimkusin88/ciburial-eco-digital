@@ -74,7 +74,7 @@ export default function KegiatanTab({ kegiatan, dataLoad }: KegiatanTabProps) {
 
         {!dataLoad && (
           kegFil.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "80px 20px", color: "#5A4A40" }}>
+            <div style={{ textAlign: "center", padding: "clamp(40px, 8vw, 80px) 20px", color: "#5A4A40" }}>
               <div style={{ fontSize: 56, marginBottom: 16 }}>📅</div>
               <div style={{ fontSize: 18, fontWeight: 700, color: "#1C3A2B", marginBottom: 6 }}>Belum ada kegiatan di kategori ini.</div>
               <div style={{ fontSize: 13, color: "#5A4A40" }}>Admin dapat menambahkan melalui panel admin.</div>
@@ -119,7 +119,7 @@ export default function KegiatanTab({ kegiatan, dataLoad }: KegiatanTabProps) {
                     ) : (
                       <div style={{ aspectRatio: "4/3", background: `linear-gradient(135deg,${kat.color}30,${kat.color}10)`, borderBottom: `4px solid ${kat.color}` }} />
                     )}
-                    <div style={{ padding: "22px 24px" }}>
+                    <div style={{ padding: "clamp(16px, 4vw, 22px) clamp(16px, 4vw, 24px)" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
                         <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".08em", padding: "6px 13px", borderRadius: 8, background: kat.bg, color: kat.color }}>{kat.label}</span>
                         <div style={{ textAlign: "right" }}>

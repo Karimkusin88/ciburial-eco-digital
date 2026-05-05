@@ -62,7 +62,7 @@ export default function PengaduanPage() {
       {/* Header */}
       <header style={{
         background: "#f5f0e8", borderBottom: "1px solid rgba(45,90,64,0.12)",
-        padding: "14px 20px", position: "sticky", top: 0, zIndex: 10,
+        padding: "clamp(12px, 3vw, 14px) clamp(16px, 4vw, 20px)", position: "sticky", top: 0, zIndex: 10,
         display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -85,13 +85,13 @@ export default function PengaduanPage() {
         </div>
       </header>
 
-      <div style={{ maxWidth: 700, margin: "0 auto", padding: "24px 16px" }}>
+      <div style={{ maxWidth: 700, margin: "0 auto", padding: "clamp(16px, 4vw, 24px) clamp(12px, 3vw, 16px)" }}>
 
         {/* Form Tab */}
         {activeTab === "form" && (
           submitted ? (
             <div style={{
-              background: "white", borderRadius: 20, padding: 40,
+              background: "white", borderRadius: 20, padding: "clamp(24px, 5vw, 40px)",
               textAlign: "center", border: "1px solid rgba(45,90,64,0.12)",
               boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
             }}>
@@ -109,7 +109,7 @@ export default function PengaduanPage() {
             </div>
           ) : (
             <div style={{
-              background: "white", borderRadius: 20, padding: 24,
+              background: "white", borderRadius: 20, padding: "clamp(16px, 4vw, 24px)",
               border: "1px solid rgba(45,90,64,0.12)",
               boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
             }}>
@@ -191,10 +191,10 @@ export default function PengaduanPage() {
         {activeTab === "list" && (
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {list.length === 0 ? (
-              <div style={{ textAlign: "center", padding: 40, color: "#a8b5a9" }}>Belum ada laporan</div>
+              <div style={{ textAlign: "center", padding: "clamp(24px, 5vw, 40px)", color: "#a8b5a9" }}>Belum ada laporan</div>
             ) : list.map(p => (
               <div key={p.id} style={{
-                background: "white", borderRadius: 16, padding: "16px 18px",
+                background: "white", borderRadius: 16, padding: "clamp(12px, 3vw, 16px) clamp(14px, 4vw, 18px)",
                 border: "1px solid rgba(45,90,64,0.1)",
                 boxShadow: "0 1px 6px rgba(0,0,0,0.04)",
               }}>

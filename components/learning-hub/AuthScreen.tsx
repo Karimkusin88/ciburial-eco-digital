@@ -68,8 +68,8 @@ export function AuthScreen({ onLogin, showToast }: AuthProps) {
 
   // ── Email Login Form ──
   if (mode === "email-login") return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "80vh", padding: "32px 20px", position: "relative", zIndex: 1 }}>
-      <div className="lh-card" style={{ padding: "40px 36px", maxWidth: 420, width: "100%", animation: "fadeInUp .5s ease both" }}>
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "80vh", padding: "clamp(20px, 4vw, 32px) 20px", position: "relative", zIndex: 1 }}>
+      <div className="lh-card" style={{ padding: "clamp(24px, 5vw, 40px) clamp(20px, 4vw, 36px)", maxWidth: 420, width: "100%", animation: "fadeInUp .5s ease both" }}>
         <div style={{ textAlign: "center", marginBottom: 28 }}>
           <div style={{ fontSize: 36, marginBottom: 12 }}>📧</div>
           <h2 className="fnt" style={{ fontSize: 24, fontWeight: 600, color: "var(--fo)", marginBottom: 6 }}>Login dengan Email</h2>
@@ -102,8 +102,8 @@ export function AuthScreen({ onLogin, showToast }: AuthProps) {
 
   // ── Email Register Form ──
   if (mode === "email-register") return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "80vh", padding: "32px 20px", position: "relative", zIndex: 1 }}>
-      <div className="lh-card" style={{ padding: "40px 36px", maxWidth: 420, width: "100%", animation: "fadeInUp .5s ease both" }}>
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "80vh", padding: "clamp(20px, 4vw, 32px) 20px", position: "relative", zIndex: 1 }}>
+      <div className="lh-card" style={{ padding: "clamp(24px, 5vw, 40px) clamp(20px, 4vw, 36px)", maxWidth: 420, width: "100%", animation: "fadeInUp .5s ease both" }}>
         <div style={{ textAlign: "center", marginBottom: 28 }}>
           <div style={{ fontSize: 36, marginBottom: 12 }}>✨</div>
           <h2 className="fnt" style={{ fontSize: 24, fontWeight: 600, color: "var(--fo)", marginBottom: 6 }}>Buat Akun Baru</h2>
@@ -140,7 +140,7 @@ export function AuthScreen({ onLogin, showToast }: AuthProps) {
 
   // ── Landing — Pilih metode ──
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", padding: "40px 20px", position: "relative", zIndex: 1 }}>
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", padding: "clamp(24px, 5vw, 40px) 20px", position: "relative", zIndex: 1 }}>
       {/* Hero */}
       <div style={{ textAlign: "center", marginBottom: 40, animation: "fadeInUp .6s ease both" }}>
         <div className="lh-badge lh-badge-green" style={{ marginBottom: 16 }}>
@@ -159,7 +159,7 @@ export function AuthScreen({ onLogin, showToast }: AuthProps) {
       <div className="lh-auth-split" style={{ display: "flex", gap: 48, alignItems: "stretch", maxWidth: 800, width: "100%", animation: "fadeInUp .6s ease .15s both" }}>
 
         {/* Warga Ciburial — NFC */}
-        <div className="lh-card" style={{ flex: 1, padding: "36px 28px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
+        <div className="lh-card" style={{ flex: 1, padding: "clamp(24px, 5vw, 36px) clamp(20px, 4vw, 28px)", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
           <div className="lh-badge lh-badge-green">🏘️ Warga Ciburial</div>
           <h3 className="fnt" style={{ fontSize: 22, fontWeight: 600, color: "var(--fo)" }}>Masuk via e-KTP</h3>
           <p style={{ fontSize: 13, color: "var(--tm)", lineHeight: 1.6, maxWidth: 260 }}>
@@ -194,7 +194,7 @@ export function AuthScreen({ onLogin, showToast }: AuthProps) {
         </div>
 
         {/* User Luar — Email */}
-        <div className="lh-card" style={{ flex: 1, padding: "36px 28px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
+        <div className="lh-card" style={{ flex: 1, padding: "clamp(24px, 5vw, 36px) clamp(20px, 4vw, 28px)", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
           <div className="lh-badge lh-badge-gold">🌍 Pengguna Umum</div>
           <h3 className="fnt" style={{ fontSize: 22, fontWeight: 600, color: "var(--fo)" }}>Login / Daftar</h3>
           <p style={{ fontSize: 13, color: "var(--tm)", lineHeight: 1.6, maxWidth: 260 }}>
