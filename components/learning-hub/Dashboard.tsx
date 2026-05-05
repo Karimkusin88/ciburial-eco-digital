@@ -65,10 +65,16 @@ export function Dashboard({ user, onLogout, showToast }: { user: User; onLogout:
         placeholder="🔍 Cari judul, penulis, atau kategori..." 
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        style={{ width: "100%", padding: "14px 20px", borderRadius: 14, border: "1.5px solid rgba(47,143,78,.2)", background: "var(--cw)", fontSize: 15, outline: "none", color: "var(--tp)", boxShadow: "0 4px 12px rgba(0,0,0,.03)" }}
+        style={{ width: "100%", padding: "14px 20px", borderRadius: 14, border: "1.5px solid rgba(47,143,78,.2)", background: "var(--cw)", fontSize: 15, outline: "none", color: "var(--tp)", boxShadow: "0 4px 12px rgba(0,0,0,.03)", WebkitAppearance: "none" }}
       />
     </div>
   );
+
+  function getYtId(url: string) {
+    if (!url) return null;
+    const match = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/);
+    return (match && match[2].length === 11) ? match[2] : null;
+  }
 
   function renderContent() {
     if (!activeTab) return (
@@ -118,17 +124,11 @@ export function Dashboard({ user, onLogout, showToast }: { user: User; onLogout:
               {/* PDF Preview via Iframe atau Foto Sampul */}
               {b.foto_sampul ? (
                  <img src={b.foto_sampul} alt="" style={{width: "100%", height: "100%", objectFit: "cover"}} />
-              ) : b.file_url ? (
-                <div style={{ position: "absolute", inset: -2, overflow: "hidden", background: "#fff" }}>
-                    <iframe 
-                      src={`${b.file_url}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`} 
-                      style={{ width: "100%", height: "100%", border: "none", pointerEvents: "none" }}
-                      scrolling="no"
-                    />
-                </div>
               ) : (
-                <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--cr)", fontSize: 40 }}>
-                  {b.icon || "📱"}
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg, var(--fo) 0%, var(--accent-dark) 100%)", display: "flex", flexDirection: "column", padding: "16px 12px", color: "white" }}>
+                  <div style={{ fontSize: 9, fontWeight: 800, color: "var(--accent-light)", marginBottom: "auto", textTransform: "uppercase", letterSpacing: "1px" }}>PDF • {b.kategori || "E-Book"}</div>
+                  <h3 style={{ fontSize: 15, fontWeight: 800, margin: "0 0 6px", lineHeight: 1.2, display: "-webkit-box", WebkitLineClamp: 4, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{b.judul}</h3>
+                  <div style={{ fontSize: 10, opacity: 0.8, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{b.penulis || "Ciburial Hub"}</div>
                 </div>
               )}
 
@@ -191,20 +191,20 @@ export function Dashboard({ user, onLogout, showToast }: { user: User; onLogout:
       const filtered = fisikBooks.filter(b => (b.judul + " " + (b.penulis||"") + " " + (b.kategori||"")).toLowerCase().includes(searchQuery.toLowerCase()));
 
       const renderGrid = (list: any[]) => (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(240px,1fr))", gap: 14 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(140px,1fr))", gap: 16 }}>
           {list.map(b => (
-            <div key={b.id} className="lh-card" style={{ padding: 22 }}>
-              <div style={{ display: "flex", gap: 14, marginBottom: 16 }}>
-                {b.foto_sampul ? <img src={b.foto_sampul} alt="" style={{width: 60, height: 80, objectFit: "cover", borderRadius: 8, border: "1px solid rgba(0,0,0,0.1)"}} /> : <div style={{ fontSize: 40 }}>{b.icon || "📕"}</div>}
-                <div>
-                  <div style={{ fontSize: 15, fontWeight: 800, color: "var(--tp)", marginBottom: 4, lineHeight: 1.3 }}>{b.judul}</div>
-                  <div style={{ fontSize: 12, color: "var(--tm)" }}>{b.penulis || "—"}</div>
-                  <div style={{ fontSize: 11, color: "var(--accent)", fontWeight: 700, marginTop: 4 }}>{b.kategori}</div>
-                </div>
+            <div key={b.id} className="lh-card" style={{ display: "flex", flexDirection: "column", padding: 12, borderRadius: 16 }}>
+              <div style={{ width: "100%", aspectRatio: "3/4", borderRadius: 10, overflow: "hidden", marginBottom: 12, background: "var(--cr)", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid rgba(0,0,0,0.05)" }}>
+                {b.foto_sampul ? <img src={b.foto_sampul} alt="" style={{width: "100%", height: "100%", objectFit: "cover"}} loading="lazy" /> : <div style={{ fontSize: 40 }}>{b.icon || "📕"}</div>}
               </div>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(0,0,0,0.02)", padding: "10px 12px", borderRadius: 10 }}>
-                <span className="lh-badge" style={{ background: b.status === "tersedia" ? "var(--gb)" : "var(--rb)", color: b.status === "tersedia" ? "var(--gt)" : "var(--rt)" }}>{b.status === "tersedia" ? "✅ Tersedia" : "📤 Dipinjam"}</span>
-                <span style={{ fontSize: 10, color: "var(--tm)", fontWeight: 600 }}>Pinjam via Admin</span>
+              <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+                <div style={{ fontSize: 10, fontWeight: 800, color: "var(--accent)", marginBottom: 4, textTransform: "uppercase", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{b.kategori}</div>
+                <div style={{ fontSize: 14, fontWeight: 800, color: "var(--tp)", marginBottom: 4, lineHeight: 1.2, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{b.judul}</div>
+                <div style={{ fontSize: 11, color: "var(--tm)", marginBottom: 12, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{b.penulis || "—"}</div>
+                
+                <div style={{ marginTop: "auto", display: "flex", alignItems: "center", justifyContent: "center", background: b.status === "tersedia" ? "var(--gb)" : "var(--rb)", padding: "8px 10px", borderRadius: 8 }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: b.status === "tersedia" ? "var(--gt)" : "var(--rt)" }}>{b.status === "tersedia" ? "✅ Tersedia" : "📤 Dipinjam"}</span>
+                </div>
               </div>
             </div>
           ))}
@@ -241,14 +241,42 @@ export function Dashboard({ user, onLogout, showToast }: { user: User; onLogout:
         <span className="lh-badge" style={{ marginTop: 8, background: pc.status === "tersedia" ? "var(--gb)" : "rgba(255,180,50,.1)", color: pc.status === "tersedia" ? "var(--gt)" : "#B8943F" }}>{pc.status || "tersedia"}</span>
       </div>))}</div>}</div>;
 
-    if (activeTab === "video") return <div>{backBtn}{secTitle("▶️ Video Pembelajaran")}{videos.length === 0 ? empty("Video belum tersedia") : <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>{videos.map(v => (
-      <a key={v.id} href={v.url} target="_blank" rel="noopener noreferrer" className="lh-card" style={{ padding: 18, display: "flex", alignItems: "center", gap: 16, textDecoration: "none" }}>
-        <div style={{ width: 50, height: 50, borderRadius: 14, background: "rgba(139,92,246,.08)", border: "1.5px solid rgba(139,92,246,.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }}>▶️</div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 15, fontWeight: 700, color: "var(--tp)" }}>{v.judul}</div>
-          <div style={{ fontSize: 12, color: "var(--tm)", marginTop: 3 }}>{v.kategori || "Umum"} · {v.durasi || "—"}</div>
-        </div>
-      </a>))}</div>}</div>;
+    if (activeTab === "video") return (
+      <div>
+        {backBtn}
+        {secTitle("▶️ Video Pembelajaran")}
+        {videos.length === 0 ? empty("Video belum tersedia") : (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(240px,1fr))", gap: 20 }}>
+            {videos.map(v => {
+              const ytId = getYtId(v.url);
+              const thumbUrl = ytId ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` : null;
+              return (
+                <a key={v.id} href={v.url} target="_blank" rel="noopener noreferrer" className="lh-card" style={{ display: "flex", flexDirection: "column", textDecoration: "none", overflow: "hidden", borderRadius: 16, padding: 0 }}>
+                  <div style={{ width: "100%", aspectRatio: "16/9", background: "linear-gradient(135deg, rgba(139,92,246,0.1), rgba(139,92,246,0.02))", position: "relative" }}>
+                    {thumbUrl ? (
+                      <img src={thumbUrl} alt="" style={{width: "100%", height: "100%", objectFit: "cover"}} loading="lazy" />
+                    ) : (
+                      <div style={{width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 40}}>▶️</div>
+                    )}
+                    {v.durasi && (
+                      <div style={{ position: "absolute", bottom: 8, right: 8, background: "rgba(0,0,0,0.8)", color: "white", fontSize: 11, fontWeight: 600, padding: "3px 6px", borderRadius: 4 }}>
+                        {v.durasi}
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ padding: 16 }}>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: "var(--tp)", marginBottom: 6, lineHeight: 1.3, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{v.judul}</div>
+                    <div style={{ fontSize: 12, color: "var(--tm)", display: "flex", alignItems: "center", gap: 6 }}>
+                      <span style={{ padding: "2px 8px", background: "rgba(139,92,246,0.1)", color: "#8B5CF6", borderRadius: 4, fontWeight: 600, fontSize: 10 }}>{v.kategori || "Umum"}</span>
+                    </div>
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
 
     if (activeTab === "dokumen") return <div>{backBtn}{secTitle("📄 Dokumen & PDF")}{docs.length === 0 ? empty("Dokumen belum tersedia") : <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>{docs.map(d => (
       <a key={d.id} href={d.url} target="_blank" rel="noopener noreferrer" className="lh-card" style={{ padding: 18, display: "flex", alignItems: "center", gap: 16, textDecoration: "none" }}>
@@ -272,26 +300,25 @@ export function Dashboard({ user, onLogout, showToast }: { user: User; onLogout:
   return (
     <div style={{ position: "relative", zIndex: 1 }}>
       {/* Dashboard Header */}
-      <header style={{ background: "var(--cw)", borderBottom: "1.5px solid rgba(47,143,78,.08)", padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 10, boxShadow: "0 2px 16px rgba(28,58,43,.04)" }}>
+      <header style={{ background: "var(--cw)", borderBottom: "1.5px solid rgba(47,143,78,.08)", padding: "16px clamp(16px, 4vw, 24px)", display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 10, boxShadow: "0 2px 16px rgba(28,58,43,.04)" }}>
         <div>
           <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".2em", color: "var(--accent)", textTransform: "uppercase" }}>CIBURIAL LEARNING HUB</div>
           <div style={{ fontSize: 18, fontWeight: 800, color: "var(--fo)", letterSpacing: "-.03em", marginTop: 2 }}>
             Dashboard<span style={{ color: "var(--accent)" }}>.</span>
           </div>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-          <div style={{ textAlign: "right" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div className="hidden sm:block" style={{ textAlign: "right" }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: "var(--tp)" }}>{user.nama}</div>
             <div style={{ fontSize: 11, color: "var(--accent)", fontWeight: 600 }}>
               {user.tipe === "warga" ? `🌿 ${poinUser} poin` : "🌍 Pengguna Umum"}
             </div>
           </div>
-          <div style={{ width: 38, height: 38, borderRadius: "50%", background: "linear-gradient(135deg,rgba(47,143,78,.1),rgba(79,191,126,.15))", border: "1.5px solid rgba(47,143,78,.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, fontWeight: 800, color: "var(--accent)" }}>{user.nama?.charAt(0)}</div>
-          <button onClick={onLogout} className="lh-btn" style={{ padding: "7px 16px", borderRadius: 10, background: "var(--rb)", border: "1px solid rgba(139,32,32,.1)", color: "var(--rt)", fontSize: 11, fontWeight: 700 }}>Logout</button>
+          <button onClick={onLogout} className="lh-btn" style={{ padding: "7px 12px", borderRadius: 8, background: "var(--rb)", border: "1px solid rgba(139,32,32,.1)", color: "var(--rt)", fontSize: 11, fontWeight: 700 }}>Keluar</button>
         </div>
       </header>
 
-      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "28px 24px 60px" }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "28px clamp(16px, 4vw, 24px) 60px" }}>
         {!activeTab && (
           <div style={{ marginBottom: 28, animation: "fadeInUp .5s ease both" }}>
             <h2 className="fnt" style={{ fontSize: "clamp(24px,4vw,36px)", fontWeight: 300, color: "var(--fo)", letterSpacing: "-.02em", marginBottom: 6 }}>
