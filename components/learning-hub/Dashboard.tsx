@@ -5,7 +5,8 @@ import { supabase, isSupabaseReady } from "@/lib/supabase";
 interface User { id: string; nama: string; kk_id: string; saldo_poin: number; tipe: "warga" | "external" }
 
 const FEATURES = [
-  { key: "perpus", icon: "📚", title: "E-Perpustakaan", desc: "Katalog buku & e-book digital untuk dipinjam", color: "#3B82F6" },
+  { key: "ebook", icon: "📱", title: "E-Book Digital", desc: "Baca dan unduh buku digital interaktif", color: "#3B82F6" },
+  { key: "perpus", icon: "📚", title: "Perpustakaan Desa", desc: "Katalog buku cetak fisik balai warga", color: "#D97706" },
   { key: "lab", icon: "💻", title: "Lab Komputer", desc: "Cek ketersediaan PC di Balai Warga", color: "#14B8A6" },
   { key: "video", icon: "▶️", title: "Video Pembelajaran", desc: "Tutorial UMKM, koding dasar, & pertanian", color: "#8B5CF6" },
   { key: "dokumen", icon: "📄", title: "Dokumen & PDF", desc: "Panduan teknis, regulasi, dan proposal desa", color: "#F43F5E" },
@@ -74,39 +75,95 @@ export function Dashboard({ user, onLogout, showToast }: { user: User; onLogout:
       </div>
     );
 
-    if (activeTab === "perpus") {
+    if (activeTab === "ebook") {
       const eBooks = books.filter(b => b.jenis_buku === "ebook");
-      const fisikBooks = books.filter(b => b.jenis_buku !== "ebook");
-
       return (
         <div>
           {backBtn}
-          <div style={{marginBottom: 32}}>
+          <div style={{marginBottom: 16}}>
             {secTitle("📱 Rak E-Book Digital")}
             {eBooks.length === 0 ? empty("E-Book belum tersedia") : (
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: 14 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 20 }}>
                 {eBooks.map(b => (
-                  <div key={b.id} className="lh-card" style={{ padding: 22, display: "flex", flexDirection: "column" }}>
-                    <div style={{ display: "flex", gap: 14, marginBottom: 16 }}>
-                      {b.foto_sampul ? <img src={b.foto_sampul} alt="" style={{width: 60, height: 80, objectFit: "cover", borderRadius: 8, border: "1px solid rgba(0,0,0,0.1)"}} /> : <div style={{ fontSize: 40 }}>{b.icon || "📱"}</div>}
-                      <div>
-                        <div style={{ fontSize: 15, fontWeight: 800, color: "var(--tp)", marginBottom: 4, lineHeight: 1.3 }}>{b.judul}</div>
-                        <div style={{ fontSize: 12, color: "var(--tm)" }}>{b.penulis || "—"}</div>
-                        <div style={{ fontSize: 11, color: "var(--accent)", fontWeight: 700, marginTop: 4 }}>{b.kategori}</div>
+                  <div 
+                    key={b.id} 
+                    style={{ 
+                      position: "relative", 
+                      borderRadius: 16, 
+                      overflow: "hidden", 
+                      aspectRatio: "3/4", 
+                      boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+                      border: "1px solid rgba(47,143,78,.1)",
+                      background: "#f0f0f0",
+                      cursor: "pointer"
+                    }}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget.querySelector('.ebook-overlay') as HTMLElement).style.opacity = '1';
+                      (e.currentTarget.querySelector('.ebook-info') as HTMLElement).style.transform = 'translateY(0)';
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget.querySelector('.ebook-overlay') as HTMLElement).style.opacity = '0';
+                      (e.currentTarget.querySelector('.ebook-info') as HTMLElement).style.transform = 'translateY(20px)';
+                    }}
+                  >
+                    {/* PDF Preview via Iframe atau Foto Sampul */}
+                    {b.foto_sampul ? (
+                       <img src={b.foto_sampul} alt="" style={{width: "100%", height: "100%", objectFit: "cover"}} />
+                    ) : b.file_url ? (
+                      <div style={{ position: "absolute", inset: -2, overflow: "hidden", background: "#fff" }}>
+                          <iframe 
+                            src={`${b.file_url}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`} 
+                            style={{ width: "100%", height: "100%", border: "none", pointerEvents: "none" }}
+                            scrolling="no"
+                          />
+                      </div>
+                    ) : (
+                      <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--cr)", fontSize: 50 }}>
+                        {b.icon || "📱"}
+                      </div>
+                    )}
+
+                    {/* Hover Overlay Animation */}
+                    <div 
+                      className="ebook-overlay"
+                      style={{ 
+                        position: "absolute", inset: 0, 
+                        background: "linear-gradient(to top, rgba(28,58,43,0.95) 0%, rgba(28,58,43,0.7) 40%, rgba(28,58,43,0.2) 100%)", 
+                        opacity: 0, transition: "all 0.3s ease",
+                        display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: 20,
+                        zIndex: 2
+                      }}
+                    >
+                      <div 
+                        className="ebook-info"
+                        style={{ transform: "translateY(20px)", transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)", color: "white" }}
+                      >
+                        <div style={{ fontSize: 10, fontWeight: 800, color: "var(--accent-light)", marginBottom: 6, letterSpacing: "1px", textTransform: "uppercase" }}>{b.kategori}</div>
+                        <h3 style={{ fontSize: 18, fontWeight: 800, margin: "0 0 6px", lineHeight: 1.2, textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>{b.judul}</h3>
+                        <div style={{ fontSize: 12, color: "rgba(255,255,255,0.8)", marginBottom: 16 }}>{b.penulis || "—"}</div>
+                        
+                        {b.file_url && (
+                          <a href={b.file_url} target="_blank" rel="noopener noreferrer" style={{ display: "block", background: "var(--accent)", color: "white", padding: "12px", borderRadius: 10, fontSize: 13, fontWeight: 700, textDecoration: "none", textAlign: "center", transition: "background 0.2s", boxShadow: "0 4px 12px rgba(47,143,78,0.4)" }}>
+                            📖 Baca Sekarang
+                          </a>
+                        )}
                       </div>
                     </div>
-                    {b.file_url ? (
-                      <a href={b.file_url} target="_blank" rel="noopener noreferrer" className="btn-heroic" style={{ padding: "8px", fontSize: 12, textAlign: "center", textDecoration: "none", marginTop: "auto" }}>📖 Baca / Unduh</a>
-                    ) : (
-                      <div style={{ fontSize: 11, color: "var(--rt)", background: "var(--rb)", padding: "8px", borderRadius: 8, textAlign: "center", fontWeight: 600, marginTop: "auto" }}>File belum tersedia</div>
-                    )}
                   </div>
                 ))}
               </div>
             )}
           </div>
+        </div>
+      );
+    }
 
-          <div>
+    if (activeTab === "perpus") {
+      const fisikBooks = books.filter(b => b.jenis_buku !== "ebook");
+      return (
+        <div>
+          {backBtn}
+          <div style={{marginBottom: 16}}>
             {secTitle("📚 Rak Buku Fisik")}
             {fisikBooks.length === 0 ? empty("Buku fisik belum tersedia") : (
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: 14 }}>
