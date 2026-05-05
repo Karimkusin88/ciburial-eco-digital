@@ -247,9 +247,12 @@ export default function AdminLearningHub() {
                 <input style={IS} placeholder="Penulis / Pengarang" value={fB.penulis} onChange={e=>setFB({...fB,penulis:e.target.value})}/>
                 <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
                   <input style={IS} placeholder="Emoji icon (📕)" value={fB.icon} onChange={e=>setFB({...fB,icon:e.target.value})}/>
-                  <select style={IS} value={fB.kategori} onChange={e=>setFB({...fB,kategori:e.target.value})}>
-                    {["umum","agama","teknologi","pertanian","anak","novel","bisnis"].map(k=><option key={k}>{k}</option>)}
-                  </select>
+                  <div style={{position: "relative"}}>
+                    <input list="kategori-buku-list" style={{...IS, width:"100%"}} placeholder="Kategori (cth: Agama Anak)" value={fB.kategori} onChange={e=>setFB({...fB,kategori:e.target.value})}/>
+                    <datalist id="kategori-buku-list">
+                      {["Agama Dewasa","Agama Anak","Teknologi","Pertanian Dasar","Novel Fiksi","Bisnis & UMKM","Pendidikan Anak"].map(k=><option key={k} value={k}/>)}
+                    </datalist>
+                  </div>
                 </div>
                 {fB.jenis_buku === "fisik" && (
                   <select style={IS} value={fB.status} onChange={e=>setFB({...fB,status:e.target.value})}>
@@ -271,9 +274,12 @@ export default function AdminLearningHub() {
                 <input style={IS} placeholder="Judul video *" value={fV.judul} onChange={e=>setFV({...fV,judul:e.target.value})}/>
                 <UploadOrUrl label="File / Link Video *" value={fV.url} onChange={v=>setFV({...fV,url:v})} bucket="video-hub" accept="video/*" urlPlaceholder="https://youtube.com/watch?v=... atau URL video"/>
                 <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
-                  <select style={IS} value={fV.kategori} onChange={e=>setFV({...fV,kategori:e.target.value})}>
-                    {["umum","umkm","pertanian","teknologi","koding","kesehatan","agama"].map(k=><option key={k}>{k}</option>)}
-                  </select>
+                  <div style={{position: "relative"}}>
+                    <input list="kategori-video-list" style={{...IS, width:"100%"}} placeholder="Kategori Video" value={fV.kategori} onChange={e=>setFV({...fV,kategori:e.target.value})}/>
+                    <datalist id="kategori-video-list">
+                      {["UMKM & Bisnis","Pertanian Modern","Koding Dasar","Kesehatan","Kajian Agama"].map(k=><option key={k} value={k}/>)}
+                    </datalist>
+                  </div>
                   <input style={IS} placeholder="Durasi (cth: 15:30)" value={fV.durasi} onChange={e=>setFV({...fV,durasi:e.target.value})}/>
                 </div>
                 <textarea style={{...IS,minHeight:80}} placeholder="Deskripsi video" value={fV.deskripsi} onChange={e=>setFV({...fV,deskripsi:e.target.value})}/>

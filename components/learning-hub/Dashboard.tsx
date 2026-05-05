@@ -22,6 +22,7 @@ export function Dashboard({ user, onLogout, showToast }: { user: User; onLogout:
   const [galeri, setGaleri] = useState<any[]>([]);
   const [labPCs, setLabPCs] = useState<any[]>([]);
   const [poinUser, setPoinUser] = useState(user.saldo_poin || 0);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     if (!isSupabaseReady()) return;
@@ -57,6 +58,17 @@ export function Dashboard({ user, onLogout, showToast }: { user: User; onLogout:
   const backBtn = <button className="lh-btn" onClick={() => setActiveTab(null)} style={{ padding: "8px 18px", borderRadius: 10, background: "rgba(47,143,78,.06)", color: "var(--ts)", fontSize: 12, fontWeight: 600, marginBottom: 20, border: "1px solid rgba(47,143,78,.1)" }}>← Kembali ke Menu</button>;
   const empty = (t: string) => <div style={{ textAlign: "center", padding: "56px 20px", color: "var(--tm)", fontSize: 14, opacity: .6 }}><div style={{ fontSize: 40, marginBottom: 12, opacity: .3 }}>📭</div>{t}</div>;
   const secTitle = (t: string) => <h3 className="fnt" style={{ fontSize: 24, fontWeight: 600, color: "var(--fo)", marginBottom: 16 }}>{t}</h3>;
+  const searchBar = (
+    <div style={{ marginBottom: 24 }}>
+      <input 
+        type="text" 
+        placeholder="🔍 Cari judul, penulis, atau kategori..." 
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        style={{ width: "100%", padding: "14px 20px", borderRadius: 14, border: "1.5px solid rgba(47,143,78,.2)", background: "var(--cw)", fontSize: 15, outline: "none", color: "var(--tp)", boxShadow: "0 4px 12px rgba(0,0,0,.03)" }}
+      />
+    </div>
+  );
 
   function renderContent() {
     if (!activeTab) return (
@@ -77,78 +89,94 @@ export function Dashboard({ user, onLogout, showToast }: { user: User; onLogout:
 
     if (activeTab === "ebook") {
       const eBooks = books.filter(b => b.jenis_buku === "ebook");
+      const filtered = eBooks.filter(b => (b.judul + " " + (b.penulis||"") + " " + (b.kategori||"")).toLowerCase().includes(searchQuery.toLowerCase()));
+
+      const renderGrid = (list: any[]) => (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(110px,1fr))", gap: 12 }}>
+          {list.map(b => (
+            <div 
+              key={b.id} 
+              style={{ 
+                position: "relative", 
+                borderRadius: 14, 
+                overflow: "hidden", 
+                aspectRatio: "3/4", 
+                boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+                border: "1px solid rgba(47,143,78,.1)",
+                background: "#f0f0f0",
+                cursor: "pointer"
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget.querySelector('.ebook-overlay') as HTMLElement).style.opacity = '1';
+                (e.currentTarget.querySelector('.ebook-info') as HTMLElement).style.transform = 'translateY(0)';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget.querySelector('.ebook-overlay') as HTMLElement).style.opacity = '0';
+                (e.currentTarget.querySelector('.ebook-info') as HTMLElement).style.transform = 'translateY(20px)';
+              }}
+            >
+              {/* PDF Preview via Iframe atau Foto Sampul */}
+              {b.foto_sampul ? (
+                 <img src={b.foto_sampul} alt="" style={{width: "100%", height: "100%", objectFit: "cover"}} />
+              ) : b.file_url ? (
+                <div style={{ position: "absolute", inset: -2, overflow: "hidden", background: "#fff" }}>
+                    <iframe 
+                      src={`${b.file_url}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`} 
+                      style={{ width: "100%", height: "100%", border: "none", pointerEvents: "none" }}
+                      scrolling="no"
+                    />
+                </div>
+              ) : (
+                <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--cr)", fontSize: 40 }}>
+                  {b.icon || "📱"}
+                </div>
+              )}
+
+              {/* Hover Overlay Animation */}
+              <div 
+                className="ebook-overlay"
+                style={{ 
+                  position: "absolute", inset: 0, 
+                  background: "linear-gradient(to top, rgba(28,58,43,0.95) 0%, rgba(28,58,43,0.7) 40%, rgba(28,58,43,0.2) 100%)", 
+                  opacity: 0, transition: "all 0.3s ease",
+                  display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: 12,
+                  zIndex: 2
+                }}
+              >
+                <div 
+                  className="ebook-info"
+                  style={{ transform: "translateY(20px)", transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)", color: "white" }}
+                >
+                  <div style={{ fontSize: 9, fontWeight: 800, color: "var(--accent-light)", marginBottom: 4, letterSpacing: "0.5px", textTransform: "uppercase", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{b.kategori}</div>
+                  <h3 style={{ fontSize: 13, fontWeight: 800, margin: "0 0 4px", lineHeight: 1.2, textShadow: "0 2px 4px rgba(0,0,0,0.5)", display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{b.judul}</h3>
+                  <div style={{ fontSize: 10, color: "rgba(255,255,255,0.8)", marginBottom: 12, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{b.penulis || "—"}</div>
+                  
+                  {b.file_url && (
+                    <a href={b.file_url} target="_blank" rel="noopener noreferrer" style={{ display: "block", background: "var(--accent)", color: "white", padding: "8px", borderRadius: 8, fontSize: 11, fontWeight: 700, textDecoration: "none", textAlign: "center", transition: "background 0.2s", boxShadow: "0 4px 12px rgba(47,143,78,0.4)" }}>
+                      📖 Baca
+                    </a>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+
       return (
         <div>
           {backBtn}
           <div style={{marginBottom: 16}}>
             {secTitle("📱 Rak E-Book Digital")}
-            {eBooks.length === 0 ? empty("E-Book belum tersedia") : (
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 20 }}>
-                {eBooks.map(b => (
-                  <div 
-                    key={b.id} 
-                    style={{ 
-                      position: "relative", 
-                      borderRadius: 16, 
-                      overflow: "hidden", 
-                      aspectRatio: "3/4", 
-                      boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
-                      border: "1px solid rgba(47,143,78,.1)",
-                      background: "#f0f0f0",
-                      cursor: "pointer"
-                    }}
-                    onMouseEnter={(e) => {
-                      (e.currentTarget.querySelector('.ebook-overlay') as HTMLElement).style.opacity = '1';
-                      (e.currentTarget.querySelector('.ebook-info') as HTMLElement).style.transform = 'translateY(0)';
-                    }}
-                    onMouseLeave={(e) => {
-                      (e.currentTarget.querySelector('.ebook-overlay') as HTMLElement).style.opacity = '0';
-                      (e.currentTarget.querySelector('.ebook-info') as HTMLElement).style.transform = 'translateY(20px)';
-                    }}
-                  >
-                    {/* PDF Preview via Iframe atau Foto Sampul */}
-                    {b.foto_sampul ? (
-                       <img src={b.foto_sampul} alt="" style={{width: "100%", height: "100%", objectFit: "cover"}} />
-                    ) : b.file_url ? (
-                      <div style={{ position: "absolute", inset: -2, overflow: "hidden", background: "#fff" }}>
-                          <iframe 
-                            src={`${b.file_url}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`} 
-                            style={{ width: "100%", height: "100%", border: "none", pointerEvents: "none" }}
-                            scrolling="no"
-                          />
-                      </div>
-                    ) : (
-                      <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--cr)", fontSize: 50 }}>
-                        {b.icon || "📱"}
-                      </div>
-                    )}
-
-                    {/* Hover Overlay Animation */}
-                    <div 
-                      className="ebook-overlay"
-                      style={{ 
-                        position: "absolute", inset: 0, 
-                        background: "linear-gradient(to top, rgba(28,58,43,0.95) 0%, rgba(28,58,43,0.7) 40%, rgba(28,58,43,0.2) 100%)", 
-                        opacity: 0, transition: "all 0.3s ease",
-                        display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: 20,
-                        zIndex: 2
-                      }}
-                    >
-                      <div 
-                        className="ebook-info"
-                        style={{ transform: "translateY(20px)", transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)", color: "white" }}
-                      >
-                        <div style={{ fontSize: 10, fontWeight: 800, color: "var(--accent-light)", marginBottom: 6, letterSpacing: "1px", textTransform: "uppercase" }}>{b.kategori}</div>
-                        <h3 style={{ fontSize: 18, fontWeight: 800, margin: "0 0 6px", lineHeight: 1.2, textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>{b.judul}</h3>
-                        <div style={{ fontSize: 12, color: "rgba(255,255,255,0.8)", marginBottom: 16 }}>{b.penulis || "—"}</div>
-                        
-                        {b.file_url && (
-                          <a href={b.file_url} target="_blank" rel="noopener noreferrer" style={{ display: "block", background: "var(--accent)", color: "white", padding: "12px", borderRadius: 10, fontSize: 13, fontWeight: 700, textDecoration: "none", textAlign: "center", transition: "background 0.2s", boxShadow: "0 4px 12px rgba(47,143,78,0.4)" }}>
-                            📖 Baca Sekarang
-                          </a>
-                        )}
-                      </div>
+            {searchBar}
+            {filtered.length === 0 ? empty("E-Book tidak ditemukan") : searchQuery ? renderGrid(filtered) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
+                {Array.from(new Set(filtered.map(b => b.kategori || "Umum"))).sort().map(kat => (
+                  <div key={kat as string}>
+                    <div style={{ fontSize: 16, fontWeight: 800, color: "var(--tp)", marginBottom: 12, display: "flex", alignItems: "center", gap: 8, paddingBottom: 8, borderBottom: "1.5px dashed rgba(47,143,78,.15)" }}>
+                      <span style={{ color: "var(--accent)" }}>🔖</span> Rak: {kat}
                     </div>
+                    {renderGrid(filtered.filter(b => (b.kategori || "Umum") === kat))}
                   </div>
                 ))}
               </div>
@@ -160,27 +188,43 @@ export function Dashboard({ user, onLogout, showToast }: { user: User; onLogout:
 
     if (activeTab === "perpus") {
       const fisikBooks = books.filter(b => b.jenis_buku !== "ebook");
+      const filtered = fisikBooks.filter(b => (b.judul + " " + (b.penulis||"") + " " + (b.kategori||"")).toLowerCase().includes(searchQuery.toLowerCase()));
+
+      const renderGrid = (list: any[]) => (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(240px,1fr))", gap: 14 }}>
+          {list.map(b => (
+            <div key={b.id} className="lh-card" style={{ padding: 22 }}>
+              <div style={{ display: "flex", gap: 14, marginBottom: 16 }}>
+                {b.foto_sampul ? <img src={b.foto_sampul} alt="" style={{width: 60, height: 80, objectFit: "cover", borderRadius: 8, border: "1px solid rgba(0,0,0,0.1)"}} /> : <div style={{ fontSize: 40 }}>{b.icon || "📕"}</div>}
+                <div>
+                  <div style={{ fontSize: 15, fontWeight: 800, color: "var(--tp)", marginBottom: 4, lineHeight: 1.3 }}>{b.judul}</div>
+                  <div style={{ fontSize: 12, color: "var(--tm)" }}>{b.penulis || "—"}</div>
+                  <div style={{ fontSize: 11, color: "var(--accent)", fontWeight: 700, marginTop: 4 }}>{b.kategori}</div>
+                </div>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(0,0,0,0.02)", padding: "10px 12px", borderRadius: 10 }}>
+                <span className="lh-badge" style={{ background: b.status === "tersedia" ? "var(--gb)" : "var(--rb)", color: b.status === "tersedia" ? "var(--gt)" : "var(--rt)" }}>{b.status === "tersedia" ? "✅ Tersedia" : "📤 Dipinjam"}</span>
+                <span style={{ fontSize: 10, color: "var(--tm)", fontWeight: 600 }}>Pinjam via Admin</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+
       return (
         <div>
           {backBtn}
           <div style={{marginBottom: 16}}>
-            {secTitle("📚 Rak Buku Fisik")}
-            {fisikBooks.length === 0 ? empty("Buku fisik belum tersedia") : (
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: 14 }}>
-                {fisikBooks.map(b => (
-                  <div key={b.id} className="lh-card" style={{ padding: 22 }}>
-                    <div style={{ display: "flex", gap: 14, marginBottom: 16 }}>
-                      {b.foto_sampul ? <img src={b.foto_sampul} alt="" style={{width: 60, height: 80, objectFit: "cover", borderRadius: 8, border: "1px solid rgba(0,0,0,0.1)"}} /> : <div style={{ fontSize: 40 }}>{b.icon || "📕"}</div>}
-                      <div>
-                        <div style={{ fontSize: 15, fontWeight: 800, color: "var(--tp)", marginBottom: 4, lineHeight: 1.3 }}>{b.judul}</div>
-                        <div style={{ fontSize: 12, color: "var(--tm)" }}>{b.penulis || "—"}</div>
-                        <div style={{ fontSize: 11, color: "var(--accent)", fontWeight: 700, marginTop: 4 }}>{b.kategori}</div>
-                      </div>
+            {secTitle("📚 Perpustakaan Desa")}
+            {searchBar}
+            {filtered.length === 0 ? empty("Buku fisik tidak ditemukan") : searchQuery ? renderGrid(filtered) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
+                {Array.from(new Set(filtered.map(b => b.kategori || "Umum"))).sort().map(kat => (
+                  <div key={kat as string}>
+                    <div style={{ fontSize: 16, fontWeight: 800, color: "var(--tp)", marginBottom: 12, display: "flex", alignItems: "center", gap: 8, paddingBottom: 8, borderBottom: "1.5px dashed rgba(47,143,78,.15)" }}>
+                      <span style={{ color: "var(--accent)" }}>🔖</span> Rak: {kat}
                     </div>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(0,0,0,0.02)", padding: "10px 12px", borderRadius: 10 }}>
-                      <span className="lh-badge" style={{ background: b.status === "tersedia" ? "var(--gb)" : "var(--rb)", color: b.status === "tersedia" ? "var(--gt)" : "var(--rt)" }}>{b.status === "tersedia" ? "✅ Tersedia" : "📤 Dipinjam"}</span>
-                      <span style={{ fontSize: 10, color: "var(--tm)", fontWeight: 600 }}>Pinjam via Admin</span>
-                    </div>
+                    {renderGrid(filtered.filter(b => (b.kategori || "Umum") === kat))}
                   </div>
                 ))}
               </div>
