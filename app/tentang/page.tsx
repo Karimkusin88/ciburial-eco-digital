@@ -73,8 +73,8 @@ export default function TentangPage() {
 
       {/* VISI MISI - HEROIC */}
       <section className="sec" style={{ padding: "clamp(60px,10vw,120px) clamp(16px,4vw,32px)", background: "linear-gradient(135deg,rgba(250,248,243,.5) 0%,rgba(255,254,249,.8) 100%)" }}>
-        <div className="visi-wrap" style={{ maxWidth: 1320, margin: "0 auto", display: "flex", flexWrap: "wrap", gap: 64, alignItems: "flex-start" }}>
-          <div className="visi-left" style={{ flex: "0 0 280px" }}>
+        <div className="visi-wrap" style={{ maxWidth: 1320, margin: "0 auto", display: "flex", flexWrap: "wrap", gap: "clamp(32px, 5vw, 64px)", alignItems: "flex-start" }}>
+          <div className="visi-left" style={{ flex: "1 1 300px", minWidth: 280 }}>
             <div className="dl" />
             <h2 className="fnt" style={{ fontSize: "clamp(36px,5vw,56px)", fontWeight: 300, background: "linear-gradient(135deg,#1C3A2B,#2F8F4E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", lineHeight: 1.1, letterSpacing: "-.03em", marginBottom: 20 }}>Visi &<br />Misi Kami</h2>
             <p style={{ fontSize: 14, lineHeight: 1.8, color: "#5A4A40", marginBottom: 24, fontWeight: 500 }}>
@@ -138,17 +138,17 @@ export default function TentangPage() {
           {/* Dewan Pelindung */}
           <div style={{ marginBottom: 50 }}>
             <div style={{ fontSize: 13, fontWeight: 800, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--go)", marginBottom: 20, textAlign: "center" }}>A. Dewan Pelindung & Penasihat</div>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 32, justifyContent: "center" }}>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "clamp(16px, 4vw, 32px)", justifyContent: "center" }}>
               {(pengurusDb.filter(p => p.kategori === 'pelindung').length > 0 ? pengurusDb.filter(p => p.kategori === 'pelindung') : dwnPelindung.map((p, i) => ({ ...p, jabatan: p.role, nama: p.name, id: `p-${i}` }))).map((item: any, i) => (
-                <div key={item.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 50, position: 'relative', width: 220, animation: `float-heroic 6s ease-in-out infinite ${(i * 0.2).toFixed(1)}s` }}>
-                  <div style={{ width: 140, height: 140, borderRadius: 28, padding: 5, background: "var(--cw)", border: `2px solid var(--go)`, zIndex: 2, position: "relative", marginBottom: -40, boxShadow: `0 16px 32px rgba(184,148,63,.25)`, overflow: "hidden" }}>
+                <div key={item.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 50, position: 'relative', width: "clamp(160px, 40vw, 220px)", minWidth: 160, animation: `float-heroic 6s ease-in-out infinite ${(i * 0.2).toFixed(1)}s` }}>
+                  <div style={{ width: "clamp(100px, 25vw, 140px)", height: "clamp(100px, 25vw, 140px)", borderRadius: 28, padding: 5, background: "var(--cw)", border: `2px solid var(--go)`, zIndex: 2, position: "relative", marginBottom: "-clamp(20px, 8vw, 40px)", boxShadow: `0 16px 32px rgba(184,148,63,.25)`, overflow: "hidden" }}>
                     {item.foto ? (
                       <img src={item.foto} alt={item.nama} style={{ width: "100%", height: "100%", borderRadius: 22, objectFit: "cover" }} />
                     ) : (
                       <div style={{ width: "100%", height: "100%", borderRadius: 22, background: "var(--fo)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 44 }}>👤</div>
                     )}
                   </div>
-                  <div style={{ background: "linear-gradient(135deg,rgba(184,148,63,1),rgba(155,125,76,1))", padding: "64px 20px 24px", borderRadius: "16px 16px 24px 24px", width: "100%", textAlign: "center", borderTop: "none", boxShadow: `0 12px 28px rgba(0,0,0,0.2)` }}>
+                  <div style={{ background: "linear-gradient(135deg,rgba(184,148,63,1),rgba(155,125,76,1))", padding: "clamp(40px, 10vw, 64px) 16px 20px", borderRadius: "16px 16px 24px 24px", width: "100%", textAlign: "center", borderTop: "none", boxShadow: `0 12px 28px rgba(0,0,0,0.2)` }}>
                     <div style={{ fontSize: 15, fontWeight: 800, color: "white", marginBottom: 6, textShadow: "0 2px 4px rgba(0,0,0,0.2)" }}>{item.nama}</div>
                     <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.9)", textTransform: "uppercase", letterSpacing: ".06em" }}>{item.jabatan}</div>
                   </div>
@@ -162,17 +162,17 @@ export default function TentangPage() {
             {/* Dewan Pengawas */}
             <div>
               <div style={{ fontSize: 13, fontWeight: 800, letterSpacing: ".14em", textTransform: "uppercase", color: "#4FBF7E", marginBottom: 20, textAlign: "center" }}>B. Dewan Pengawas Kas</div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 32, justifyContent: "center", maxWidth: 800, margin: "0 auto" }}>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "clamp(16px, 4vw, 32px)", justifyContent: "center", maxWidth: 800, margin: "0 auto" }}>
                 {(pengurusDb.filter(p => p.kategori === 'pengawas').length > 0 ? pengurusDb.filter(p => p.kategori === 'pengawas') : dwnPengawas.map((p, i) => ({ ...p, jabatan: p.role, nama: p.name, id: `w-${i}` }))).map((item: any, i) => (
-                  <div key={item.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 40, position: 'relative', width: 220, animation: `float-heroic 6s ease-in-out infinite ${(i * 0.2 + 1).toFixed(1)}s` }}>
-                    <div style={{ width: 140, height: 140, borderRadius: 28, padding: 5, background: "var(--cw)", border: `2px solid #2F8F4E`, zIndex: 2, position: "relative", marginBottom: -40, boxShadow: `0 16px 32px rgba(47,143,78,.25)`, overflow: "hidden" }}>
+                  <div key={item.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 40, position: 'relative', width: "clamp(160px, 40vw, 220px)", minWidth: 160, animation: `float-heroic 6s ease-in-out infinite ${(i * 0.2 + 1).toFixed(1)}s` }}>
+                    <div style={{ width: "clamp(100px, 25vw, 140px)", height: "clamp(100px, 25vw, 140px)", borderRadius: 28, padding: 5, background: "var(--cw)", border: `2px solid #2F8F4E`, zIndex: 2, position: "relative", marginBottom: "-clamp(20px, 8vw, 40px)", boxShadow: `0 16px 32px rgba(47,143,78,.25)`, overflow: "hidden" }}>
                       {item.foto ? (
                         <img src={item.foto} alt={item.nama} style={{ width: "100%", height: "100%", borderRadius: 22, objectFit: "cover" }} />
                       ) : (
                         <div style={{ width: "100%", height: "100%", borderRadius: 22, background: "var(--fo)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 44 }}>👤</div>
                       )}
                     </div>
-                    <div style={{ background: "linear-gradient(135deg,rgba(47,143,78,1),rgba(28,58,43,1))", padding: "64px 20px 24px", borderRadius: "16px 16px 24px 24px", width: "100%", textAlign: "center", borderTop: "none", boxShadow: `0 12px 28px rgba(0,0,0,0.2)` }}>
+                    <div style={{ background: "linear-gradient(135deg,rgba(47,143,78,1),rgba(28,58,43,1))", padding: "clamp(40px, 10vw, 64px) 16px 20px", borderRadius: "16px 16px 24px 24px", width: "100%", textAlign: "center", borderTop: "none", boxShadow: `0 12px 28px rgba(0,0,0,0.2)` }}>
                       <div style={{ fontSize: 15, fontWeight: 800, color: "white", marginBottom: 6, textShadow: "0 2px 4px rgba(0,0,0,0.2)" }}>{item.nama}</div>
                       <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.8)", textTransform: "uppercase", letterSpacing: ".06em" }}>{item.jabatan}</div>
                     </div>
@@ -184,17 +184,17 @@ export default function TentangPage() {
             {/* Tim Eksekutif */}
             <div>
               <div style={{ fontSize: 13, fontWeight: 800, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--go)", marginBottom: 20, textAlign: "center" }}>C. Tim Eksekutif Lapangan</div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 32, justifyContent: "center" }}>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "clamp(16px, 4vw, 32px)", justifyContent: "center" }}>
                 {(pengurusDb.filter(p => p.kategori === 'eksekutif').length > 0 ? pengurusDb.filter(p => p.kategori === 'eksekutif') : timEksekutif.map((p, i) => ({ ...p, jabatan: p.role, nama: p.name, id: `e-${i}` }))).map((item: any, i) => (
-                  <div key={item.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 40, position: 'relative', width: 220, animation: `float-heroic 6s ease-in-out infinite ${(i * 0.2 + 2).toFixed(1)}s` }}>
-                    <div style={{ width: 140, height: 140, borderRadius: 28, padding: 5, background: "var(--cw)", border: `2px solid var(--go)`, zIndex: 2, position: "relative", marginBottom: -40, boxShadow: `0 16px 32px rgba(184,148,63,.25)`, overflow: "hidden" }}>
+                  <div key={item.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 40, position: 'relative', width: "clamp(160px, 40vw, 220px)", minWidth: 160, animation: `float-heroic 6s ease-in-out infinite ${(i * 0.2 + 2).toFixed(1)}s` }}>
+                    <div style={{ width: "clamp(100px, 25vw, 140px)", height: "clamp(100px, 25vw, 140px)", borderRadius: 28, padding: 5, background: "var(--cw)", border: `2px solid var(--go)`, zIndex: 2, position: "relative", marginBottom: "-clamp(20px, 8vw, 40px)", boxShadow: `0 16px 32px rgba(184,148,63,.25)`, overflow: "hidden" }}>
                       {item.foto ? (
                         <img src={item.foto} alt={item.nama} style={{ width: "100%", height: "100%", borderRadius: 22, objectFit: "cover" }} />
                       ) : (
                         <div style={{ width: "100%", height: "100%", borderRadius: 22, background: "var(--fo)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 44 }}>👤</div>
                       )}
                     </div>
-                    <div style={{ background: "linear-gradient(135deg,rgba(184,148,63,1),rgba(155,125,76,1))", padding: "64px 20px 24px", borderRadius: "16px 16px 24px 24px", width: "100%", textAlign: "center", borderTop: "none", boxShadow: `0 12px 28px rgba(0,0,0,0.2)` }}>
+                    <div style={{ background: "linear-gradient(135deg,rgba(184,148,63,1),rgba(155,125,76,1))", padding: "clamp(40px, 10vw, 64px) 16px 20px", borderRadius: "16px 16px 24px 24px", width: "100%", textAlign: "center", borderTop: "none", boxShadow: `0 12px 28px rgba(0,0,0,0.2)` }}>
                       <div style={{ fontSize: 15, fontWeight: 800, color: "white", marginBottom: 6, textShadow: "0 2px 4px rgba(0,0,0,0.2)" }}>{item.nama}</div>
                       <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.9)", textTransform: "uppercase", letterSpacing: ".06em" }}>{item.jabatan}</div>
                     </div>
