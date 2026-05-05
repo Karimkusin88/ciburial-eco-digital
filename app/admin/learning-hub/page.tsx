@@ -12,7 +12,7 @@ const TABS: {key:Tab;icon:string;label:string}[] = [
   {key:"lab",icon:"💻",label:"Lab PC"},
 ];
 
-const EB = {judul:"",penulis:"",icon:"📕",kategori:"umum",status:"tersedia",deskripsi:"",foto_sampul:""};
+const EB = {judul:"",penulis:"",icon:"📕",kategori:"umum",status:"tersedia",deskripsi:"",foto_sampul:"",jenis_buku:"fisik",file_url:""};
 const EV = {judul:"",url:"",kategori:"umum",durasi:"",deskripsi:""};
 const ED = {judul:"",url:"",tipe:"PDF",ukuran:"",deskripsi:""};
 const EG = {judul:"",url:"",deskripsi:""};
@@ -78,7 +78,7 @@ export default function AdminLearningHub() {
 
   function openEdit(item:any) {
     setEditId(item.id);
-    if(tab==="buku") setFB({judul:item.judul,penulis:item.penulis||"",icon:item.icon||"📕",kategori:item.kategori||"umum",status:item.status||"tersedia",deskripsi:item.deskripsi||"",foto_sampul:item.foto_sampul||""});
+    if(tab==="buku") setFB({judul:item.judul,penulis:item.penulis||"",icon:item.icon||"📕",kategori:item.kategori||"umum",status:item.status||"tersedia",deskripsi:item.deskripsi||"",foto_sampul:item.foto_sampul||"",jenis_buku:item.jenis_buku||"fisik",file_url:item.file_url||""});
     if(tab==="video") setFV({judul:item.judul,url:item.url||"",kategori:item.kategori||"umum",durasi:item.durasi||"",deskripsi:item.deskripsi||""});
     if(tab==="dokumen") setFD({judul:item.judul,url:item.url||"",tipe:item.tipe||"PDF",ukuran:item.ukuran||"",deskripsi:item.deskripsi||""});
     if(tab==="galeri") setFG({judul:item.judul||"",url:item.url||"",deskripsi:item.deskripsi||""});
@@ -210,7 +210,7 @@ export default function AdminLearningHub() {
                       {tab==="lab"?`PC-${item.nomor_pc}`:item.judul}
                     </div>
                     <div style={{fontSize:12,color:"#7a9a7e",marginTop:2}}>
-                      {tab==="buku"&&`${item.penulis||"—"} · ${item.kategori}`}
+                      {tab==="buku"&&<><span style={{fontWeight:800,color:item.jenis_buku==="ebook"?"#3B82F6":"#D97706"}}>[{item.jenis_buku==="ebook"?"E-Book":"Fisik"}]</span> {item.penulis||"—"} · {item.kategori}</>}
                       {tab==="video"&&`${item.kategori||"Umum"} · ${item.durasi||"—"}`}
                       {tab==="dokumen"&&`${item.tipe||"PDF"} · ${item.ukuran||"—"}`}
                       {tab==="galeri"&&(item.deskripsi||"Foto kegiatan")}
@@ -239,6 +239,10 @@ export default function AdminLearningHub() {
 
             {tab==="buku" && (
               <div style={{display:"flex",flexDirection:"column",gap:14}}>
+                <select style={{...IS,fontWeight:700,color:"#2d5a40"}} value={fB.jenis_buku} onChange={e=>setFB({...fB,jenis_buku:e.target.value})}>
+                  <option value="fisik">📚 Jenis: Buku Fisik (Cetak)</option>
+                  <option value="ebook">📱 Jenis: E-Book (Digital)</option>
+                </select>
                 <input style={IS} placeholder="Judul buku *" value={fB.judul} onChange={e=>setFB({...fB,judul:e.target.value})}/>
                 <input style={IS} placeholder="Penulis / Pengarang" value={fB.penulis} onChange={e=>setFB({...fB,penulis:e.target.value})}/>
                 <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
@@ -247,10 +251,15 @@ export default function AdminLearningHub() {
                     {["umum","agama","teknologi","pertanian","anak","novel","bisnis"].map(k=><option key={k}>{k}</option>)}
                   </select>
                 </div>
-                <select style={IS} value={fB.status} onChange={e=>setFB({...fB,status:e.target.value})}>
-                  <option value="tersedia">✅ Tersedia</option>
-                  <option value="dipinjam">📤 Dipinjam</option>
-                </select>
+                {fB.jenis_buku === "fisik" && (
+                  <select style={IS} value={fB.status} onChange={e=>setFB({...fB,status:e.target.value})}>
+                    <option value="tersedia">✅ Tersedia</option>
+                    <option value="dipinjam">📤 Dipinjam</option>
+                  </select>
+                )}
+                {fB.jenis_buku === "ebook" && (
+                  <UploadOrUrl label="File PDF E-Book" value={fB.file_url} onChange={v=>setFB({...fB,file_url:v})} bucket="dokumen-hub" accept=".pdf" urlPlaceholder="URL file PDF E-Book"/>
+                )}
                 <UploadOrUrl label="Foto Sampul" value={fB.foto_sampul} onChange={v=>setFB({...fB,foto_sampul:v})} bucket="buku-sampul" accept="image/*" urlPlaceholder="URL gambar sampul buku"/>
                 {fB.foto_sampul && <img src={fB.foto_sampul} alt="" style={{maxHeight:160,borderRadius:10,objectFit:"cover",border:"1px solid rgba(0,0,0,0.08)"}}/>}
                 <textarea style={{...IS,minHeight:80}} placeholder="Deskripsi / sinopsis singkat" value={fB.deskripsi} onChange={e=>setFB({...fB,deskripsi:e.target.value})}/>

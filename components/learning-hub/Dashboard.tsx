@@ -74,13 +74,64 @@ export function Dashboard({ user, onLogout, showToast }: { user: User; onLogout:
       </div>
     );
 
-    if (activeTab === "perpus") return <div>{backBtn}{secTitle("📚 E-Perpustakaan")}{books.length === 0 ? empty("Katalog buku belum tersedia") : <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: 14 }}>{books.map(b => (
-      <div key={b.id} className="lh-card" style={{ padding: 22 }}>
-        <div style={{ fontSize: 32, marginBottom: 10 }}>{b.icon || "📕"}</div>
-        <div style={{ fontSize: 15, fontWeight: 700, color: "var(--tp)", marginBottom: 4 }}>{b.judul}</div>
-        <div style={{ fontSize: 12, color: "var(--tm)", marginBottom: 10 }}>{b.penulis || "—"}</div>
-        <span className="lh-badge" style={{ background: b.status === "tersedia" ? "var(--gb)" : "var(--rb)", color: b.status === "tersedia" ? "var(--gt)" : "var(--rt)" }}>{b.status || "tersedia"}</span>
-      </div>))}</div>}</div>;
+    if (activeTab === "perpus") {
+      const eBooks = books.filter(b => b.jenis_buku === "ebook");
+      const fisikBooks = books.filter(b => b.jenis_buku !== "ebook");
+
+      return (
+        <div>
+          {backBtn}
+          <div style={{marginBottom: 32}}>
+            {secTitle("📱 Rak E-Book Digital")}
+            {eBooks.length === 0 ? empty("E-Book belum tersedia") : (
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: 14 }}>
+                {eBooks.map(b => (
+                  <div key={b.id} className="lh-card" style={{ padding: 22, display: "flex", flexDirection: "column" }}>
+                    <div style={{ display: "flex", gap: 14, marginBottom: 16 }}>
+                      {b.foto_sampul ? <img src={b.foto_sampul} alt="" style={{width: 60, height: 80, objectFit: "cover", borderRadius: 8, border: "1px solid rgba(0,0,0,0.1)"}} /> : <div style={{ fontSize: 40 }}>{b.icon || "📱"}</div>}
+                      <div>
+                        <div style={{ fontSize: 15, fontWeight: 800, color: "var(--tp)", marginBottom: 4, lineHeight: 1.3 }}>{b.judul}</div>
+                        <div style={{ fontSize: 12, color: "var(--tm)" }}>{b.penulis || "—"}</div>
+                        <div style={{ fontSize: 11, color: "var(--accent)", fontWeight: 700, marginTop: 4 }}>{b.kategori}</div>
+                      </div>
+                    </div>
+                    {b.file_url ? (
+                      <a href={b.file_url} target="_blank" rel="noopener noreferrer" className="btn-heroic" style={{ padding: "8px", fontSize: 12, textAlign: "center", textDecoration: "none", marginTop: "auto" }}>📖 Baca / Unduh</a>
+                    ) : (
+                      <div style={{ fontSize: 11, color: "var(--rt)", background: "var(--rb)", padding: "8px", borderRadius: 8, textAlign: "center", fontWeight: 600, marginTop: "auto" }}>File belum tersedia</div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div>
+            {secTitle("📚 Rak Buku Fisik")}
+            {fisikBooks.length === 0 ? empty("Buku fisik belum tersedia") : (
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: 14 }}>
+                {fisikBooks.map(b => (
+                  <div key={b.id} className="lh-card" style={{ padding: 22 }}>
+                    <div style={{ display: "flex", gap: 14, marginBottom: 16 }}>
+                      {b.foto_sampul ? <img src={b.foto_sampul} alt="" style={{width: 60, height: 80, objectFit: "cover", borderRadius: 8, border: "1px solid rgba(0,0,0,0.1)"}} /> : <div style={{ fontSize: 40 }}>{b.icon || "📕"}</div>}
+                      <div>
+                        <div style={{ fontSize: 15, fontWeight: 800, color: "var(--tp)", marginBottom: 4, lineHeight: 1.3 }}>{b.judul}</div>
+                        <div style={{ fontSize: 12, color: "var(--tm)" }}>{b.penulis || "—"}</div>
+                        <div style={{ fontSize: 11, color: "var(--accent)", fontWeight: 700, marginTop: 4 }}>{b.kategori}</div>
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(0,0,0,0.02)", padding: "10px 12px", borderRadius: 10 }}>
+                      <span className="lh-badge" style={{ background: b.status === "tersedia" ? "var(--gb)" : "var(--rb)", color: b.status === "tersedia" ? "var(--gt)" : "var(--rt)" }}>{b.status === "tersedia" ? "✅ Tersedia" : "📤 Dipinjam"}</span>
+                      <span style={{ fontSize: 10, color: "var(--tm)", fontWeight: 600 }}>Pinjam via Admin</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
 
     if (activeTab === "lab") return <div>{backBtn}{secTitle("💻 Lab Komputer")}{labPCs.length === 0 ? empty("Data lab belum tersedia") : <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))", gap: 12 }}>{labPCs.map(pc => (
       <div key={pc.id} className="lh-card" style={{ padding: 20, textAlign: "center" }}>
