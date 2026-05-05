@@ -346,15 +346,15 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
       <CommunityDashboard />
 
       {/* CIBURIAL SMART HUB — DIGITAL SERVICES */}
-      <section className="sec" style={{ padding: "clamp(60px,8vw,100px) clamp(16px,4vw,32px)", background: "linear-gradient(180deg, rgba(232,245,238,0.5) 0%, #FAF8F3 100%)" }}>
+      <section className="sec" style={{ padding: "clamp(48px,8vw,100px) clamp(16px,4vw,32px)", background: "linear-gradient(180deg, rgba(232,245,238,0.5) 0%, #FAF8F3 100%)" }}>
         <div style={{ maxWidth: 1320, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 48 }}>
             <span className="badge-heroic" style={{ padding: "6px 14px", fontSize: 10, borderRadius: 99, background: "rgba(47,143,78,0.1)", color: "#2F8F4E", border: "1px solid rgba(47,143,78,0.2)", fontWeight: 800, letterSpacing: "0.1em" }}>DIGITAL TRANSFORMATION</span>
             <h2 className="fnt" style={{ fontSize: "clamp(28px,4vw,48px)", fontWeight: 300, color: "#1C3A2B", marginTop: 16, marginBottom: 12 }}>Ciburial Smart Hub</h2>
-            <p style={{ color: "#5A4A40", fontSize: 15, maxWidth: 600, margin: "0 auto", fontWeight: 500, lineHeight: 1.6 }}>Pusat kendali dan layanan warga berbasis teknologi untuk transparansi dan efisiensi desa.</p>
+            <p style={{ color: "#5A4A40", fontSize: "clamp(13px,3vw,15px)", maxWidth: 600, margin: "0 auto", fontWeight: 500, lineHeight: 1.6 }}>Pusat kendali dan layanan warga berbasis teknologi untuk transparansi dan efisiensi desa.</p>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24, maxWidth: 1200 }} className="grid-2x3-hub">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))", gap: "clamp(16px, 3vw, 24px)", maxWidth: 1200 }} className="grid-2x3-hub">
             {[
               { 
                 title: "E-Voting", 
@@ -423,7 +423,7 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
               <a key={i} href={item.link} style={{ textDecoration: "none", color: "inherit", pointerEvents: item.comingSoon ? "none" : "auto" }} className="hub-card-link">
                 <div className="card-heroic" style={{ 
                   height: "100%", 
-                  padding: "32px 24px", 
+                  padding: "clamp(20px, 4vw, 32px) clamp(16px, 4vw, 24px)", 
                   background: item.comingSoon ? "linear-gradient(135deg,rgba(250,248,243,.5),rgba(232,245,238,.3))" : "white", 
                   border: `1.5px solid ${item.comingSoon ? "rgba(155,125,76,.2)" : "rgba(0,0,0,0.04)"}`,
                   display: "flex",
@@ -502,10 +502,10 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
 
 
       {/* DONASI SPLIT */}
-      <section className="sec" style={{ padding: "0 clamp(16px,4vw,32px) clamp(48px,8vw,104px)" }}>
+      <section className="sec" style={{ padding: "0 clamp(12px,3vw,32px) clamp(48px,8vw,104px)" }}>
         <div style={{ maxWidth: 1320, margin: "0 auto" }}>
-          <div style={{ borderRadius: 28, overflow: "hidden", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(250px,1fr))" }}>
-            <div style={{ background: "var(--fo)", padding: "60px 52px" }}>
+          <div style={{ borderRadius: 28, overflow: "hidden", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 300px),1fr))" }}>
+            <div style={{ background: "var(--fo)", padding: "clamp(32px, 6vw, 60px) clamp(24px, 5vw, 52px)" }}>
               <div className="dl" />
               <h2 className="fnt" style={{ fontSize: 36, fontWeight: 300, color: "var(--cr)", lineHeight: 1.15, letterSpacing: "-.02em", marginBottom: 14 }}>Donasi<br />Kemakmuran<br />Kampung</h2>
               <p style={{ fontSize: 13, lineHeight: 1.85, color: "rgba(250,248,243,.5)", marginBottom: 28 }}>
@@ -592,9 +592,9 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
                 </button>
               </div>
             </div>
-            <div style={{ background: "linear-gradient(135deg,rgba(47,143,78,.05) 0%,rgba(79,191,126,.05) 100%)", padding: "60px 52px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+            <div style={{ background: "linear-gradient(135deg,rgba(47,143,78,.05) 0%,rgba(79,191,126,.05) 100%)", padding: "clamp(32px, 6vw, 60px) clamp(24px, 5vw, 52px)", display: "flex", flexDirection: "column", justifyContent: "center" }}>
               <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: "#2F8F4E", marginBottom: 20 }}>Doa untuk Donatur</div>
-              <p dir="rtl" className="fnt" style={{ fontSize: "clamp(18px,2.8vw,27px)", lineHeight: 1.9, color: "#1C3A2B", fontWeight: 400, marginBottom: 22 }}>
+              <p dir="rtl" className="fnt" style={{ fontSize: "clamp(18px,4vw,27px)", lineHeight: 1.9, color: "#1C3A2B", fontWeight: 400, marginBottom: 22 }}>
                 رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ
               </p>
               <p style={{ fontSize: 13, fontStyle: "italic", lineHeight: 1.85, color: "#5A4A40", marginBottom: 14 }}>
