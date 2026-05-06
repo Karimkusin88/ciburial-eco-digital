@@ -24,25 +24,40 @@ function renderMarkdown(text: string): string {
 
 function CiburialLogo({ size = 34 }: { size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 40 40" fill="none">
-      <rect width="40" height="40" rx="10" fill="url(#logo-grad)"/>
+    <svg width={size} height={size} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <linearGradient id="logo-grad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+        <linearGradient id="ai-bg-grad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#1C3A2B" />
           <stop offset="100%" stopColor="#2F8F4E" />
         </linearGradient>
+        <linearGradient id="star-grad-1" x1="20" y1="0" x2="40" y2="20" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#D4AC5A" />
+          <stop offset="100%" stopColor="#B8943F" />
+        </linearGradient>
+        <linearGradient id="star-grad-2" x1="20" y1="0" x2="40" y2="20" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#FFF" />
+          <stop offset="100%" stopColor="#4FBF7E" />
+        </linearGradient>
       </defs>
-      <line x1="6" y1="20" x2="11" y2="20" stroke="#4FBF7E" strokeWidth="1.5" strokeLinecap="round"/>
-      <line x1="6" y1="15" x2="6" y2="20" stroke="#4FBF7E" strokeWidth="1.5" strokeLinecap="round"/>
-      <circle cx="6" cy="14" r="1.5" fill="#4FBF7E"/>
-      <line x1="34" y1="20" x2="29" y2="20" stroke="#4FBF7E" strokeWidth="1.5" strokeLinecap="round"/>
-      <line x1="34" y1="25" x2="34" y2="20" stroke="#4FBF7E" strokeWidth="1.5" strokeLinecap="round"/>
-      <circle cx="34" cy="26" r="1.5" fill="#4FBF7E"/>
-      <line x1="20" y1="34" x2="20" y2="29" stroke="#4FBF7E" strokeWidth="1.5" strokeLinecap="round"/>
-      <line x1="15" y1="34" x2="20" y2="34" stroke="#4FBF7E" strokeWidth="1.5" strokeLinecap="round"/>
-      <circle cx="14" cy="34" r="1.5" fill="#4FBF7E"/>
-      <path d="M20 8 C20 8, 28 12, 28 20 C28 25, 24 28, 20 28 C20 28, 20 18, 14 14 C17 11, 20 8, 20 8Z" fill="#4FBF7E" />
-      <path d="M20 8 C20 8, 14 13, 13 20 C12.5 24, 15 27, 20 28 C20 28, 18 20, 20 8Z" fill="#FFF" opacity="0.8" />
+      
+      {/* Box Container */}
+      <rect x="4" y="10" width="26" height="26" rx="8" fill="url(#ai-bg-grad)" />
+      <rect x="4" y="10" width="26" height="26" rx="8" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
+      
+      {/* Inner Highlight */}
+      <rect x="5" y="11" width="24" height="24" rx="7" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
+      
+      {/* AI Text */}
+      <text x="17" y="29.5" fill="#FFFFFF" fontSize="15" fontWeight="900" fontFamily="system-ui, sans-serif" textAnchor="middle" letterSpacing="0.08em">AI</text>
+      
+      {/* Main Gold Sparkle (Top Right) */}
+      <path d="M 33 2 Q 33 10 41 10 Q 33 10 33 18 Q 33 10 25 10 Q 33 10 33 2 Z" fill="url(#star-grad-1)" />
+      
+      {/* Secondary Green/White Sparkle */}
+      <path d="M 23 2 Q 23 5 26 5 Q 23 5 23 8 Q 23 5 20 5 Q 23 5 23 2 Z" fill="url(#star-grad-2)" />
+      
+      {/* Tiny Gold Sparkle */}
+      <path d="M 38 18 Q 38 20 40 20 Q 38 20 38 22 Q 38 20 36 20 Q 38 20 38 18 Z" fill="#D4AC5A" opacity="0.9" />
     </svg>
   );
 }
