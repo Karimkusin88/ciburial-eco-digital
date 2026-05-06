@@ -94,7 +94,7 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
   style={{
     position: "relative",
     overflow: "hidden",
-    minHeight: "100vh",
+    minHeight: "clamp(480px, 85vh, 900px)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
