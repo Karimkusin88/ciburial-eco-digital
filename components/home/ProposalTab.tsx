@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { ALOKASI, Transaksi } from "./types";
 import { fRp } from "./types";
+import { FileText, BookOpen, Target, Lightbulb, Leaf, BarChart2, PenTool, Landmark, Wheat, Zap, ShoppingCart, Coins, Heart, Smartphone, Search, MapPin } from "lucide-react";
 
 interface ProposalTabProps {
   transaksi: Transaksi[];
@@ -49,7 +50,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
 
   const sections = [
     {
-      title: "Surat Pengantar", icon: "📜",
+      title: "Surat Pengantar", icon: <FileText size={20} strokeWidth={1.5} color="currentColor" />,
       content: (
         <div style={{ fontSize: 14, lineHeight: 1.9, color: "var(--ts)" }}>
           <div style={{ padding: "clamp(12px, 3vw, 16px) clamp(16px, 4vw, 20px)", background: "var(--cr)", borderRadius: 12, border: "1px solid var(--bo)", marginBottom: 20 }}>
@@ -79,7 +80,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
       )
     },
     {
-      title: "Bab I — Latar Belakang", icon: "📖",
+      title: "Bab I — Latar Belakang", icon: <BookOpen size={20} strokeWidth={1.5} color="currentColor" />,
       content: (
         <div style={{ fontSize: 14, lineHeight: 1.9, color: "var(--ts)" }}>
           <p style={{ marginBottom: 16 }}>Dunia bergerak sangat cepat menuju era digital, namun masyarakat desa seringkali hanya menjadi penonton. Di Kampung Ciburial, kami menolak tertinggal. Kami memiliki kekayaan alam yang melimpah — pertanian organik, peternakan komunal, dan mahakarya bambu — namun potensinya kerap tidak maksimal akibat minimnya infrastruktur dan panjangnya rantai distribusi.</p>
@@ -89,7 +90,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
       )
     },
     {
-      title: "Bab II — Tujuan Program", icon: "🎯",
+      title: "Bab II — Tujuan Program", icon: <Target size={20} strokeWidth={1.5} color="currentColor" />,
       content: (
         <div style={{ display: "flex", flexDirection: "column", gap: "clamp(8px, 2vw, 10px)" }}>
           {[
@@ -110,14 +111,14 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
       )
     },
     {
-      title: "Bab III — Visi & Misi", icon: "💡",
+      title: "Bab III — Visi & Misi", icon: <Lightbulb size={20} strokeWidth={1.5} color="currentColor" />,
       content: (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 12 }}>
           {[
-            { icon: "💡", t: "Infrastruktur Cerdas", d: "Balai Serba Guna berkonsep hijau, Smart PJU, Jaringan CCTV, dan Internet Mandiri." },
-            { icon: "📚", t: "SDM Unggul", d: "Lab Komputer & Perpustakaan sebagai inkubator pemuda Ciburial." },
-            { icon: "🌱", t: "Ekonomi Sirkular & Smart Farming", d: "Marketplace lokal untuk bambu, sayuran organik, peternakan, dan produk daur ulang." },
-            { icon: "📊", t: "Tata Kelola Transparan", d: "Dana kemakmuran terbuka real-time, dari fiat konvensional hingga aset kripto (Web3)." },
+            { icon: <Lightbulb size={20} strokeWidth={1.5} color="currentColor" />, t: "Infrastruktur Cerdas", d: "Balai Serba Guna berkonsep hijau, Smart PJU, Jaringan CCTV, dan Internet Mandiri." },
+            { icon: <BookOpen size={20} strokeWidth={1.5} color="currentColor" />, t: "SDM Unggul", d: "Lab Komputer & Perpustakaan sebagai inkubator pemuda Ciburial." },
+            { icon: <Leaf size={20} strokeWidth={1.5} color="currentColor" />, t: "Ekonomi Sirkular & Smart Farming", d: "Marketplace lokal untuk bambu, sayuran organik, peternakan, dan produk daur ulang." },
+            { icon: <BarChart2 size={20} strokeWidth={1.5} color="currentColor" />, t: "Tata Kelola Transparan", d: "Dana kemakmuran terbuka real-time, dari fiat konvensional hingga aset kripto (Web3)." },
           ].map((v, i) => (
             <div key={i} style={{ padding: "clamp(14px, 4vw, 18px)", background: "var(--cr)", borderRadius: 13, border: "1px solid var(--bo)" }}>
               <div style={{ fontSize: 26, marginBottom: 10 }}>{v.icon}</div>
@@ -129,15 +130,15 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
       )
     },
     {
-      title: "Bab IV — Program Kerja Unggulan (5 Program)", icon: "🛠️",
+      title: "Bab IV — Program Kerja Unggulan (5 Program)", icon: <PenTool size={20} strokeWidth={1.5} color="currentColor" />,
       content: (
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           {[
-            { icon: "🏛️", t: "Ciburial Learning Hub & Balai Warga", d: "Balai Serba Guna berkonsep ramah lingkungan (bambu & baja ringan). Berfungsi sebagai pusat interaksi warga, perpustakaan desa, dan laboratorium komputer." },
-            { icon: "🌾", t: "Smart Farming & Circular Eco-Waste", d: "Integrasi pertanian sayur organik dan peternakan modern komunal. Limbah kotoran hewan → pupuk kompos, plastik → material infrastruktur daur ulang." },
-            { icon: "🔦", t: "Instalasi Smart PJU & Pos Ronda Digital", d: "Lampu jalan cerdas bertenaga surya dan jaringan CCTV untuk sistem keamanan lingkungan." },
-            { icon: "🛒", t: "Ciburial Local Commerce (Web & App)", d: "Marketplace desa untuk memasarkan karya bambu, hasil panen, dan produk peternakan dengan sistem delivery." },
-            { icon: "💰", t: "Digitalisasi Kas Donasi (Fiat & Crypto)", d: "Sentralisasi dana melalui QRIS, Rekening Bank, dan Crypto Wallet (EVM Compatible) untuk menjangkau filantropis global." },
+            { icon: <Landmark size={20} strokeWidth={1.5} color="currentColor" />, t: "Ciburial Learning Hub & Balai Warga", d: "Balai Serba Guna berkonsep ramah lingkungan (bambu & baja ringan). Berfungsi sebagai pusat interaksi warga, perpustakaan desa, dan laboratorium komputer." },
+            { icon: <Wheat size={20} strokeWidth={1.5} color="currentColor" />, t: "Smart Farming & Circular Eco-Waste", d: "Integrasi pertanian sayur organik dan peternakan modern komunal. Limbah kotoran hewan → pupuk kompos, plastik → material infrastruktur daur ulang." },
+            { icon: <Zap size={20} strokeWidth={1.5} color="currentColor" />, t: "Instalasi Smart PJU & Pos Ronda Digital", d: "Lampu jalan cerdas bertenaga surya dan jaringan CCTV untuk sistem keamanan lingkungan." },
+            { icon: <ShoppingCart size={20} strokeWidth={1.5} color="currentColor" />, t: "Ciburial Local Commerce (Web & App)", d: "Marketplace desa untuk memasarkan karya bambu, hasil panen, dan produk peternakan dengan sistem delivery." },
+            { icon: <Coins size={20} strokeWidth={1.5} color="currentColor" />, t: "Digitalisasi Kas Donasi (Fiat & Crypto)", d: "Sentralisasi dana melalui QRIS, Rekening Bank, dan Crypto Wallet (EVM Compatible) untuk menjangkau filantropis global." },
           ].map((p, i) => (
             <div key={i} style={{ display: "flex", gap: 14, padding: "clamp(12px, 3vw, 15px) clamp(14px, 4vw, 18px)", background: "var(--cr)", borderRadius: 12, border: "1px solid var(--bo)", alignItems: "flex-start" }}>
               <span style={{ fontSize: 22, minWidth: 28 }}>{p.icon}</span>
@@ -151,7 +152,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
       )
     },
     {
-      title: "Bab V — Tata Kelola & Struktur Kepengurusan", icon: "🏛️",
+      title: "Bab V — Tata Kelola & Struktur Kepengurusan", icon: <Landmark size={20} strokeWidth={1.5} color="currentColor" />,
       content: (
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           {[
@@ -176,11 +177,11 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
             },
             {
               group: "D. 5 Divisi Operasional", items: [
-                "🏗️ Green Build — Infrastruktur & Konstruksi Hijau",
-                "💻 Digital Hub — IT, Jaringan & Web3",
-                "🌾 Eco-Waste & Farming — Smart Farming & Lingkungan",
-                "🛒 Local Commerce — Ekonomi Kreatif & UMKM",
-                "📢 Public Relations — Humas & Transparansi Publik",
+                "Green Build — Infrastruktur & Konstruksi Hijau",
+                "Digital Hub — IT, Jaringan & Web3",
+                "Eco-Waste & Farming — Smart Farming & Lingkungan",
+                "Local Commerce — Ekonomi Kreatif & UMKM",
+                "Public Relations — Humas & Transparansi Publik",
               ]
             },
           ].map((s, i) => (
@@ -197,11 +198,11 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
       )
     },
     {
-      title: "Bab VI — RAB Global (Target Rp 250.000.000)", icon: "💰",
+      title: "Bab VI — RAB Global (Target Rp 250.000.000)", icon: <Coins size={20} strokeWidth={1.5} color="currentColor" />,
       content: (
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <p style={{ fontSize: 13, lineHeight: 1.7, color: "var(--ts)", marginBottom: 8, padding: "clamp(8px, 2vw, 12px) clamp(12px, 3vw, 16px)", background: "rgba(184,148,63,.07)", borderRadius: 10, border: "1px solid rgba(184,148,63,.18)" }}>
-            💡 <strong>Catatan:</strong> Seluruh pengerjaan fisik/instalasi bernilai Rp 0 karena dilakukan secara <strong>swadaya & gotong royong</strong>. Dana donasi digunakan untuk material saja.
+            <Lightbulb size={14} style={{display:"inline", marginRight:4}}/> <strong>Catatan:</strong> Seluruh pengerjaan fisik/instalasi bernilai Rp 0 karena dilakukan secara <strong>swadaya & gotong royong</strong>. Dana donasi digunakan untuk material saja.
           </p>
           {ALOKASI.map((item, i) => {
             const used = transaksi.filter(t => t.tipe === "keluar" && t.kategori === item.label).reduce((s, t) => s + t.jumlah, 0);
@@ -234,14 +235,14 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
       )
     },
     {
-      title: "Bab VII — Penyaluran Dana & Penutup", icon: "🙏",
+      title: "Bab VII — Penyaluran Dana & Penutup", icon: <Heart size={20} strokeWidth={1.5} color="currentColor" />,
       content: (
         <div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 200px),1fr))", gap: "clamp(8px, 2vw, 12px)", marginBottom: 24 }}>
             {[
-              { id: "bank", icon: "🏦", t: "Rekening Bank Resmi", sub: "Bank SeaBank", detail: "No. Rek: 901355550666\nA.n: Ubay Rahmat H" },
-              { id: "midtrans", icon: "📱", t: "QRIS & E-Wallet", sub: "Secara Otomatis via Midtrans", detail: loadingDonasi ? "⏳ MEMUAT MIDTRANS..." : "➡️ SILAKAN KLIK KOTAK INI UNTUK MULAI DONASI" },
-              { id: "crypto", icon: "🌐", t: "Crypto / Web3", sub: "EVM Compatible Wallet", detail: "Wallet Address:\n0x71723715478b344164e992b49ae1fCEb6467888B" },
+              { id: "bank", icon: <Landmark size={24} strokeWidth={1.5} />, t: "Rekening Bank Resmi", sub: "Bank SeaBank", detail: "No. Rek: 901355550666\nA.n: Ubay Rahmat H" },
+              { id: "midtrans", icon: <Smartphone size={24} strokeWidth={1.5} />, t: "QRIS & E-Wallet", sub: "Secara Otomatis via Midtrans", detail: loadingDonasi ? "⏳ MEMUAT MIDTRANS..." : "SILAKAN KLIK KOTAK INI UNTUK MULAI DONASI" },
+              { id: "crypto", icon: <Search size={24} strokeWidth={1.5} />, t: "Crypto / Web3", sub: "EVM Compatible Wallet", detail: "Wallet Address:\n0x71723715478b344164e992b49ae1fCEb6467888B" },
             ].map((m, i) => (
               <div key={i} onClick={m.id === "midtrans" ? bayarDonasi : undefined} style={{ padding: "clamp(14px, 4vw, 18px)", background: "var(--fo)", borderRadius: 14, cursor: m.id === "midtrans" ? (loadingDonasi ? "wait" : "pointer") : "default", opacity: m.id === "midtrans" && loadingDonasi ? 0.6 : 1, transition: "opacity .2s, background .2s" }}
                 onMouseEnter={e => m.id === "midtrans" ? (e.currentTarget.style.background = "var(--cd)") : undefined}
@@ -302,7 +303,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
 
         {/* Info strip */}
         <div style={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "center", marginBottom: 44 }}>
-          {[{ icon: "🌐", l: "ciburial-eco-digital.vercel.app" }, { icon: "📧", l: "ciburial.smarthub@gmail.com" }, { icon: "📍", l: "Garut, Jawa Barat 44165" }].map((item, i) => (
+          {[{ icon: <Search size={24} strokeWidth={1.5} />, l: "ciburial-eco-digital.vercel.app" }, { icon: <FileText size={16} strokeWidth={1.5} />, l: "ciburial.smarthub@gmail.com" }, { icon: <MapPin size={16} strokeWidth={1.5} />, l: "Garut, Jawa Barat 44165" }].map((item, i) => (
             <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "clamp(6px, 2vw, 9px) clamp(12px, 3vw, 18px)", background: "var(--cw)", border: "1px solid var(--bo)", borderRadius: 99 }}>
               <span>{item.icon}</span><span style={{ fontSize: 12, fontWeight: 600, color: "var(--ts)" }}>{item.l}</span>
             </div>

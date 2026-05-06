@@ -1,42 +1,43 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, ReactNode } from "react";
+import { Landmark, Home, User, HandHeart, Zap, FileText, Coins, Building, Monitor, Wheat, ShoppingCart, Megaphone, Lightbulb, BookOpen, Sprout, BarChart2 } from "lucide-react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 // ─── STRUKTUR ORGANISASI ─────────────────────────────────────────────────
 const dwnPelindung = [
-  { role: "Tokoh Agama", name: "— Hasil Musyawarah —", icon: "🕌", foto: "/uploads/pengurus/dewan/tokoh-agama.jpg" },
-  { role: "Kepala Kewilayahan", name: "Bpk. Enang (Ketua RW)", icon: "🏘️", foto: "/uploads/pengurus/dewan/kepala-kewilayahan.jpg" },
-  { role: "Koordinator RT 01", name: "Sarip Hidayat", icon: "👤", foto: "/uploads/pengurus/dewan/rt01.jpg" },
-  { role: "Koordinator RT 02", name: "Oneng", icon: "👤", foto: "/uploads/pengurus/dewan/rt02.jpg" },
-  { role: "Koordinator RT 03", name: "Mumun", icon: "👤", foto: "/uploads/pengurus/dewan/rt03.jpg" },
+  { role: "Tokoh Agama", name: "— Hasil Musyawarah —", icon: <Landmark size={20} />, foto: "/uploads/pengurus/dewan/tokoh-agama.jpg" },
+  { role: "Kepala Kewilayahan", name: "Bpk. Enang (Ketua RW)", icon: <Home size={20} />, foto: "/uploads/pengurus/dewan/kepala-kewilayahan.jpg" },
+  { role: "Koordinator RT 01", name: "Sarip Hidayat", icon: <User size={20} />, foto: "/uploads/pengurus/dewan/rt01.jpg" },
+  { role: "Koordinator RT 02", name: "Oneng", icon: <User size={20} />, foto: "/uploads/pengurus/dewan/rt02.jpg" },
+  { role: "Koordinator RT 03", name: "Mumun", icon: <User size={20} />, foto: "/uploads/pengurus/dewan/rt03.jpg" },
 ];
 const dwnPengawas = [
-  { role: "Pengelola Dana DKM", name: "Bpk. Pupu Apipudin", icon: "🤲", foto: "/uploads/pengurus/dewan/kas-dkm.jpg" },
+  { role: "Pengelola Dana DKM", name: "Bpk. Pupu Apipudin", icon: <HandHeart size={20} />, foto: "/uploads/pengurus/dewan/kas-dkm.jpg" },
 ];
 const timEksekutif = [
-  { role: "Ketua Pelaksana (PM)", name: "— Hasil Voting —", icon: "⚡", foto: "/uploads/pengurus/tim-eksekutif/ketua-pm.jpg" },
-  { role: "Sekretaris", name: "— Hasil Voting —", icon: "📋", foto: "/uploads/pengurus/tim-eksekutif/sekretaris.jpg" },
-  { role: "Bendahara", name: "— Hasil Voting —", icon: "💰", foto: "/uploads/pengurus/tim-eksekutif/bendahara.jpg" },
+  { role: "Ketua Pelaksana (PM)", name: "— Hasil Voting —", icon: <Zap size={20} />, foto: "/uploads/pengurus/tim-eksekutif/ketua-pm.jpg" },
+  { role: "Sekretaris", name: "— Hasil Voting —", icon: <FileText size={20} />, foto: "/uploads/pengurus/tim-eksekutif/sekretaris.jpg" },
+  { role: "Bendahara", name: "— Hasil Voting —", icon: <Coins size={20} />, foto: "/uploads/pengurus/tim-eksekutif/bendahara.jpg" },
 ];
 const divisi = [
   {
-    icon: "🏗️", nama: "Green Build", full: "Infrastruktur & Konstruksi Hijau", tugas: "Balai Serba Guna, Smart PJU, drainase resapan",
+    icon: <Building size={20} />, nama: "Green Build", full: "Infrastruktur & Konstruksi Hijau", tugas: "Balai Serba Guna, Smart PJU, drainase resapan",
     ketua: { nama: "— Hasil Voting —" }, wakil: { nama: "— Hasil Voting —" }
   },
   {
-    icon: "💻", nama: "Digital Hub", full: "IT, Jaringan & Web3", tugas: "RT/RW Net, Learning Hub, Website, Crypto",
+    icon: <Monitor size={20} />, nama: "Digital Hub", full: "IT, Jaringan & Web3", tugas: "RT/RW Net, Learning Hub, Website, Crypto",
     ketua: { nama: "— Hasil Voting —" }, wakil: { nama: "— Hasil Voting —" }
   },
   {
-    icon: "🌾", nama: "Eco-Waste & Farming", full: "Smart Farming & Lingkungan", tugas: "Pertanian organik, peternakan, Bank Sampah",
+    icon: <Wheat size={20} />, nama: "Eco-Waste & Farming", full: "Smart Farming & Lingkungan", tugas: "Pertanian organik, peternakan, Bank Sampah",
     ketua: { nama: "— Hasil Voting —" }, wakil: { nama: "— Hasil Voting —" }
   },
   {
-    icon: "🛒", nama: "Local Commerce", full: "Ekonomi Kreatif & UMKM", tugas: "Pengrajin lokal, marketplace, quality control",
+    icon: <ShoppingCart size={20} />, nama: "Local Commerce", full: "Ekonomi Kreatif & UMKM", tugas: "Pengrajin lokal, marketplace, quality control",
     ketua: { nama: "— Hasil Voting —" }, wakil: { nama: "— Hasil Voting —" }
   },
   {
-    icon: "📢", nama: "Public Relations", full: "Humas & Transparansi Publik", tugas: "Dokumentasi, laporan dana, komunikasi CSR",
+    icon: <Megaphone size={20} />, nama: "Public Relations", full: "Humas & Transparansi Publik", tugas: "Dokumentasi, laporan dana, komunikasi CSR",
     ketua: { nama: "— Hasil Voting —" }, wakil: { nama: "— Hasil Voting —" }
   },
 ];
@@ -94,10 +95,10 @@ export default function TentangPage() {
           </div>
           <div style={{ flex: 1, minWidth: 260, display: "flex", flexDirection: "column", gap: 14 }}>
             {[
-              { no: "01", icon: "💡", t: "Infrastruktur Cerdas", d: "Balai Serba Guna berkonsep hijau, Smart PJU, Jaringan CCTV, dan Internet Mandiri (Wi-Fi Kampung)." },
-              { no: "02", icon: "📚", t: "SDM Unggul", d: "Laboratorium Komputer & Perpustakaan sebagai inkubator pemuda Ciburial yang melek teknologi." },
-              { no: "03", icon: "🌱", t: "Ekonomi Sirkular & Smart Farming", d: "Pasar lokal untuk bambu, sayuran organik, peternakan terpadu, dan produk daur ulang limbah." },
-              { no: "04", icon: "📊", t: "Tata Kelola Transparan", d: "Aliran dana kemakmuran terbuka secara real-time, dari fiat konvensional hingga aset kripto (Web3)." },
+              { no: "01", icon: "", t: "Infrastruktur Cerdas", d: "Balai Serba Guna berkonsep hijau, Smart PJU, Jaringan CCTV, dan Internet Mandiri (Wi-Fi Kampung)." },
+              { no: "02", icon: "", t: "SDM Unggul", d: "Laboratorium Komputer & Perpustakaan sebagai inkubator pemuda Ciburial yang melek teknologi." },
+              { no: "03", icon: "", t: "Ekonomi Sirkular & Smart Farming", d: "Pasar lokal untuk bambu, sayuran organik, peternakan terpadu, dan produk daur ulang limbah." },
+              { no: "04", icon: "", t: "Tata Kelola Transparan", d: "Aliran dana kemakmuran terbuka secara real-time, dari fiat konvensional hingga aset kripto (Web3)." },
             ].map((v, i) => (
               <div key={i} className={`rv ch d${i + 1}`}
                 style={{ padding: "24px 28px", background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.6))", borderRadius: 16, border: "1.5px solid rgba(47,143,78,.15)", display: "flex", gap: 18, alignItems: "flex-start", transition: "all .35s cubic-bezier(.22,1,.36,1)", cursor: "pointer" }}
@@ -145,7 +146,7 @@ export default function TentangPage() {
                     {item.foto ? (
                       <img src={item.foto} alt={item.nama} style={{ width: "100%", height: "100%", borderRadius: 22, objectFit: "cover" }} />
                     ) : (
-                      <div style={{ width: "100%", height: "100%", borderRadius: 22, background: "var(--fo)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 44 }}>👤</div>
+                      <div style={{ width: "100%", height: "100%", borderRadius: 22, background: "var(--fo)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 44 }}></div>
                     )}
                   </div>
                   <div style={{ background: "linear-gradient(135deg,rgba(184,148,63,1),rgba(155,125,76,1))", padding: "64px 16px 24px", borderRadius: "16px 16px 24px 24px", width: "100%", textAlign: "center", borderTop: "none", boxShadow: `0 12px 28px rgba(0,0,0,0.2)` }}>
@@ -169,7 +170,7 @@ export default function TentangPage() {
                       {item.foto ? (
                         <img src={item.foto} alt={item.nama} style={{ width: "100%", height: "100%", borderRadius: 22, objectFit: "cover" }} />
                       ) : (
-                        <div style={{ width: "100%", height: "100%", borderRadius: 22, background: "var(--fo)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 44 }}>👤</div>
+                        <div style={{ width: "100%", height: "100%", borderRadius: 22, background: "var(--fo)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 44 }}></div>
                       )}
                     </div>
                     <div style={{ background: "linear-gradient(135deg,rgba(47,143,78,1),rgba(28,58,43,1))", padding: "64px 16px 24px", borderRadius: "16px 16px 24px 24px", width: "100%", textAlign: "center", borderTop: "none", boxShadow: `0 12px 28px rgba(0,0,0,0.2)` }}>
@@ -191,7 +192,7 @@ export default function TentangPage() {
                       {item.foto ? (
                         <img src={item.foto} alt={item.nama} style={{ width: "100%", height: "100%", borderRadius: 22, objectFit: "cover" }} />
                       ) : (
-                        <div style={{ width: "100%", height: "100%", borderRadius: 22, background: "var(--fo)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 44 }}>👤</div>
+                        <div style={{ width: "100%", height: "100%", borderRadius: 22, background: "var(--fo)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 44 }}></div>
                       )}
                     </div>
                     <div style={{ background: "linear-gradient(135deg,rgba(184,148,63,1),rgba(155,125,76,1))", padding: "64px 16px 24px", borderRadius: "16px 16px 24px 24px", width: "100%", textAlign: "center", borderTop: "none", boxShadow: `0 12px 28px rgba(0,0,0,0.2)` }}>
@@ -230,12 +231,12 @@ export default function TentangPage() {
 
                   {/* Ketua & Wakil (Nama saja) */}
                   <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: "#2F8F4E", textTransform: "uppercase", letterSpacing: ".05em" }}>👤 Ketua</div>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: "#2F8F4E", textTransform: "uppercase", letterSpacing: ".05em" }}> Ketua</div>
                     <div style={{ fontSize: 12, fontWeight: 600, color: "#1C3A2B", fontStyle: (pengurusDb.find(p => p.kategori === 'divisi' && p.jabatan.includes("Ketua") && p.jabatan.includes(d.nama))?.nama || d.ketua.nama).includes("—") ? "italic" : "normal", marginBottom: 8 }}>
                       {pengurusDb.find(p => p.kategori === 'divisi' && p.jabatan.includes("Ketua") && p.jabatan.includes(d.nama))?.nama || d.ketua.nama}
                     </div>
 
-                    <div style={{ fontSize: 10, fontWeight: 700, color: "#2F8F4E", textTransform: "uppercase", letterSpacing: ".05em" }}>👤 Wakil</div>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: "#2F8F4E", textTransform: "uppercase", letterSpacing: ".05em" }}> Wakil</div>
                     <div style={{ fontSize: 12, fontWeight: 600, color: "#1C3A2B", fontStyle: (pengurusDb.find(p => p.kategori === 'divisi' && p.jabatan.includes("Wakil") && p.jabatan.includes(d.nama))?.nama || d.wakil.nama).includes("—") ? "italic" : "normal" }}>
                       {pengurusDb.find(p => p.kategori === 'divisi' && p.jabatan.includes("Wakil") && p.jabatan.includes(d.nama))?.nama || d.wakil.nama}
                     </div>

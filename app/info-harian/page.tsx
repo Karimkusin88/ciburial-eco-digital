@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { Newspaper, User } from "lucide-react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 import { Testimoni, DEF_TESTIMONI } from "@/components/home/types";
 
@@ -53,7 +54,7 @@ export default function InfoHarianPage() {
 
               <div style={{ padding: t.tipe === "berita" && t.foto ? "0 16px" : 0, display: "flex", flexDirection: "column", gap: 14, flex: 1 }}>
                 {t.tipe === "tokoh" && <div style={{ fontSize: 32, lineHeight: 1, color: "var(--go)", opacity: 0.5 }}>&quot;</div>}
-                {t.tipe === "berita" && !t.foto && <div style={{ fontSize: 28, lineHeight: 1, color: "var(--go)", opacity: 0.5 }}>📰</div>}
+                {t.tipe === "berita" && !t.foto && <div style={{ fontSize: 28, lineHeight: 1, color: "var(--go)", opacity: 0.5 }}></div>}
 
                 <p className="fnt" style={{ fontSize: "16px", lineHeight: 1.75, color: "#1C3A2B", flex: 1, fontStyle: t.tipe === "tokoh" ? "italic" : "normal", fontWeight: 400 }}>
                   {t.tipe === "tokoh" ? `"${t.pesan}"` : t.pesan}
@@ -69,7 +70,7 @@ export default function InfoHarianPage() {
                     )
                   ) : (
                     <div style={{ width: 44, height: 44, borderRadius: "50%", background: "var(--cd)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>
-                      {t.tipe === "tokoh" ? "👤" : "🗞️"}
+                      {t.tipe === "tokoh" ? "" : "<Newspaper size={16} />️"}
                     </div>
                   )}
                   <div>

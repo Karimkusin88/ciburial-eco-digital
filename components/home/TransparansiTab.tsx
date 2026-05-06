@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
+import { Home, TreePine, Wheat, Soup, Recycle, Leaf, QrCode, Heart, Landmark, CheckCircle, Package, Truck, PartyPopper, XCircle, Search, MapPin, Zap, Eye, ShoppingCart, MessageSquare, Loader, Smartphone, FileText, CreditCard, Lock, ArrowRight, CornerDownRight, AlertCircle, BarChart2, Coins, TrendingUp, TrendingDown, Target, Building, BookOpen, Lightbulb, Wifi, PenTool, Globe } from "lucide-react";
 import { Transaksi, ALOKASI, fRp, DEF_TX } from "./types";
 
 // ─── RAB target global ─────────────────────────────────────────────────────
@@ -222,7 +223,7 @@ export default function TransparansiTab() {
           <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(79,191,126,.1)", border: "1.5px solid rgba(47,143,78,.2)", borderRadius: 99, padding: "clamp(4px, 1vw, 6px) clamp(12px, 3vw, 16px)", marginBottom: 20 }}>
             <div style={{ width: 8, height: 8, borderRadius: "50%", background: live ? "#2F8F4E" : "#9A8C85", animation: live ? "pulse-glow 2s infinite" : "none", boxShadow: live ? "0 0 12px rgba(47,143,78,.6)" : "none" }} />
             <span style={{ fontSize: 10, fontWeight: 700, color: live ? "#2F8F4E" : "#9A8C85", letterSpacing: ".15em", textTransform: "uppercase" }}>
-              {live ? `🔴 Live · ${updated}` : "⏳ Memuat…"}
+              {live ? `🔴 Live · ${updated}` : <div style={{display:"flex", alignItems:"center", gap:6}}><Loader size={14} strokeWidth={2}/> Memuat...</div>}
             </span>
           </div>
           <div style={{ display: "inline-block", width: "44px", height: "3px", background: "linear-gradient(90deg, #2F8F4E, #4FBF7E)", borderRadius: "99px", boxShadow: "0 0 16px rgba(47,143,78,.4)", marginBottom: "20px" }} />
@@ -239,8 +240,8 @@ export default function TransparansiTab() {
           {[
             { label: "Total Masuk", val: fRp(totMasuk), icon: "📈", color: "#1C3A2B", valColor: "#2F8F4E", bg: "linear-gradient(135deg,rgba(79,191,126,.08) 0%,rgba(47,143,78,.04) 100%)", border: "rgba(47,143,78,.2)" },
             { label: "Total Keluar", val: fRp(totKeluar), icon: "📉", color: "#1C3A2B", valColor: "#B8472F", bg: "linear-gradient(135deg,rgba(248,113,113,.08) 0%,rgba(248,113,113,.02) 100%)", border: "rgba(248,113,113,.2)" },
-            { label: "Saldo Dana", val: fRp(saldo), icon: "💰", color: "#1C3A2B", valColor: "#2F8F4E", bg: "linear-gradient(135deg,rgba(255,254,249,.8) 0%,rgba(232,245,238,.4) 100%)", border: "rgba(47,143,78,.15)" },
-            { label: "Target RAB", val: fRp(RAB_TARGET), icon: "🎯", color: "#1C3A2B", valColor: "#9B7D4C", bg: "linear-gradient(135deg,rgba(184,148,63,.1) 0%,rgba(184,148,63,.04) 100%)", border: "rgba(184,148,63,.2)" },
+            { label: "Saldo Dana", val: fRp(saldo), icon: <Coins size={20} strokeWidth={1.5} color="currentColor" />, color: "#1C3A2B", valColor: "#2F8F4E", bg: "linear-gradient(135deg,rgba(255,254,249,.8) 0%,rgba(232,245,238,.4) 100%)", border: "rgba(47,143,78,.15)" },
+            { label: "Target RAB", val: fRp(RAB_TARGET), icon: <Target size={20} strokeWidth={1.5} color="currentColor" />, color: "#1C3A2B", valColor: "#9B7D4C", bg: "linear-gradient(135deg,rgba(184,148,63,.1) 0%,rgba(184,148,63,.04) 100%)", border: "rgba(184,148,63,.2)" },
           ].map((c, i) => (
             <div key={i} style={{ 
               minWidth: 0,
@@ -276,7 +277,7 @@ export default function TransparansiTab() {
         <div style={{ background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))", border: "1.5px solid rgba(47,143,78,.15)", borderRadius: 16, padding: "clamp(24px, 6vw, 32px) clamp(20px, 5vw, 28px)", marginBottom: 32, transition: "all 0.35s ease" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 20, flexWrap: "wrap", gap: 16 }}>
             <div>
-              <div style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "#2F8F4E", marginBottom: 6 }}>🎯 Target Global RAB 2026</div>
+              <div style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "#2F8F4E", marginBottom: 6 }}><Target size={24} strokeWidth={1.5} />Target Global RAB 2026</div>
               <div style={{ fontSize: 14, color: "#5A4A40", fontWeight: 500 }}>
                 Terkumpul <strong style={{ color: "#2F8F4E" }}>{fRp(totMasuk)}</strong> dari <strong>{fRp(RAB_TARGET)}</strong>
               </div>
@@ -311,7 +312,7 @@ export default function TransparansiTab() {
           {/* Sisa target info */}
           {totMasuk < RAB_TARGET && (
             <div style={{ padding: "clamp(8px, 2vw, 12px) clamp(12px, 3vw, 16px)", background: "linear-gradient(135deg,rgba(184,148,63,.1) 0%,rgba(184,148,63,.05) 100%)", border: "1.5px solid rgba(184,148,63,.2)", borderRadius: 12, fontSize: 13, color: "#2F8F4E", fontWeight: 500, display: "flex", alignItems: "center", gap: 10 }}>
-              <span>💪</span>
+              <span><PartyPopper size={16} /></span>
               <span>Masih butuh <strong>{fRp(RAB_TARGET - totMasuk)}</strong> untuk target global</span>
             </div>
           )}
@@ -322,20 +323,20 @@ export default function TransparansiTab() {
 
           {/* Area chart: performa aliran dana */}
           <div style={{ ...card("linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))") }}>
-            <div style={{ fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "#2F8F4E", marginBottom: 20 }}>📈 Performa Aliran Dana (Per Bulan)</div>
+            <div style={{ fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "#2F8F4E", marginBottom: 20 }}><TrendingUp size={24} strokeWidth={1.5} />Performa Aliran Dana (Per Bulan)</div>
             <DanaFlowChart transaksi={transaksi} />
           </div>
 
           {/* Donut: distribusi pengeluaran RAB */}
           <div style={{ ...card("linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))") }}>
-            <div style={{ fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "#2F8F4E", marginBottom: 20 }}>🍩 Distribusi Pengeluaran per Program</div>
+            <div style={{ fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "#2F8F4E", marginBottom: 20 }}>Distribusi Pengeluaran per Program</div>
             <AlokasiDonut transaksi={transaksi} />
           </div>
         </div>
 
         {/* ── Rincian Alokasi RAB per Program ── */}
         <div style={{ marginBottom: 28 }}>
-          <div style={{ fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "#2F8F4E", marginBottom: 18 }}>📊 Rincian Alokasi Dana per Program RAB</div>
+          <div style={{ fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "#2F8F4E", marginBottom: 18 }}>Rincian Alokasi Dana per Program RAB</div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 260px),1fr))", gap: "clamp(14px, 3vw, 20px)" }}>
             {ALOKASI.map((item, i) => {
               const used = transaksi.filter(t => t.tipe === "keluar" && t.kategori === item.label).reduce((s, t) => s + t.jumlah, 0);
@@ -376,7 +377,7 @@ export default function TransparansiTab() {
         {/* ── Riwayat Transaksi ── */}
         <div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18, flexWrap: "wrap", gap: 12 }}>
-            <div style={{ fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "#2F8F4E" }}>📋 Riwayat Transaksi ({txFil.length})</div>
+            <div style={{ fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "#2F8F4E" }}>Riwayat Transaksi ({txFil.length})</div>
             <div style={{ display: "flex", gap: 8 }}>
               {(["semua", "masuk", "keluar"] as const).map(f => (
                 <button key={f} onClick={() => setFTipe(f)} style={{
@@ -458,19 +459,19 @@ export default function TransparansiTab() {
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 260px), 1fr))", gap: "clamp(14px, 3vw, 20px)" }}>
               {[
                 { 
-                  icon: "📱", 
+                  icon: <Smartphone size={24} strokeWidth={1.5} />, 
                   title: "QRIS & E-Wallet", 
                   desc: "Donasi instan melalui Midtrans (dukungan semua e-wallet populer)",
                   detail: "Klik tombol 'Donasi' di halaman utama"
                 },
                 { 
-                  icon: "🏦", 
+                  icon: <Landmark size={24} strokeWidth={1.5} />, 
                   title: "Transfer Bank", 
                   desc: "Rekening resmi untuk donasi melalui perbankan",
                   detail: "SeaBank: 90135555066\na.n Ubay Rahmat H"
                 },
                 { 
-                  icon: "🌐", 
+                  icon: <Search size={24} strokeWidth={1.5} />, 
                   title: "Crypto / Web3", 
                   desc: "Untuk donasi menggunakan aset digital",
                   detail: "0x71723715478b344164e992b49ae1fCEb6467888B\n(EVM-Compatible)"

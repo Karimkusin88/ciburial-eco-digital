@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { CalendarDays, MapPin } from "lucide-react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 interface Kegiatan { id: string; judul: string; deskripsi: string; tanggal: string; jam_mulai: string; lokasi: string; kategori: string; foto_url: string; }
@@ -57,7 +58,7 @@ export default function KalenderPage() {
         <a href="/" style={{ color: "#6b7c6d", textDecoration: "none", fontSize: 13 }}>← Beranda</a>
         <span style={{ color: "#c8bfaa" }}>|</span>
         <div>
-          <div style={{ fontWeight: 800, fontSize: 15, color: "#1a2e1f" }}>📅 Kalender Kegiatan</div>
+          <div style={{ fontWeight: 800, fontSize: 15, color: "#1a2e1f" }}> Kalender Kegiatan</div>
           <div style={{ fontSize: 10, color: "#7a9a7e", textTransform: "uppercase", letterSpacing: "0.08em" }}>Agenda Kampung Ciburial</div>
         </div>
       </header>
@@ -131,12 +132,12 @@ export default function KalenderPage() {
                     <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 6 }}>{selectedKegiatan.judul}</div>
                     <div style={{ fontSize: 13, opacity: 0.8, lineHeight: 1.5 }}>{selectedKegiatan.deskripsi}</div>
                     <div style={{ display: "flex", gap: 12, marginTop: 10, fontSize: 12, opacity: 0.8 }}>
-                      <span>📅 {new Date(selectedKegiatan.tanggal).toLocaleDateString("id-ID", { day: "numeric", month: "long" })}</span>
+                      <span> {new Date(selectedKegiatan.tanggal).toLocaleDateString("id-ID", { day: "numeric", month: "long" })}</span>
                       {selectedKegiatan.jam_mulai && <span>⏰ {selectedKegiatan.jam_mulai}</span>}
-                      {selectedKegiatan.lokasi && <span>📍 {selectedKegiatan.lokasi}</span>}
+                      {selectedKegiatan.lokasi && <span> {selectedKegiatan.lokasi}</span>}
                     </div>
                   </div>
-                  <button onClick={() => setSelected(null)} style={{ background: "rgba(255,255,255,0.2)", border: "none", borderRadius: 8, padding: "4px 8px", color: "white", cursor: "pointer", fontSize: 13 }}>✕</button>
+                  <button onClick={() => setSelected(null)} style={{ background: "rgba(255,255,255,0.2)", border: "none", borderRadius: 8, padding: "4px 8px", color: "white", cursor: "pointer", fontSize: 13 }}>X</button>
                 </div>
               </div>
             )}
@@ -165,7 +166,7 @@ export default function KalenderPage() {
                     <div style={{ fontSize: 12, color: "#6b7c6d", lineHeight: 1.4, marginBottom: 4 }}>{k.deskripsi?.slice(0, 80)}{k.deskripsi?.length > 80 ? "..." : ""}</div>
                     <div style={{ display: "flex", gap: 10, fontSize: 11, color: "#a8b5a9" }}>
                       {k.jam_mulai && <span>⏰ {k.jam_mulai}</span>}
-                      {k.lokasi && <span>📍 {k.lokasi}</span>}
+                      {k.lokasi && <span> {k.lokasi}</span>}
                     </div>
                   </div>
                   <div style={{ width: 8, borderRadius: 4, background: color, flexShrink: 0 }}/>

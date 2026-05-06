@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
+import { Home, Users, Recycle, Baby, Loader, Radio, BarChart2, CheckCircle, AlertTriangle, AlertCircle, PartyPopper } from "lucide-react";
 
 /* ─── SVG Area Chart ─── */
 function SvgArea({ data, color = "#2F8F4E", h = 80, labels = [] }: { data: number[]; color?: string; h?: number; labels?: string[] }) {
@@ -184,8 +185,8 @@ export default function CommunityDashboard() {
         <div style={{ textAlign: "center", marginBottom: 48 }}>
           <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(79,191,126,.1)", border: "1.5px solid rgba(47,143,78,.2)", borderRadius: 99, padding: "8px 18px", marginBottom: 20 }}>
             <div style={{ width: 8, height: 8, borderRadius: "50%", background: live ? "#2F8F4E" : "#9A8C85", animation: live ? "pulse-glow 2s infinite" : "none", boxShadow: live ? "0 0 12px rgba(47,143,78,.6)" : "none" }} />
-            <span style={{ fontSize: 11, color: live ? "#2F8F4E" : "#9A8C85", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase" }}>
-              {live ? `🔴 Live — ${d.updated}` : "⏳ Memuat…"}
+            <span style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: live ? "#2F8F4E" : "#9A8C85", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase" }}>
+              {live ? <><Radio size={12} strokeWidth={2} /> Live — {d.updated}</> : <><Loader size={12} strokeWidth={2} /> Memuat…</>}
             </span>
           </div>
           <h2 style={{ margin: "0 0 16px", fontSize: "clamp(32px,5vw,48px)", fontWeight: 300, background: "linear-gradient(135deg,#1C3A2B,#2F8F4E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", lineHeight: 1.1, letterSpacing: "-0.03em" }}>
@@ -199,10 +200,10 @@ export default function CommunityDashboard() {
         {/* Big stats */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 110px),1fr))", gap: "clamp(8px, 2vw, 16px)", marginBottom: 44 }}>
           {[
-            { icon: "🏠", val: loading ? "—" : d.kk, label: "Kartu Keluarga", color: "#2F8F4E" },
-            { icon: "👥", val: loading ? "—" : d.jiwa, label: "Total Jiwa", color: "#4FBF7E" },
-            { icon: "♻️", val: loading ? "—" : `${d.totKg.toFixed(0)} kg`, label: "Sampah Dikelola", color: "#2F8F4E" },
-            { icon: "👶", val: loading ? "—" : d.anakNormal + d.anakRisiko + d.anakStunting, label: "Anak Posyandu", color: "#9B7D4C" },
+            { icon: <Home size={28} strokeWidth={1.5} />, val: loading ? "—" : d.kk, label: "Kartu Keluarga", color: "#2F8F4E" },
+            { icon: <Users size={28} strokeWidth={1.5} />, val: loading ? "—" : d.jiwa, label: "Total Jiwa", color: "#4FBF7E" },
+            { icon: <Recycle size={28} strokeWidth={1.5} />, val: loading ? "—" : `${d.totKg.toFixed(0)} kg`, label: "Sampah Dikelola", color: "#2F8F4E" },
+            { icon: <Baby size={28} strokeWidth={1.5} />, val: loading ? "—" : d.anakNormal + d.anakRisiko + d.anakStunting, label: "Anak Posyandu", color: "#9B7D4C" },
           ].map((s, i) => (
             <div key={i} style={{ minWidth: 0, overflow: "hidden", background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))", border: "1.5px solid rgba(47,143,78,.12)", borderRadius: 14, padding: "clamp(16px, 4vw, 28px) clamp(8px, 2vw, 16px)", textAlign: "center", transition: "all 0.35s cubic-bezier(.22,1,.36,1)", cursor: "pointer" }}
               onMouseEnter={(e) => {
@@ -215,7 +216,7 @@ export default function CommunityDashboard() {
                 el.style.transform = "translateY(0)";
                 el.style.boxShadow = "none";
               }}>
-              <div style={{ fontSize: 24, marginBottom: 8 }}>{s.icon}</div>
+              <div style={{ display: "flex", justifyContent: "center", marginBottom: 8, color: s.color }}>{s.icon}</div>
               <div style={{ fontSize: "clamp(24px, 5vw, 32px)", fontWeight: 300, color: s.color, lineHeight: 1, letterSpacing: "-0.02em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{s.val}</div>
               <div style={{ fontSize: "clamp(9px, 2.5vw, 11px)", color: "#5A4A40", marginTop: 8, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{s.label}</div>
             </div>
@@ -227,7 +228,7 @@ export default function CommunityDashboard() {
 
           {/* Demografi Donut */}
           <div style={{ background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))", border: "1.5px solid rgba(47,143,78,.12)", borderRadius: 16, padding: "clamp(20px, 5vw, 32px) clamp(16px, 4vw, 28px)", transition: "all 0.35s cubic-bezier(.22,1,.36,1)" }}>
-            <div style={{ fontSize: 12, color: "#2F8F4E", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 24 }}>📊 Komposisi Jiwa</div>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "#2F8F4E", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 24 }}><BarChart2 size={16} strokeWidth={2} /> Komposisi Jiwa</div>
             <div style={{ display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap", justifyContent: "center" }}>
               <Donut segs={donutSegs} jiwa={d.jiwa} />
               <div style={{ flex: 1, minWidth: 120 }}>
@@ -244,19 +245,19 @@ export default function CommunityDashboard() {
 
           {/* Bank Sampah */}
           <div style={{ background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))", border: "1.5px solid rgba(47,143,78,.12)", borderRadius: 16, padding: "clamp(20px, 5vw, 32px) clamp(16px, 4vw, 28px)", transition: "all 0.35s cubic-bezier(.22,1,.36,1)" }}>
-            <div style={{ fontSize: 12, color: "#2F8F4E", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 8 }}>♻️ Bank Sampah — 6 Bulan</div>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "#2F8F4E", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 8 }}><Recycle size={16} strokeWidth={2} /> Bank Sampah — 6 Bulan</div>
             <div style={{ fontSize: 28, fontWeight: 300, color: "#2F8F4E", marginBottom: 22, letterSpacing: "-0.02em" }}>{d.totKg.toFixed(1)} <span style={{ fontSize: "0.5em", opacity: 0.7 }}>kg</span></div>
             <SvgArea data={d.sampahKg} color={C.bright} h={90} labels={d.sampahLbl} />
           </div>
 
           {/* Gizi Balita */}
           <div style={{ background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))", border: "1.5px solid rgba(47,143,78,.12)", borderRadius: 16, padding: "clamp(20px, 5vw, 32px) clamp(16px, 4vw, 28px)", transition: "all 0.35s cubic-bezier(.22,1,.36,1)" }}>
-            <div style={{ fontSize: 12, color: "#2F8F4E", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 24 }}>👶 Status Gizi Balita</div>
-            <HBar value={d.anakNormal} max={stunMax} color={C.bright} label="✅ Normal" count={d.anakNormal} />
-            <HBar value={d.anakRisiko} max={stunMax} color={C.gold} label="⚠️ Risiko" count={d.anakRisiko} />
-            <HBar value={d.anakStunting} max={stunMax} color={C.red} label="🔴 Stunting" count={d.anakStunting} />
+            <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "#2F8F4E", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 24 }}><Baby size={16} strokeWidth={2} /> Status Gizi Balita</div>
+            <HBar value={d.anakNormal} max={stunMax} color={C.bright} label={<div style={{ display: "flex", alignItems: "center", gap: 6 }}><CheckCircle size={14} strokeWidth={2} /> Normal</div> as any} count={d.anakNormal} />
+            <HBar value={d.anakRisiko} max={stunMax} color={C.gold} label={<div style={{ display: "flex", alignItems: "center", gap: 6 }}><AlertTriangle size={14} strokeWidth={2} /> Risiko</div> as any} count={d.anakRisiko} />
+            <HBar value={d.anakStunting} max={stunMax} color={C.red} label={<div style={{ display: "flex", alignItems: "center", gap: 6 }}><AlertCircle size={14} strokeWidth={2} /> Stunting</div> as any} count={d.anakStunting} />
             <div style={{ marginTop: 20, padding: "14px 16px", background: d.anakStunting === 0 ? "linear-gradient(135deg,rgba(79,191,126,.1),rgba(47,143,78,.05))" : "linear-gradient(135deg,rgba(248,113,113,.1),rgba(184,80,80,.05))", borderRadius: 12, fontSize: 13, border: d.anakStunting === 0 ? "1px solid rgba(47,143,78,.2)" : "1px solid rgba(248,113,113,.2)", color: d.anakStunting === 0 ? "#2F8F4E" : "#B8472F", fontWeight: 600 }}>
-              {d.anakStunting === 0 ? "🎉 Tidak ada balita stunting saat ini!" : `⚠️ ${d.anakStunting} balita perlu perhatian khusus`}
+              {d.anakStunting === 0 ? <div style={{ display: "flex", alignItems: "center", gap: 6 }}><PartyPopper size={16} strokeWidth={2} /> Tidak ada balita stunting saat ini!</div> : <div style={{ display: "flex", alignItems: "center", gap: 6 }}><AlertTriangle size={16} strokeWidth={2} /> {d.anakStunting} balita perlu perhatian khusus</div>}
             </div>
           </div>
         </div>

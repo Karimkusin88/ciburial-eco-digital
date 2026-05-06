@@ -1,3 +1,6 @@
+import React from "react";
+import { Landmark, Wheat, BookOpen, Lightbulb, Wifi, Recycle, Lamp, ShoppingBasket, Leaf, Sprout, Carrot, Trees } from "lucide-react";
+
 // Shared types & data for the home page components
 
 export type TabType = "tentang" | "kegiatan" | "proposal" | "transparansi" | "marketplace";
@@ -18,7 +21,7 @@ export interface Produk {
   deskripsi: string;
   harga: number;
   tag: string;
-  icon: string;
+  icon: React.ReactNode | string;
   foto?: string;
 }
 
@@ -59,19 +62,19 @@ export const TABS = [
 ];
 
 export const KAT_CFG: Record<string, { label: string; bg: string; color: string }> = {
-  keagamaan: { label: "🕌 Keagamaan", bg: "rgba(184,148,63,.1)", color: "#7A5A1E" },
-  kemerdekaan: { label: "🇮🇩 Kemerdekaan", bg: "rgba(196,50,50,.09)", color: "#8B2020" },
-  kemasyarakatan: { label: "🤝 Kemasyarakatan", bg: "rgba(28,58,43,.1)", color: "#1C3A2B" },
-  "update-kampung": { label: "📍 Update Kampung", bg: "rgba(45,90,160,.09)", color: "#1A3A6B" },
+  keagamaan: { label: "Keagamaan", bg: "rgba(184,148,63,.1)", color: "#7A5A1E" },
+  kemerdekaan: { label: "Kemerdekaan", bg: "rgba(196,50,50,.09)", color: "#8B2020" },
+  kemasyarakatan: { label: "Kemasyarakatan", bg: "rgba(28,58,43,.1)", color: "#1C3A2B" },
+  "update-kampung": { label: "Update Kampung", bg: "rgba(45,90,160,.09)", color: "#1A3A6B" },
 };
 
 export const ALOKASI = [
-  { label: "Balai Serba Guna & Ruang Publik", target: 80000000, icon: "🏛️", color: "#2D5A40", desc: "Material konstruksi baja ringan & bambu" },
-  { label: "Smart Farming & Peternakan Modern", target: 60000000, icon: "🌾", color: "#4A7C59", desc: "Infrastruktur kandang, bibit, instalasi kebun, pupuk" },
-  { label: "Learning Hub", target: 45000000, icon: "📚", color: "#B8943F", desc: "PC/Laptop, server, perabotan, buku perpustakaan" },
-  { label: "Smart PJU & Keamanan", target: 25000000, icon: "💡", color: "#1A3A6B", desc: "Panel surya, lampu DC, tiang, IP Camera CCTV" },
-  { label: "Jaringan Internet (RT/RW Net)", target: 20000000, icon: "📶", color: "#6B4F3A", desc: "Router utama, kabel distribusi, Wi-Fi publik" },
-  { label: "Operasional Digital & Eco-Waste", target: 20000000, icon: "♻️", color: "#8A7065", desc: "Alat press limbah, server/domain, marketplace" },
+  { label: "Balai Serba Guna & Ruang Publik", target: 80000000, icon: <Landmark size={18} strokeWidth={1.5} />, color: "#2D5A40", desc: "Material konstruksi baja ringan & bambu" },
+  { label: "Smart Farming & Peternakan Modern", target: 60000000, icon: <Wheat size={18} strokeWidth={1.5} />, color: "#4A7C59", desc: "Infrastruktur kandang, bibit, instalasi kebun, pupuk" },
+  { label: "Learning Hub", target: 45000000, icon: <BookOpen size={18} strokeWidth={1.5} />, color: "#B8943F", desc: "PC/Laptop, server, perabotan, buku perpustakaan" },
+  { label: "Smart PJU & Keamanan", target: 25000000, icon: <Lightbulb size={18} strokeWidth={1.5} />, color: "#1A3A6B", desc: "Panel surya, lampu DC, tiang, IP Camera CCTV" },
+  { label: "Jaringan Internet (RT/RW Net)", target: 20000000, icon: <Wifi size={18} strokeWidth={1.5} />, color: "#6B4F3A", desc: "Router utama, kabel distribusi, Wi-Fi publik" },
+  { label: "Operasional Digital & Eco-Waste", target: 20000000, icon: <Recycle size={18} strokeWidth={1.5} />, color: "#8A7065", desc: "Alat press limbah, server/domain, marketplace" },
 ];
 
 // ─── DEFAULT DATA (fallback sebelum Supabase dikonfigurasi) ─────────────────
@@ -83,12 +86,12 @@ export const DEF_KEG: Kegiatan[] = [
 ];
 
 export const DEF_PROD: Produk[] = [
-  { id: "p1", nama: "Lampu Hex-Bamboo", deskripsi: "Lampu tidur estetik anyaman bambu asli pegunungan. Cahaya hangat, aroma alami.", harga: 150000, tag: "Best Seller", icon: "🪔" },
-  { id: "p2", nama: "Keranjang Anyam", deskripsi: "Kerajinan tangan warga, multifungsi dan ramah lingkungan untuk dekorasi.", harga: 85000, tag: "Handmade", icon: "🧺" },
-  { id: "p3", nama: "Mini Pot Bambu", deskripsi: "Pot tanaman dari bambu pilihan. Natural, kuat, mempercantik ruangan.", harga: 60000, tag: "Eco", icon: "🌿" },
-  { id: "p4", nama: "Kompos Organik", deskripsi: "Pupuk dari Bank Sampah Ciburial. 100% organik, baik untuk tanaman.", harga: 25000, tag: "Eco-Waste", icon: "🌱" },
-  { id: "p5", nama: "Sayur Organik Box", deskripsi: "Sayuran segar dari ladang warga Ciburial, bebas pestisida kimia.", harga: 45000, tag: "Fresh Farm", icon: "🥬" },
-  { id: "p6", nama: "Pigura Bambu", deskripsi: "Pigura foto artistik dari bambu terpilih. Cocok untuk dekorasi atau hadiah.", harga: 70000, tag: "Craft", icon: "🎋" },
+  { id: "p1", nama: "Lampu Hex-Bamboo", deskripsi: "Lampu tidur estetik anyaman bambu asli pegunungan. Cahaya hangat, aroma alami.", harga: 150000, tag: "Best Seller", icon: <Lamp size={18} strokeWidth={1.5} /> },
+  { id: "p2", nama: "Keranjang Anyam", deskripsi: "Kerajinan tangan warga, multifungsi dan ramah lingkungan untuk dekorasi.", harga: 85000, tag: "Handmade", icon: <ShoppingBasket size={18} strokeWidth={1.5} /> },
+  { id: "p3", nama: "Mini Pot Bambu", deskripsi: "Pot tanaman dari bambu pilihan. Natural, kuat, mempercantik ruangan.", harga: 60000, tag: "Eco", icon: <Leaf size={18} strokeWidth={1.5} /> },
+  { id: "p4", nama: "Kompos Organik", deskripsi: "Pupuk dari Bank Sampah Ciburial. 100% organik, baik untuk tanaman.", harga: 25000, tag: "Eco-Waste", icon: <Sprout size={18} strokeWidth={1.5} /> },
+  { id: "p5", nama: "Sayur Organik Box", deskripsi: "Sayuran segar dari ladang warga Ciburial, bebas pestisida kimia.", harga: 45000, tag: "Fresh Farm", icon: <Carrot size={18} strokeWidth={1.5} /> },
+  { id: "p6", nama: "Pigura Bambu", deskripsi: "Pigura foto artistik dari bambu terpilih. Cocok untuk dekorasi atau hadiah.", harga: 70000, tag: "Craft", icon: <Trees size={18} strokeWidth={1.5} /> },
 ];
 
 export const DEF_TX: Transaksi[] = [

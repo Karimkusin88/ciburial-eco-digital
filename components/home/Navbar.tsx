@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { TabType, TABS } from "./types";
+import { CalendarDays, Newspaper, Info, Bot } from "lucide-react";
 
 interface NavbarProps {
   tab: TabType;
@@ -45,7 +46,7 @@ export default function Navbar({ tab, checkout, scrolled, onNavigate }: NavbarPr
             </button>
             <div className={`drop-menu ${dropOpen ? "open" : ""}`}>
               <a href="/kalender" className="drop-item">
-                <span style={{ fontSize: 18 }}>📅</span>
+                <CalendarDays size={18} strokeWidth={1.5} />
                 <div>
                   <div style={{ fontWeight: 700, color: "var(--tp)" }}>Kalender Kegiatan</div>
                   <div style={{ fontSize: 10, color: "var(--tm)", fontWeight: 500 }}>Agenda & jadwal kampung</div>
@@ -53,7 +54,7 @@ export default function Navbar({ tab, checkout, scrolled, onNavigate }: NavbarPr
               </a>
               <div style={{ height: 1, background: "var(--bo)", margin: "4px 0" }} />
               <a href="/info-harian" className="drop-item">
-                <span style={{ fontSize: 18 }}>📰</span>
+                <Newspaper size={18} strokeWidth={1.5} />
                 <div>
                   <div style={{ fontWeight: 700, color: "var(--tp)" }}>Info Harian</div>
                   <div style={{ fontSize: 10, color: "var(--tm)", fontWeight: 500 }}>Dukungan & liputan terbaru</div>
@@ -61,7 +62,7 @@ export default function Navbar({ tab, checkout, scrolled, onNavigate }: NavbarPr
               </a>
               <div style={{ height: 1, background: "var(--bo)", margin: "4px 0" }} />
               <a href="/tentang" className="drop-item">
-                <span style={{ fontSize: 18 }}>ℹ️</span>
+                <Info size={18} strokeWidth={1.5} />
                 <div>
                   <div style={{ fontWeight: 700, color: "var(--tp)" }}>Tentang</div>
                   <div style={{ fontSize: 10, color: "var(--tm)", fontWeight: 500 }}>Profil Ciburial Eco-Digital</div>
@@ -86,7 +87,7 @@ export default function Navbar({ tab, checkout, scrolled, onNavigate }: NavbarPr
             onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 0 20px rgba(74,140,92,0.35)"; (e.currentTarget as HTMLAnchorElement).style.color = "#a8d4b4"; }}
             onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 0 12px rgba(74,140,92,0.15)"; (e.currentTarget as HTMLAnchorElement).style.color = "#7aad8a"; }}
           >
-            <span style={{ fontSize: 14 }}>🤖</span>
+            <Bot size={14} strokeWidth={1.5} />
             Ciburial AI
             <span style={{ fontSize: 9, padding: "2px 6px", background: "rgba(74,140,92,0.25)", borderRadius: 99, letterSpacing: ".06em" }}>BETA</span>
           </a>
@@ -107,17 +108,17 @@ export default function Navbar({ tab, checkout, scrolled, onNavigate }: NavbarPr
           </button>
         ))}
         <a href="/ai" style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 0", fontSize: 12, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "#2d5a40", textDecoration: "none", borderBottom: "1px solid var(--bo)" }}>
-          <span>🤖</span> Ciburial AI <span style={{ fontSize: 9, padding: "2px 6px", background: "rgba(45,90,64,0.1)", borderRadius: 99, color: "#4a7c59" }}>BETA</span>
+          <Bot size={16} strokeWidth={1.5} /> Ciburial AI <span style={{ fontSize: 9, padding: "2px 6px", background: "rgba(45,90,64,0.1)", borderRadius: 99, color: "#4a7c59" }}>BETA</span>
         </a>
         <div style={{ padding: "8px 0 4px", borderBottom: "1px solid var(--bo)" }}>
           <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".15em", textTransform: "uppercase", color: "var(--tm)", marginBottom: 8 }}>Layanan Warga</div>
           {[
-            { href: "/kalender", icon: "📅", title: "Kalender Kegiatan", sub: "Agenda & jadwal kampung" },
-            { href: "/info-harian", icon: "📰", title: "Info Harian", sub: "Dukungan & liputan terbaru" },
-            { href: "/tentang", icon: "ℹ️", title: "Tentang", sub: "Profil Ciburial Eco-Digital" },
+            { href: "/kalender", icon: <CalendarDays size={18} strokeWidth={1.5} />, title: "Kalender Kegiatan", sub: "Agenda & jadwal kampung" },
+            { href: "/info-harian", icon: <Newspaper size={18} strokeWidth={1.5} />, title: "Info Harian", sub: "Dukungan & liputan terbaru" },
+            { href: "/tentang", icon: <Info size={18} strokeWidth={1.5} />, title: "Tentang", sub: "Profil Ciburial Eco-Digital" },
           ].map((item, i, arr) => (
             <a key={i} href={item.href} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 0", textDecoration: "none", borderBottom: i < arr.length - 1 ? "1px solid rgba(229,224,216,.5)" : "none" }}>
-              <span style={{ fontSize: 18 }}>{item.icon}</span>
+              {item.icon}
               <div>
                 <div style={{ fontSize: 12, fontWeight: 700, color: "var(--tp)", letterSpacing: ".04em", textTransform: "uppercase" }}>{item.title}</div>
                 <div style={{ fontSize: 11, color: "var(--tm)" }}>{item.sub}</div>

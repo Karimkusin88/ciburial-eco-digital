@@ -1,5 +1,6 @@
 "use client";
 import { TabType, TABS } from "./types";
+import { CalendarDays, Newspaper, Info, Bot, Heart } from "lucide-react";
 
 interface FooterProps {
   onNavigate: (t: TabType) => void;
@@ -28,22 +29,22 @@ export default function Footer({ onNavigate }: FooterProps) {
                 onMouseLeave={e => (e.currentTarget.style.color = "rgba(250,248,243,.38)")}
               >{t.label}</button>
             ))}
-            <a href="/kalender" style={{ fontSize: 12, fontWeight: 500, color: "rgba(250,248,243,.38)", textDecoration: "none", transition: "color .2s" }}
+            <a href="/kalender" style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 500, color: "rgba(250,248,243,.38)", textDecoration: "none", transition: "color .2s" }}
               onMouseEnter={e => (e.currentTarget.style.color = "var(--cr)")}
               onMouseLeave={e => (e.currentTarget.style.color = "rgba(250,248,243,.38)")}
-            >📅 Kalender Kegiatan</a>
-            <a href="/info-harian" style={{ fontSize: 12, fontWeight: 500, color: "rgba(250,248,243,.38)", textDecoration: "none", transition: "color .2s" }}
+            ><CalendarDays size={14} strokeWidth={1.5} /> Kalender Kegiatan</a>
+            <a href="/info-harian" style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 500, color: "rgba(250,248,243,.38)", textDecoration: "none", transition: "color .2s" }}
               onMouseEnter={e => (e.currentTarget.style.color = "var(--cr)")}
               onMouseLeave={e => (e.currentTarget.style.color = "rgba(250,248,243,.38)")}
-            >📰 Info Harian</a>
-            <a href="/tentang" style={{ fontSize: 12, fontWeight: 500, color: "rgba(250,248,243,.38)", textDecoration: "none", transition: "color .2s" }}
+            ><Newspaper size={14} strokeWidth={1.5} /> Info Harian</a>
+            <a href="/tentang" style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 500, color: "rgba(250,248,243,.38)", textDecoration: "none", transition: "color .2s" }}
               onMouseEnter={e => (e.currentTarget.style.color = "var(--cr)")}
               onMouseLeave={e => (e.currentTarget.style.color = "rgba(250,248,243,.38)")}
-            >ℹ️ Tentang</a>
-            <a href="/ai" style={{ fontSize: 12, fontWeight: 500, color: "rgba(122,173,138,.6)", textDecoration: "none", transition: "color .2s" }}
+            ><Info size={14} strokeWidth={1.5} /> Tentang</a>
+            <a href="/ai" style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 500, color: "rgba(122,173,138,.6)", textDecoration: "none", transition: "color .2s" }}
               onMouseEnter={e => (e.currentTarget.style.color = "#7aad8a")}
               onMouseLeave={e => (e.currentTarget.style.color = "rgba(122,173,138,.6)")}
-            >🤖 Ciburial AI</a>
+            ><Bot size={14} strokeWidth={1.5} /> Ciburial AI</a>
           </div>
         </div>
         <div>
@@ -63,8 +64,8 @@ export default function Footer({ onNavigate }: FooterProps) {
           <p style={{ fontSize: 10, fontWeight: 600, color: "rgba(250,248,243,.2)", letterSpacing: ".07em", textTransform: "uppercase" }}>
             © {new Date().getFullYear()} Ciburial Eco-Digital Village. All Rights Reserved.
           </p>
-          <div style={{ fontSize: 13, fontWeight: 400, color: "rgba(250,248,243,.5)" }}>
-            Initiated & built with <span style={{ color: "#E25555" }}>❤️</span> by <strong style={{ color: "var(--cw)", fontWeight: 700, letterSpacing: ".02em" }}>Ubay Rahmat H</strong>
+          <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 13, fontWeight: 400, color: "rgba(250,248,243,.5)" }}>
+            Initiated & built with <Heart size={14} strokeWidth={2} style={{ color: "#E25555" }} /> by <strong style={{ color: "var(--cw)", fontWeight: 700, letterSpacing: ".02em" }}>Ubay Rahmat H</strong>
           </div>
         </div>
         
