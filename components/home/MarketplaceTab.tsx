@@ -1055,7 +1055,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                 e.currentTarget.style.boxShadow = "0 8px 16px rgba(79,191,126,.2)";
               }}
             >
-              
+              <Package size={24} strokeWidth={1.5} />
             </button>
 
             {/* Cart Button */}
@@ -1069,7 +1069,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                 e.currentTarget.style.boxShadow = "0 8px 16px rgba(47,143,78,.2)";
               }}
             >
-              
+              <ShoppingCart size={24} strokeWidth={1.5} />
               {cart.length > 0 && (
                 <span style={{ position: "absolute", top: 0, right: 0, background: "#f87171", color: "#FFF", fontSize: 10, fontWeight: 700, padding: "2px 6px", borderRadius: "10px", minWidth: "20px", textAlign: "center", border: "2px solid white" }}>
                   {cart.length}
