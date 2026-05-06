@@ -62,16 +62,17 @@ function Donut({ segs, jiwa }: { segs: { label: string; value: number; color: st
   );
 }
 
-/* ─── Horizontal Bar ─── */
 function HBar({ value, max, color, label, count }: { value: number; max: number; color: string; label: string; count: number }) {
   const pct = max > 0 ? Math.min(100, (value / max) * 100) : 0;
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14, fontFamily: "'Inter',system-ui,sans-serif" }}>
-      <div style={{ width: 110, fontSize: 12, color: "#1C3A2B", textAlign: "right", flexShrink: 0, lineHeight: 1.3, fontWeight: 500 }}>{label}</div>
-      <div style={{ flex: 1, background: "rgba(47,143,78,.08)", borderRadius: 99, height: 10, overflow: "hidden", boxShadow: "inset 0 1px 2px rgba(0,0,0,.02)" }}>
+    <div style={{ marginBottom: 14, fontFamily: "'Inter',system-ui,sans-serif" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 6 }}>
+        <div style={{ fontSize: 12, color: "#1C3A2B", fontWeight: 600 }}>{label}</div>
+        <div style={{ fontSize: 14, fontWeight: 800, color }}>{count}</div>
+      </div>
+      <div style={{ width: "100%", background: "rgba(47,143,78,.08)", borderRadius: 99, height: 10, overflow: "hidden", boxShadow: "inset 0 1px 2px rgba(0,0,0,.02)" }}>
         <div style={{ width: `${pct}%`, height: "100%", background: `linear-gradient(90deg, ${color}, ${color}dd)`, borderRadius: 99, transition: "width 1s cubic-bezier(.34,1.56,.64,1)", boxShadow: `0 0 8px ${color}60` }} />
       </div>
-      <div style={{ width: 32, fontSize: 14, fontWeight: 800, color, textAlign: "right" }}>{count}</div>
     </div>
   );
 }
@@ -196,7 +197,7 @@ export default function CommunityDashboard() {
         </div>
 
         {/* Big stats */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(45%, 140px),1fr))", gap: "clamp(12px, 3vw, 16px)", marginBottom: 44 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(110px,1fr))", gap: "clamp(12px, 3vw, 16px)", marginBottom: 44 }}>
           {[
             { icon: "🏠", val: loading ? "—" : d.kk, label: "Kartu Keluarga", color: "#2F8F4E" },
             { icon: "👥", val: loading ? "—" : d.jiwa, label: "Total Jiwa", color: "#4FBF7E" },
@@ -227,9 +228,9 @@ export default function CommunityDashboard() {
           {/* Demografi Donut */}
           <div style={{ background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))", border: "1.5px solid rgba(47,143,78,.12)", borderRadius: 16, padding: "clamp(20px, 5vw, 32px) clamp(16px, 4vw, 28px)", transition: "all 0.35s cubic-bezier(.22,1,.36,1)" }}>
             <div style={{ fontSize: 12, color: "#2F8F4E", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 24 }}>📊 Komposisi Jiwa</div>
-            <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap", justifyContent: "center" }}>
               <Donut segs={donutSegs} jiwa={d.jiwa} />
-              <div style={{ flex: 1 }}>
+              <div style={{ flex: 1, minWidth: 120 }}>
                 {donutSegs.map((s, i) => (
                   <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
                     <div style={{ width: 10, height: 10, borderRadius: 3, background: s.color, flexShrink: 0, boxShadow: `0 2px 8px ${s.color}40` }} />
