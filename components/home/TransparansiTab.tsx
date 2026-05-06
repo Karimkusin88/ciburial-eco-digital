@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
-import { Home, TreePine, Wheat, Soup, Recycle, Leaf, QrCode, Heart, Landmark, CheckCircle, Package, Truck, PartyPopper, XCircle, Search, MapPin, Zap, Eye, ShoppingCart, MessageSquare, Loader, Smartphone, FileText, CreditCard, Lock, ArrowRight, CornerDownRight, AlertCircle, BarChart2, Coins, TrendingUp, TrendingDown, Target, Building, BookOpen, Lightbulb, Wifi, PenTool, Globe } from "lucide-react";
+import { Home, TreePine, Wheat, Soup, Recycle, Leaf, QrCode, Heart, Landmark, CheckCircle, Package, Truck, PartyPopper, XCircle, Search, MapPin, Zap, Eye, ShoppingCart, MessageSquare, Loader, Smartphone, FileText, CreditCard, Lock, ArrowRight, CornerDownRight, AlertCircle, BarChart2, Coins, TrendingUp, TrendingDown, Target, Building, BookOpen, Lightbulb, Wifi, PenTool, Globe, Radio } from "lucide-react";
 import { Transaksi, ALOKASI, fRp, DEF_TX } from "./types";
 
 // ─── RAB target global ─────────────────────────────────────────────────────
@@ -222,8 +222,8 @@ export default function TransparansiTab() {
         <div style={{ textAlign: "center", marginBottom: 56 }}>
           <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(79,191,126,.1)", border: "1.5px solid rgba(47,143,78,.2)", borderRadius: 99, padding: "clamp(4px, 1vw, 6px) clamp(12px, 3vw, 16px)", marginBottom: 20 }}>
             <div style={{ width: 8, height: 8, borderRadius: "50%", background: live ? "#2F8F4E" : "#9A8C85", animation: live ? "pulse-glow 2s infinite" : "none", boxShadow: live ? "0 0 12px rgba(47,143,78,.6)" : "none" }} />
-            <span style={{ fontSize: 10, fontWeight: 700, color: live ? "#2F8F4E" : "#9A8C85", letterSpacing: ".15em", textTransform: "uppercase" }}>
-              {live ? `🔴 Live · ${updated}` : <div style={{display:"flex", alignItems:"center", gap:6}}><Loader size={14} strokeWidth={2}/> Memuat...</div>}
+            <span style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 10, fontWeight: 700, color: live ? "#2F8F4E" : "#9A8C85", letterSpacing: ".15em", textTransform: "uppercase" }}>
+              {live ? <><Radio size={12} strokeWidth={2} /> Live · {updated}</> : <div style={{display:"flex", alignItems:"center", gap:6}}><Loader size={14} strokeWidth={2}/> Memuat...</div>}
             </span>
           </div>
           <div style={{ display: "inline-block", width: "44px", height: "3px", background: "linear-gradient(90deg, #2F8F4E, #4FBF7E)", borderRadius: "99px", boxShadow: "0 0 16px rgba(47,143,78,.4)", marginBottom: "20px" }} />
