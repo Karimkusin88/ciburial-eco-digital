@@ -204,7 +204,7 @@ export default function CommunityDashboard() {
             { icon: "♻️", val: loading ? "—" : `${d.totKg.toFixed(0)} kg`, label: "Sampah Dikelola", color: "#2F8F4E" },
             { icon: "👶", val: loading ? "—" : d.anakNormal + d.anakRisiko + d.anakStunting, label: "Anak Posyandu", color: "#9B7D4C" },
           ].map((s, i) => (
-            <div key={i} style={{ background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))", border: "1.5px solid rgba(47,143,78,.12)", borderRadius: 14, padding: "clamp(20px, 4vw, 28px) clamp(12px, 3vw, 20px)", textAlign: "center", transition: "all 0.35s cubic-bezier(.22,1,.36,1)", cursor: "pointer" }}
+            <div key={i} style={{ minWidth: 0, overflow: "hidden", background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))", border: "1.5px solid rgba(47,143,78,.12)", borderRadius: 14, padding: "clamp(16px, 4vw, 28px) clamp(8px, 2vw, 16px)", textAlign: "center", transition: "all 0.35s cubic-bezier(.22,1,.36,1)", cursor: "pointer" }}
               onMouseEnter={(e) => {
                 const el = e.currentTarget as HTMLElement;
                 el.style.transform = "translateY(-6px)";
@@ -215,9 +215,9 @@ export default function CommunityDashboard() {
                 el.style.transform = "translateY(0)";
                 el.style.boxShadow = "none";
               }}>
-              <div style={{ fontSize: 28, marginBottom: 10 }}>{s.icon}</div>
-              <div style={{ fontSize: 32, fontWeight: 300, color: s.color, lineHeight: 1, letterSpacing: "-0.02em" }}>{s.val}</div>
-              <div style={{ fontSize: 11, color: "#5A4A40", marginTop: 8, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600 }}>{s.label}</div>
+              <div style={{ fontSize: 24, marginBottom: 8 }}>{s.icon}</div>
+              <div style={{ fontSize: "clamp(24px, 5vw, 32px)", fontWeight: 300, color: s.color, lineHeight: 1, letterSpacing: "-0.02em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{s.val}</div>
+              <div style={{ fontSize: "clamp(9px, 2.5vw, 11px)", color: "#5A4A40", marginTop: 8, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{s.label}</div>
             </div>
           ))}
         </div>

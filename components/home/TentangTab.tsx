@@ -238,13 +238,15 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
     </div>
 
     {/* CTA Buttons */}
-    <div style={{ display: "flex", justifyContent: "center", gap: 12, flexWrap: "wrap" }}>
+    <div style={{ display: "flex", justifyContent: "center", gap: "clamp(8px, 2vw, 12px)", width: "100%", padding: "0 12px" }}>
       <button
         className="btn-heroic"
         onClick={() => document.getElementById("content-start")?.scrollIntoView({ behavior: "smooth" })}
         style={{
-          padding: "15px 36px",
-          fontSize: 12,
+          flex: "1 1 auto",
+          maxWidth: 220,
+          padding: "clamp(12px, 3vw, 15px) clamp(10px, 2vw, 36px)",
+          fontSize: "clamp(10px, 2.8vw, 12px)",
           fontWeight: 700,
           letterSpacing: ".1em",
           textTransform: "uppercase",
@@ -255,6 +257,9 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
           cursor: "pointer",
           boxShadow: "0 8px 28px rgba(149,213,178,0.25)",
           transition: "all .35s cubic-bezier(.22,1,.36,1)",
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis"
         }}
         onMouseEnter={e => {
           e.currentTarget.style.transform = "translateY(-3px)";
@@ -273,8 +278,10 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
       <button
         onClick={() => setShowStory(true)}
         style={{
-          padding: "15px 36px",
-          fontSize: 12,
+          flex: "1 1 auto",
+          maxWidth: 220,
+          padding: "clamp(12px, 3vw, 15px) clamp(10px, 2vw, 36px)",
+          fontSize: "clamp(10px, 2.8vw, 12px)",
           fontWeight: 700,
           letterSpacing: ".1em",
           textTransform: "uppercase",
@@ -283,6 +290,9 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
           background: "rgba(255,255,255,0.08)",
           color: "rgba(255,255,255,0.9)",
           cursor: "pointer",
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
           backdropFilter: "blur(12px)",
           transition: "all .35s cubic-bezier(.22,1,.36,1)",
           display: "flex",

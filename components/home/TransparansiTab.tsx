@@ -235,7 +235,7 @@ export default function TransparansiTab() {
         </div>
 
         {/* KPI Cards - Heroic */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(210px,1fr))", gap: 18, marginBottom: 36 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(130px,1fr))", gap: 18, marginBottom: 36 }}>
           {[
             { label: "Total Masuk", val: fRp(totMasuk), icon: "📈", color: "#1C3A2B", valColor: "#2F8F4E", bg: "linear-gradient(135deg,rgba(79,191,126,.08) 0%,rgba(47,143,78,.04) 100%)", border: "rgba(47,143,78,.2)" },
             { label: "Total Keluar", val: fRp(totKeluar), icon: "📉", color: "#1C3A2B", valColor: "#B8472F", bg: "linear-gradient(135deg,rgba(248,113,113,.08) 0%,rgba(248,113,113,.02) 100%)", border: "rgba(248,113,113,.2)" },
@@ -243,6 +243,7 @@ export default function TransparansiTab() {
             { label: "Target RAB", val: fRp(RAB_TARGET), icon: "🎯", color: "#1C3A2B", valColor: "#9B7D4C", bg: "linear-gradient(135deg,rgba(184,148,63,.1) 0%,rgba(184,148,63,.04) 100%)", border: "rgba(184,148,63,.2)" },
           ].map((c, i) => (
             <div key={i} style={{ 
+              minWidth: 0,
               background: c.bg, 
               border: `1.5px solid ${c.border}`,
               borderRadius: 16, 
@@ -262,10 +263,10 @@ export default function TransparansiTab() {
               (e.currentTarget as HTMLElement).style.boxShadow = "0 0 0 transparent";
             }}
             >
-              <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".1em", textTransform: "uppercase", color: "#1C3A2B", marginBottom: 12 }}>{c.label}</div>
+              <div style={{ fontSize: "clamp(8px, 2vw, 10px)", fontWeight: 800, letterSpacing: ".05em", textTransform: "uppercase", color: "#1C3A2B", marginBottom: 12, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{c.label}</div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-                <div className="fnt" style={{ fontSize: "clamp(16px,2.5vw,24px)", fontWeight: 700, color: c.valColor || c.color, lineHeight: 1 }}>{c.val}</div>
-                <span style={{ fontSize: 24, opacity: 0.7 }}>{c.icon}</span>
+                <div className="fnt" style={{ fontSize: "clamp(16px,4vw,24px)", fontWeight: 700, color: c.valColor || c.color, lineHeight: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", paddingRight: 4 }}>{c.val}</div>
+                <span style={{ fontSize: "clamp(18px, 4vw, 24px)", opacity: 0.7 }}>{c.icon}</span>
               </div>
             </div>
           ))}
@@ -342,7 +343,7 @@ export default function TransparansiTab() {
               const sisa = item.target - used;
               const col = ALOKASI_COLORS[i];
               return (
-                <div key={i} style={{ ...card("linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))") }}>
+                <div key={i} style={{ minWidth: 0, ...card("linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))") }}>
                   <div style={{ display: "flex", gap: 10, alignItems: "flex-start", marginBottom: 14 }}>
                     <span style={{ fontSize: 22, lineHeight: 1, marginTop: 1 }}>{item.icon}</span>
                     <div style={{ flex: 1 }}>
