@@ -58,7 +58,7 @@ export default function KegiatanTab({ kegiatan, dataLoad }: KegiatanTabProps) {
         </div>
 
         {/* Filter kategori - Heroic */}
-        <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 44, justifyContent: "center" }}>
+        <div style={{ display: "flex", gap: "clamp(8px, 2vw, 12px)", flexWrap: "wrap", marginBottom: 44, justifyContent: "center" }}>
           {[{ k: "semua", l: "✦ Semua" }, ...Object.entries(KAT_CFG).map(([k, v]) => ({ k, l: v.label }))].map(item => (
             <button key={item.k} onClick={() => setFKat(item.k)} style={{ padding: "11px 20px", fontSize: 12, fontWeight: 700, letterSpacing: ".06em", border: fKat === item.k ? "1.5px solid #2F8F4E" : "1.5px solid rgba(47,143,78,.2)", borderRadius: 10, cursor: "pointer", transition: "all 0.3s cubic-bezier(.22,1,.36,1)", background: fKat === item.k ? "linear-gradient(135deg,#2F8F4E,#4FBF7E)" : "rgba(255,254,249,.9)", color: fKat === item.k ? "#fff" : "#1C3A2B", transform: fKat === item.k ? "translateY(-2px)" : "translateY(0)", boxShadow: fKat === item.k ? "0 8px 16px rgba(47,143,78,.2)" : "0 2px 8px rgba(0,0,0,.04)" }}>
               {item.l}
@@ -67,7 +67,7 @@ export default function KegiatanTab({ kegiatan, dataLoad }: KegiatanTabProps) {
         </div>
 
         {dataLoad && (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(280px,1fr))", gap: 20 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(min(100%, 280px),1fr))", gap: "clamp(16px, 3vw, 20px)" }}>
             {[1, 2, 3].map(i => <div key={i} className="sk" style={{ height: 240, borderRadius: 18, background: "linear-gradient(135deg,rgba(255,254,249,.8),rgba(250,248,243,.6))", border: "1.5px solid rgba(47,143,78,.1)" }} />)}
           </div>
         )}
@@ -80,7 +80,7 @@ export default function KegiatanTab({ kegiatan, dataLoad }: KegiatanTabProps) {
               <div style={{ fontSize: 13, color: "#5A4A40" }}>Admin dapat menambahkan melalui panel admin.</div>
             </div>
           ) : (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(280px,1fr))", gap: 20 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(min(100%, 280px),1fr))", gap: "clamp(16px, 3vw, 20px)" }}>
               {kegFil.map((k, i) => {
                 const kat = KAT_CFG[k.kategori] || { label: "📌 Lainnya", bg: "rgba(90,74,64,.08)", color: "#5A4A40" };
                 const d = new Date(k.tanggal);

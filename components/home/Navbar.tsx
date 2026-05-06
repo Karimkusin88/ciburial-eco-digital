@@ -17,7 +17,7 @@ export default function Navbar({ tab, checkout, scrolled, onNavigate }: NavbarPr
 
   return (
     <nav className={scrolled ? "ng" : ""} style={{ position: "sticky", top: 0, width: "100%", height: "70px", zIndex: 50, transition: "all 0.3s ease-in-out", background: "transparant" }}>
-      <div style={{ maxWidth: 1320, margin: "0 auto", padding: "0 28px", height: 70, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <div style={{ maxWidth: 1320, margin: "0 auto", padding: "0 clamp(12px, 4vw, 28px)", height: 70, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
 
         <button onClick={() => go("tentang")} style={{ background: "none", border: "none", cursor: "pointer", textAlign: "left" }}>
           <div className="fnt" style={{ fontSize: 20, fontWeight: 600, color: "var(--fo)", lineHeight: 1, letterSpacing: "-.02em" }}>Ciburial</div>
@@ -100,7 +100,7 @@ export default function Navbar({ tab, checkout, scrolled, onNavigate }: NavbarPr
         </button>
       </div>
 
-      <div className={`mob md:hidden ${mobOpen ? "op" : ""}`} style={{ background: "var(--cw)", borderTop: "1px solid var(--bo)", padding: "12px 28px 20px" }}>
+      <div className={`mob md:hidden ${mobOpen ? "op" : ""}`} style={{ background: "var(--cw)", borderTop: "1px solid var(--bo)", padding: "12px clamp(12px, 4vw, 28px) 20px" }}>
         {TABS.map(t => (
           <button key={t.key} onClick={() => go(t.key)} style={{ display: "block", width: "100%", textAlign: "left", padding: "11px 0", fontSize: 12, fontWeight: 600, letterSpacing: ".08em", textTransform: "uppercase", background: "none", border: "none", color: tab === t.key ? "var(--fo)" : "var(--ts)", cursor: "pointer", borderBottom: "1px solid var(--bo)" }}>
             {t.label}

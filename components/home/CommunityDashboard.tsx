@@ -197,7 +197,7 @@ export default function CommunityDashboard() {
         </div>
 
         {/* Big stats */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(110px,1fr))", gap: "clamp(12px, 3vw, 16px)", marginBottom: 44 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 110px),1fr))", gap: "clamp(8px, 2vw, 16px)", marginBottom: 44 }}>
           {[
             { icon: "🏠", val: loading ? "—" : d.kk, label: "Kartu Keluarga", color: "#2F8F4E" },
             { icon: "👥", val: loading ? "—" : d.jiwa, label: "Total Jiwa", color: "#4FBF7E" },
@@ -223,7 +223,7 @@ export default function CommunityDashboard() {
         </div>
 
         {/* 3 chart cards */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(45%, 280px),1fr))", gap: 24 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 260px),1fr))", gap: "clamp(16px, 3vw, 24px)" }}>
 
           {/* Demografi Donut */}
           <div style={{ background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))", border: "1.5px solid rgba(47,143,78,.12)", borderRadius: 16, padding: "clamp(20px, 5vw, 32px) clamp(16px, 4vw, 28px)", transition: "all 0.35s cubic-bezier(.22,1,.36,1)" }}>

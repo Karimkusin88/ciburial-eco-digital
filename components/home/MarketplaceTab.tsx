@@ -1022,8 +1022,8 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
         {/* ── HEADER SECTION ── */}
         <div style={{ marginBottom: 48, display: "flex", flexDirection: "column", gap: 24 }}>
           {/* Logo + Search Bar */}
-          <div style={{ background: "rgba(255,254,249,.9)", borderRadius: 16, border: "1.5px solid rgba(47,143,78,.15)", padding: "20px 24px", display: "flex", gap: 18, alignItems: "center", boxShadow: "0 8px 24px rgba(47,143,78,.08)" }}>
-            <div className="fnt" style={{ fontWeight: 700, fontSize: 22, background: "linear-gradient(135deg,#1C3A2B,#2F8F4E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Ciburial<span style={{ WebkitTextFillColor: "#5A4A40" }}>Market</span></div>
+          <div style={{ background: "rgba(255,254,249,.9)", borderRadius: 16, border: "1.5px solid rgba(47,143,78,.15)", padding: "clamp(12px, 3vw, 20px) clamp(12px, 3vw, 24px)", display: "flex", gap: "clamp(12px, 2vw, 18px)", alignItems: "center", boxShadow: "0 8px 24px rgba(47,143,78,.08)" }}>
+            <div className="fnt" style={{ fontWeight: 700, fontSize: "clamp(18px, 4vw, 22px)", background: "linear-gradient(135deg,#1C3A2B,#2F8F4E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Ciburial<span style={{ WebkitTextFillColor: "#5A4A40" }}>Market</span></div>
             
             <div style={{ flex: 1, position: "relative" }}>
               <span style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", fontSize: 18, color: "#2F8F4E" }}>🔍</span>

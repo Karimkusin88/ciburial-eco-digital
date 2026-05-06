@@ -60,7 +60,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
           <p style={{ marginBottom: 14 }}>Puji syukur ke hadirat Tuhan Yang Maha Esa atas segala limpahan rahmat-Nya. Bersama surat ini, kami dari Paguyuban Warga & Pemuda Ciburial Makers bermaksud menyampaikan proposal program <strong>"Ciburial Eco-Digital Village"</strong>.</p>
           <p style={{ marginBottom: 14 }}>Program ini adalah inisiatif swadaya masyarakat akar rumput untuk membangun ekosistem desa yang mandiri, cerdas, dan ramah lingkungan. Mengawinkan kekayaan alam organik dengan literasi teknologi digital untuk menciptakan ketahanan pangan, keamanan lingkungan, dan peningkatan SDM generasi muda.</p>
           <p style={{ marginBottom: 28 }}>Mengingat besarnya skala pergerakan ini, kami membuka ruang kolaborasi dan memohon dukungan dari Bapak/Ibu/Saudara guna merealisasikan cetak biru kemakmuran desa ini.</p>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 12 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 180px),1fr))", gap: "clamp(8px, 2vw, 12px)" }}>
             {[
               { role: "Ketua Pemuda Ciburial Makers", name: "— Soon —", label: "Tanda Tangan & Stempel" },
               { role: "Ketua DKM Ciburial", name: "Bpk. Pupu Apipudin", label: "Mengetahui / Menyetujui" },
@@ -91,7 +91,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
     {
       title: "Bab II — Tujuan Program", icon: "🎯",
       content: (
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "clamp(8px, 2vw, 10px)" }}>
           {[
             { n: "01", t: "Kemakmuran Masjid & Warga", d: "Membantu kas DKM agar kegiatan keagamaan dan sosial warga berjalan optimal." },
             { n: "02", t: "Keamanan & Kenyamanan Lingkungan", d: "Menerangi jalan desa dengan Smart PJU dan mewujudkan Pos Ronda Digital berbasis pantauan CCTV." },
@@ -186,7 +186,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
           ].map((s, i) => (
             <div key={i}>
               <div style={{ fontSize: 12, fontWeight: 700, color: "var(--go)", letterSpacing: ".07em", textTransform: "uppercase", marginBottom: 10 }}>{s.group}</div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "clamp(4px, 1vw, 6px)" }}>
                 {s.items.map((item, j) => (
                   <div key={j} style={{ padding: "clamp(8px, 2vw, 10px) clamp(12px, 3vw, 16px)", background: "var(--cr)", borderRadius: 10, border: "1px solid var(--bo)", fontSize: 13, color: "var(--ts)" }}>{item}</div>
                 ))}
@@ -237,7 +237,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
       title: "Bab VII — Penyaluran Dana & Penutup", icon: "🙏",
       content: (
         <div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 12, marginBottom: 24 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 200px),1fr))", gap: "clamp(8px, 2vw, 12px)", marginBottom: 24 }}>
             {[
               { id: "bank", icon: "🏦", t: "Rekening Bank Resmi", sub: "Bank SeaBank", detail: "No. Rek: 901355550666\nA.n: Ubay Rahmat H" },
               { id: "midtrans", icon: "📱", t: "QRIS & E-Wallet", sub: "Secara Otomatis via Midtrans", detail: loadingDonasi ? "⏳ MEMUAT MIDTRANS..." : "➡️ SILAKAN KLIK KOTAK INI UNTUK MULAI DONASI" },

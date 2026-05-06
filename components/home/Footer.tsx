@@ -8,7 +8,7 @@ interface FooterProps {
 export default function Footer({ onNavigate }: FooterProps) {
   return (
     <footer style={{ background: "var(--ea)", borderTop: "1px solid rgba(255,255,255,.05)" }}>
-      <div style={{ maxWidth: 1320, margin: "0 auto", padding: "clamp(32px, 8vw, 64px) clamp(16px, 4vw, 28px) clamp(24px, 6vw, 48px)", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))", gap: 40 }}>
+      <div style={{ maxWidth: 1320, margin: "0 auto", padding: "clamp(32px, 8vw, 64px) clamp(16px, 4vw, 28px) clamp(24px, 6vw, 48px)", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 160px),1fr))", gap: "clamp(24px, 5vw, 40px)" }}>
         <div>
           <div className="fnt" style={{ fontSize: 24, fontWeight: 300, color: "var(--cr)", letterSpacing: "-.02em", marginBottom: 4 }}>Ciburial</div>
           <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "var(--go)", marginBottom: 6 }}>Eco-Digital Village</div>

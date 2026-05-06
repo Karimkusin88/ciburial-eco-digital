@@ -235,7 +235,7 @@ export default function TransparansiTab() {
         </div>
 
         {/* KPI Cards - Heroic */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(130px,1fr))", gap: 18, marginBottom: 36 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 130px),1fr))", gap: "clamp(12px, 2vw, 18px)", marginBottom: 36 }}>
           {[
             { label: "Total Masuk", val: fRp(totMasuk), icon: "📈", color: "#1C3A2B", valColor: "#2F8F4E", bg: "linear-gradient(135deg,rgba(79,191,126,.08) 0%,rgba(47,143,78,.04) 100%)", border: "rgba(47,143,78,.2)" },
             { label: "Total Keluar", val: fRp(totKeluar), icon: "📉", color: "#1C3A2B", valColor: "#B8472F", bg: "linear-gradient(135deg,rgba(248,113,113,.08) 0%,rgba(248,113,113,.02) 100%)", border: "rgba(248,113,113,.2)" },
@@ -318,7 +318,7 @@ export default function TransparansiTab() {
         </div>
 
         {/* ── 2-col: Flow Chart + Alokasi Donut ── */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))", gap: 20, marginBottom: 28 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 240px),1fr))", gap: "clamp(16px, 3vw, 20px)", marginBottom: 28 }}>
 
           {/* Area chart: performa aliran dana */}
           <div style={{ ...card("linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))") }}>
@@ -336,7 +336,7 @@ export default function TransparansiTab() {
         {/* ── Rincian Alokasi RAB per Program ── */}
         <div style={{ marginBottom: 28 }}>
           <div style={{ fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "#2F8F4E", marginBottom: 18 }}>📊 Rincian Alokasi Dana per Program RAB</div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: 14 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 260px),1fr))", gap: "clamp(14px, 3vw, 20px)" }}>
             {ALOKASI.map((item, i) => {
               const used = transaksi.filter(t => t.tipe === "keluar" && t.kategori === item.label).reduce((s, t) => s + t.jumlah, 0);
               const pct = Math.min(100, (used / item.target) * 100);
@@ -455,7 +455,7 @@ export default function TransparansiTab() {
           <div style={{ marginTop: 40, padding: 0 }}>
             <h3 className="fnt" style={{ fontSize: 24, fontWeight: 300, color: "#1C3A2B", marginBottom: 24, borderBottom: "2px solid rgba(47,143,78,.2)", paddingBottom: "clamp(8px, 2vw, 12px)" }}>Metode Donasi & Penerima</h3>
             
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 260px), 1fr))", gap: "clamp(14px, 3vw, 20px)" }}>
               {[
                 { 
                   icon: "📱", 
