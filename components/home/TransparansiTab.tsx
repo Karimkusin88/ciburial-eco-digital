@@ -210,7 +210,7 @@ export default function TransparansiTab() {
   const C = { green: "#2F8F4E", bright: "#4FBF7E", gold: "#b8943f", red: "#f87171", dark: "#1C3A2B", cream: "#FAF8F3" };
   const card = (bg: string): React.CSSProperties => ({
     background: bg, border: "1.5px solid rgba(47,143,78,.15)",
-    borderRadius: 16, padding: "24px 20px", transition: "all 0.35s cubic-bezier(.22,1,.36,1)", cursor: "pointer"
+    borderRadius: 16, padding: "clamp(16px, 4vw, 24px) clamp(16px, 4vw, 20px)", transition: "all 0.35s cubic-bezier(.22,1,.36,1)", cursor: "pointer"
   });
 
   return (
@@ -219,7 +219,7 @@ export default function TransparansiTab() {
 
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: 56 }}>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(79,191,126,.1)", border: "1.5px solid rgba(47,143,78,.2)", borderRadius: 99, padding: "6px 16px", marginBottom: 20 }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(79,191,126,.1)", border: "1.5px solid rgba(47,143,78,.2)", borderRadius: 99, padding: "clamp(4px, 1vw, 6px) clamp(12px, 3vw, 16px)", marginBottom: 20 }}>
             <div style={{ width: 8, height: 8, borderRadius: "50%", background: live ? "#2F8F4E" : "#9A8C85", animation: live ? "pulse-glow 2s infinite" : "none", boxShadow: live ? "0 0 12px rgba(47,143,78,.6)" : "none" }} />
             <span style={{ fontSize: 10, fontWeight: 700, color: live ? "#2F8F4E" : "#9A8C85", letterSpacing: ".15em", textTransform: "uppercase" }}>
               {live ? `🔴 Live · ${updated}` : "⏳ Memuat…"}
@@ -246,7 +246,7 @@ export default function TransparansiTab() {
               background: c.bg, 
               border: `1.5px solid ${c.border}`,
               borderRadius: 16, 
-              padding: "28px 22px", 
+              padding: "clamp(20px, 5vw, 28px) clamp(16px, 4vw, 22px)", 
               position: "relative", 
               overflow: "hidden",
               transition: "all 0.35s cubic-bezier(.22,1,.36,1)",
@@ -272,7 +272,7 @@ export default function TransparansiTab() {
         </div>
 
         {/* ── Progress RAB Global - Heroic ── */}
-        <div style={{ background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))", border: "1.5px solid rgba(47,143,78,.15)", borderRadius: 16, padding: "32px 28px", marginBottom: 32, transition: "all 0.35s ease" }}>
+        <div style={{ background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))", border: "1.5px solid rgba(47,143,78,.15)", borderRadius: 16, padding: "clamp(24px, 6vw, 32px) clamp(20px, 5vw, 28px)", marginBottom: 32, transition: "all 0.35s ease" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 20, flexWrap: "wrap", gap: 16 }}>
             <div>
               <div style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "#2F8F4E", marginBottom: 6 }}>🎯 Target Global RAB 2026</div>
@@ -309,7 +309,7 @@ export default function TransparansiTab() {
           
           {/* Sisa target info */}
           {totMasuk < RAB_TARGET && (
-            <div style={{ padding: "12px 16px", background: "linear-gradient(135deg,rgba(184,148,63,.1) 0%,rgba(184,148,63,.05) 100%)", border: "1.5px solid rgba(184,148,63,.2)", borderRadius: 12, fontSize: 13, color: "#2F8F4E", fontWeight: 500, display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ padding: "clamp(8px, 2vw, 12px) clamp(12px, 3vw, 16px)", background: "linear-gradient(135deg,rgba(184,148,63,.1) 0%,rgba(184,148,63,.05) 100%)", border: "1.5px solid rgba(184,148,63,.2)", borderRadius: 12, fontSize: 13, color: "#2F8F4E", fontWeight: 500, display: "flex", alignItems: "center", gap: 10 }}>
               <span>💪</span>
               <span>Masih butuh <strong>{fRp(RAB_TARGET - totMasuk)}</strong> untuk target global</span>
             </div>
@@ -379,7 +379,7 @@ export default function TransparansiTab() {
             <div style={{ display: "flex", gap: 8 }}>
               {(["semua", "masuk", "keluar"] as const).map(f => (
                 <button key={f} onClick={() => setFTipe(f)} style={{
-                  padding: "8px 16px", fontSize: 11, fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase",
+                  padding: "clamp(6px, 2vw, 8px) clamp(12px, 3vw, 16px)", fontSize: 11, fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase",
                   border: fTipe === f ? "1.5px solid #2F8F4E" : "1.5px solid rgba(47,143,78,.2)", borderRadius: 8, cursor: "pointer", transition: "all 0.3s",
                   background: fTipe === f ? "linear-gradient(135deg,#2F8F4E,#4FBF7E)" : "rgba(255,254,249,.8)",
                   color: fTipe === f ? "#FFF" : "#1C3A2B",
@@ -397,7 +397,7 @@ export default function TransparansiTab() {
                 <thead>
                   <tr style={{ borderBottom: "1.5px solid rgba(47,143,78,.12)" }}>
                     {["Tanggal", "Keterangan", "Kategori", "Tipe", "Jumlah"].map((h, i) => (
-                      <th key={h} style={{ padding: "14px 16px", fontSize: 10, fontWeight: 800, letterSpacing: ".1em", textTransform: "uppercase", color: "#2F8F4E", textAlign: i === 4 ? "right" : "left", whiteSpace: "nowrap" }}>{h}</th>
+                      <th key={h} style={{ padding: "clamp(10px, 3vw, 14px) clamp(12px, 3vw, 16px)", fontSize: 10, fontWeight: 800, letterSpacing: ".1em", textTransform: "uppercase", color: "#2F8F4E", textAlign: i === 4 ? "right" : "left", whiteSpace: "nowrap" }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -406,44 +406,44 @@ export default function TransparansiTab() {
                     <tr key={t.id} style={{ borderBottom: i < txFil.length - 1 ? "1px solid rgba(47,143,78,.1)" : "none", transition: "background .15s" }}
                       onMouseEnter={e => (e.currentTarget.style.background = "rgba(47,143,78,.05)")}
                       onMouseLeave={e => (e.currentTarget.style.background = "transparent")}>
-                      <td style={{ padding: "13px 16px", fontSize: 12, color: "#5A4A40", whiteSpace: "nowrap", fontWeight: 500 }}>
+                      <td style={{ padding: "clamp(10px, 3vw, 13px) clamp(12px, 3vw, 16px)", fontSize: 12, color: "#5A4A40", whiteSpace: "nowrap", fontWeight: 500 }}>
                         {new Date(t.tanggal).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
                       </td>
-                      <td style={{ padding: "13px 16px", fontSize: 13, color: "#1C3A2B", maxWidth: 240, fontWeight: 500 }}>{t.keterangan}</td>
-                      <td style={{ padding: "13px 16px" }}>
-                        <span style={{ padding: "4px 12px", background: "rgba(47,143,78,.08)", borderRadius: 8, fontSize: 11, fontWeight: 600, color: "#2F8F4E", whiteSpace: "nowrap" }}>
+                      <td style={{ padding: "clamp(10px, 3vw, 13px) clamp(12px, 3vw, 16px)", fontSize: 13, color: "#1C3A2B", maxWidth: 240, fontWeight: 500 }}>{t.keterangan}</td>
+                      <td style={{ padding: "clamp(10px, 3vw, 13px) clamp(12px, 3vw, 16px)" }}>
+                        <span style={{ padding: "clamp(4px, 1vw, 4px) clamp(8px, 2vw, 12px)", background: "rgba(47,143,78,.08)", borderRadius: 8, fontSize: 11, fontWeight: 600, color: "#2F8F4E", whiteSpace: "nowrap" }}>
                           {t.kategori}
                         </span>
                       </td>
-                      <td style={{ padding: "13px 16px" }}>
+                      <td style={{ padding: "clamp(10px, 3vw, 13px) clamp(12px, 3vw, 16px)" }}>
                         <span style={{
-                          padding: "4px 12px", borderRadius: 8, fontSize: 11, fontWeight: 700, whiteSpace: "nowrap",
+                          padding: "clamp(4px, 1vw, 4px) clamp(8px, 2vw, 12px)", borderRadius: 8, fontSize: 11, fontWeight: 700, whiteSpace: "nowrap",
                           background: t.tipe === "masuk" ? "rgba(79,191,126,.15)" : "rgba(184,72,48,.15)",
                           color: t.tipe === "masuk" ? "#2F8F4E" : "#B8472F",
                         }}>
                           {t.tipe === "masuk" ? "↑ Masuk" : "↓ Keluar"}
                         </span>
                       </td>
-                      <td style={{ padding: "13px 16px", textAlign: "right", fontWeight: 700, whiteSpace: "nowrap", fontSize: 13, color: t.tipe === "masuk" ? "#2F8F4E" : "#B8472F" }}>
+                      <td style={{ padding: "clamp(10px, 3vw, 13px) clamp(12px, 3vw, 16px)", textAlign: "right", fontWeight: 700, whiteSpace: "nowrap", fontSize: 13, color: t.tipe === "masuk" ? "#2F8F4E" : "#B8472F" }}>
                         {t.tipe === "masuk" ? "+" : "−"}{fRp(t.jumlah)}
                       </td>
                     </tr>
                   ))}
                   {txFil.length === 0 && (
-                    <tr><td colSpan={5} style={{ padding: 40, textAlign: "center", color: "#9A8C85", fontSize: 13 }}>Tidak ada transaksi</td></tr>
+                    <tr><td colSpan={5} style={{ padding: "clamp(24px, 6vw, 40px)", textAlign: "center", color: "#9A8C85", fontSize: 13 }}>Tidak ada transaksi</td></tr>
                   )}
                 </tbody>
               </table>
             </div>
             {/* Footer */}
-            <div style={{ padding: "14px 22px", borderTop: "1px solid rgba(47,143,78,.12)", display: "flex", justifyContent: "flex-end", gap: 24, flexWrap: "wrap" }}>
+            <div style={{ padding: "clamp(10px, 3vw, 14px) clamp(16px, 4vw, 22px)", borderTop: "1px solid rgba(47,143,78,.12)", display: "flex", justifyContent: "flex-end", gap: 24, flexWrap: "wrap" }}>
               <span style={{ fontSize: 12, fontWeight: 700, color: "#2F8F4E" }}>Masuk: {fRp(totMasuk)}</span>
               <span style={{ fontSize: 12, fontWeight: 700, color: "#B8472F" }}>Keluar: {fRp(totKeluar)}</span>
               <span style={{ fontSize: 13, fontWeight: 900, color: "#1C3A2B" }}>Saldo: {fRp(saldo)}</span>
             </div>
           </div>
 
-          <div style={{ marginTop: 16, padding: "13px 18px", background: "rgba(184,148,63,.08)", border: "1px solid rgba(184,148,63,.2)", borderRadius: 13, display: "flex", gap: 10, alignItems: "flex-start" }}>
+          <div style={{ marginTop: 16, padding: "clamp(10px, 3vw, 13px) clamp(14px, 4vw, 18px)", background: "rgba(184,148,63,.08)", border: "1px solid rgba(184,148,63,.2)", borderRadius: 13, display: "flex", gap: 10, alignItems: "flex-start" }}>
             <span style={{ fontSize: 16 }}>ℹ️</span>
             <div style={{ fontSize: 12, lineHeight: 1.7, color: "#7A6B5D" }}>
               Data diperbarui otomatis secara real-time via Supabase. Pertanyaan terkait keuangan: <strong>ciburial.smarthub@gmail.com</strong>
@@ -452,7 +452,7 @@ export default function TransparansiTab() {
 
           {/* METODE DONASI & WALLET */}
           <div style={{ marginTop: 40, padding: 0 }}>
-            <h3 className="fnt" style={{ fontSize: 24, fontWeight: 300, color: "#1C3A2B", marginBottom: 24, borderBottom: "2px solid rgba(47,143,78,.2)", paddingBottom: 12 }}>Metode Donasi & Penerima</h3>
+            <h3 className="fnt" style={{ fontSize: 24, fontWeight: 300, color: "#1C3A2B", marginBottom: 24, borderBottom: "2px solid rgba(47,143,78,.2)", paddingBottom: "clamp(8px, 2vw, 12px)" }}>Metode Donasi & Penerima</h3>
             
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20 }}>
               {[
@@ -475,12 +475,12 @@ export default function TransparansiTab() {
                   detail: "0x71723715478b344164e992b49ae1fCEb6467888B\n(EVM-Compatible)"
                 }
               ].map((m, i) => (
-                <div key={i} style={{ padding: 20, background: "rgba(47,143,78,.04)", border: "1.5px solid rgba(47,143,78,.12)", borderRadius: 14, display: "flex", flexDirection: "column", gap: 12 }}>
+                <div key={i} style={{ padding: "clamp(16px, 4vw, 20px)", background: "rgba(47,143,78,.04)", border: "1.5px solid rgba(47,143,78,.12)", borderRadius: 14, display: "flex", flexDirection: "column", gap: 12 }}>
                   <div style={{ fontSize: 32 }}>{m.icon}</div>
                   <div>
                     <h4 style={{ fontSize: 14, fontWeight: 700, color: "#1C3A2B", marginBottom: 6 }}>{m.title}</h4>
                     <p style={{ fontSize: 12, color: "#5A4A40", lineHeight: 1.6, marginBottom: 10 }}>{m.desc}</p>
-                    <div style={{ padding: 12, background: "rgba(255,255,255,.6)", borderRadius: 8, border: "1px solid rgba(47,143,78,.1)", fontSize: 12, color: "#1C3A2B", fontFamily: "monospace", fontWeight: 500, lineHeight: 1.6, whiteSpace: "pre-wrap", wordBreak: "break-all" }}>
+                    <div style={{ padding: "clamp(8px, 2vw, 12px)", background: "rgba(255,255,255,.6)", borderRadius: 8, border: "1px solid rgba(47,143,78,.1)", fontSize: 12, color: "#1C3A2B", fontFamily: "monospace", fontWeight: 500, lineHeight: 1.6, whiteSpace: "pre-wrap", wordBreak: "break-all" }}>
                       {m.detail}
                     </div>
                   </div>

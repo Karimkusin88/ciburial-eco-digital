@@ -74,7 +74,7 @@ export default function KegiatanTab({ kegiatan, dataLoad }: KegiatanTabProps) {
 
         {!dataLoad && (
           kegFil.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "clamp(40px, 8vw, 80px) 20px", color: "#5A4A40" }}>
+            <div style={{ textAlign: "center", padding: "clamp(40px, 8vw, 80px) clamp(16px, 4vw, 20px)", color: "#5A4A40" }}>
               <div style={{ fontSize: 56, marginBottom: 16 }}>📅</div>
               <div style={{ fontSize: 18, fontWeight: 700, color: "#1C3A2B", marginBottom: 6 }}>Belum ada kegiatan di kategori ini.</div>
               <div style={{ fontSize: 13, color: "#5A4A40" }}>Admin dapat menambahkan melalui panel admin.</div>

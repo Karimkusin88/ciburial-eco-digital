@@ -8,7 +8,7 @@ interface FooterProps {
 export default function Footer({ onNavigate }: FooterProps) {
   return (
     <footer style={{ background: "var(--ea)", borderTop: "1px solid rgba(255,255,255,.05)" }}>
-      <div style={{ maxWidth: 1320, margin: "0 auto", padding: "64px 28px 48px", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))", gap: 40 }}>
+      <div style={{ maxWidth: 1320, margin: "0 auto", padding: "clamp(32px, 8vw, 64px) clamp(16px, 4vw, 28px) clamp(24px, 6vw, 48px)", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))", gap: 40 }}>
         <div>
           <div className="fnt" style={{ fontSize: 24, fontWeight: 300, color: "var(--cr)", letterSpacing: "-.02em", marginBottom: 4 }}>Ciburial</div>
           <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "var(--go)", marginBottom: 6 }}>Eco-Digital Village</div>
@@ -58,7 +58,7 @@ export default function Footer({ onNavigate }: FooterProps) {
           </div>
         </div>
       </div>
-      <div style={{ borderTop: "1px solid rgba(255,255,255,.05)", padding: "24px 28px", maxWidth: 1320, margin: "0 auto", display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 20 }}>
+      <div style={{ borderTop: "1px solid rgba(255,255,255,.05)", padding: "clamp(16px, 4vw, 24px) clamp(16px, 4vw, 28px)", maxWidth: 1320, margin: "0 auto", display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 20 }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           <p style={{ fontSize: 10, fontWeight: 600, color: "rgba(250,248,243,.2)", letterSpacing: ".07em", textTransform: "uppercase" }}>
             © {new Date().getFullYear()} Ciburial Eco-Digital Village. All Rights Reserved.

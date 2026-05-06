@@ -121,7 +121,7 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
     zIndex: 1,
   }} />
 
-  <div className="hero-content" style={{ position: "relative", zIndex: 2, maxWidth: 900, width: "100%", textAlign: "center", padding: "0 24px" }}>
+  <div className="hero-content" style={{ position: "relative", zIndex: 2, maxWidth: 900, width: "100%", textAlign: "center", padding: "0 clamp(16px, 4vw, 24px)" }}>
 
     {/* Badge - lebih minimalis */}
     <div style={{ marginBottom: 32, display: "flex", alignItems: "center", justifyContent: "center", gap: 12 }}>
@@ -334,7 +334,7 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
 <div id="content-start" style={{ background: "var(--fo)", overflow: "hidden", padding: "10px 0" }}>
   <div className="mq" style={{ display: "flex", whiteSpace: "nowrap", width: "max-content" }}>
     {[...Array(2)].map((_, i) => (  // 2x
-      <span key={i} style={{ display: "flex", alignItems: "center", gap: 24, padding: "0 24px", color: "rgba(255,255,255,0.35)", fontSize: 10, fontWeight: 600, letterSpacing: ".2em", textTransform: "uppercase" }}>
+      <span key={i} style={{ display: "flex", alignItems: "center", gap: 24, padding: "0 clamp(16px, 4vw, 24px)", color: "rgba(255,255,255,0.35)", fontSize: 10, fontWeight: 600, letterSpacing: ".2em", textTransform: "uppercase" }}>
         {["Mandiri", "Berkelanjutan", "Inovatif", "Transparan", "Eco-Digital", "Gotong Royong", "Quantum Leap"].map((w, j) => (
           <span key={j}>{w}{j < 6 && <span style={{ color: "rgba(149,213,178,0.5)", margin: "0 10px" }}>✦</span>}</span>
         ))}
@@ -541,7 +541,7 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
                           if (m.id === "midtrans") bayarDonasi();
                           else setExpandedDonation(isExp ? null : m.id);
                         }} 
-                        style={{ display: "flex", alignItems: "center", gap: 14, padding: "16px 20px", background: isExp ? "rgba(255,255,255,.15)" : "rgba(255,255,255,.06)", cursor: "pointer", transition: "all .2s" }}
+                        style={{ display: "flex", alignItems: "center", gap: 14, padding: "clamp(12px, 3vw, 16px) clamp(16px, 4vw, 20px)", background: isExp ? "rgba(255,255,255,.15)" : "rgba(255,255,255,.06)", cursor: "pointer", transition: "all .2s" }}
                         onMouseEnter={e => { if(!isExp) e.currentTarget.style.background = "rgba(255,255,255,.12)"; }}
                         onMouseLeave={e => { if(!isExp) e.currentTarget.style.background = "rgba(255,255,255,.06)"; }}
                       >
@@ -557,8 +557,8 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
                       
                       {/* Inline Details */}
                       {isExp && m.rek && (
-                        <div style={{ background: "white", padding: "20px", color: "#000" }}>
-                          <div style={{ background: "#F1F5F9", padding: "16px", borderRadius: 12, border: "1px solid #E2E8F0" }}>
+                        <div style={{ background: "white", padding: "clamp(16px, 4vw, 20px)", color: "#000" }}>
+                          <div style={{ background: "#F1F5F9", padding: "clamp(12px, 3vw, 16px)", borderRadius: 12, border: "1px solid #E2E8F0" }}>
                             <div style={{ fontSize: 9, fontWeight: 800, color: "#059669", marginBottom: 4 }}>{m.id === "bank" ? "NOMOR REKENING" : "WALLET ADDRESS"}</div>
                             <div style={{ fontSize: m.id === "bank" ? 22 : 11, fontWeight: 900, fontFamily: "monospace", wordBreak: "break-all", color: "#000" }}>{m.rek}</div>
                             <div style={{ fontSize: 9, fontWeight: 800, color: "#64748B", marginTop: 10, marginBottom: 2 }}>{m.id === "bank" ? "ATAS NAMA" : "NETWORK"}</div>
@@ -701,7 +701,7 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
                 </div>
               </div>
             ) : (
-              <div style={{ padding: "20px", textAlign: "center", color: "#66463F", background: "#FFF5F0", borderRadius: 12, border: "1px solid #FFDDD0" }}>
+              <div style={{ padding: "clamp(16px, 4vw, 20px)", textAlign: "center", color: "#66463F", background: "#FFF5F0", borderRadius: 12, border: "1px solid #FFDDD0" }}>
                 <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 8 }}>⚠️ Invalid Method</div>
                 <div style={{ fontSize: 11, color: "#8B6B63" }}>Method: <code style={{ background: "#FFE8DC", padding: "2px 6px", borderRadius: 4 }}>{selectedDonationMethod}</code></div>
                 <div style={{ fontSize: 10, marginTop: 8, color: "#A0837B" }}>Expected: "bank" or "crypto"</div>
@@ -718,7 +718,7 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
       )}
       {/* STORY MODAL */}
       {showStory && (
-        <div style={{ position: "fixed", inset: 0, zIndex: 9999, overflowY: "auto", background: "rgba(28,58,43,.7)", backdropFilter: "blur(12px)", padding: "clamp(40px,10vw,80px) 20px", animation: "storyFadeIn .3s ease", display: "block" }}>
+        <div style={{ position: "fixed", inset: 0, zIndex: 9999, overflowY: "auto", background: "rgba(28,58,43,.7)", backdropFilter: "blur(12px)", padding: "clamp(40px, 10vw, 80px) clamp(16px, 4vw, 20px)", animation: "storyFadeIn .3s ease", display: "block" }}>
           <div style={{ margin: "0 auto", flexShrink: 0, background: "linear-gradient(135deg,rgba(255,254,249,1) 0%,rgba(232,245,238,1) 100%)", borderRadius: 24, maxWidth: 640, width: "100%", border: "1px solid rgba(47,143,78,.2)", boxShadow: "0 24px 64px rgba(28,58,43,.3)", position: "relative", animation: "storySlideUp .4s cubic-bezier(.22,1,.36,1)" }}>
 
             {/* Header / Cover */}
@@ -732,7 +732,7 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
             </div>
 
             {/* Body */}
-            <div style={{ padding: "50px 40px 40px" }}>
+            <div style={{ padding: "clamp(32px, 8vw, 50px) clamp(24px, 6vw, 40px) clamp(24px, 6vw, 40px)" }}>
               <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".15em", textTransform: "uppercase", color: "#2F8F4E", marginBottom: 8 }}>The Origin Story</div>
               <h3 className="fnt" style={{ fontSize: 32, fontWeight: 300, color: "#1C3A2B", lineHeight: 1.2, letterSpacing: "-.02em", marginBottom: 24 }}>Dari Pelosok Garut Menuju Masa Depan</h3>
 

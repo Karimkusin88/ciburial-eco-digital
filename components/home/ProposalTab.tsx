@@ -52,7 +52,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
       title: "Surat Pengantar", icon: "📜",
       content: (
         <div style={{ fontSize: 14, lineHeight: 1.9, color: "var(--ts)" }}>
-          <div style={{ padding: "16px 20px", background: "var(--cr)", borderRadius: 12, border: "1px solid var(--bo)", marginBottom: 20 }}>
+          <div style={{ padding: "clamp(12px, 3vw, 16px) clamp(16px, 4vw, 20px)", background: "var(--cr)", borderRadius: 12, border: "1px solid var(--bo)", marginBottom: 20 }}>
             <div style={{ fontSize: 11, fontWeight: 700, color: "var(--tm)", letterSpacing: ".08em", marginBottom: 4 }}>Nomor: 01/CBM/III/2026 &nbsp;|&nbsp; Hal: Permohonan Dukungan & Kolaborasi</div>
             <div style={{ fontSize: 11, color: "var(--tm)" }}>Lampiran: 1 (Satu) Berkas Proposal</div>
           </div>
@@ -66,7 +66,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
               { role: "Ketua DKM Ciburial", name: "Bpk. Pupu Apipudin", label: "Mengetahui / Menyetujui" },
               { role: "Ketua RW Kp. Ciburial", name: "Bpk. Enang", label: "Mengetahui / Menyetujui" },
             ].map((s, i) => (
-              <div key={i} style={{ padding: "16px", background: "var(--cr)", borderRadius: 12, border: "1px solid var(--bo)", textAlign: "center" }}>
+              <div key={i} style={{ padding: "clamp(12px, 3vw, 16px)", background: "var(--cr)", borderRadius: 12, border: "1px solid var(--bo)", textAlign: "center" }}>
                 <div style={{ fontSize: 10, fontWeight: 700, color: "var(--tm)", letterSpacing: ".07em", textTransform: "uppercase", marginBottom: 40 }}>{s.label}</div>
                 <div style={{ borderTop: "1px solid var(--bo)", paddingTop: 12 }}>
                   <div style={{ fontSize: 13, fontWeight: 700, color: "var(--tp)" }}>{s.name}</div>
@@ -98,7 +98,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
             { n: "03", t: "Peningkatan SDM Generasi Muda", d: "Menyediakan fasilitas belajar interaktif untuk mencetak generasi penerus yang kompeten dan melek teknologi." },
             { n: "04", t: "Kemandirian Ekonomi & Ketahanan Pangan", d: "Sistem perdagangan sirkular dari warga untuk warga, memadukan pertanian dan peternakan modern dengan pemesanan digital." },
           ].map((item, i) => (
-            <div key={i} style={{ display: "flex", gap: 14, padding: "16px 18px", background: "var(--cr)", borderRadius: 12, border: "1px solid var(--bo)" }}>
+            <div key={i} style={{ display: "flex", gap: 14, padding: "clamp(12px, 3vw, 16px) clamp(14px, 4vw, 18px)", background: "var(--cr)", borderRadius: 12, border: "1px solid var(--bo)" }}>
               <span className="fnt" style={{ fontSize: 12, fontWeight: 700, color: "var(--go)", minWidth: 22 }}>{item.n}</span>
               <div>
                 <div style={{ fontSize: 14, fontWeight: 700, color: "var(--tp)", marginBottom: 4 }}>{item.t}</div>
@@ -119,7 +119,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
             { icon: "🌱", t: "Ekonomi Sirkular & Smart Farming", d: "Marketplace lokal untuk bambu, sayuran organik, peternakan, dan produk daur ulang." },
             { icon: "📊", t: "Tata Kelola Transparan", d: "Dana kemakmuran terbuka real-time, dari fiat konvensional hingga aset kripto (Web3)." },
           ].map((v, i) => (
-            <div key={i} style={{ padding: "18px", background: "var(--cr)", borderRadius: 13, border: "1px solid var(--bo)" }}>
+            <div key={i} style={{ padding: "clamp(14px, 4vw, 18px)", background: "var(--cr)", borderRadius: 13, border: "1px solid var(--bo)" }}>
               <div style={{ fontSize: 26, marginBottom: 10 }}>{v.icon}</div>
               <div style={{ fontSize: 13, fontWeight: 700, color: "var(--tp)", marginBottom: 6 }}>{v.t}</div>
               <div style={{ fontSize: 12, lineHeight: 1.7, color: "var(--ts)" }}>{v.d}</div>
@@ -139,7 +139,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
             { icon: "🛒", t: "Ciburial Local Commerce (Web & App)", d: "Marketplace desa untuk memasarkan karya bambu, hasil panen, dan produk peternakan dengan sistem delivery." },
             { icon: "💰", t: "Digitalisasi Kas Donasi (Fiat & Crypto)", d: "Sentralisasi dana melalui QRIS, Rekening Bank, dan Crypto Wallet (EVM Compatible) untuk menjangkau filantropis global." },
           ].map((p, i) => (
-            <div key={i} style={{ display: "flex", gap: 14, padding: "15px 18px", background: "var(--cr)", borderRadius: 12, border: "1px solid var(--bo)", alignItems: "flex-start" }}>
+            <div key={i} style={{ display: "flex", gap: 14, padding: "clamp(12px, 3vw, 15px) clamp(14px, 4vw, 18px)", background: "var(--cr)", borderRadius: 12, border: "1px solid var(--bo)", alignItems: "flex-start" }}>
               <span style={{ fontSize: 22, minWidth: 28 }}>{p.icon}</span>
               <div>
                 <div style={{ fontSize: 14, fontWeight: 700, color: "var(--tp)", marginBottom: 3 }}>{p.t}</div>
@@ -188,7 +188,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
               <div style={{ fontSize: 12, fontWeight: 700, color: "var(--go)", letterSpacing: ".07em", textTransform: "uppercase", marginBottom: 10 }}>{s.group}</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                 {s.items.map((item, j) => (
-                  <div key={j} style={{ padding: "10px 16px", background: "var(--cr)", borderRadius: 10, border: "1px solid var(--bo)", fontSize: 13, color: "var(--ts)" }}>{item}</div>
+                  <div key={j} style={{ padding: "clamp(8px, 2vw, 10px) clamp(12px, 3vw, 16px)", background: "var(--cr)", borderRadius: 10, border: "1px solid var(--bo)", fontSize: 13, color: "var(--ts)" }}>{item}</div>
                 ))}
               </div>
             </div>
@@ -200,14 +200,14 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
       title: "Bab VI — RAB Global (Target Rp 250.000.000)", icon: "💰",
       content: (
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          <p style={{ fontSize: 13, lineHeight: 1.7, color: "var(--ts)", marginBottom: 8, padding: "12px 16px", background: "rgba(184,148,63,.07)", borderRadius: 10, border: "1px solid rgba(184,148,63,.18)" }}>
+          <p style={{ fontSize: 13, lineHeight: 1.7, color: "var(--ts)", marginBottom: 8, padding: "clamp(8px, 2vw, 12px) clamp(12px, 3vw, 16px)", background: "rgba(184,148,63,.07)", borderRadius: 10, border: "1px solid rgba(184,148,63,.18)" }}>
             💡 <strong>Catatan:</strong> Seluruh pengerjaan fisik/instalasi bernilai Rp 0 karena dilakukan secara <strong>swadaya & gotong royong</strong>. Dana donasi digunakan untuk material saja.
           </p>
           {ALOKASI.map((item, i) => {
             const used = transaksi.filter(t => t.tipe === "keluar" && t.kategori === item.label).reduce((s, t) => s + t.jumlah, 0);
             const pct = Math.min(100, (used / item.target) * 100);
             return (
-              <div key={i} style={{ padding: "16px 20px", background: "var(--cr)", borderRadius: 13, border: "1px solid var(--bo)" }}>
+              <div key={i} style={{ padding: "clamp(12px, 3vw, 16px) clamp(16px, 4vw, 20px)", background: "var(--cr)", borderRadius: 13, border: "1px solid var(--bo)" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6, flexWrap: "wrap", gap: 6 }}>
                   <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
                     <span style={{ fontSize: 20 }}>{item.icon}</span>
@@ -223,7 +223,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
               </div>
             );
           })}
-          <div style={{ padding: "16px 22px", background: "var(--fo)", borderRadius: 14, display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 8, marginTop: 4 }}>
+          <div style={{ padding: "clamp(12px, 3vw, 16px) clamp(16px, 4vw, 22px)", background: "var(--fo)", borderRadius: 14, display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 8, marginTop: 4 }}>
             <span style={{ fontSize: 13, fontWeight: 700, color: "var(--cr)" }}>TOTAL ESTIMASI KEBUTUHAN</span>
             <div style={{ textAlign: "right" }}>
               <span className="fnt" style={{ fontSize: 22, fontWeight: 600, color: "var(--gl)" }}>Rp 250.000.000</span>
@@ -243,7 +243,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
               { id: "midtrans", icon: "📱", t: "QRIS & E-Wallet", sub: "Secara Otomatis via Midtrans", detail: loadingDonasi ? "⏳ MEMUAT MIDTRANS..." : "➡️ SILAKAN KLIK KOTAK INI UNTUK MULAI DONASI" },
               { id: "crypto", icon: "🌐", t: "Crypto / Web3", sub: "EVM Compatible Wallet", detail: "Wallet Address:\n0x71723715478b344164e992b49ae1fCEb6467888B" },
             ].map((m, i) => (
-              <div key={i} onClick={m.id === "midtrans" ? bayarDonasi : undefined} style={{ padding: "18px", background: "var(--fo)", borderRadius: 14, cursor: m.id === "midtrans" ? (loadingDonasi ? "wait" : "pointer") : "default", opacity: m.id === "midtrans" && loadingDonasi ? 0.6 : 1, transition: "opacity .2s, background .2s" }}
+              <div key={i} onClick={m.id === "midtrans" ? bayarDonasi : undefined} style={{ padding: "clamp(14px, 4vw, 18px)", background: "var(--fo)", borderRadius: 14, cursor: m.id === "midtrans" ? (loadingDonasi ? "wait" : "pointer") : "default", opacity: m.id === "midtrans" && loadingDonasi ? 0.6 : 1, transition: "opacity .2s, background .2s" }}
                 onMouseEnter={e => m.id === "midtrans" ? (e.currentTarget.style.background = "var(--cd)") : undefined}
                 onMouseLeave={e => m.id === "midtrans" ? (e.currentTarget.style.background = "var(--fo)") : undefined}
               >
@@ -262,7 +262,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
           <p style={{ fontSize: 14, lineHeight: 1.9, color: "var(--ts)", marginBottom: 24 }}>
             Setiap dukungan Anda adalah lentera nyata bagi jalan desa kami, buku dan ilmu bagi generasi muda kami, serta roda penggerak bagi kemakmuran warga Ciburial. Kami percaya, kemajuan teknologi akan membawa keberkahan jika disandingkan dengan kelestarian alam dan niat tulus bergotong royong.
           </p>
-          <div style={{ padding: "26px 32px", background: "var(--ea)", borderRadius: 18 }}>
+          <div style={{ padding: "clamp(20px, 5vw, 26px) clamp(20px, 5vw, 32px)", background: "var(--ea)", borderRadius: 18 }}>
             <p dir="rtl" className="fnt" style={{ fontSize: "clamp(16px,2.5vw,22px)", lineHeight: 1.9, color: "var(--cr)", marginBottom: 14 }}>
               رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ
             </p>
@@ -303,7 +303,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
         {/* Info strip */}
         <div style={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "center", marginBottom: 44 }}>
           {[{ icon: "🌐", l: "ciburial-eco-digital.vercel.app" }, { icon: "📧", l: "ciburial.smarthub@gmail.com" }, { icon: "📍", l: "Garut, Jawa Barat 44165" }].map((item, i) => (
-            <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "9px 18px", background: "var(--cw)", border: "1px solid var(--bo)", borderRadius: 99 }}>
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "clamp(6px, 2vw, 9px) clamp(12px, 3vw, 18px)", background: "var(--cw)", border: "1px solid var(--bo)", borderRadius: 99 }}>
               <span>{item.icon}</span><span style={{ fontSize: 12, fontWeight: 600, color: "var(--ts)" }}>{item.l}</span>
             </div>
           ))}
@@ -314,7 +314,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
           <div key={i} style={{ marginBottom: 8 }}>
             <button
               onClick={() => setPropOpen(propOpen === i ? null : i)}
-              style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 26px", background: propOpen === i ? "var(--fo)" : "var(--cw)", border: "1px solid var(--bo)", borderRadius: propOpen === i ? "18px 18px 0 0" : 18, cursor: "pointer", transition: "background .25s,border-radius .25s", textAlign: "left" }}
+              style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "clamp(16px, 4vw, 20px) clamp(16px, 4vw, 26px)", background: propOpen === i ? "var(--fo)" : "var(--cw)", border: "1px solid var(--bo)", borderRadius: propOpen === i ? "18px 18px 0 0" : 18, cursor: "pointer", transition: "background .25s,border-radius .25s", textAlign: "left" }}
             >
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                 <span style={{ fontSize: 20 }}>{section.icon}</span>
@@ -322,7 +322,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
               </div>
               <span style={{ fontSize: 20, color: propOpen === i ? "var(--gl)" : "var(--tm)", transition: "transform .3s", transform: propOpen === i ? "rotate(45deg)" : "rotate(0)", display: "block" }}>+</span>
             </button>
-            <div className={`ac ${propOpen === i ? "op" : ""}`} style={{ border: "1px solid var(--bo)", borderTop: "none", borderRadius: "0 0 18px 18px", padding: propOpen === i ? "26px" : "0 26px", background: "var(--cw)" }}>
+            <div className={`ac ${propOpen === i ? "op" : ""}`} style={{ border: "1px solid var(--bo)", borderTop: "none", borderRadius: "0 0 18px 18px", padding: propOpen === i ? "clamp(16px, 4vw, 26px)" : "0 clamp(16px, 4vw, 26px)", background: "var(--cw)" }}>
               {section.content}
             </div>
           </div>

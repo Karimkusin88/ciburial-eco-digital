@@ -410,7 +410,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
     return (
       <div className="pi" style={{ paddingTop:"clamp(64px,10vw,120px)", paddingBottom:"clamp(40px, 8vw, 80px)", minHeight:"100vh", background:"linear-gradient(135deg,rgba(250,248,243,.5),rgba(255,254,249,.8))" }}>
         <div style={{ maxWidth:720, margin:"0 auto", padding:"0 clamp(16px,3vw,28px)" }}>
-          <button onClick={()=>setShowCheckout(false)} style={{ display:"flex", alignItems:"center", gap:6, background:"none", border:"none", cursor:"pointer", fontSize:14, fontWeight:700, color:"#2F8F4E", padding:"6px 0", marginBottom:20 }}>
+          <button onClick={()=>setShowCheckout(false)} style={{ display:"flex", alignItems:"center", gap:6, background:"none", border:"none", cursor:"pointer", fontSize:14, fontWeight:700, color:"#2F8F4E", padding:"clamp(4px, 1vw, 6px) 0", marginBottom:20 }}>
             ← Kembali ke Keranjang
           </button>
           <h2 style={{ margin:"0 0 24px", color:"#1C3A2B", fontSize:"clamp(22px,4vw,30px)", fontWeight:800 }}>🧾 Detail Pesanan</h2>
@@ -419,7 +419,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
             {/* Form kiri */}
             <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
               {/* Identitas */}
-              <div style={{ background:"white", borderRadius:16, padding:20, border:"1.5px solid rgba(47,143,78,.12)", boxShadow:"0 4px 16px rgba(47,143,78,.06)" }}>
+              <div style={{ background:"white", borderRadius:16, padding:"clamp(16px, 4vw, 20px)", border:"1.5px solid rgba(47,143,78,.12)", boxShadow:"0 4px 16px rgba(47,143,78,.06)" }}>
                 <h4 style={{ margin:"0 0 14px", color:"#1C3A2B", fontSize:14, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.06em" }}>👤 Identitas Pembeli</h4>
                 <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
                   {[
@@ -429,19 +429,19 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                     <div key={f.key}>
                       <label style={{ fontSize:11, fontWeight:700, color:"#6b7c6d", letterSpacing:"0.06em", textTransform:"uppercase" as const, display:"block", marginBottom:4 }}>{f.label}</label>
                       <input value={(orderForm as any)[f.key]} onChange={e=>setOrderForm({...orderForm,[f.key]:e.target.value})} placeholder={f.ph}
-                        style={{ width:"100%", padding:"9px 12px", borderRadius:10, border:"1.5px solid rgba(47,143,78,.2)", fontSize:13, outline:"none", boxSizing:"border-box" as const }}/>
+                        style={{ width:"100%", padding:"clamp(6px, 2vw, 9px) clamp(8px, 2vw, 12px)", borderRadius:10, border:"1.5px solid rgba(47,143,78,.2)", fontSize:13, outline:"none", boxSizing:"border-box" as const }}/>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Pengiriman */}
-              <div style={{ background:"white", borderRadius:16, padding:20, border:"1.5px solid rgba(47,143,78,.12)", boxShadow:"0 4px 16px rgba(47,143,78,.06)" }}>
+              <div style={{ background:"white", borderRadius:16, padding:"clamp(16px, 4vw, 20px)", border:"1.5px solid rgba(47,143,78,.12)", boxShadow:"0 4px 16px rgba(47,143,78,.06)" }}>
                 <h4 style={{ margin:"0 0 14px", color:"#1C3A2B", fontSize:14, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.06em" }}>🚚 Metode Pengiriman</h4>
                 <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
                   {METODE_KIRIM.map(m=>(
                     <div key={m.v} onClick={()=>setOrderForm({...orderForm,metode_kirim:m.v as any})}
-                      style={{ padding:"10px 14px", borderRadius:10, border:`1.5px solid ${orderForm.metode_kirim===m.v?"#2F8F4E":"rgba(47,143,78,.15)"}`, cursor:"pointer", background:orderForm.metode_kirim===m.v?"rgba(47,143,78,.06)":"white", display:"flex", justifyContent:"space-between", alignItems:"center", transition:"all 0.15s" }}>
+                      style={{ padding:"clamp(8px, 2vw, 10px) clamp(10px, 3vw, 14px)", borderRadius:10, border:`1.5px solid ${orderForm.metode_kirim===m.v?"#2F8F4E":"rgba(47,143,78,.15)"}`, cursor:"pointer", background:orderForm.metode_kirim===m.v?"rgba(47,143,78,.06)":"white", display:"flex", justifyContent:"space-between", alignItems:"center", transition:"all 0.15s" }}>
                       <span style={{ fontSize:13, color:"#1C3A2B", fontWeight:500 }}>{m.l}</span>
                       <span style={{ fontSize:13, fontWeight:700, color: m.harga===0?"#2F8F4E":"#1C3A2B" }}>{m.harga===0?"Gratis":`+${fRp(m.harga)}`}</span>
                     </div>
@@ -451,42 +451,42 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                   <div style={{ marginTop:12 }}>
                     <label style={{ fontSize:11, fontWeight:700, color:"#6b7c6d", letterSpacing:"0.06em", textTransform:"uppercase" as const, display:"block", marginBottom:4 }}>Alamat Lengkap *</label>
                     <textarea value={orderForm.alamat} onChange={e=>setOrderForm({...orderForm,alamat:e.target.value})} placeholder="Nama jalan, RT/RW, desa..." rows={2}
-                      style={{ width:"100%", padding:"9px 12px", borderRadius:10, border:"1.5px solid rgba(47,143,78,.2)", fontSize:13, outline:"none", resize:"none" as const, boxSizing:"border-box" as const, fontFamily:"inherit" }}/>
+                      style={{ width:"100%", padding:"clamp(6px, 2vw, 9px) clamp(8px, 2vw, 12px)", borderRadius:10, border:"1.5px solid rgba(47,143,78,.2)", fontSize:13, outline:"none", resize:"none" as const, boxSizing:"border-box" as const, fontFamily:"inherit" }}/>
                   </div>
                 )}
               </div>
 
               {/* Catatan */}
-              <div style={{ background:"white", borderRadius:16, padding:20, border:"1.5px solid rgba(47,143,78,.12)" }}>
+              <div style={{ background:"white", borderRadius:16, padding:"clamp(16px, 4vw, 20px)", border:"1.5px solid rgba(47,143,78,.12)" }}>
                 <label style={{ fontSize:11, fontWeight:700, color:"#6b7c6d", letterSpacing:"0.06em", textTransform:"uppercase" as const, display:"block", marginBottom:8 }}>📝 Catatan (opsional)</label>
                 <textarea value={orderForm.catatan} onChange={e=>setOrderForm({...orderForm,catatan:e.target.value})} placeholder="Catatan khusus untuk penjual..." rows={2}
-                  style={{ width:"100%", padding:"9px 12px", borderRadius:10, border:"1.5px solid rgba(47,143,78,.15)", fontSize:13, outline:"none", resize:"none" as const, boxSizing:"border-box" as const, fontFamily:"inherit" }}/>
+                  style={{ width:"100%", padding:"clamp(6px, 2vw, 9px) clamp(8px, 2vw, 12px)", borderRadius:10, border:"1.5px solid rgba(47,143,78,.15)", fontSize:13, outline:"none", resize:"none" as const, boxSizing:"border-box" as const, fontFamily:"inherit" }}/>
               </div>
             </div>
 
             {/* Ringkasan + payment kanan */}
             <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
               {/* Ringkasan order */}
-              <div style={{ background:"white", borderRadius:16, padding:20, border:"1.5px solid rgba(47,143,78,.12)", boxShadow:"0 4px 16px rgba(47,143,78,.06)" }}>
+              <div style={{ background:"white", borderRadius:16, padding:"clamp(16px, 4vw, 20px)", border:"1.5px solid rgba(47,143,78,.12)", boxShadow:"0 4px 16px rgba(47,143,78,.06)" }}>
                 <h4 style={{ margin:"0 0 14px", color:"#1C3A2B", fontSize:14, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.06em" }}>🛒 Ringkasan ({cart.length} produk)</h4>
                 {cart.map(item=>(
-                  <div key={item.id} style={{ display:"flex", justifyContent:"space-between", padding:"6px 0", borderBottom:"1px solid rgba(47,143,78,.08)", fontSize:13 }}>
+                  <div key={item.id} style={{ display:"flex", justifyContent:"space-between", padding:"clamp(4px, 1vw, 6px) 0", borderBottom:"1px solid rgba(47,143,78,.08)", fontSize:13 }}>
                     <span style={{ color:"#1C3A2B" }}>{item.nama} ×{item.qty}</span>
                     <span style={{ fontWeight:600, color:"#2F8F4E" }}>{fRp(item.harga*item.qty)}</span>
                   </div>
                 ))}
-                <div style={{ display:"flex", justifyContent:"space-between", padding:"8px 0", fontSize:13, color:"#6b7c6d" }}>
+                <div style={{ display:"flex", justifyContent:"space-between", padding:"clamp(6px, 2vw, 8px) 0", fontSize:13, color:"#6b7c6d" }}>
                   <span>Ongkos Kirim</span>
                   <span style={{ color:ongkosKirim===0?"#2F8F4E":"#1C3A2B" }}>{ongkosKirim===0?"Gratis":fRp(ongkosKirim)}</span>
                 </div>
-                <div style={{ display:"flex", justifyContent:"space-between", padding:"10px 0 0", borderTop:"2px solid rgba(47,143,78,.15)", fontWeight:800, color:"#1C3A2B", fontSize:16 }}>
+                <div style={{ display:"flex", justifyContent:"space-between", padding:"clamp(8px, 2vw, 10px) 0 0", borderTop:"2px solid rgba(47,143,78,.15)", fontWeight:800, color:"#1C3A2B", fontSize:16 }}>
                   <span>Total</span>
                   <span style={{ color:"#2F8F4E" }}>{fRp(totalBayar)}</span>
                 </div>
               </div>
 
               {/* Metode bayar */}
-              <div style={{ background:"white", borderRadius:16, padding:20, border:"1.5px solid rgba(47,143,78,.12)", boxShadow:"0 4px 16px rgba(47,143,78,.06)" }}>
+              <div style={{ background:"white", borderRadius:16, padding:"clamp(16px, 4vw, 20px)", border:"1.5px solid rgba(47,143,78,.12)", boxShadow:"0 4px 16px rgba(47,143,78,.06)" }}>
                 <h4 style={{ margin:"0 0 14px", color:"#1C3A2B", fontSize:14, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.06em" }}>💳 Metode Pembayaran</h4>
                 {["E-Wallet & QRIS","Transfer Bank"].map(grup=>(
                   <div key={grup} style={{ marginBottom:12 }}>
@@ -494,7 +494,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                     <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:6 }}>
                       {METODE_BAYAR.filter(m=>m.grup===grup).map(m=>(
                         <div key={m.v} onClick={()=>setOrderForm({...orderForm,metode_bayar:m.v as any})}
-                          style={{ padding:"8px 10px", borderRadius:10, border:`1.5px solid ${orderForm.metode_bayar===m.v?"#2F8F4E":"rgba(47,143,78,.15)"}`, cursor:"pointer", background:orderForm.metode_bayar===m.v?"rgba(47,143,78,.08)":"white", display:"flex", alignItems:"center", gap:6, transition:"all 0.15s" }}>
+                          style={{ padding:"clamp(6px, 2vw, 8px) clamp(8px, 2vw, 10px)", borderRadius:10, border:`1.5px solid ${orderForm.metode_bayar===m.v?"#2F8F4E":"rgba(47,143,78,.15)"}`, cursor:"pointer", background:orderForm.metode_bayar===m.v?"rgba(47,143,78,.08)":"white", display:"flex", alignItems:"center", gap:6, transition:"all 0.15s" }}>
                           <span style={{ fontSize:16 }}>{m.icon}</span>
                           <span style={{ fontSize:11, fontWeight:600, color:"#1C3A2B" }}>{m.l}</span>
                         </div>
@@ -506,7 +506,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
 
               {/* Tombol bayar */}
               <button onClick={prosesCheckout} disabled={orderLoading}
-                style={{ padding:"14px", borderRadius:14, background:orderLoading?"rgba(47,143,78,.3)":"linear-gradient(135deg,#2F8F4E,#4FBF7E)", color:"white", border:"none", fontSize:15, fontWeight:800, cursor:orderLoading?"not-allowed":"pointer", boxShadow:"0 8px 20px rgba(47,143,78,.25)", letterSpacing:"0.03em", transition:"all 0.2s" }}>
+                style={{ padding:"clamp(10px, 3vw, 14px)", borderRadius:14, background:orderLoading?"rgba(47,143,78,.3)":"linear-gradient(135deg,#2F8F4E,#4FBF7E)", color:"white", border:"none", fontSize:15, fontWeight:800, cursor:orderLoading?"not-allowed":"pointer", boxShadow:"0 8px 20px rgba(47,143,78,.25)", letterSpacing:"0.03em", transition:"all 0.2s" }}>
                 {orderLoading ? "Memproses..." : `🔒 Bayar ${fRp(totalBayar)}`}
               </button>
               <div style={{ fontSize:11, color:"#9A8C85", textAlign:"center", lineHeight:1.5 }}>
@@ -537,7 +537,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
     return (
       <div className="pi" style={{ paddingTop: "clamp(64px,10vw,120px)", paddingBottom: "clamp(40px, 8vw, 80px)", minHeight: "100vh", background: "linear-gradient(135deg,rgba(250,248,243,.5) 0%,rgba(255,254,249,.8) 100%)" }}>
         <div style={{ maxWidth: 600, margin: "0 auto", padding: "0 clamp(16px,3vw,28px)" }}>
-          <button onClick={() => setShowTracking(false)} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", fontSize: 14, fontWeight: 700, color: "#2F8F4E", padding: "6px 0", marginBottom: 24 }}>
+          <button onClick={() => setShowTracking(false)} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", fontSize: 14, fontWeight: 700, color: "#2F8F4E", padding: "clamp(4px, 1vw, 6px) 0", marginBottom: 24 }}>
             ← Kembali ke Marketplace
           </button>
 
@@ -553,12 +553,12 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                   setTrackingError("");
                 }}
                 placeholder="Contoh: MKT-1776656649289"
-                style={{ flex: 1, padding: "12px 14px", borderRadius: 10, border: "1.5px solid rgba(47,143,78,.2)", fontSize: 13, outline: "none", boxSizing: "border-box" }}
+                style={{ flex: 1, padding: "clamp(8px, 2vw, 12px) clamp(10px, 3vw, 14px)", borderRadius: 10, border: "1.5px solid rgba(47,143,78,.2)", fontSize: 13, outline: "none", boxSizing: "border-box" }}
               />
               <button
                 type="submit"
                 disabled={trackingLoading}
-                style={{ padding: "12px 20px", borderRadius: 10, background: trackingLoading ? "rgba(47,143,78,.3)" : "linear-gradient(135deg,#2F8F4E,#4FBF7E)", color: "white", border: "none", fontSize: 13, fontWeight: 700, cursor: trackingLoading ? "not-allowed" : "pointer" }}
+                style={{ padding: "clamp(8px, 2vw, 12px) clamp(16px, 4vw, 20px)", borderRadius: 10, background: trackingLoading ? "rgba(47,143,78,.3)" : "linear-gradient(135deg,#2F8F4E,#4FBF7E)", color: "white", border: "none", fontSize: 13, fontWeight: 700, cursor: trackingLoading ? "not-allowed" : "pointer" }}
               >
                 {trackingLoading ? "⏳" : "🔍"}
               </button>
@@ -568,7 +568,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
 
           {trackedOrder && statusInfo && (
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              <div style={{ background: "white", borderRadius: 14, padding: 20, border: `1.5px solid ${statusInfo.warna}40` }}>
+              <div style={{ background: "white", borderRadius: 14, padding: "clamp(16px, 4vw, 20px)", border: `1.5px solid ${statusInfo.warna}40` }}>
                 <div style={{ fontSize: 40, marginBottom: 12 }}>{statusInfo.label.split(" ")[0]}</div>
                 <h3 style={{ margin: "0 0 8px", color: "#1C3A2B", fontSize: 18, fontWeight: 700 }}>{statusInfo.label.substring(2)}</h3>
                 <div style={{ fontSize: 12, color: "#6b7c6d", fontFamily: "monospace", fontWeight: 600, marginBottom: 16 }}>{trackedOrder.order_id}</div>
@@ -579,7 +579,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                 <div style={{ fontSize: 11, color: "#6b7c6d" }}>{statusInfo.progress}% Selesai</div>
 
                 {trackedOrder.no_resi && trackedOrder.status !== "pending" && (
-                  <div style={{ marginTop: 14, padding: 12, background: "rgba(47,143,78,.06)", borderRadius: 8, fontSize: 12 }}>
+                  <div style={{ marginTop: 14, padding: "clamp(8px, 2vw, 12px)", background: "rgba(47,143,78,.06)", borderRadius: 8, fontSize: 12 }}>
                     <div style={{ color: "#6b7c6d", fontWeight: 600, marginBottom: 4 }}>No. Resi:</div>
                     <div style={{ fontFamily: "monospace", fontWeight: 700, color: "#2F8F4E" }}>{trackedOrder.no_resi}</div>
                   </div>
@@ -587,10 +587,10 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
               </div>
 
               {items.length > 0 && (
-                <div style={{ background: "white", borderRadius: 12, padding: 16, border: "1px solid rgba(47,143,78,.12)" }}>
+                <div style={{ background: "white", borderRadius: 12, padding: "clamp(12px, 3vw, 16px)", border: "1px solid rgba(47,143,78,.12)" }}>
                   <div style={{ fontSize: 12, fontWeight: 700, color: "#1C3A2B", marginBottom: 10 }}>📦 Produk ({items.length})</div>
                   {items.map((item: any, i: number) => (
-                    <div key={i} style={{ padding: "8px 0", borderBottom: i < items.length - 1 ? "1px solid rgba(47,143,78,.08)" : "none", fontSize: 12 }}>
+                    <div key={i} style={{ padding: "clamp(6px, 2vw, 8px) 0", borderBottom: i < items.length - 1 ? "1px solid rgba(47,143,78,.08)" : "none", fontSize: 12 }}>
                       <div style={{ color: "#1C3A2B", fontWeight: 600 }}>{item.nama} ×{item.qty}</div>
                       <div style={{ fontSize: 11, color: "#9A8C85" }}>{fRp(item.harga * item.qty)}</div>
                     </div>
@@ -619,7 +619,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
       <div className="pi" style={{ paddingTop: "clamp(64px,10vw,120px)", paddingBottom: "clamp(40px, 8vw, 80px)", minHeight: "100vh", background: "linear-gradient(135deg,rgba(250,248,243,.5) 0%,rgba(255,254,249,.8) 100%)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 clamp(16px,3vw,28px)" }}>
           {/* Close Button */}
-          <button onClick={() => { setSelectedProduct(null); setDetailQty(1); setActivePhotoIndex(0); }} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", fontSize: 14, fontWeight: 700, color: "#2F8F4E", padding: "6px 0", marginBottom: 24, transition: "all 0.3s" }}
+          <button onClick={() => { setSelectedProduct(null); setDetailQty(1); setActivePhotoIndex(0); }} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", fontSize: 14, fontWeight: 700, color: "#2F8F4E", padding: "clamp(4px, 1vw, 6px) 0", marginBottom: 24, transition: "all 0.3s" }}
             onMouseEnter={(e) => e.currentTarget.style.transform = "translateX(-4px)"}
             onMouseLeave={(e) => e.currentTarget.style.transform = "translateX(0)"}
           >
@@ -644,7 +644,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                           <img src={photos[activePhotoIndex]} alt={selectedProduct!.nama} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                           {/* Photo Counter */}
                           {photos.length > 1 && (
-                            <div style={{ position: "absolute", bottom: 14, right: 14, background: "rgba(0,0,0,.5)", color: "white", padding: "6px 12px", borderRadius: 20, fontSize: 11, fontWeight: 700, letterSpacing: "0.05em" }}>
+                            <div style={{ position: "absolute", bottom: 14, right: 14, background: "rgba(0,0,0,.5)", color: "white", padding: "clamp(4px, 1vw, 6px) clamp(8px, 2vw, 12px)", borderRadius: 20, fontSize: 11, fontWeight: 700, letterSpacing: "0.05em" }}>
                               {activePhotoIndex + 1}/{photos.length}
                             </div>
                           )}
@@ -674,7 +674,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                         <span style={{ fontSize: 120 }}>{selectedProduct!.icon || "🎋"}</span>
                       )}
                       {selectedProduct!.tag && (
-                        <div style={{ position: "absolute", top: 20, left: 20, padding: "10px 16px", background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", color: "#FFF", borderRadius: 8, fontSize: 13, fontWeight: 800, boxShadow: "0 4px 12px rgba(47,143,78,.3)" }}>
+                        <div style={{ position: "absolute", top: 20, left: 20, padding: "clamp(8px, 2vw, 10px) clamp(12px, 3vw, 16px)", background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", color: "#FFF", borderRadius: 8, fontSize: 13, fontWeight: 800, boxShadow: "0 4px 12px rgba(47,143,78,.3)" }}>
                           {selectedProduct!.tag}
                         </div>
                       )}
@@ -724,7 +724,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
               </div>
 
               {/* Harga Besar */}
-              <div style={{ padding: "16px", background: "linear-gradient(135deg,rgba(79,191,126,.1),rgba(47,143,78,.05))", borderRadius: 12, border: "1.5px solid rgba(47,143,78,.15)" }}>
+              <div style={{ padding: "clamp(12px, 3vw, 16px)", background: "linear-gradient(135deg,rgba(79,191,126,.1),rgba(47,143,78,.05))", borderRadius: 12, border: "1.5px solid rgba(47,143,78,.15)" }}>
                 <div style={{ fontSize: 12, color: "#6b7c6d", fontWeight: 600, marginBottom: 8 }}>HARGA</div>
                 <div className="fnt" style={{ fontSize: "clamp(28px,5vw,40px)", fontWeight: 900, background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
                   {fRp(selectedProduct.harga)}
@@ -740,9 +740,9 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
               </div>
 
               {/* Quantity Selector */}
-              <div style={{ display: "flex", alignItems: "center", gap: 16, padding: "16px", background: "rgba(47,143,78,.06)", borderRadius: 12, border: "1.5px solid rgba(47,143,78,.15)" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 16, padding: "clamp(12px, 3vw, 16px)", background: "rgba(47,143,78,.06)", borderRadius: 12, border: "1.5px solid rgba(47,143,78,.15)" }}>
                 <span style={{ fontSize: 12, fontWeight: 700, color: "#6b7c6d", textTransform: "uppercase", letterSpacing: "0.05em" }}>Jumlah</span>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, background: "white", borderRadius: 8, padding: "4px 8px", border: "1.5px solid rgba(47,143,78,.2)" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, background: "white", borderRadius: 8, padding: "clamp(2px, 1vw, 4px) clamp(6px, 2vw, 8px)", border: "1.5px solid rgba(47,143,78,.2)" }}>
                   <button
                     onClick={() => setDetailQty(Math.max(1, detailQty - 1))}
                     style={{ background: "none", border: "none", fontSize: 18, cursor: "pointer", color: "#2F8F4E", fontWeight: 800, width: 24, textAlign: "center", transition: "all 0.2s", padding: 0 }}
@@ -771,7 +771,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                   setSelectedProduct(null);
                   setDetailQty(1);
                 }}
-                  style={{ padding: "14px 24px", background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", border: "none", borderRadius: 12, color: "#FFF", fontSize: 15, fontWeight: 800, cursor: "pointer", boxShadow: "0 8px 20px rgba(47,143,78,.25)", transition: "all 0.3s", letterSpacing: "0.02em" }}
+                  style={{ padding: "clamp(10px, 3vw, 14px) clamp(16px, 4vw, 24px)", background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", border: "none", borderRadius: 12, color: "#FFF", fontSize: 15, fontWeight: 800, cursor: "pointer", boxShadow: "0 8px 20px rgba(47,143,78,.25)", transition: "all 0.3s", letterSpacing: "0.02em" }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.transform = "translateY(-2px)";
                     e.currentTarget.style.boxShadow = "0 12px 28px rgba(47,143,78,.3)";
@@ -795,7 +795,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                   setDetailQty(1);
                   setShowCheckout(true);
                 }}
-                  style={{ padding: "14px 24px", background: "linear-gradient(135deg,#B8943F,#D4AC5A)", border: "none", borderRadius: 12, color: "#FFF", fontSize: 15, fontWeight: 800, cursor: "pointer", boxShadow: "0 8px 20px rgba(184,148,63,.25)", transition: "all 0.3s", letterSpacing: "0.02em" }}
+                  style={{ padding: "clamp(10px, 3vw, 14px) clamp(16px, 4vw, 24px)", background: "linear-gradient(135deg,#B8943F,#D4AC5A)", border: "none", borderRadius: 12, color: "#FFF", fontSize: 15, fontWeight: 800, cursor: "pointer", boxShadow: "0 8px 20px rgba(184,148,63,.25)", transition: "all 0.3s", letterSpacing: "0.02em" }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.transform = "translateY(-2px)";
                     e.currentTarget.style.boxShadow = "0 12px 28px rgba(184,148,63,.3)";
