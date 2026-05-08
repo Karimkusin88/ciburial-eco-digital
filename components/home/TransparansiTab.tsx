@@ -238,8 +238,8 @@ export default function TransparansiTab() {
         {/* KPI Cards - Heroic */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 130px),1fr))", gap: "clamp(12px, 2vw, 18px)", marginBottom: 36 }}>
           {[
-            { label: "Total Masuk", val: fRp(totMasuk), icon: "📈", color: "#1C3A2B", valColor: "#2F8F4E", bg: "linear-gradient(135deg,rgba(79,191,126,.08) 0%,rgba(47,143,78,.04) 100%)", border: "rgba(47,143,78,.2)" },
-            { label: "Total Keluar", val: fRp(totKeluar), icon: "📉", color: "#1C3A2B", valColor: "#B8472F", bg: "linear-gradient(135deg,rgba(248,113,113,.08) 0%,rgba(248,113,113,.02) 100%)", border: "rgba(248,113,113,.2)" },
+            { label: "Total Masuk", val: fRp(totMasuk), icon: <TrendingUp size={20} strokeWidth={1.5} />, color: "#1C3A2B", valColor: "#2F8F4E", bg: "linear-gradient(135deg,rgba(79,191,126,.08) 0%,rgba(47,143,78,.04) 100%)", border: "rgba(47,143,78,.2)" },
+            { label: "Total Keluar", val: fRp(totKeluar), icon: <TrendingDown size={20} strokeWidth={1.5} />, color: "#1C3A2B", valColor: "#B8472F", bg: "linear-gradient(135deg,rgba(248,113,113,.08) 0%,rgba(248,113,113,.02) 100%)", border: "rgba(248,113,113,.2)" },
             { label: "Saldo Dana", val: fRp(saldo), icon: <Coins size={20} strokeWidth={1.5} color="currentColor" />, color: "#1C3A2B", valColor: "#2F8F4E", bg: "linear-gradient(135deg,rgba(255,254,249,.8) 0%,rgba(232,245,238,.4) 100%)", border: "rgba(47,143,78,.15)" },
             { label: "Target RAB", val: fRp(RAB_TARGET), icon: <Target size={20} strokeWidth={1.5} color="currentColor" />, color: "#1C3A2B", valColor: "#9B7D4C", bg: "linear-gradient(135deg,rgba(184,148,63,.1) 0%,rgba(184,148,63,.04) 100%)", border: "rgba(184,148,63,.2)" },
           ].map((c, i) => (

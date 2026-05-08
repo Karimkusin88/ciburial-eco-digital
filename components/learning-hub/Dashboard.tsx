@@ -1,17 +1,23 @@
 "use client";
 import { useState, useEffect } from "react";
+import { 
+  Smartphone, Book, Laptop, PlaySquare, FileText, Bot, 
+  Image as ImageIcon, Search, Bookmark, CheckCircle, 
+  LogOut, ArrowLeft, Inbox, Monitor, ChevronRight, 
+  Sparkles, Leaf, Globe
+} from "lucide-react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 interface User { id: string; nama: string; kk_id: string; saldo_poin: number; tipe: "warga" | "external" }
 
 const FEATURES = [
-  { key: "ebook", icon: "📱", title: "E-Book Digital", desc: "Baca dan unduh buku digital interaktif", color: "#3B82F6" },
-  { key: "perpus", icon: "📚", title: "Perpustakaan Desa", desc: "Katalog buku cetak fisik balai warga", color: "#D97706" },
-  { key: "lab", icon: "💻", title: "Lab Komputer", desc: "Cek ketersediaan PC di Balai Warga", color: "#14B8A6" },
-  { key: "video", icon: "▶️", title: "Video Pembelajaran", desc: "Tutorial UMKM, koding dasar, & pertanian", color: "#8B5CF6" },
-  { key: "dokumen", icon: "📄", title: "Dokumen & PDF", desc: "Panduan teknis, regulasi, dan proposal desa", color: "#F43F5E" },
-  { key: "ai", icon: "🤖", title: "AI Asisten Ciburial", desc: "Tanya apapun soal administrasi desa", color: "#2F8F4E" },
-  { key: "galeri", icon: "🖼️", title: "Galeri Kegiatan", desc: "Dokumentasi foto pelatihan & kegiatan Hub", color: "#D946EF" },
+  { key: "ebook", icon: <Smartphone size={24} />, title: "E-Book Digital", desc: "Baca dan unduh buku digital interaktif", color: "#3B82F6" },
+  { key: "perpus", icon: <Book size={24} />, title: "Perpustakaan Desa", desc: "Katalog buku cetak fisik balai warga", color: "#D97706" },
+  { key: "lab", icon: <Laptop size={24} />, title: "Lab Komputer", desc: "Cek ketersediaan PC di Balai Warga", color: "#14B8A6" },
+  { key: "video", icon: <PlaySquare size={24} />, title: "Video Pembelajaran", desc: "Tutorial UMKM, koding dasar, & pertanian", color: "#8B5CF6" },
+  { key: "dokumen", icon: <FileText size={24} />, title: "Dokumen & PDF", desc: "Panduan teknis, regulasi, dan proposal desa", color: "#F43F5E" },
+  { key: "ai", icon: <Bot size={24} />, title: "AI Asisten Ciburial", desc: "Tanya apapun soal administrasi desa", color: "#2F8F4E" },
+  { key: "galeri", icon: <ImageIcon size={24} />, title: "Galeri Kegiatan", desc: "Dokumentasi foto pelatihan & kegiatan Hub", color: "#D946EF" },
 ];
 
 export function Dashboard({ user, onLogout, showToast }: { user: User; onLogout: () => void; showToast: (m: string, ok?: boolean) => void }) {
@@ -55,18 +61,19 @@ export function Dashboard({ user, onLogout, showToast }: { user: User; onLogout:
     } catch {}
   }
 
-  const backBtn = <button className="lh-btn" onClick={() => setActiveTab(null)} style={{ padding: "8px 18px", borderRadius: 10, background: "rgba(47,143,78,.06)", color: "var(--ts)", fontSize: 12, fontWeight: 600, marginBottom: 20, border: "1px solid rgba(47,143,78,.1)" }}>← Kembali ke Menu</button>;
-  const empty = (t: string) => <div style={{ textAlign: "center", padding: "56px 20px", color: "var(--tm)", fontSize: 14, opacity: .6 }}><div style={{ fontSize: 40, marginBottom: 12, opacity: .3 }}>📭</div>{t}</div>;
-  const secTitle = (t: string) => <h3 className="fnt" style={{ fontSize: 24, fontWeight: 600, color: "var(--fo)", marginBottom: 16 }}>{t}</h3>;
+  const backBtn = <button className="lh-btn" onClick={() => setActiveTab(null)} style={{ padding: "8px 18px", borderRadius: 10, background: "rgba(47,143,78,.06)", color: "var(--ts)", fontSize: 12, fontWeight: 600, marginBottom: 20, border: "1px solid rgba(47,143,78,.1)", display: "flex", alignItems: "center", gap: 6 }}><ArrowLeft size={14}/> Kembali ke Menu</button>;
+  const empty = (t: string) => <div style={{ textAlign: "center", padding: "56px 20px", color: "var(--tm)", fontSize: 14, opacity: .6, display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}><Inbox size={40} style={{ opacity: .3 }}/>{t}</div>;
+  const secTitle = (t: string, icon?: React.ReactNode) => <h3 className="fnt" style={{ fontSize: 24, fontWeight: 600, color: "var(--fo)", marginBottom: 16, display: "flex", alignItems: "center", gap: 10 }}>{icon} {t}</h3>;
   const searchBar = (
-    <div style={{ marginBottom: 24 }}>
+    <div style={{ marginBottom: 24, position: "relative" }}>
       <input 
         type="text" 
-        placeholder="🔍 Cari judul, penulis, atau kategori..." 
+        placeholder="Cari judul, penulis, atau kategori..." 
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        style={{ width: "100%", padding: "14px 20px", borderRadius: 14, border: "1.5px solid rgba(47,143,78,.2)", background: "var(--cw)", fontSize: 15, outline: "none", color: "var(--tp)", boxShadow: "0 4px 12px rgba(0,0,0,.03)", WebkitAppearance: "none" }}
+        style={{ width: "100%", padding: "14px 20px 14px 44px", borderRadius: 14, border: "1.5px solid rgba(47,143,78,.2)", background: "var(--cw)", fontSize: 15, outline: "none", color: "var(--tp)", boxShadow: "0 4px 12px rgba(0,0,0,.03)", WebkitAppearance: "none" }}
       />
+      <Search size={18} style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", color: "var(--accent)" }} />
     </div>
   );
 
@@ -113,12 +120,16 @@ export function Dashboard({ user, onLogout, showToast }: { user: User; onLogout:
                 cursor: "pointer"
               }}
               onMouseEnter={(e) => {
-                (e.currentTarget.querySelector('.ebook-overlay') as HTMLElement).style.opacity = '1';
-                (e.currentTarget.querySelector('.ebook-info') as HTMLElement).style.transform = 'translateY(0)';
+                const overlay = e.currentTarget.querySelector('.ebook-overlay') as HTMLElement;
+                const info = e.currentTarget.querySelector('.ebook-info') as HTMLElement;
+                if (overlay) overlay.style.opacity = '1';
+                if (info) info.style.transform = 'translateY(0)';
               }}
               onMouseLeave={(e) => {
-                (e.currentTarget.querySelector('.ebook-overlay') as HTMLElement).style.opacity = '0';
-                (e.currentTarget.querySelector('.ebook-info') as HTMLElement).style.transform = 'translateY(20px)';
+                const overlay = e.currentTarget.querySelector('.ebook-overlay') as HTMLElement;
+                const info = e.currentTarget.querySelector('.ebook-info') as HTMLElement;
+                if (overlay) overlay.style.opacity = '0';
+                if (info) info.style.transform = 'translateY(20px)';
               }}
             >
               {/* PDF Preview via Iframe atau Foto Sampul */}
@@ -167,14 +178,14 @@ export function Dashboard({ user, onLogout, showToast }: { user: User; onLogout:
         <div>
           {backBtn}
           <div style={{marginBottom: 16}}>
-            {secTitle("📱 Rak E-Book Digital")}
+            {secTitle("Rak E-Book Digital", <Smartphone size={24} />)}
             {searchBar}
             {filtered.length === 0 ? empty("E-Book tidak ditemukan") : searchQuery ? renderGrid(filtered) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
                 {Array.from(new Set(filtered.map(b => b.kategori || "Umum"))).sort().map(kat => (
                   <div key={kat as string}>
                     <div style={{ fontSize: 16, fontWeight: 800, color: "var(--tp)", marginBottom: 12, display: "flex", alignItems: "center", gap: 8, paddingBottom: 8, borderBottom: "1.5px dashed rgba(47,143,78,.15)" }}>
-                      <span style={{ color: "var(--accent)" }}>🔖</span> Rak: {kat}
+                      <Bookmark size={16} color="var(--accent)" /> Rak: {kat}
                     </div>
                     {renderGrid(filtered.filter(b => (b.kategori || "Umum") === kat))}
                   </div>
@@ -195,15 +206,16 @@ export function Dashboard({ user, onLogout, showToast }: { user: User; onLogout:
           {list.map(b => (
             <div key={b.id} className="lh-card" style={{ display: "flex", flexDirection: "column", padding: 12, borderRadius: 16 }}>
               <div style={{ width: "100%", aspectRatio: "3/4", borderRadius: 10, overflow: "hidden", marginBottom: 12, background: "var(--cr)", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid rgba(0,0,0,0.05)" }}>
-                {b.foto_sampul ? <img src={b.foto_sampul} alt="" style={{width: "100%", height: "100%", objectFit: "cover"}} loading="lazy" /> : <div style={{ fontSize: 40 }}>{b.icon || "📕"}</div>}
+                {b.foto_sampul ? <img src={b.foto_sampul} alt="" style={{width: "100%", height: "100%", objectFit: "cover"}} loading="lazy" /> : <div style={{ color: "var(--tm)", opacity: 0.3 }}><Book size={40} /></div>}
               </div>
               <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
                 <div style={{ fontSize: 10, fontWeight: 800, color: "var(--accent)", marginBottom: 4, textTransform: "uppercase", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{b.kategori}</div>
                 <div style={{ fontSize: 14, fontWeight: 800, color: "var(--tp)", marginBottom: 4, lineHeight: 1.2, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{b.judul}</div>
                 <div style={{ fontSize: 11, color: "var(--tm)", marginBottom: 12, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{b.penulis || "—"}</div>
                 
-                <div style={{ marginTop: "auto", display: "flex", alignItems: "center", justifyContent: "center", background: b.status === "tersedia" ? "var(--gb)" : "var(--rb)", padding: "8px 10px", borderRadius: 8 }}>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: b.status === "tersedia" ? "var(--gt)" : "var(--rt)" }}>{b.status === "tersedia" ? "✅ Tersedia" : "📤 Dipinjam"}</span>
+                <div style={{ marginTop: "auto", display: "flex", alignItems: "center", justifyContent: "center", background: b.status === "tersedia" ? "var(--gb)" : "var(--rb)", padding: "8px 10px", borderRadius: 8, gap: 6 }}>
+                  {b.status === "tersedia" ? <CheckCircle size={12} color="var(--gt)" /> : <LogOut size={12} color="var(--rt)" />}
+                  <span style={{ fontSize: 11, fontWeight: 700, color: b.status === "tersedia" ? "var(--gt)" : "var(--rt)" }}>{b.status === "tersedia" ? "Tersedia" : "Dipinjam"}</span>
                 </div>
               </div>
             </div>
@@ -215,14 +227,14 @@ export function Dashboard({ user, onLogout, showToast }: { user: User; onLogout:
         <div>
           {backBtn}
           <div style={{marginBottom: 16}}>
-            {secTitle("📚 Perpustakaan Desa")}
+            {secTitle("Perpustakaan Desa", <Book size={24} />)}
             {searchBar}
             {filtered.length === 0 ? empty("Buku fisik tidak ditemukan") : searchQuery ? renderGrid(filtered) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
                 {Array.from(new Set(filtered.map(b => b.kategori || "Umum"))).sort().map(kat => (
                   <div key={kat as string}>
                     <div style={{ fontSize: 16, fontWeight: 800, color: "var(--tp)", marginBottom: 12, display: "flex", alignItems: "center", gap: 8, paddingBottom: 8, borderBottom: "1.5px dashed rgba(47,143,78,.15)" }}>
-                      <span style={{ color: "var(--accent)" }}>🔖</span> Rak: {kat}
+                      <Bookmark size={16} color="var(--accent)" /> Rak: {kat}
                     </div>
                     {renderGrid(filtered.filter(b => (b.kategori || "Umum") === kat))}
                   </div>
@@ -234,29 +246,31 @@ export function Dashboard({ user, onLogout, showToast }: { user: User; onLogout:
       );
     }
 
-    if (activeTab === "lab") return <div>{backBtn}{secTitle("💻 Lab Komputer")}{labPCs.length === 0 ? empty("Data lab belum tersedia") : <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))", gap: 12 }}>{labPCs.map(pc => (
-      <div key={pc.id} className="lh-card" style={{ padding: 20, textAlign: "center" }}>
-        <div style={{ fontSize: 36, marginBottom: 8 }}>🖥️</div>
+    if (activeTab === "lab") return <div>{backBtn}{secTitle("Lab Komputer", <Laptop size={24} />)}{labPCs.length === 0 ? empty("Data lab belum tersedia") : <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))", gap: 12 }}>{labPCs.map(pc => (
+      <div key={pc.id} className="lh-card" style={{ padding: 20, textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
+        <div style={{ color: "var(--fo)" }}><Monitor size={36} /></div>
         <div style={{ fontSize: 14, fontWeight: 700, color: "var(--tp)" }}>PC-{pc.nomor_pc}</div>
-        <span className="lh-badge" style={{ marginTop: 8, background: pc.status === "tersedia" ? "var(--gb)" : "rgba(255,180,50,.1)", color: pc.status === "tersedia" ? "var(--gt)" : "#B8943F" }}>{pc.status || "tersedia"}</span>
+        <span className="lh-badge" style={{ marginTop: 8, background: pc.status === "tersedia" ? "var(--gb)" : "rgba(255,180,50,.1)", color: pc.status === "tersedia" ? "var(--gt)" : "#B8943F", display: "flex", alignItems: "center", gap: 4 }}>
+          {pc.status === "tersedia" ? <CheckCircle size={10}/> : <Info size={10}/>} {pc.status || "tersedia"}
+        </span>
       </div>))}</div>}</div>;
 
     if (activeTab === "video") return (
       <div>
         {backBtn}
-        {secTitle("▶️ Video Pembelajaran")}
+        {secTitle("Video Pembelajaran", <PlaySquare size={24} />)}
         {videos.length === 0 ? empty("Video belum tersedia") : (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(240px,1fr))", gap: 20 }}>
             {videos.map(v => {
               const ytId = getYtId(v.url);
               const thumbUrl = ytId ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` : null;
               return (
-                <a key={v.id} href={v.url} target="_blank" rel="noopener noreferrer" className="lh-card" style={{ display: "flex", flexDirection: "column", textDecoration: "none", overflow: "hidden", borderRadius: 16, padding: 0 }}>
+                <a key={v.id} href={v.url} target="_blank" rel="noopener noreferrer" className="lh-card" style={{ display: "flex", flexDirection: "column", textDecoration: "none", overflow: "hidden", padding: 0 }}>
                   <div style={{ width: "100%", aspectRatio: "16/9", background: "linear-gradient(135deg, rgba(139,92,246,0.1), rgba(139,92,246,0.02))", position: "relative" }}>
                     {thumbUrl ? (
                       <img src={thumbUrl} alt="" style={{width: "100%", height: "100%", objectFit: "cover"}} loading="lazy" />
                     ) : (
-                      <div style={{width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 40}}>▶️</div>
+                      <div style={{width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: "#8B5CF6"}}><PlaySquare size={40} /></div>
                     )}
                     {v.durasi && (
                       <div style={{ position: "absolute", bottom: 8, right: 8, background: "rgba(0,0,0,0.8)", color: "white", fontSize: 11, fontWeight: 600, padding: "3px 6px", borderRadius: 4 }}>
@@ -278,17 +292,17 @@ export function Dashboard({ user, onLogout, showToast }: { user: User; onLogout:
       </div>
     );
 
-    if (activeTab === "dokumen") return <div>{backBtn}{secTitle("📄 Dokumen & PDF")}{docs.length === 0 ? empty("Dokumen belum tersedia") : <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>{docs.map(d => (
+    if (activeTab === "dokumen") return <div>{backBtn}{secTitle("Dokumen & PDF", <FileText size={24} />)}{docs.length === 0 ? empty("Dokumen belum tersedia") : <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>{docs.map(d => (
       <a key={d.id} href={d.url} target="_blank" rel="noopener noreferrer" className="lh-card" style={{ padding: 18, display: "flex", alignItems: "center", gap: 16, textDecoration: "none" }}>
-        <div style={{ width: 46, height: 46, borderRadius: 12, background: "rgba(244,63,94,.08)", border: "1.5px solid rgba(244,63,94,.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>📄</div>
+        <div style={{ width: 46, height: 46, borderRadius: 12, background: "rgba(244,63,94,.08)", border: "1.5px solid rgba(244,63,94,.15)", display: "flex", alignItems: "center", justifyContent: "center", color: "#F43F5E", flexShrink: 0 }}><FileText size={24} /></div>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 15, fontWeight: 700, color: "var(--tp)" }}>{d.judul}</div>
           <div style={{ fontSize: 12, color: "var(--tm)", marginTop: 2 }}>{d.tipe || "PDF"} · {d.ukuran || "—"}</div>
         </div>
-        <span style={{ fontSize: 12, color: "#F43F5E", fontWeight: 700 }}>Unduh →</span>
+        <span style={{ fontSize: 12, color: "#F43F5E", fontWeight: 700, display: "flex", alignItems: "center", gap: 4 }}>Unduh <ChevronRight size={14}/></span>
       </a>))}</div>}</div>;
 
-    if (activeTab === "galeri") return <div>{backBtn}{secTitle("🖼️ Galeri Kegiatan")}{galeri.length === 0 ? empty("Galeri belum tersedia") : <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 12 }}>{galeri.map(g => (
+    if (activeTab === "galeri") return <div>{backBtn}{secTitle("Galeri Kegiatan", <ImageIcon size={24} />)}{galeri.length === 0 ? empty("Galeri belum tersedia") : <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 12 }}>{galeri.map(g => (
       <div key={g.id} style={{ borderRadius: 18, overflow: "hidden", aspectRatio: "4/3", position: "relative", border: "1.5px solid rgba(47,143,78,.1)" }}>
         <img src={g.url} alt={g.judul || ""} style={{ width: "100%", height: "100%", objectFit: "cover" }} loading="lazy" />
         {g.judul && <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "10px 14px", background: "linear-gradient(transparent,rgba(0,0,0,.6))", fontSize: 12, color: "#fff", fontWeight: 600 }}>{g.judul}</div>}

@@ -69,8 +69,8 @@ export default function InfoHarianPage() {
                       <img src={t.foto} alt={t.nama} style={{ width: 44, height: 44, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
                     )
                   ) : (
-                    <div style={{ width: 44, height: 44, borderRadius: "50%", background: "var(--cd)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>
-                      {t.tipe === "tokoh" ? "" : "<Newspaper size={16} />️"}
+                    <div style={{ width: 44, height: 44, borderRadius: "50%", background: "var(--cd)", display: "flex", alignItems: "center", justifyContent: "center", color: "#2F8F4E" }}>
+                      {t.tipe === "tokoh" ? <User size={20} /> : <Newspaper size={20} />}
                     </div>
                   )}
                   <div>

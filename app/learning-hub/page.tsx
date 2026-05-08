@@ -51,7 +51,7 @@ export default function LearningHubPage() {
       )}
 
       {user ? (
-        <Dashboard user={user} onLogout={() => { setUser(null); showToast("Berhasil logout 👋"); }} showToast={showToast} />
+        <Dashboard user={user} onLogout={() => { setUser(null); showToast("Berhasil logout"); }} showToast={showToast} />
       ) : (
         <AuthScreen onLogin={(u) => setUser(u)} showToast={showToast} />
       )}

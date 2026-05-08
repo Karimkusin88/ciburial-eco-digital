@@ -1,5 +1,10 @@
 "use client";
 import { useState, useRef } from "react";
+import { 
+  Smartphone, Mail, Lock, User, CheckCircle, XCircle, 
+  ArrowLeft, LogIn, UserPlus, Sparkles, Home, Globe, 
+  Scan, Info, AlertCircle, Leaf, PartyPopper
+} from "lucide-react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 interface AuthUser { id: string; nama: string; kk_id: string; saldo_poin: number; nfc_id?: string; tipe: "warga" | "external" }
@@ -16,7 +21,7 @@ export function AuthScreen({ onLogin, showToast }: AuthProps) {
 
   // ── NFC untuk Warga Kampung ──
   async function startNFC() {
-    if (!("NDEFReader" in window)) return showToast("NFC butuh Chrome Android ya 📱", false);
+    if (!("NDEFReader" in window)) return showToast("NFC butuh Chrome Android ya", false);
     try {
       const ndef = new (window as any).NDEFReader();
       nfcRef.current = ndef;
@@ -25,11 +30,11 @@ export function AuthScreen({ onLogin, showToast }: AuthProps) {
       ndef.addEventListener("reading", async ({ serialNumber }: any) => {
         const uid = serialNumber.replace(/:/g, "").toUpperCase();
         stopNFC();
-        if (!isSupabaseReady()) return showToast("Punten, sistem belum siap 🙏", false);
+        if (!isSupabaseReady()) return showToast("Punten, sistem belum siap", false);
         const { data } = await supabase.from("anggota_kk").select("id,nama,kk_id,saldo_poin,nfc_id").eq("nfc_id", uid).single();
         if (data) {
           onLogin({ ...data, tipe: "warga" } as AuthUser);
-          showToast(`Wilujeng sumping, ${data.nama}! 🌿`);
+          showToast(`Wilujeng sumping, ${data.nama}!`);
         } else showToast("Kartu tidak terdaftar di sistem desa!", false);
       });
     } catch { showToast("Gagal aktifkan NFC", false); setScanning(false); }
@@ -40,20 +45,20 @@ export function AuthScreen({ onLogin, showToast }: AuthProps) {
   // ── Email + Password untuk User Luar ──
   async function handleEmailLogin() {
     if (!email || !password) return showToast("Isi email dan password dulu ya", false);
-    if (!isSupabaseReady()) return showToast("Punten, sistem belum siap 🙏", false);
+    if (!isSupabaseReady()) return showToast("Punten, sistem belum siap", false);
     setLoading(true);
     const { data, error } = await supabase.from("user_learning").select("*").eq("email", email.toLowerCase().trim()).single();
     if (error || !data) { setLoading(false); return showToast("Email tidak ditemukan. Silakan daftar dulu!", false); }
     if (data.password !== password) { setLoading(false); return showToast("Password salah!", false); }
     onLogin({ id: data.id, nama: data.nama, kk_id: "", saldo_poin: data.saldo_poin || 0, tipe: "external" });
-    showToast(`Welcome, ${data.nama}! 🎉`);
+    showToast(`Welcome, ${data.nama}!`);
     setLoading(false);
   }
 
   async function handleEmailRegister() {
     if (!nama || !email || !password) return showToast("Semua field harus diisi ya", false);
     if (password.length < 6) return showToast("Password minimal 6 karakter", false);
-    if (!isSupabaseReady()) return showToast("Punten, sistem belum siap 🙏", false);
+    if (!isSupabaseReady()) return showToast("Punten, sistem belum siap", false);
     setLoading(true);
     const { data: exist } = await supabase.from("user_learning").select("id").eq("email", email.toLowerCase().trim()).single();
     if (exist) { setLoading(false); return showToast("Email sudah terdaftar! Silakan login.", false); }
@@ -61,7 +66,7 @@ export function AuthScreen({ onLogin, showToast }: AuthProps) {
     if (error) { setLoading(false); return showToast("Gagal daftar: " + error.message, false); }
     if (data) {
       onLogin({ id: data.id, nama: data.nama, kk_id: "", saldo_poin: 0, tipe: "external" });
-      showToast(`Selamat bergabung, ${data.nama}! 🎉`);
+      showToast(`Selamat bergabung, ${data.nama}!`);
     }
     setLoading(false);
   }
@@ -71,7 +76,7 @@ export function AuthScreen({ onLogin, showToast }: AuthProps) {
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "80vh", padding: "clamp(20px, 4vw, 32px) 20px", position: "relative", zIndex: 1 }}>
       <div className="lh-card" style={{ padding: "clamp(24px, 5vw, 40px) clamp(20px, 4vw, 36px)", maxWidth: 420, width: "100%", animation: "fadeInUp .5s ease both" }}>
         <div style={{ textAlign: "center", marginBottom: 28 }}>
-          <div style={{ fontSize: 36, marginBottom: 12 }}>📧</div>
+          <div style={{ color: "var(--fo)", marginBottom: 12, display: "flex", justifyContent: "center" }}><Mail size={44} /></div>
           <h2 className="fnt" style={{ fontSize: 24, fontWeight: 600, color: "var(--fo)", marginBottom: 6 }}>Login dengan Email</h2>
           <p style={{ fontSize: 13, color: "var(--tm)", lineHeight: 1.5 }}>Untuk pengguna dari luar Kampung Ciburial</p>
         </div>
@@ -85,8 +90,8 @@ export function AuthScreen({ onLogin, showToast }: AuthProps) {
             <label style={{ fontSize: 11, fontWeight: 700, color: "var(--ts)", letterSpacing: ".06em", textTransform: "uppercase", marginBottom: 6, display: "block" }}>PASSWORD</label>
             <input className="lh-input" type="password" placeholder="Masukkan password" value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === "Enter" && handleEmailLogin()} />
           </div>
-          <button className="lh-btn lh-btn-primary" onClick={handleEmailLogin} disabled={loading} style={{ marginTop: 8, width: "100%" }}>
-            {loading ? "Memproses..." : "Masuk →"}
+          <button className="lh-btn lh-btn-primary" onClick={handleEmailLogin} disabled={loading} style={{ marginTop: 8, width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+            {loading ? "Memproses..." : <><LogIn size={18}/> Masuk</>}
           </button>
         </div>
 
@@ -95,7 +100,7 @@ export function AuthScreen({ onLogin, showToast }: AuthProps) {
           Belum punya akun?{" "}
           <button onClick={() => { setMode("email-register"); setEmail(""); setPassword(""); setNama(""); }} style={{ color: "var(--accent)", fontWeight: 700, background: "none", border: "none", cursor: "pointer", fontFamily: "inherit", fontSize: 13 }}>Daftar sekarang</button>
         </p>
-        <button onClick={() => setMode("landing")} className="lh-btn" style={{ display: "block", margin: "16px auto 0", padding: "8px 20px", background: "rgba(47,143,78,.06)", color: "var(--ts)", fontSize: 12, fontWeight: 600 }}>← Kembali</button>
+        <button onClick={() => setMode("landing")} className="lh-btn" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, margin: "16px auto 0", padding: "8px 20px", background: "rgba(47,143,78,.06)", color: "var(--ts)", fontSize: 12, fontWeight: 600 }}><ArrowLeft size={14}/> Kembali</button>
       </div>
     </div>
   );
@@ -105,7 +110,7 @@ export function AuthScreen({ onLogin, showToast }: AuthProps) {
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "80vh", padding: "clamp(20px, 4vw, 32px) 20px", position: "relative", zIndex: 1 }}>
       <div className="lh-card" style={{ padding: "clamp(24px, 5vw, 40px) clamp(20px, 4vw, 36px)", maxWidth: 420, width: "100%", animation: "fadeInUp .5s ease both" }}>
         <div style={{ textAlign: "center", marginBottom: 28 }}>
-          <div style={{ fontSize: 36, marginBottom: 12 }}>✨</div>
+          <div style={{ color: "var(--fo)", marginBottom: 12, display: "flex", justifyContent: "center" }}><Sparkles size={44} /></div>
           <h2 className="fnt" style={{ fontSize: 24, fontWeight: 600, color: "var(--fo)", marginBottom: 6 }}>Buat Akun Baru</h2>
           <p style={{ fontSize: 13, color: "var(--tm)", lineHeight: 1.5 }}>Daftar gratis untuk akses Learning Hub</p>
         </div>
@@ -123,8 +128,8 @@ export function AuthScreen({ onLogin, showToast }: AuthProps) {
             <label style={{ fontSize: 11, fontWeight: 700, color: "var(--ts)", letterSpacing: ".06em", textTransform: "uppercase", marginBottom: 6, display: "block" }}>PASSWORD</label>
             <input className="lh-input" type="password" placeholder="Minimal 6 karakter" value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === "Enter" && handleEmailRegister()} />
           </div>
-          <button className="lh-btn lh-btn-primary" onClick={handleEmailRegister} disabled={loading} style={{ marginTop: 8, width: "100%" }}>
-            {loading ? "Mendaftar..." : "Daftar & Masuk ✨"}
+          <button className="lh-btn lh-btn-primary" onClick={handleEmailRegister} disabled={loading} style={{ marginTop: 8, width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+            {loading ? "Mendaftar..." : <><UserPlus size={18}/> Daftar & Masuk</>}
           </button>
         </div>
 
@@ -133,7 +138,7 @@ export function AuthScreen({ onLogin, showToast }: AuthProps) {
           Sudah punya akun?{" "}
           <button onClick={() => { setMode("email-login"); setEmail(""); setPassword(""); }} style={{ color: "var(--accent)", fontWeight: 700, background: "none", border: "none", cursor: "pointer", fontFamily: "inherit", fontSize: 13 }}>Login di sini</button>
         </p>
-        <button onClick={() => setMode("landing")} className="lh-btn" style={{ display: "block", margin: "16px auto 0", padding: "8px 20px", background: "rgba(47,143,78,.06)", color: "var(--ts)", fontSize: 12, fontWeight: 600 }}>← Kembali</button>
+        <button onClick={() => setMode("landing")} className="lh-btn" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, margin: "16px auto 0", padding: "8px 20px", background: "rgba(47,143,78,.06)", color: "var(--ts)", fontSize: 12, fontWeight: 600 }}><ArrowLeft size={14}/> Kembali</button>
       </div>
     </div>
   );
@@ -160,7 +165,7 @@ export function AuthScreen({ onLogin, showToast }: AuthProps) {
 
         {/* Warga Ciburial — NFC */}
         <div className="lh-card" style={{ flex: 1, padding: "clamp(24px, 5vw, 36px) clamp(20px, 4vw, 28px)", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
-          <div className="lh-badge lh-badge-green">🏘️ Warga Ciburial</div>
+          <div className="lh-badge lh-badge-green" style={{ display: "flex", alignItems: "center", gap: 6 }}><Home size={14}/> Warga Ciburial</div>
           <h3 className="fnt" style={{ fontSize: 22, fontWeight: 600, color: "var(--fo)" }}>Masuk via e-KTP</h3>
           <p style={{ fontSize: 13, color: "var(--tm)", lineHeight: 1.6, maxWidth: 260 }}>
             Tempel kartu e-KTP di HP untuk login langsung — khusus warga Kampung Ciburial.
@@ -172,18 +177,16 @@ export function AuthScreen({ onLogin, showToast }: AuthProps) {
               <div style={{ position: "absolute", inset: -8, borderRadius: "50%", border: "1px solid rgba(47,143,78,.2)", animation: "pulse-ring2 2.2s ease-out infinite .5s" }} />
             </>}
             <button onClick={scanning ? stopNFC : startNFC} className={`nfc-circle ${scanning ? "scanning" : ""}`}>
-              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke={scanning ? "#2F8F4E" : "var(--tm)"} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" style={{ transition: "stroke .4s" }}>
-                <path d="M2 7V5a2 2 0 0 1 2-2h2" /><path d="M2 17v2a2 2 0 0 0 2 2h2" />
-                <path d="M22 7V5a2 2 0 0 0-2-2h-2" /><path d="M22 17v2a2 2 0 0 1-2 2h-2" />
-                <rect x="7" y="7" width="10" height="10" rx="1.5" />
-              </svg>
+              <div style={{ color: scanning ? "#2F8F4E" : "var(--tm)", transition: "color .4s" }}>
+                <Scan size={44} strokeWidth={1.3} />
+              </div>
               <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".1em", color: scanning ? "#2F8F4E" : "var(--tm)" }}>
                 {scanning ? "SCANNING..." : "TAP e-KTP"}
               </span>
             </button>
           </div>
 
-          <span style={{ fontSize: 10, color: "var(--tm)", opacity: .6 }}>Chrome Android · NFC aktif</span>
+          <div style={{ fontSize: 10, color: "var(--tm)", opacity: .6, display: "flex", alignItems: "center", gap: 4 }}><Info size={10}/> Chrome Android · NFC aktif</div>
         </div>
 
         {/* Divider */}
@@ -195,18 +198,18 @@ export function AuthScreen({ onLogin, showToast }: AuthProps) {
 
         {/* User Luar — Email */}
         <div className="lh-card" style={{ flex: 1, padding: "clamp(24px, 5vw, 36px) clamp(20px, 4vw, 28px)", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
-          <div className="lh-badge lh-badge-gold">🌍 Pengguna Umum</div>
+          <div className="lh-badge lh-badge-gold" style={{ display: "flex", alignItems: "center", gap: 6 }}><Globe size={14}/> Pengguna Umum</div>
           <h3 className="fnt" style={{ fontSize: 22, fontWeight: 600, color: "var(--fo)" }}>Login / Daftar</h3>
           <p style={{ fontSize: 13, color: "var(--tm)", lineHeight: 1.6, maxWidth: 260 }}>
             Gunakan email dan password untuk mengakses materi pembelajaran digital.
           </p>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 10, width: "100%", marginTop: 4 }}>
-            <button onClick={() => setMode("email-login")} className="lh-btn lh-btn-primary" style={{ width: "100%" }}>
-              📧 Login dengan Email
+            <button onClick={() => setMode("email-login")} className="lh-btn lh-btn-primary" style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+              <Mail size={18} /> Login dengan Email
             </button>
-            <button onClick={() => setMode("email-register")} className="lh-btn lh-btn-outline" style={{ width: "100%" }}>
-              Buat Akun Baru
+            <button onClick={() => setMode("email-register")} className="lh-btn lh-btn-outline" style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+              <UserPlus size={18} /> Buat Akun Baru
             </button>
           </div>
         </div>

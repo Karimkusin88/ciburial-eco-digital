@@ -1,5 +1,9 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import { 
+  Shield, CreditCard, CheckCircle, Clock, Users, Calendar, 
+  Scan, Power, X, Sparkles, Moon, Info, ChevronRight, Zap
+} from "lucide-react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 const POIN_RONDA = 30;
@@ -7,16 +11,19 @@ const POIN_RONDA = 30;
 // ─── CARA KERJA ──────────────────────────────────────────────────────────────
 function CaraKerja() {
   const steps = [
-    { i: "01", t: "SIAGA PETUGAS", d: "Petugas ronda bersiap di pos dengan perlengkapan patroli." },
-    { i: "02", t: "TEMPEL KARTU", d: "Tempelkan e-KTP atau Kartu Warga pada sensor NFC di HP." },
-    { i: "03", t: "TERCATAT", d: "Sistem mencatat kehadiran & waktu patroli secara real-time." },
-    { i: "04", t: "BONUS POIN", d: "Petugas yang aktif akan mendapatkan poin apresiasi warga." },
+    { i: "01", t: "SIAGA PETUGAS", d: "Petugas ronda bersiap di pos dengan perlengkapan patroli.", icon: <Shield size={16} /> },
+    { i: "02", t: "TEMPEL KARTU", d: "Tempelkan e-KTP atau Kartu Warga pada sensor NFC di HP.", icon: <CreditCard size={16} /> },
+    { i: "03", t: "TERCATAT", d: "Sistem mencatat kehadiran & waktu patroli secara real-time.", icon: <CheckCircle size={16} /> },
+    { i: "04", t: "BONUS POIN", d: "Petugas yang aktif akan mendapatkan poin apresiasi warga.", icon: <Sparkles size={16} /> },
   ];
   return (
     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 14, marginTop: 24 }}>
       {steps.map(s => (
         <div key={s.i} className="glass-card" style={{ padding: 18, border: "1px solid rgba(47,143,78,0.12)" }}>
-          <div style={{ fontSize: 9, fontWeight: 900, color: "#2F8F4E", marginBottom: 6, opacity: 0.6 }}>LANGKAH {s.i}</div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
+            <div style={{ fontSize: 9, fontWeight: 900, color: "#2F8F4E", opacity: 0.6 }}>LANGKAH {s.i}</div>
+            <div style={{ color: "#2F8F4E", opacity: 0.8 }}>{s.icon}</div>
+          </div>
           <div style={{ fontSize: 13, fontWeight: 800, color: "#E8F5EE", marginBottom: 4 }}>{s.t}</div>
           <div style={{ fontSize: 11, color: "rgba(232,245,238,0.35)", fontWeight: 500, lineHeight: 1.5 }}>{s.d}</div>
         </div>
@@ -213,7 +220,8 @@ export default function RondaKioskPage() {
 
       {/* ── Toast ── */}
       {toast.msg && (
-        <div style={{ position:"fixed", top:20, left:"50%", transform:"translateX(-50%)", background: toast.ok ? "rgba(30,100,55,0.95)" : "rgba(160,40,40,0.95)", color:"#fff", padding:"12px 26px", borderRadius:100, zIndex:9999, fontSize:13, fontWeight:600, letterSpacing:".02em", animation:"slide-up 0.3s ease", backdropFilter:"blur(24px)", border:`1px solid ${toast.ok ? "rgba(79,191,126,0.3)" : "rgba(255,100,100,0.3)"}`, maxWidth:"90vw", textAlign:"center", boxShadow:"0 12px 40px rgba(0,0,0,0.5)" }}>
+        <div style={{ position:"fixed", top:20, left:"50%", transform:"translateX(-50%)", background: toast.ok ? "rgba(30,100,55,0.95)" : "rgba(160,40,40,0.95)", color:"#fff", padding:"12px 26px", borderRadius:100, zIndex:9999, fontSize:13, fontWeight:600, letterSpacing:".02em", animation:"slide-up 0.3s ease", backdropFilter:"blur(24px)", border:`1px solid ${toast.ok ? "rgba(79,191,126,0.3)" : "rgba(255,100,100,0.3)"}`, maxWidth:"90vw", textAlign:"center", boxShadow:"0 12px 40px rgba(0,0,0,0.5)", display:"flex", alignItems:"center", gap:10 }}>
+          {toast.ok ? <CheckCircle size={18} /> : <Info size={18} />}
           {toast.msg}
         </div>
       )}
@@ -223,11 +231,16 @@ export default function RondaKioskPage() {
       ══════════════════════════════════════ */}
       <header style={{ position:"relative", zIndex:1, padding:"clamp(12px, 3vw, 18px) clamp(16px, 4vw, 24px) 0", display:"flex", alignItems:"center", justifyContent:"space-between", flexShrink:0 }}>
         {/* Brand */}
-        <div>
-          <div style={{ fontSize:9, fontWeight:700, letterSpacing:".25em", color:"rgba(47,143,78,0.4)", textTransform:"uppercase" }}>Ciburial Eco-Digital</div>
-          <div style={{ fontSize:"clamp(18px,3vw,22px)", fontWeight:800, color:"#E8F5EE", letterSpacing:"-.04em", lineHeight:1.1, marginTop:3 }}>
-            Ronda<span style={{ color:"#2F8F4E" }}>.</span>
-            <span style={{ fontSize:"clamp(10px,1.5vw,12px)", fontWeight:500, color:"rgba(232,245,238,0.3)", marginLeft:8, letterSpacing:".02em" }}>Kiosk Absensi</span>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{ background: "rgba(47,143,78,0.15)", width: 44, height: 44, borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", color: "#2F8F4E" }}>
+            <Shield size={28} />
+          </div>
+          <div>
+            <div style={{ fontSize:9, fontWeight:700, letterSpacing:".25em", color:"rgba(47,143,78,0.4)", textTransform:"uppercase" }}>Ciburial Eco-Digital</div>
+            <div style={{ fontSize:"clamp(18px,3vw,22px)", fontWeight:800, color:"#E8F5EE", letterSpacing:"-.04em", lineHeight:1.1, marginTop:3 }}>
+              Ronda<span style={{ color:"#2F8F4E" }}>.</span>
+              <span style={{ fontSize:"clamp(10px,1.5vw,12px)", fontWeight:500, color:"rgba(232,245,238,0.3)", marginLeft:8, letterSpacing:".02em" }}>Kiosk Absensi</span>
+            </div>
           </div>
         </div>
 
@@ -249,7 +262,8 @@ export default function RondaKioskPage() {
               </span>
             ))}
           </div>
-          <div style={{ fontSize:"clamp(11px,1.5vw,13px)", color:"rgba(232,245,238,0.3)", fontWeight:500, marginTop:4, letterSpacing:".04em" }}>
+          <div style={{ fontSize:"clamp(11px,1.5vw,13px)", color:"rgba(232,245,238,0.3)", fontWeight:500, marginTop:4, letterSpacing:".04em", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+            <Calendar size={14} />
             {jam.toLocaleDateString("id-ID", { weekday:"long", day:"numeric", month:"long", year:"numeric" })}
           </div>
         </div>
@@ -260,7 +274,9 @@ export default function RondaKioskPage() {
             <div style={{ width:7, height:7, borderRadius:"50%", background:"#2F8F4E", boxShadow:"0 0 8px #2F8F4E", animation:"blink 2.5s infinite" }} />
             <span style={{ fontSize:10, fontWeight:600, color:"rgba(47,143,78,0.55)", letterSpacing:".1em" }}>LIVE</span>
           </div>
-          <div style={{ fontSize:10, color:"rgba(232,245,238,0.15)", fontWeight:500 }}>{hadir.length} hadir</div>
+          <div style={{ fontSize:10, color:"rgba(232,245,238,0.15)", fontWeight:500, display: "flex", alignItems: "center", gap: 4 }}>
+            <Users size={12} /> {hadir.length} hadir
+          </div>
         </div>
       </header>
 
@@ -271,9 +287,7 @@ export default function RondaKioskPage() {
         {activeJadwalData ? (
           <div className="glass-card-green" style={{ padding:"12px 18px", display:"flex", alignItems:"center", gap:12, borderRadius:14 }}>
             <div style={{ flexShrink:0 }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4FBF7E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-              </svg>
+              <Calendar size={18} color="#4FBF7E" />
             </div>
             <div style={{ flex:1, minWidth:0 }}>
               <div style={{ fontSize:9, fontWeight:700, letterSpacing:".18em", color:"rgba(47,143,78,0.5)", marginBottom:2 }}>JADWAL AKTIF</div>
@@ -290,8 +304,8 @@ export default function RondaKioskPage() {
             )}
           </div>
         ) : (
-          <div className="glass-card" style={{ padding:"12px 18px", textAlign:"center", fontSize:12, color:"rgba(232,245,238,0.25)", borderRadius:14 }}>
-            Tidak ada jadwal ronda hari ini
+          <div className="glass-card" style={{ padding:"12px 18px", textAlign:"center", fontSize:12, color:"rgba(232,245,238,0.25)", borderRadius:14, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+            <Moon size={14} /> Tidak ada jadwal ronda hari ini
           </div>
         )}
       </div>
@@ -335,11 +349,9 @@ export default function RondaKioskPage() {
                     <div style={{ position:"absolute", left:0, right:0, height:2, background:"linear-gradient(90deg,transparent,rgba(47,143,78,0.7),transparent)", animation:"scan-sweep 1.8s ease-in-out infinite alternate" }} />
                   </div>
                 )}
-                <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke={scanning ? "#2F8F4E" : "rgba(232,245,238,0.18)"} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" style={{ transition:"stroke 0.5s", position:"relative" }}>
-                  <path d="M2 7V5a2 2 0 0 1 2-2h2"/><path d="M2 17v2a2 2 0 0 0 2 2h2"/>
-                  <path d="M22 7V5a2 2 0 0 0-2-2h-2"/><path d="M22 17v2a2 2 0 0 1-2 2h-2"/>
-                  <rect x="7" y="7" width="10" height="10" rx="1.5"/>
-                </svg>
+                <div style={{ color: scanning ? "#2F8F4E" : "rgba(232,245,238,0.18)", transition: "color 0.5s", position: "relative" }}>
+                  <Scan size={52} strokeWidth={1.3} />
+                </div>
               </div>
             </div>
 
@@ -357,13 +369,18 @@ export default function RondaKioskPage() {
                 border: scanning ? "1px solid rgba(220,50,50,0.35)" : "1px solid rgba(79,191,126,0.2)",
                 fontSize:13, fontWeight:700, letterSpacing:".08em", fontFamily:"inherit",
                 boxShadow: scanning ? "none" : "0 10px 36px rgba(47,143,78,0.3)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 10,
+                margin: "0 auto"
               }}>
-              {scanning ? "⬜ Stop Scanning" : "⬡ Aktifkan NFC e-KTP"}
+              {scanning ? <><Power size={18} /> Stop Scanning</> : <><Scan size={18} /> Aktifkan NFC e-KTP</>}
             </button>
 
             {!scanning && (
-              <div style={{ marginTop:10, fontSize:10, color:"rgba(232,245,238,0.18)", letterSpacing:".04em" }}>
-                Chrome Android · NFC harus aktif di pengaturan
+              <div style={{ marginTop:10, fontSize:10, color:"rgba(232,245,238,0.18)", letterSpacing:".04em", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+                <Info size={10} /> Chrome Android · NFC harus aktif di pengaturan
               </div>
             )}
           </div>
@@ -372,11 +389,13 @@ export default function RondaKioskPage() {
           {lastScan && (
             <div className="glass-card-green" style={{ padding:"18px 20px", display:"flex", alignItems:"center", gap:14, animation:"slide-up 0.35s ease" }}>
               <div style={{ width:44, height:44, borderRadius:"50%", background:"rgba(47,143,78,0.2)", border:"1px solid rgba(47,143,78,0.3)", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4FBF7E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                <CheckCircle size={22} color="#4FBF7E" strokeWidth={2.5} />
               </div>
               <div style={{ flex:1, minWidth:0 }}>
                 <div style={{ fontSize:15, fontWeight:800, color:"#E8F5EE", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{lastScan.nama}</div>
-                <div style={{ fontSize:11, color:"rgba(79,191,126,0.65)", fontWeight:600, marginTop:2 }}>Berhasil absen · {lastScan.waktu}</div>
+                <div style={{ fontSize:11, color:"rgba(79,191,126,0.65)", fontWeight:600, marginTop:2, display: "flex", alignItems: "center", gap: 4 }}>
+                  <Zap size={10} /> Berhasil absen · {lastScan.waktu}
+                </div>
               </div>
               <div style={{ backgroundColor:"rgba(47,143,78,0.2)", padding:"6px 12px", borderRadius:100, fontSize:14, fontWeight:900, color:"#4FBF7E", flexShrink:0 }}>+{lastScan.poin}</div>
             </div>
@@ -389,7 +408,8 @@ export default function RondaKioskPage() {
         <div className="glass-card" style={{ display:"flex", flexDirection:"column", overflow:"hidden" }}>
           {/* Header */}
           <div style={{ padding:"16px 20px", borderBottom:"1px solid rgba(255,255,255,0.05)", display:"flex", alignItems:"center", justifyContent:"space-between", flexShrink:0 }}>
-            <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <Users size={14} color="rgba(232,245,238,0.35)" />
               <div style={{ fontSize:10, fontWeight:700, letterSpacing:".18em", color:"rgba(232,245,238,0.35)" }}>SUDAH HADIR</div>
             </div>
             <div style={{ display:"flex", alignItems:"center", gap:8 }}>
@@ -405,7 +425,9 @@ export default function RondaKioskPage() {
           <div style={{ flex:1, overflowY:"auto" }}>
             {hadir.length === 0 ? (
               <div style={{ padding:"clamp(36px, 6vw, 56px) clamp(16px, 4vw, 24px)", textAlign:"center" }}>
-                <div style={{ fontSize:40, marginBottom:14, opacity:0.12 }}>🌙</div>
+                <div style={{ fontSize:40, marginBottom:14, opacity:0.12, display: "flex", justifyContent: "center" }}>
+                  <Moon size={40} />
+                </div>
                 <div style={{ fontSize:13, color:"rgba(232,245,238,0.22)", fontWeight:500 }}>Belum ada yang absen</div>
                 <div style={{ fontSize:11, color:"rgba(232,245,238,0.12)", marginTop:6 }}>Tap e-KTP untuk catat kehadiran</div>
               </div>
@@ -427,17 +449,19 @@ export default function RondaKioskPage() {
                   <div style={{ flex:1, minWidth:0 }}>
                     <div style={{ fontSize:14, fontWeight:700, color:"#E8F5EE", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{a.nama}</div>
                     <div style={{ display:"flex", alignItems:"center", gap:6, marginTop:2 }}>
-                      <span style={{ fontSize:9, fontWeight:700, letterSpacing:".1em", padding:"2px 7px", borderRadius:100, background: a.metode === "nfc" ? "rgba(47,143,78,0.15)" : "rgba(255,255,255,0.07)", color: a.metode === "nfc" ? "#4FBF7E" : "rgba(232,245,238,0.35)", border: a.metode === "nfc" ? "1px solid rgba(47,143,78,0.25)" : "1px solid rgba(255,255,255,0.08)" }}>
-                        {a.metode === "nfc" ? "e-KTP" : "Manual"}
+                      <span style={{ fontSize:9, fontWeight:700, letterSpacing:".1em", padding:"2px 7px", borderRadius:100, background: a.metode === "nfc" ? "rgba(47,143,78,0.15)" : "rgba(255,255,255,0.07)", color: a.metode === "nfc" ? "#4FBF7E" : "rgba(232,245,238,0.35)", border: a.metode === "nfc" ? "1px solid rgba(47,143,78,0.25)" : "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 4 }}>
+                        {a.metode === "nfc" ? <><CreditCard size={10}/> e-KTP</> : <><Edit2 size={10}/> Manual</>}
                       </span>
-                      <span style={{ fontSize:10, color:"rgba(232,245,238,0.28)", fontWeight:500 }}>
-                        {new Date(a.waktu_tap).toLocaleTimeString("id-ID", { hour:"2-digit", minute:"2-digit" })}
+                      <span style={{ fontSize:10, color:"rgba(232,245,238,0.28)", fontWeight:500, display: "flex", alignItems: "center", gap: 4 }}>
+                        <Clock size={10} /> {new Date(a.waktu_tap).toLocaleTimeString("id-ID", { hour:"2-digit", minute:"2-digit" })}
                       </span>
                     </div>
                   </div>
 
                   {/* Points */}
-                  <div style={{ fontSize:13, fontWeight:900, color:"#2F8F4E", flexShrink:0 }}>+{POIN_RONDA}</div>
+                  <div style={{ fontSize:13, fontWeight:900, color:"#2F8F4E", flexShrink:0, display: "flex", alignItems: "center", gap: 4 }}>
+                    <Coins size={14} /> +{POIN_RONDA}
+                  </div>
                 </div>
               ))
             )}

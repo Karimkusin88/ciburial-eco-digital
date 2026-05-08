@@ -1,5 +1,10 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import { 
+  Banknote, Smartphone, CreditCard, ShoppingCart, Package, 
+  History, Gift, ArrowLeft, Scan, Power, Info, 
+  Coins, Recycle, User, CheckCircle, X, ChevronRight, Zap
+} from "lucide-react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 interface Hadiah { id?: string; nama: string; kategori: string; poin_dibutuhkan: number; stok: number; }
@@ -30,13 +35,13 @@ const ATM_ITEMS: Hadiah[] = [
   { nama: "Paket Keluarga (Beras 5Kg, Minyak 2L, Sabun, Gula)", kategori: "paket", poin_dibutuhkan: 1300, stok: 999 },
 ];
 
-const KAT_MAP: Record<string, { l: string; i: string }> = {
-  "uang": { l: "Tarik Tunai", i: "💵" },
-  "pulsa": { l: "Pulsa HP", i: "📱" },
-  "ewallet": { l: "Topup E-Wallet", i: "💳" },
-  "sembako": { l: "Sembako Eceran", i: "🛒" },
-  "paket": { l: "Paket Sembako", i: "📦" },
-  "riwayat": { l: "Riwayat", i: "📋" }
+const KAT_MAP: Record<string, { l: string; i: React.ReactNode }> = {
+  "uang": { l: "Tarik Tunai", i: <Banknote size={18} /> },
+  "pulsa": { l: "Pulsa HP", i: <Smartphone size={18} /> },
+  "ewallet": { l: "Topup E-Wallet", i: <CreditCard size={18} /> },
+  "sembako": { l: "Sembako Eceran", i: <ShoppingCart size={18} /> },
+  "paket": { l: "Paket Sembako", i: <Package size={18} /> },
+  "riwayat": { l: "Riwayat", i: <History size={18} /> }
 };
 
 export default function TukarPoinPage() {
@@ -202,18 +207,18 @@ export default function TukarPoinPage() {
       {confirm && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(28,58,43,0.6)", backdropFilter: "blur(8px)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
           <div style={{ background: "white", border: "1px solid rgba(47,143,78,0.2)", borderRadius: 24, padding: "40px 32px", maxWidth: 420, width: "100%", textAlign: "center", color: "#1C3A2B", boxShadow: "0 20px 60px rgba(47,143,78,0.15)" }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>{KAT_MAP[confirm.kategori]?.i || "🎁"}</div>
+            <div style={{ fontSize: 48, marginBottom: 16, display: "flex", justifyContent: "center", color: "#B8943F" }}>{KAT_MAP[confirm.kategori]?.i ? <div style={{transform: "scale(2.5)"}}>{KAT_MAP[confirm.kategori].i}</div> : <Gift size={48} />}</div>
             <h3 style={{ margin: "0 0 12px", fontSize: 22, fontWeight: 900 }}>Konfirmasi Transaksi</h3>
             <p style={{ color: "#2D5A40", margin: "0 0 8px", fontSize: 16, fontWeight: 700 }}>{confirm.nama}</p>
             <div style={{ background: "rgba(47,143,78,0.06)", padding: "16px", borderRadius: 16, margin: "24px 0", border: "1px solid rgba(47,143,78,0.1)" }}>
-              <p style={{ color: "#1C3A2B", fontWeight: 900, fontSize: 32, margin: "0 0 4px" }}>-{confirm.poin_dibutuhkan}</p>
+              <p style={{ color: "#1C3A2B", fontWeight: 900, fontSize: 32, margin: "0 0 4px", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}><Coins size={28}/> -{confirm.poin_dibutuhkan}</p>
               <p style={{ color: "#4A7C59", fontSize: 12, margin: 0, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em" }}>Poin Eco-Digital</p>
             </div>
             <p style={{ color: "#4A7C59", fontSize: 13, margin: "0 0 32px", fontWeight: 600 }}>Sisa Saldo Poin: <strong style={{ color: "#1C3A2B" }}>{(saldo?.total_poin || 0) - confirm.poin_dibutuhkan}</strong></p>
             <div style={{ display: "flex", gap: 12 }}>
-              <button onClick={() => setConfirm(null)} style={{ flex: 1, padding: "16px", borderRadius: 14, border: "2px solid rgba(28,58,43,0.15)", background: "transparent", color: "#1C3A2B", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>Batal</button>
-              <button onClick={() => requestTukar(confirm)} disabled={loading} style={{ flex: 2, padding: "16px", borderRadius: 14, border: "none", background: "linear-gradient(135deg, #2F8F4E, #4FBF7E)", color: "white", fontSize: 14, fontWeight: 800, cursor: loading ? "not-allowed" : "pointer", boxShadow: "0 8px 24px rgba(47,143,78,0.2)" }}>
-                {loading ? "Memproses..." : "TUKAR SEKARANG"}
+              <button onClick={() => setConfirm(null)} style={{ flex: 1, padding: "16px", borderRadius: 14, border: "2px solid rgba(28,58,43,0.15)", background: "transparent", color: "#1C3A2B", fontSize: 14, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}><X size={16}/> Batal</button>
+              <button onClick={() => requestTukar(confirm)} disabled={loading} style={{ flex: 2, padding: "16px", borderRadius: 14, border: "none", background: "linear-gradient(135deg, #2F8F4E, #4FBF7E)", color: "white", fontSize: 14, fontWeight: 800, cursor: loading ? "not-allowed" : "pointer", boxShadow: "0 8px 24px rgba(47,143,78,0.2)", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                {loading ? "Memproses..." : <><CheckCircle size={18}/> TUKAR SEKARANG</>}
               </button>
             </div>
           </div>
@@ -222,11 +227,14 @@ export default function TukarPoinPage() {
 
       {/* Header HEROIC - Light Theme */}
       <header style={{ background: "rgba(250,248,243,0.9)", backdropFilter: "blur(12px)", borderBottom: "1px solid rgba(47,143,78,0.15)", padding: "20px 24px", position: "sticky", top: 0, zIndex: 10, display: "flex", alignItems: "center", gap: 16 }}>
-        <a href="/" style={{ color: "#4A7C59", textDecoration: "none", fontSize: 14, fontWeight: 700 }}>← Web Publik</a>
+        <a href="/" style={{ color: "#4A7C59", textDecoration: "none", fontSize: 14, fontWeight: 700, display: "flex", alignItems: "center", gap: 6 }}><ArrowLeft size={16}/> Web Publik</a>
         <div style={{ width: 1, height: 24, background: "rgba(79,191,126,0.3)" }}></div>
-        <div>
-          <div style={{ fontWeight: 900, fontSize: 18, color: "#1C3A2B", letterSpacing: "-0.02em" }}>ATM POIN ECO-DIGITAL</div>
-          <div style={{ fontSize: 11, color: "#4FBF7E", textTransform: "uppercase", letterSpacing: "0.15em", fontWeight: 700, marginTop: 2 }}>Ciburial Smart Village</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{ background: "rgba(47,143,78,0.1)", width: 40, height: 40, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", color: "#2F8F4E" }}><Coins size={24} /></div>
+          <div>
+            <div style={{ fontWeight: 900, fontSize: 18, color: "#1C3A2B", letterSpacing: "-0.02em" }}>ATM POIN ECO-DIGITAL</div>
+            <div style={{ fontSize: 11, color: "#4FBF7E", textTransform: "uppercase", letterSpacing: "0.15em", fontWeight: 700, marginTop: 2 }}>Ciburial Smart Village</div>
+          </div>
         </div>
       </header>
 
@@ -289,34 +297,34 @@ export default function TukarPoinPage() {
 
             {/* Kolom Kanan: Saldo Info */}
             <div style={{ flex: "1 1 300px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-               {selectedKK ? (
-                 <div style={{ animation: "slideIn 0.4s ease" }}>
-                   <div style={{ background: "linear-gradient(135deg, rgba(47,143,78,0.08), rgba(79,191,126,0.03))", padding: "20px", borderRadius: 16, border: "1px solid rgba(47,143,78,0.15)", marginBottom: 16 }}>
-                     <div style={{ fontSize: 11, color: "#4A7C59", fontWeight: 800, letterSpacing: "0.1em", marginBottom: 6 }}>NAMA KEPALA KELUARGA</div>
-                     <div style={{ fontSize: 24, fontWeight: 900, color: "#1C3A2B", lineHeight: 1.2 }}>{selectedKK.nama}</div>
-                     <div style={{ fontSize: 13, color: "#4A7C59", fontWeight: 600, marginTop: 4 }}>Warga RT {selectedKK.rt}</div>
-                   </div>
+            {selectedKK ? (
+              <div style={{ animation: "slideIn 0.4s ease" }}>
+                <div style={{ background: "linear-gradient(135deg, rgba(47,143,78,0.08), rgba(79,191,126,0.03))", padding: "20px", borderRadius: 16, border: "1px solid rgba(47,143,78,0.15)", marginBottom: 16 }}>
+                  <div style={{ fontSize: 11, color: "#4A7C59", fontWeight: 800, letterSpacing: "0.1em", marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}><User size={12}/> NAMA KEPALA KELUARGA</div>
+                  <div style={{ fontSize: 24, fontWeight: 900, color: "#1C3A2B", lineHeight: 1.2 }}>{selectedKK.nama}</div>
+                  <div style={{ fontSize: 13, color: "#4A7C59", fontWeight: 600, marginTop: 4 }}>Warga RT {selectedKK.rt}</div>
+                </div>
 
-                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-                     <div style={{ background: "white", padding: "16px", borderRadius: 16, border: "1px solid rgba(47,143,78,0.15)", boxShadow: "0 4px 12px rgba(0,0,0,0.03)" }}>
-                       <div style={{ fontSize: 10, color: "#4A7C59", fontWeight: 800, letterSpacing: "0.1em", marginBottom: 6 }}>SALDO POIN</div>
-                       <div style={{ fontSize: "clamp(24px, 4vw, 32px)", fontWeight: 900, color: "#2F8F4E", lineHeight: 1 }}>{saldo?.total_poin?.toLocaleString("id-ID") || 0}</div>
-                       <div style={{ fontSize: 11, color: "#6B7C6D", fontWeight: 600, marginTop: 6 }}>≈ Rp {((saldo?.total_poin || 0) * 100).toLocaleString("id-ID")}</div>
-                     </div>
-                     <div style={{ background: "white", padding: "16px", borderRadius: 16, border: "1px solid rgba(47,143,78,0.15)", boxShadow: "0 4px 12px rgba(0,0,0,0.03)" }}>
-                       <div style={{ fontSize: 10, color: "#4A7C59", fontWeight: 800, letterSpacing: "0.1em", marginBottom: 6 }}>KONTRIBUSI</div>
-                       <div style={{ fontSize: "clamp(24px, 4vw, 32px)", fontWeight: 900, color: "#1C3A2B", lineHeight: 1 }}>{Number(saldo?.total_setor_kg || 0).toFixed(1)} <span style={{ fontSize: 14, color: "#A8B5A9" }}>kg</span></div>
-                       <div style={{ fontSize: 11, color: "#6B7C6D", fontWeight: 600, marginTop: 6 }}>Sampah Terdaur</div>
-                     </div>
-                   </div>
-                 </div>
-               ) : (
-                 <div style={{ padding: "40px 20px", textAlign: "center", background: "#FAF8F3", border: "2px dashed rgba(47,143,78,0.2)", borderRadius: 16, color: "rgba(47,143,78,0.6)", fontSize: 14, fontWeight: 700, height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                   <p>Tap e-KTP di samping<br/>untuk membuka ATM Poin</p>
-                 </div>
-               )}
-            </div>
-          </div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                  <div style={{ background: "white", padding: "16px", borderRadius: 16, border: "1px solid rgba(47,143,78,0.15)", boxShadow: "0 4px 12px rgba(0,0,0,0.03)" }}>
+                    <div style={{ fontSize: 10, color: "#4A7C59", fontWeight: 800, letterSpacing: "0.1em", marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}><Coins size={10}/> SALDO POIN</div>
+                    <div style={{ fontSize: "clamp(24px, 4vw, 32px)", fontWeight: 900, color: "#2F8F4E", lineHeight: 1 }}>{saldo?.total_poin?.toLocaleString("id-ID") || 0}</div>
+                    <div style={{ fontSize: 11, color: "#6B7C6D", fontWeight: 600, marginTop: 6 }}>≈ Rp {((saldo?.total_poin || 0) * 100).toLocaleString("id-ID")}</div>
+                  </div>
+                  <div style={{ background: "white", padding: "16px", borderRadius: 16, border: "1px solid rgba(47,143,78,0.15)", boxShadow: "0 4px 12px rgba(0,0,0,0.03)" }}>
+                    <div style={{ fontSize: 10, color: "#4A7C59", fontWeight: 800, letterSpacing: "0.1em", marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}><Recycle size={10}/> KONTRIBUSI</div>
+                    <div style={{ fontSize: "clamp(24px, 4vw, 32px)", fontWeight: 900, color: "#1C3A2B", lineHeight: 1 }}>{Number(saldo?.total_setor_kg || 0).toFixed(1)} <span style={{ fontSize: 14, color: "#A8B5A9" }}>kg</span></div>
+                    <div style={{ fontSize: 11, color: "#6B7C6D", fontWeight: 600, marginTop: 6 }}>Sampah Terdaur</div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div style={{ padding: "40px 20px", textAlign: "center", background: "#FAF8F3", border: "2px dashed rgba(47,143,78,0.2)", borderRadius: 16, color: "rgba(47,143,78,0.6)", fontSize: 14, fontWeight: 700, height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12 }}>
+                <Info size={32} />
+                <p>Tap e-KTP di samping<br/>untuk membuka ATM Poin</p>
+              </div>
+            )}
+            </div>          </div>
         </div>
 
         {/* Tab Navigation */}
@@ -324,7 +332,7 @@ export default function TukarPoinPage() {
           {Object.entries(KAT_MAP).map(([key, val]) => (
             <button key={key} onClick={() => setTab(key)} 
               style={{ padding: "14px 20px", borderRadius: 99, fontSize: 13, fontWeight: 800, border: `1.5px solid ${tab === key ? "#2F8F4E" : "rgba(47,143,78,0.15)"}`, cursor: "pointer", background: tab === key ? "linear-gradient(135deg, #2F8F4E, #4FBF7E)" : "white", color: tab === key ? "white" : "#2D5A40", whiteSpace: "nowrap", transition: "all 0.3s", display: "flex", alignItems: "center", gap: 8, boxShadow: tab === key ? "0 8px 24px rgba(47,143,78,0.25)" : "0 2px 8px rgba(0,0,0,0.02)" }}>
-              <span style={{ fontSize: 16 }}>{val.i}</span> {val.l}
+              {val.i} {val.l}
             </button>
           ))}
         </div>
@@ -338,16 +346,18 @@ export default function TukarPoinPage() {
                 return (
                   <div key={h.id || h.nama} style={{ background: "white", borderRadius: 20, padding: 24, border: `1.5px solid ${cukup ? "rgba(47,143,78,0.3)" : "rgba(47,143,78,0.08)"}`, boxShadow: cukup ? "0 10px 30px rgba(47,143,78,0.1)" : "0 4px 12px rgba(0,0,0,0.03)", transition: "transform 0.3s" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
-                      <div style={{ fontSize: 32 }}>{KAT_MAP[h.kategori]?.i || "🎁"}</div>
-                      <div style={{ background: cukup ? "rgba(47,143,78,0.1)" : "rgba(0,0,0,0.04)", padding: "6px 12px", borderRadius: 99, fontSize: 11, fontWeight: 800, color: cukup ? "#2F8F4E" : "#A8B5A9", border: `1px solid ${cukup ? "rgba(47,143,78,0.2)" : "transparent"}` }}>
-                        {h.poin_dibutuhkan} Poin
+                      <div style={{ color: cukup ? "#2F8F4E" : "#A8B5A9", background: "rgba(0,0,0,0.02)", width: 48, height: 48, borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        {KAT_MAP[h.kategori]?.i ? <div style={{transform: "scale(1.8)"}}>{KAT_MAP[h.kategori].i}</div> : <Gift size={24} />}
+                      </div>
+                      <div style={{ background: cukup ? "rgba(47,143,78,0.1)" : "rgba(0,0,0,0.04)", padding: "6px 12px", borderRadius: 99, fontSize: 11, fontWeight: 800, color: cukup ? "#2F8F4E" : "#A8B5A9", border: `1px solid ${cukup ? "rgba(47,143,78,0.2)" : "transparent"}`, display: "flex", alignItems: "center", gap: 4 }}>
+                        <Coins size={12}/> {h.poin_dibutuhkan} Poin
                       </div>
                     </div>
                     <div style={{ fontWeight: 800, fontSize: 16, color: "#1C3A2B", marginBottom: 8, lineHeight: 1.4 }}>{h.nama}</div>
-                    <div style={{ fontSize: 12, color: "#6B7C6D", marginBottom: 20, fontWeight: 600 }}>Setara Rp {(h.poin_dibutuhkan * 100).toLocaleString("id-ID")}</div>
+                    <div style={{ fontSize: 12, color: "#6B7280", marginBottom: 20, fontWeight: 600 }}>Setara Rp {(h.poin_dibutuhkan * 100).toLocaleString("id-ID")}</div>
                     <button onClick={() => { if (!selectedKK) return showToast("Tap e-KTP dulu di Kiosk!", "error"); if (cukup) setConfirm(h); else showToast("Poin tidak cukup!", "error"); }}
-                      style={{ width: "100%", padding: "12px", borderRadius: 12, border: "none", background: cukup ? "linear-gradient(135deg, #2F8F4E, #4FBF7E)" : "#F5F0E8", color: cukup ? "white" : "#A8B5A9", fontSize: 13, fontWeight: 800, cursor: cukup ? "pointer" : "not-allowed", transition: "all 0.3s", boxShadow: cukup ? "0 8px 24px rgba(47,143,78,0.3)" : "none" }}>
-                      {cukup ? "TUKAR POIN" : "POIN KURANG"}
+                      style={{ width: "100%", padding: "12px", borderRadius: 12, border: "none", background: cukup ? "linear-gradient(135deg, #2F8F4E, #4FBF7E)" : "#F5F0E8", color: cukup ? "white" : "#A8B5A9", fontSize: 13, fontWeight: 800, cursor: cukup ? "pointer" : "not-allowed", transition: "all 0.3s", boxShadow: cukup ? "0 8px 24px rgba(47,143,78,0.3)" : "none", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                      {cukup ? <><Zap size={16}/> TUKAR POIN</> : "POIN KURANG"}
                     </button>
                   </div>
                 );
@@ -365,21 +375,30 @@ export default function TukarPoinPage() {
         {tab === "riwayat" && (
           <div>
             {!selectedKK ? (
-              <div style={{ textAlign: "center", padding: "clamp(30px, 6vw, 60px)", color: "#6B7C6D", background: "white", borderRadius: 24, border: "1px dashed rgba(47,143,78,0.2)", fontWeight: 700 }}>Tap e-KTP dulu untuk lihat riwayat</div>
+              <div style={{ textAlign: "center", padding: "clamp(30px, 6vw, 60px)", color: "#6B7C6D", background: "white", borderRadius: 24, border: "1px dashed rgba(47,143,78,0.2)", fontWeight: 700, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12 }}>
+                <Info size={32} /> Tap e-KTP dulu untuk lihat riwayat
+              </div>
             ) : riwayat.length === 0 ? (
-              <div style={{ textAlign: "center", padding: "clamp(30px, 6vw, 60px)", color: "#6B7C6D", background: "white", borderRadius: 24, border: "1px dashed rgba(47,143,78,0.2)", fontWeight: 700 }}>Belum ada riwayat penukaran</div>
+              <div style={{ textAlign: "center", padding: "clamp(30px, 6vw, 60px)", color: "#6B7C6D", background: "white", borderRadius: 24, border: "1px dashed rgba(47,143,78,0.2)", fontWeight: 700, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12 }}>
+                <History size={32} /> Belum ada riwayat penukaran
+              </div>
             ) : (
               <div style={{ background: "white", borderRadius: 24, border: "1px solid rgba(47,143,78,0.15)", overflow: "hidden", boxShadow: "0 10px 40px rgba(0,0,0,0.03)" }}>
                 {riwayat.map((r, i) => {
                   const SC: Record<string, string> = { pending: "#D4AC5A", diproses: "#4A7C59", selesai: "#4FBF7E", ditolak: "#8B2020" };
                   return (
                     <div key={r.id} style={{ padding: "20px 24px", borderBottom: i < riwayat.length - 1 ? "1px solid rgba(47,143,78,0.08)" : "none", display: "flex", alignItems: "center", gap: 16 }}>
-                      <div style={{ fontSize: 28 }}>{KAT_MAP[r.katalog_hadiah?.kategori]?.i || "🎁"}</div>
+                      <div style={{ color: "#2F8F4E", background: "rgba(47,143,78,0.05)", width: 44, height: 44, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        {KAT_MAP[r.katalog_hadiah?.kategori]?.i || <Gift size={20} />}
+                      </div>
                       <div style={{ flex: 1 }}>
                         <div style={{ fontWeight: 800, fontSize: 15, color: "#1C3A2B", marginBottom: 4 }}>{r.katalog_hadiah?.nama || r.nama_item_sementara || "Hadiah Poin"}</div>
-                        <div style={{ fontSize: 12, color: "#6B7C6D", fontWeight: 600 }}>{r.poin_dipakai} Poin · {new Date(r.tgl_request).toLocaleDateString("id-ID")}</div>
+                        <div style={{ fontSize: 12, color: "#6B7C6D", fontWeight: 600, display: "flex", alignItems: "center", gap: 6 }}><Coins size={12}/> {r.poin_dipakai} Poin · {new Date(r.tgl_request).toLocaleDateString("id-ID")}</div>
                       </div>
-                      <div style={{ background: SC[r.status] + "15", color: SC[r.status], border: `1px solid ${SC[r.status]}40`, borderRadius: 99, padding: "6px 16px", fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.05em" }}>{r.status}</div>
+                      <div style={{ background: SC[r.status] + "15", color: SC[r.status], border: `1px solid ${SC[r.status]}40`, borderRadius: 99, padding: "6px 16px", fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.05em", display: "flex", alignItems: "center", gap: 6 }}>
+                        {r.status === 'selesai' ? <CheckCircle size={12}/> : r.status === 'pending' ? <History size={12}/> : <Info size={12}/>}
+                        {r.status}
+                      </div>
                     </div>
                   );
                 })}

@@ -1,15 +1,16 @@
 "use client";
 import { useState, useEffect } from "react";
+import { Book, PlaySquare, FileText, Image as ImageIcon, Laptop, CheckCircle, XCircle, Trash2, Edit2, Upload, Folder, Save, Smartphone, ChevronRight } from "lucide-react";
 import "../admin-styles-heroic.css";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 type Tab = "buku"|"video"|"dokumen"|"galeri"|"lab";
-const TABS: {key:Tab;icon:string;label:string}[] = [
-  {key:"buku",icon:"📚",label:"Buku"},
-  {key:"video",icon:"▶️",label:"Video"},
-  {key:"dokumen",icon:"📄",label:"Dokumen"},
-  {key:"galeri",icon:"🖼️",label:"Galeri"},
-  {key:"lab",icon:"💻",label:"Lab PC"},
+const TABS: {key:Tab;icon:React.ReactNode;label:string}[] = [
+  {key:"buku",icon:<Book size={20} />,label:"Buku"},
+  {key:"video",icon:<PlaySquare size={20} />,label:"Video"},
+  {key:"dokumen",icon:<FileText size={20} />,label:"Dokumen"},
+  {key:"galeri",icon:<ImageIcon size={20} />,label:"Galeri"},
+  {key:"lab",icon:<Laptop size={20} />,label:"Lab PC"},
 ];
 
 const EB = {judul:"",penulis:"",icon:"📕",kategori:"umum",status:"tersedia",deskripsi:"",foto_sampul:"",jenis_buku:"fisik",file_url:""};
@@ -38,7 +39,7 @@ export default function AdminLearningHub() {
   const [fG, setFG] = useState({...EG});
   const [fL, setFL] = useState({...EL});
 
-  const showToast = (m:string) => { setToast(m); setTimeout(()=>setToast(""),3500); };
+  const showToast = (m:React.ReactNode) => { setToast(m as any); setTimeout(()=>setToast(""),3500); };
 
   async function fetchAll() {
     if(!isSupabaseReady()) return;
@@ -98,8 +99,8 @@ export default function AdminLearningHub() {
     const {error} = editId
       ? await supabase.from(tbl).update(payload).eq("id",editId)
       : await supabase.from(tbl).insert(payload);
-    if(error) showToast("❌ "+error.message);
-    else showToast(editId?"✅ Data diupdate!":"✅ Data ditambahkan!");
+    if(error) showToast(<div style={{display:"flex",alignItems:"center",gap:6}}><XCircle size={14}/> {error.message}</div>);
+    else showToast(editId ? <div style={{display:"flex",alignItems:"center",gap:6}}><CheckCircle size={14}/> Data diupdate!</div> : <div style={{display:"flex",alignItems:"center",gap:6}}><CheckCircle size={14}/> Data ditambahkan!</div>);
     setShowModal(false); setEditId(null); setLoading(false); fetchAll();
   }
 
@@ -107,8 +108,8 @@ export default function AdminLearningHub() {
     if(!confirm("Yakin hapus data ini?")) return;
     const tblMap:Record<Tab,string> = {buku:"buku_perpustakaan",video:"video_pembelajaran",dokumen:"dokumen_hub",galeri:"galeri_hub",lab:"lab_komputer"};
     const {error} = await supabase.from(tblMap[tab]).delete().eq("id",id);
-    if(error) showToast("❌ "+error.message);
-    else { showToast("🗑️ Dihapus!"); fetchAll(); }
+    if(error) showToast(<div style={{display:"flex",alignItems:"center",gap:6}}><XCircle size={14}/> {error.message}</div>);
+    else { showToast(<div style={{display:"flex",alignItems:"center",gap:6}}><Trash2 size={14}/> Dihapus!</div>); fetchAll(); }
   }
 
   const counts = {buku:books.length,video:videos.length,dokumen:docs.length,galeri:galeri.length,lab:labPCs.length};
@@ -120,12 +121,12 @@ export default function AdminLearningHub() {
       <div>
         <div style={{fontSize:11,fontWeight:700,color:"#7a9a7e",marginBottom:8,textTransform:"uppercase",letterSpacing:".06em"}}>{label}</div>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:8}}>
-          <div style={{padding:"10px 12px",borderRadius:10,background:"rgba(47,143,78,0.06)",border:"1.5px solid rgba(47,143,78,0.2)",fontSize:11,fontWeight:700,color:"#2d5a40",textAlign:"center"}}>🔗 Dari URL</div>
-          <div style={{padding:"10px 12px",borderRadius:10,background:"rgba(47,143,78,0.06)",border:"1.5px solid rgba(47,143,78,0.2)",fontSize:11,fontWeight:700,color:"#2d5a40",textAlign:"center"}}>⬆️ Upload File</div>
+          <div style={{padding:"10px 12px",borderRadius:10,background:"rgba(47,143,78,0.06)",border:"1.5px solid rgba(47,143,78,0.2)",fontSize:11,fontWeight:700,color:"#2d5a40",textAlign:"center",display:"flex",alignItems:"center",justifyContent:"center",gap:6}}><Smartphone size={14} /> Dari URL</div>
+          <div style={{padding:"10px 12px",borderRadius:10,background:"rgba(47,143,78,0.06)",border:"1.5px solid rgba(47,143,78,0.2)",fontSize:11,fontWeight:700,color:"#2d5a40",textAlign:"center",display:"flex",alignItems:"center",justifyContent:"center",gap:6}}><Upload size={14} /> Upload File</div>
         </div>
         <input style={{...IS,marginBottom:8}} placeholder={urlPlaceholder} value={value} onChange={e=>onChange(e.target.value)} />
         <label style={{display:"flex",alignItems:"center",gap:10,padding:"10px 14px",borderRadius:10,border:"1.5px dashed rgba(45,90,64,0.3)",cursor:"pointer",background:"rgba(47,143,78,0.03)"}}>
-          <span style={{fontSize:18}}>📁</span>
+          <Folder size={18} color="#2d5a40" />
           <span style={{fontSize:12,color:"#6b7c6d",fontWeight:600}}>{uploading?"Mengupload...":"Pilih file dari perangkat"}</span>
           <input type="file" accept={accept} style={{display:"none"}} onChange={async e=>{
             const file=e.target.files?.[0]; if(!file) return;
@@ -135,7 +136,7 @@ export default function AdminLearningHub() {
         </label>
         {value && (
           <div style={{marginTop:8,padding:"8px 12px",borderRadius:8,background:"rgba(47,143,78,0.06)",fontSize:11,color:"#2d5a40",fontWeight:600,wordBreak:"break-all"}}>
-            ✅ {value.startsWith("http")?value.substring(0,60)+"...":value}
+            <CheckCircle size={14} style={{display:"inline",marginRight:4}} /> {value.startsWith("http")?value.substring(0,60)+"...":value}
           </div>
         )}
       </div>
@@ -151,7 +152,7 @@ export default function AdminLearningHub() {
           <a href="/admin" style={{color:"#6b7c6d",textDecoration:"none",fontSize:13,fontWeight:600}}>← Admin</a>
           <span style={{color:"#c8bfaa"}}>|</span>
           <div>
-            <div style={{fontWeight:800,fontSize:15,color:"#1a2e1f"}}>📚 Learning Hub</div>
+            <div style={{fontWeight:800,fontSize:15,color:"#1a2e1f",display:"flex",alignItems:"center",gap:8}}><Book size={18} /> Learning Hub</div>
             <div style={{fontSize:10,color:"#7a9a7e",textTransform:"uppercase",letterSpacing:"0.08em"}}>Kelola Konten Edukasi</div>
           </div>
         </div>
@@ -182,7 +183,10 @@ export default function AdminLearningHub() {
         {/* List */}
         <div className="card-heroic" style={{padding:0,overflow:"hidden"}}>
           <div style={{padding:"16px 20px",borderBottom:"1px solid rgba(45,90,64,0.08)"}}>
-            <div style={{fontWeight:800,fontSize:14,color:"#1a2e1f"}}>{TABS.find(t=>t.key===tab)?.icon} Daftar {TABS.find(t=>t.key===tab)?.label} ({currentList.length})</div>
+            <div style={{fontWeight:800,fontSize:14,color:"#1a2e1f",display:"flex",alignItems:"center",gap:8}}>
+              {tab==="buku"?<Book size={18}/>:tab==="video"?<PlaySquare size={18}/>:tab==="dokumen"?<FileText size={18}/>:tab==="galeri"?<ImageIcon size={18}/>:<Laptop size={18}/>} 
+              Daftar {TABS.find(t=>t.key===tab)?.label} ({currentList.length})
+            </div>
           </div>
           {currentList.length===0 ? (
             <div style={{padding:60,textAlign:"center",color:"#a8b5a9",fontWeight:600}}>
@@ -201,8 +205,8 @@ export default function AdminLearningHub() {
                   ) : tab==="galeri"&&item.url ? (
                     <img src={item.url} alt="" style={{width:56,height:44,borderRadius:8,objectFit:"cover",flexShrink:0}}/>
                   ) : (
-                    <div style={{width:44,height:44,borderRadius:12,background:"rgba(47,143,78,0.08)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>
-                      {tab==="buku"?(item.icon||"📕"):tab==="video"?"▶️":tab==="dokumen"?"📄":tab==="galeri"?"🖼️":"🖥️"}
+                    <div style={{width:44,height:44,borderRadius:12,background:"rgba(47,143,78,0.08)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0,color:"#2d5a40"}}>
+                      {tab==="buku"?<Book size={20}/>:tab==="video"?<PlaySquare size={20}/>:tab==="dokumen"?<FileText size={20}/>:tab==="galeri"?<ImageIcon size={20}/>:<Laptop size={20}/>}
                     </div>
                   )}
                   <div style={{flex:1,minWidth:0}}>
@@ -221,8 +225,8 @@ export default function AdminLearningHub() {
                     <span style={{fontSize:10,fontWeight:800,padding:"4px 10px",borderRadius:99,flexShrink:0,background:item.status==="tersedia"?"rgba(47,143,78,0.1)":"rgba(220,53,69,0.08)",color:item.status==="tersedia"?"#2d5a40":"#8b2020"}}>{item.status}</span>
                   )}
                   <div style={{display:"flex",gap:6,flexShrink:0}}>
-                    <button onClick={()=>openEdit(item)} style={{padding:"6px 10px",borderRadius:8,background:"rgba(45,90,64,0.06)",border:"1px solid rgba(45,90,64,0.12)",color:"#2d5a40",cursor:"pointer",fontSize:12,fontWeight:700}}>✏️</button>
-                    <button onClick={()=>handleDelete(item.id)} style={{padding:"6px 10px",borderRadius:8,background:"rgba(139,32,32,0.05)",border:"1px solid rgba(139,32,32,0.1)",color:"#8B2020",cursor:"pointer",fontSize:12}}>🗑️</button>
+                    <button onClick={()=>openEdit(item)} style={{padding:"6px 10px",borderRadius:8,background:"rgba(45,90,64,0.06)",border:"1px solid rgba(45,90,64,0.12)",color:"#2d5a40",cursor:"pointer",fontSize:12,fontWeight:700}}><Edit2 size={14} /></button>
+                    <button onClick={()=>handleDelete(item.id)} style={{padding:"6px 10px",borderRadius:8,background:"rgba(139,32,32,0.05)",border:"1px solid rgba(139,32,32,0.1)",color:"#8B2020",cursor:"pointer",fontSize:12}}><Trash2 size={14} /></button>
                   </div>
                 </div>
               ))}
@@ -323,8 +327,8 @@ export default function AdminLearningHub() {
 
             <div style={{display:"flex",gap:12,marginTop:24}}>
               <button onClick={()=>{setShowModal(false);setEditId(null);}} style={{flex:1,padding:14,borderRadius:12,border:"1px solid #ddd",background:"white",fontSize:13,fontWeight:600,cursor:"pointer"}}>Batal</button>
-              <button onClick={handleSave} disabled={loading||uploading} className="btn-heroic" style={{flex:2}}>
-                {uploading?"⬆️ Mengupload...":loading?"Menyimpan...":"💾 Simpan"}
+              <button onClick={handleSave} disabled={loading||uploading} className="btn-heroic" style={{flex:2,display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
+                {uploading?<><Upload size={18} /> Mengupload...</>:loading?"Menyimpan...":<><Save size={18} /> Simpan</>}
               </button>
             </div>
           </div>

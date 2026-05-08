@@ -1,5 +1,10 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
+import { 
+  Signal, Vote, Scale, Trophy, Inbox, User, 
+  Leaf, CheckCircle, Smartphone, Mail, Lock, 
+  Megaphone, ChevronRight, Sparkles, Clock, Calendar
+} from "lucide-react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 interface Voting { id: string; judul: string; deskripsi: string; status: string; }
@@ -159,7 +164,7 @@ export default function LiveVotingBroadcast() {
 
         {!active && live && (
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "60vh", gap: 16 }}>
-            <div style={{ width: 100, height: 100, borderRadius: "50%", background: C.bgDeep, border: `2px dashed ${C.border}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 50 }}>📶</div>
+            <div style={{ width: 100, height: 100, borderRadius: "50%", background: C.bgDeep, border: `2px dashed ${C.border}`, display: "flex", alignItems: "center", justifyContent: "center", color: C.greenMid }}><Signal size={50} /></div>
             <h1 style={{ fontFamily: "var(--font-cormorant,'Cormorant Garamond'),serif", fontSize: "clamp(28px,5vw,56px)", fontWeight: 300, color: C.greenMid, textAlign: "center" }}>
               Standby — <em style={{ color: C.gold }}>Belum ada voting aktif</em>
             </h1>
@@ -174,7 +179,7 @@ export default function LiveVotingBroadcast() {
               {/* Judul agenda */}
               <div style={{ background: C.green, borderRadius: 20, padding: "28px 32px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
                 <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(255,255,255,0.1)", borderRadius: 99, padding: "5px 14px", fontSize: 11, fontWeight: 800, color: C.goldBr, letterSpacing: "0.15em", marginBottom: 12, alignSelf: "flex-start" }}>
-                  {isPemilu ? "🗳️ PEMILIHAN DIGITAL" : "⚖️ MUSYAWARAH DIGITAL"}
+                  {isPemilu ? <><Vote size={14}/> PEMILIHAN DIGITAL</> : <><Scale size={14}/> MUSYAWARAH DIGITAL</>}
                 </div>
                 <h1 style={{ margin: 0, fontSize: "clamp(22px,3vw,38px)", fontWeight: 900, color: "#fff", fontFamily: "var(--font-cormorant,'Cormorant Garamond'),serif", lineHeight: 1.15 }}>
                   {parsed?.text}
@@ -230,8 +235,8 @@ export default function LiveVotingBroadcast() {
                     <div key={p.id} style={{ borderRadius: 24, overflow: "hidden", boxShadow: isLeading ? `0 20px 60px ${col}30, 0 4px 20px rgba(0,0,0,0.12)` : "0 4px 20px rgba(0,0,0,0.08)", border: isLeading ? `3px solid ${col}` : `1px solid ${C.border}`, transition: "all 0.5s ease", position: "relative", background: "#111" }}>
 
                       {/* Rank badge */}
-                      <div style={{ position: "absolute", top: 16, left: 16, zIndex: 5, background: col, color: "#fff", borderRadius: 10, padding: "6px 14px", fontSize: 13, fontWeight: 900, letterSpacing: "0.06em", boxShadow: "0 4px 12px rgba(0,0,0,0.35)" }}>
-                        {isLeading ? "🏆" : `#${i+1}`} Nomor {i + 1}
+                      <div style={{ position: "absolute", top: 16, left: 16, zIndex: 5, background: col, color: "#fff", borderRadius: 10, padding: "6px 14px", fontSize: 13, fontWeight: 900, letterSpacing: "0.06em", boxShadow: "0 4px 12px rgba(0,0,0,0.35)", display: "flex", alignItems: "center", gap: 6 }}>
+                        {isLeading ? <Trophy size={14}/> : `#${i+1}`} Nomor {i + 1}
                       </div>
                       {isLeading && (
                         <div style={{ position: "absolute", top: 16, right: 16, zIndex: 5, background: "#DC2626", color: "#fff", borderRadius: 99, padding: "5px 14px", fontSize: 11, fontWeight: 900, letterSpacing: "0.12em", boxShadow: "0 4px 12px rgba(0,0,0,0.3)", animation: "blink 2s infinite" }}>
@@ -244,8 +249,8 @@ export default function LiveVotingBroadcast() {
                         {foto ? (
                           <img src={foto} alt={nama} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }} />
                         ) : (
-                          <div style={{ width: "100%", height: "100%", background: C.bgDeep, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "clamp(80px,14vw,160px)", opacity: 0.15, userSelect: "none" }}>
-                            {isGolput ? "🫙" : "👤"}
+                          <div style={{ width: "100%", height: "100%", background: C.bgDeep, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "clamp(80px,14vw,160px)", opacity: 0.15, userSelect: "none", color: C.greenMid }}>
+                            {isGolput ? <Inbox size={100} /> : <User size={100} />}
                           </div>
                         )}
 
@@ -316,8 +321,8 @@ export default function LiveVotingBroadcast() {
       {/* ════════ TICKER ════════ */}
       <footer style={{ position: "relative", zIndex: 10, background: C.green, borderTop: `4px solid ${C.gold}`, overflow: "hidden", height: 52, display: "flex", alignItems: "stretch" }}>
         {/* Label badge */}
-        <div style={{ background: C.gold, color: C.green, fontWeight: 900, padding: "0 24px", display: "flex", alignItems: "center", fontSize: 15, letterSpacing: "0.1em", whiteSpace: "nowrap", zIndex: 2, boxShadow: "4px 0 12px rgba(0,0,0,0.3)" }}>
-          📢 INFO KPK
+        <div style={{ background: C.gold, color: C.green, fontWeight: 900, padding: "0 24px", display: "flex", alignItems: "center", fontSize: 15, letterSpacing: "0.1em", whiteSpace: "nowrap", zIndex: 2, boxShadow: "4px 0 12px rgba(0,0,0,0.3)", gap: 8 }}>
+          <Megaphone size={18} /> INFO KPK
         </div>
         {/* Ticker content */}
         <div style={{ flex: 1, overflow: "hidden", display: "flex", alignItems: "center" }}>
@@ -326,19 +331,16 @@ export default function LiveVotingBroadcast() {
             fontSize: 17,
             fontWeight: 700,
             color: "#fff",
-            animation: "ticker 60s linear infinite"
+            animation: "ticker 60s linear infinite",
+            display: "flex",
+            alignItems: "center"
           }}>
-            &nbsp;&nbsp;&nbsp;&nbsp;🌿 Pemilihan Digital Kampung Ciburial RW 08 sedang berlangsung — Gunakan Kartu Warga NFC Anda.
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            ✅ Suara Anda dijamin rahasia, langsung, dan bebas dari manipulasi — 100% Terenkripsi secara digital.
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            💳 Belum punya Kartu Warga? Hubungi RT/RW atau kunjungi Pos Digital Warga.
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            📧 Pendaftaran via email: ciburial.smarthub@gmail.com
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            🔒 Satu warga satu suara — sistem otomatis mencegah pencoblosan ganda.
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            🏆 Hasil pemilihan ini bersifat resmi dan final sesuai keputusan musyawarah warga.
+            <span style={{ display: "flex", alignItems: "center", gap: 8 }}>&nbsp;&nbsp;&nbsp;&nbsp;<Leaf size={18} color={C.goldBr} /> Pemilihan Digital Kampung Ciburial RW 08 sedang berlangsung — Gunakan Kartu Warga NFC Anda.</span>
+            <span style={{ display: "flex", alignItems: "center", gap: 8 }}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<CheckCircle size={18} color={C.goldBr} /> Suara Anda dijamin rahasia, langsung, dan bebas dari manipulasi — 100% Terenkripsi secara digital.</span>
+            <span style={{ display: "flex", alignItems: "center", gap: 8 }}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<Smartphone size={18} color={C.goldBr} /> Belum punya Kartu Warga? Hubungi RT/RW atau kunjungi Pos Digital Warga.</span>
+            <span style={{ display: "flex", alignItems: "center", gap: 8 }}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<Mail size={18} color={C.goldBr} /> Pendaftaran via email: ciburial.smarthub@gmail.com</span>
+            <span style={{ display: "flex", alignItems: "center", gap: 8 }}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<Lock size={18} color={C.goldBr} /> Satu warga satu suara — sistem otomatis mencegah pencoblosan ganda.</span>
+            <span style={{ display: "flex", alignItems: "center", gap: 8 }}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<Trophy size={18} color={C.goldBr} /> Hasil pemilihan ini bersifat resmi dan final sesuai keputusan musyawarah warga.</span>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           </div>
         </div>

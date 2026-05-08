@@ -1,5 +1,11 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import { 
+  Vote, Lock, CheckCircle, XCircle, Info, Scan, Power, 
+  ChevronRight, ArrowLeft, PartyPopper, Users, Landmark, 
+  Mail, MapPin, ShieldCheck, AlertCircle, Quote, Megaphone, 
+  ClipboardList, Inbox, Scale, User, Image as ImageIcon, Sparkles
+} from "lucide-react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 interface Voting { id: string; judul: string; deskripsi: string; tgl_mulai: string; tgl_selesai: string; status: string; }
@@ -196,17 +202,17 @@ export default function VotingPage() {
       {konfirmasi && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(26,46,31,.95)", zIndex: 999, display: "flex", alignItems: "center", justifyContent: "center" }}>
           <div style={{ background: C.white, borderRadius: 28, padding: "clamp(24px, 5vw, 40px)", maxWidth: 480, width: "100%", textAlign: "center", animation: "zoomIn .3s ease" }}>
-            <div style={{ fontSize: 44, marginBottom: 12 }}>🔒</div>
+            <div style={{ color: C.green, marginBottom: 12, display: "flex", justifyContent: "center" }}><Lock size={44} /></div>
             <h2 style={{ margin: "0 0 8px", fontSize: 22, color: C.darkGreen, fontWeight: 900 }}>Kunci Pilihan Anda?</h2>
             <p style={{ color: C.lightGreen, fontSize: 14, margin: "0 0 24px", lineHeight: 1.7 }}>Pilihan yang disahkan tidak bisa diubah atau dibatalkan oleh siapapun. Pastikan ini adalah keputusan terbaik Anda.</p>
             <div style={{ background: C.cream, borderRadius: 16, padding: 20, marginBottom: 28 }}>
-              <div style={{ fontSize: 12, color: C.lightGreen, fontWeight: 800, letterSpacing: "0.08em", marginBottom: 8 }}>PILIHAN ANDA:</div>
+              <div style={{ fontSize: 12, color: C.lightGreen, fontWeight: 800, letterSpacing: "0.08em", marginBottom: 8, display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}><Vote size={14}/> PILIHAN ANDA:</div>
               <div style={{ fontSize: 20, fontWeight: 900, color: C.green }}>{parseKandidat(konfirmasi.teks).nama}</div>
             </div>
             <div style={{ display: "flex", gap: 12 }}>
-              <button onClick={() => setKonfirmasi(null)} style={{ flex: 1, padding: 16, borderRadius: 12, background: "transparent", border: `2px solid ${C.lightGreen}`, color: C.lightGreen, fontWeight: 800, fontSize: 14, cursor: "pointer" }}>Koreksi</button>
-              <button onClick={kirimSuara} disabled={loading} style={{ flex: 2, padding: 16, borderRadius: 12, background: C.green, color: "white", border: "none", fontWeight: 900, fontSize: 15, cursor: loading ? "not-allowed" : "pointer" }}>
-                {loading ? "Menyimpan..." : "🔐 SAH! Masukkan Suara"}
+              <button onClick={() => setKonfirmasi(null)} style={{ flex: 1, padding: 16, borderRadius: 12, background: "transparent", border: `2px solid ${C.lightGreen}`, color: C.lightGreen, fontWeight: 800, fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}><ArrowLeft size={16}/> Koreksi</button>
+              <button onClick={kirimSuara} disabled={loading} style={{ flex: 2, padding: 16, borderRadius: 12, background: C.green, color: "white", border: "none", fontWeight: 900, fontSize: 15, cursor: loading ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                {loading ? "Menyimpan..." : <><Lock size={18} /> SAH! Masukkan Suara</>}
               </button>
             </div>
           </div>
@@ -216,7 +222,7 @@ export default function VotingPage() {
       {/* Header */}
       <header style={{ background: C.white, borderBottom: "1px solid rgba(45,90,64,.12)", padding: "20px 32px", display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 50, boxShadow: "0 4px 20px rgba(0,0,0,.05)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <div style={{ width: 52, height: 52, background: C.green, borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26 }}>🗳️</div>
+          <div style={{ width: 52, height: 52, background: C.green, borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, color: "white" }}><Vote size={28} /></div>
           <div>
             <div style={{ fontSize: 10, color: C.green, letterSpacing: "0.2em", fontWeight: 900 }}>KPK CIBURIAL RW 08 — E-VOTING</div>
             <h1 style={{ margin: 0, fontSize: 20, fontWeight: 900, color: C.darkGreen }}>Bilik Suara Pintar Digital</h1>
@@ -231,7 +237,7 @@ export default function VotingPage() {
             </div>
           </div>
         ) : (
-          <a href="/" style={{ color: C.lightGreen, fontSize: 13, fontWeight: 700, textDecoration: "none" }}>← Kembali</a>
+          <a href="/" style={{ color: C.lightGreen, fontSize: 13, fontWeight: 700, textDecoration: "none", display: "flex", alignItems: "center", gap: 6 }}><ArrowLeft size={16}/> Kembali</a>
         )}
       </header>
 
@@ -245,7 +251,7 @@ export default function VotingPage() {
               <img src={slide.foto} alt="motivasi" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.45, transition: "opacity .5s" }} />
               <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(26,46,31,.95) 0%, rgba(26,46,31,.2) 100%)" }} />
               <div style={{ position: "relative", zIndex: 2, padding: "clamp(24px, 5vw, 36px) clamp(20px, 4vw, 40px)", height: "100%", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-                <div style={{ fontSize: 11, color: C.gold, fontWeight: 900, letterSpacing: "0.2em", marginBottom: 12, textTransform: "uppercase" }}>💬 Pesan Motivasi Pemilihan</div>
+                <div style={{ fontSize: 11, color: C.gold, fontWeight: 900, letterSpacing: "0.2em", marginBottom: 12, textTransform: "uppercase", display: "flex", alignItems: "center", gap: 8 }}><Quote size={14}/> Pesan Motivasi Pemilihan</div>
                 <blockquote style={{ margin: 0, fontSize: 22, fontWeight: 800, color: "white", lineHeight: 1.5, maxWidth: 600, fontStyle: "italic" }}>"{slide.kutipan}"</blockquote>
                 <div style={{ marginTop: 16, fontSize: 13, color: C.gold, fontWeight: 700 }}>— {slide.nama}</div>
               </div>
@@ -259,18 +265,18 @@ export default function VotingPage() {
 
             {/* Himbauan KPU */}
             <div style={{ background: C.green, borderRadius: 20, padding: "20px 28px", marginBottom: 32, display: "flex", alignItems: "center", gap: 20 }}>
-              <span style={{ fontSize: 32, flexShrink: 0 }}>📣</span>
+              <div style={{ color: "white", flexShrink: 0 }}><Megaphone size={32} /></div>
               <div>
                 <div style={{ fontWeight: 900, fontSize: 16, color: "white", marginBottom: 4 }}>Himbauan Komisi Pemilihan Kampung (KPK)</div>
                 <div style={{ fontSize: 14, color: "rgba(255,255,255,.8)", lineHeight: 1.6 }}>Gunakan hak pilih Anda sesuai <b>hati nurani</b> — bukan tekanan pihak manapun. Pemilihan ini bersifat <b>LANGSUNG, UMUM, BEBAS & RAHASIA</b>. Suara Anda dijamin aman oleh sistem enkripsi digital.</div>
               </div>
             </div>
 
-            <h2 style={{ fontSize: 24, fontWeight: 900, color: C.darkGreen, marginBottom: 20 }}>Agenda Pemilihan Terbuka 📋</h2>
+            <h2 style={{ fontSize: 24, fontWeight: 900, color: C.darkGreen, marginBottom: 20, display: "flex", alignItems: "center", gap: 10 }}>Agenda Pemilihan Terbuka <ClipboardList size={24} /></h2>
 
             {votings.length === 0 ? (
-              <div style={{ textAlign: "center", padding: "clamp(30px, 6vw, 60px) clamp(16px, 4vw, 20px)", background: C.white, borderRadius: 20, border: `1px dashed ${C.lightGreen}` }}>
-                <div style={{ fontSize: 40, marginBottom: 12 }}>📭</div>
+              <div style={{ textAlign: "center", padding: "clamp(30px, 6vw, 60px) clamp(16px, 4vw, 20px)", background: C.white, borderRadius: 20, border: `1px dashed ${C.lightGreen}`, display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
+                <Inbox size={40} color={C.lightGreen} />
                 <div style={{ color: C.lightGreen, fontWeight: 700, fontSize: 15 }}>Tidak ada agenda pemilihan yang aktif saat ini.</div>
               </div>
             ) : votings.map(v => {
@@ -278,13 +284,13 @@ export default function VotingPage() {
               return (
                 <div key={v.id} onClick={() => bukaBilik(v)} style={{ background: C.white, borderRadius: 20, padding: "clamp(20px, 4vw, 28px) clamp(16px, 4vw, 32px)", marginBottom: 16, display: "flex", alignItems: "center", justifyContent: "space-between", border: `1px solid rgba(45,90,64,.12)`, boxShadow: "0 8px 20px rgba(0,0,0,.04)", cursor: "pointer", transition: "all .2s" }}>
                   <div>
-                    <span style={{ background: tipe === "PEMILU" ? "rgba(45,90,64,.1)" : "rgba(184,148,63,.1)", color: tipe === "PEMILU" ? C.green : C.gold, padding: "5px 12px", borderRadius: 8, fontSize: 11, fontWeight: 900, letterSpacing: ".05em" }}>
-                      {tipe === "PEMILU" ? "🗳️ KOTAK PEMILU" : "⚖️ MUSYAWARAH"}
+                    <span style={{ background: tipe === "PEMILU" ? "rgba(45,90,64,.1)" : "rgba(184,148,63,.1)", color: tipe === "PEMILU" ? C.green : C.gold, padding: "5px 12px", borderRadius: 8, fontSize: 11, fontWeight: 900, letterSpacing: ".05em", display: "inline-flex", alignItems: "center", gap: 6 }}>
+                      {tipe === "PEMILU" ? <><Vote size={12}/> KOTAK PEMILU</> : <><Scale size={12}/> MUSYAWARAH</>}
                     </span>
                     <h3 style={{ margin: "12px 0 6px", fontSize: 20, fontWeight: 900, color: C.darkGreen }}>{text}</h3>
                     <div style={{ fontSize: 14, color: C.lightGreen, fontWeight: 600 }}>{v.deskripsi || "Silakan masuk dan berikan suara Anda."}</div>
                   </div>
-                  <div style={{ width: 44, height: 44, background: C.cream, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: C.green, fontWeight: 900, fontSize: 18, flexShrink: 0, marginLeft: 20 }}>→</div>
+                  <div style={{ width: 44, height: 44, background: C.cream, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: C.green, fontWeight: 900, fontSize: 18, flexShrink: 0, marginLeft: 20 }}><ChevronRight size={20} /></div>
                 </div>
               );
             })}
@@ -292,12 +298,12 @@ export default function VotingPage() {
             {/* ===== LIVE RESULTS BUTTON ===== */}
             <div style={{ background: C.darkGreen, borderRadius: 20, padding: "24px 28px", marginTop: 28, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
               <div>
-                <div style={{ fontSize: 13, fontWeight: 900, color: C.gold, letterSpacing: "0.1em", marginBottom: 4 }}>📺 PAPAN PUBLIK</div>
+                <div style={{ fontSize: 13, fontWeight: 900, color: C.gold, letterSpacing: "0.1em", marginBottom: 4, display: "flex", alignItems: "center", gap: 8 }}><Sparkles size={14}/> PAPAN PUBLIK</div>
                 <div style={{ fontSize: 15, fontWeight: 700, color: "white" }}>Tampilkan Hasil Voting Live Real-time</div>
                 <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", marginTop: 4 }}>Otomatis update</div>
               </div>
-              <a href="/voting/live" target="_blank" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "14px 24px", background: C.gold, color: "#1a2e1f", borderRadius: 14, fontWeight: 900, fontSize: 14, textDecoration: "none", flexShrink: 0, boxShadow: "0 6px 20px rgba(184,148,63,0.4)", transition: "all 0.2s" }}>
-                🔴 Buka Live Results →
+              <a href="/voting/live" target="_blank" style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "14px 24px", background: C.gold, color: "#1a2e1f", borderRadius: 14, fontWeight: 900, fontSize: 14, textDecoration: "none", flexShrink: 0, boxShadow: "0 6px 20px rgba(184,148,63,0.4)", transition: "all 0.2s" }}>
+                <div style={{width:8, height:8, background:C.red, borderRadius:"50%", animation:"pulse 1s infinite"}} /> Buka Live Results <ChevronRight size={16} />
               </a>
             </div>
 
@@ -306,7 +312,7 @@ export default function VotingPage() {
 
               {/* Cara voting */}
               <div style={{ background: C.white, borderRadius: 20, padding: "24px 28px", border: `1px solid rgba(45,90,64,.1)` }}>
-                <div style={{ fontSize: 22, marginBottom: 12 }}>📋</div>
+                <div style={{ color: C.green, marginBottom: 12 }}><ClipboardList size={28} /></div>
                 <div style={{ fontSize: 14, fontWeight: 900, color: C.darkGreen, marginBottom: 12 }}>Cara Menggunakan Bilik Suara Digital</div>
                 {[
                   "Pilih agenda pemilihan yang aktif",
@@ -324,18 +330,18 @@ export default function VotingPage() {
 
               {/* Cara dapat kartu */}
               <div style={{ background: C.white, borderRadius: 20, padding: "24px 28px", border: `1px solid rgba(45,90,64,.1)` }}>
-                <div style={{ fontSize: 22, marginBottom: 12 }}>💳</div>
+                <div style={{ color: C.green, marginBottom: 12 }}><Users size={28} /></div>
                 <div style={{ fontSize: 14, fontWeight: 900, color: C.darkGreen, marginBottom: 12 }}>Belum Punya Kartu Warga Digital?</div>
                 <div style={{ fontSize: 13, color: "#5a4a40", lineHeight: 1.7, marginBottom: 12 }}>
                   Kartu Warga NFC Ciburial diterbitkan untuk seluruh warga RW 08 yang terdaftar. Ambil di:
                 </div>
                 {[
-                  { icon: "🏠", text: "Ketua RT masing-masing (RT 01, 02, 03)" },
-                  { icon: "📍", text: "Pos Digital Warga RW 08" },
-                  { icon: "📧", text: "Daftar via Email: ciburial.smarthub@gmail.com" },
+                  { icon: <Landmark size={14}/>, text: "Ketua RT masing-masing (RT 01, 02, 03)" },
+                  { icon: <MapPin size={14}/>, text: "Pos Digital Warga RW 08" },
+                  { icon: <Mail size={14}/>, text: "Daftar via Email: ciburial.smarthub@gmail.com" },
                 ].map((x, i) => (
                   <div key={i} style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 8, padding: "8px 12px", background: "rgba(45,90,64,0.05)", borderRadius: 10 }}>
-                    <span style={{ fontSize: 16 }}>{x.icon}</span>
+                    <span style={{ color: C.green }}>{x.icon}</span>
                     <span style={{ fontSize: 12, color: C.darkGreen, fontWeight: 600 }}>{x.text}</span>
                   </div>
                 ))}
@@ -343,7 +349,7 @@ export default function VotingPage() {
 
               {/* Jaminan keamanan */}
               <div style={{ background: C.darkGreen, borderRadius: 20, padding: "24px 28px" }}>
-                <div style={{ fontSize: 22, marginBottom: 12 }}>🔒</div>
+                <div style={{ color: C.gold, marginBottom: 12 }}><ShieldCheck size={28} /></div>
                 <div style={{ fontSize: 14, fontWeight: 900, color: C.gold, marginBottom: 12 }}>Pemilihan Digital Tidak Bisa Dimanipulasi</div>
                 {[
                   "Suara direkam langsung ke database terenkripsi",
@@ -353,7 +359,7 @@ export default function VotingPage() {
                   "Semua data tersimpan di server terverifikasi",
                 ].map((s, i) => (
                   <div key={i} style={{ display: "flex", gap: 8, marginBottom: 8, alignItems: "flex-start" }}>
-                    <span style={{ color: C.gold, fontWeight: 900, flexShrink: 0, marginTop: 1 }}>✓</span>
+                    <div style={{ color: C.gold, marginTop: 1 }}><CheckCircle size={14} /></div>
                     <span style={{ fontSize: 12, color: "rgba(255,255,255,0.75)", lineHeight: 1.5 }}>{s}</span>
                   </div>
                 ))}
@@ -365,7 +371,7 @@ export default function VotingPage() {
         {/* ===== BILIK: Verifikasi NFC ===== */}
         {activeVoting && !terverifikasi && (
           <div style={{ maxWidth: 560, margin: "0 auto", background: C.white, borderRadius: 28, padding: "clamp(24px, 5vw, 48px)", boxShadow: "0 20px 50px rgba(0,0,0,.08)", textAlign: "center", animation: "zoomIn .3s ease" }}>
-            <div style={{ fontSize: 52, marginBottom: 16 }}>🏛️</div>
+            <div style={{ color: C.green, marginBottom: 16, display: "flex", justifyContent: "center" }}><Landmark size={52} /></div>
             <h2 style={{ margin: "0 0 8px", fontSize: 24, fontWeight: 900, color: C.darkGreen }}>{parseJudul(activeVoting.judul).text}</h2>
             <p style={{ color: C.lightGreen, fontSize: 14, lineHeight: 1.7, margin: "0 0 36px" }}>
               Anda memasuki Bilik Suara Resmi. Untuk menjaga keadilan pemilihan, <b>hanya warga terdaftar (DPT) berusia 18+ tahun</b> yang dapat memberikan suara menggunakan <b>Kartu Warga NFC Ciburial</b>.
@@ -385,16 +391,13 @@ export default function VotingPage() {
                 display: "flex", alignItems: "center", justifyContent: "center",
                 transition: "all 0.5s",
                 boxShadow: scanning ? "0 0 32px rgba(45,90,64,0.2)" : "none",
+                color: scanning ? C.green : "rgba(45,90,64,0.4)"
               }}>
-                <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke={scanning ? C.green : "rgba(45,90,64,0.4)"} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" style={{ transition: "stroke 0.5s" }}>
-                  <path d="M2 7V5a2 2 0 0 1 2-2h2"/><path d="M2 17v2a2 2 0 0 0 2 2h2"/>
-                  <path d="M22 7V5a2 2 0 0 0-2-2h-2"/><path d="M22 17v2a2 2 0 0 1-2 2h-2"/>
-                  <rect x="7" y="7" width="10" height="10" rx="1.5"/>
-                </svg>
+                <Scan size={52} strokeWidth={1.3} />
               </div>
             </div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: scanning ? C.green : C.lightGreen, marginBottom: 20, transition: "color 0.4s" }}>
-              {scanning ? "Tempelkan e-KTP ke belakang HP..." : "NFC Scanner Belum Aktif"}
+            <div style={{ fontSize: 13, fontWeight: 600, color: scanning ? C.green : C.lightGreen, marginBottom: 20, transition: "color 0.4s", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+              {scanning ? <><Info size={18}/> Tempelkan e-KTP ke belakang HP...</> : <><Power size={18}/> NFC Scanner Belum Aktif</>}
             </div>
             <button onClick={scanning ? stopNFC : startNFC}
               style={{
@@ -404,13 +407,15 @@ export default function VotingPage() {
                 cursor: "pointer", fontFamily: "inherit",
                 boxShadow: scanning ? "none" : "0 10px 28px rgba(45,90,64,0.3)",
                 letterSpacing: ".06em", marginBottom: 12,
+                display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
+                margin: "0 auto 12px"
               }}>
-              {scanning ? "⏹ Stop Scanning" : "⬡ Aktifkan NFC e-KTP"}
+              {scanning ? <><XCircle size={18} /> Stop Scanning</> : <><Scan size={18} /> Aktifkan NFC e-KTP</>}
             </button>
             <div style={{ marginBottom: 12 }}>
-              <button onClick={() => setActiveVoting(null)} style={{ color: C.lightGreen, background: "transparent", border: "none", fontWeight: 700, fontSize: 13, cursor: "pointer" }}>← Kembali ke Daftar Agenda</button>
+              <button onClick={() => setActiveVoting(null)} style={{ color: C.lightGreen, background: "transparent", border: "none", fontWeight: 700, fontSize: 13, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6, margin: "0 auto" }}><ArrowLeft size={14}/> Kembali ke Daftar Agenda</button>
             </div>
-            {!scanning && <div style={{ fontSize: 10, color: C.lightGreen, opacity: 0.5 }}>Chrome Android · NFC harus aktif</div>}
+            {!scanning && <div style={{ fontSize: 10, color: C.lightGreen, opacity: 0.5, display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}><Info size={10}/> Chrome Android · NFC harus aktif</div>}
             <style>{`
               @keyframes pulse-ring-v {
                 0%  { transform: scale(0.85); opacity: 0.75; }
@@ -445,11 +450,11 @@ export default function VotingPage() {
               <div style={{ textAlign: "center", padding: "32px", background: C.white, borderRadius: 20, border: `2px solid ${fetchError ? C.red : "#e0dccc"}` }}>
                 {fetchError ? (
                   <>
-                    <div style={{ fontSize: 30, marginBottom: 12 }}>🚨</div>
+                    <div style={{ color: C.red, marginBottom: 12, display: "flex", justifyContent: "center" }}><AlertCircle size={40} /></div>
                     <div style={{ fontWeight: 900, fontSize: 16, color: C.red, marginBottom: 12 }}>Gagal Memuat Data Pilihan!</div>
                     <div style={{ fontSize: 13, color: "#666", marginBottom: 20, padding: "12px", background: "#fff0f0", borderRadius: 10, fontFamily: "monospace", wordBreak: "break-word" }}>{fetchError}</div>
                     <div style={{ textAlign: "left", background: C.darkGreen, borderRadius: 12, padding: "16px", color: "#c8ffd4", fontSize: 12, fontFamily: "monospace", lineHeight: 1.8 }}>
-                      <div style={{ color: C.gold, fontWeight: 900, marginBottom: 8, fontFamily: "Inter" }}>🔧 SOLUSI: Jalankan SQL ini di Supabase → SQL Editor:</div>
+                      <div style={{ color: C.gold, fontWeight: 900, marginBottom: 8, fontFamily: "Inter", display: "flex", alignItems: "center", gap: 8 }}><Info size={14}/> SOLUSI: Jalankan SQL ini di Supabase → SQL Editor:</div>
                       <div>ALTER TABLE voting ENABLE ROW LEVEL SECURITY;</div>
                       <div>ALTER TABLE pilihan_voting ENABLE ROW LEVEL SECURITY;</div>
                       <div>ALTER TABLE vote_record ENABLE ROW LEVEL SECURITY;</div>
@@ -460,10 +465,10 @@ export default function VotingPage() {
                       <div>CREATE POLICY "pub_w_pv" ON pilihan_voting FOR ALL USING (true) WITH CHECK (true);</div>
                       <div>CREATE POLICY "pub_w_vr" ON vote_record FOR ALL USING (true) WITH CHECK (true);</div>
                     </div>
-                    <button onClick={() => bukaBilik(activeVoting!)} style={{ marginTop: 16, padding: "12px 24px", background: C.green, color: "white", border: "none", borderRadius: 12, fontWeight: 800, fontSize: 14, cursor: "pointer" }}>🔄 Coba Muat Ulang</button>
+                    <button onClick={() => bukaBilik(activeVoting!)} style={{ marginTop: 16, padding: "12px 24px", background: C.green, color: "white", border: "none", borderRadius: 12, fontWeight: 800, fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, margin: "16px auto 0" }}><History size={16}/> Coba Muat Ulang</button>
                   </>
                 ) : (
-                  <div style={{ color: C.lightGreen, fontWeight: 700 }}>⏳ Memuat daftar pilihan...</div>
+                  <div style={{ color: C.lightGreen, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", gap: 10 }}><Info size={18}/> Memuat daftar pilihan...</div>
                 )}
               </div>
             ) : tipeAktif?.tipe === "PEMILU" ? (
@@ -478,14 +483,16 @@ export default function VotingPage() {
                         {foto ? (
                           <img src={foto} alt={nama} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                         ) : (
-                          <div style={{ fontSize: isSpecial ? 70 : 100, opacity: 0.25 }}>{isSpecial ? "🫙" : "👤"}</div>
+                          <div style={{ color: C.lightGreen, opacity: 0.25 }}>
+                            {isSpecial ? <Inbox size={100} /> : <User size={100} />}
+                          </div>
                         )}
                         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(255,255,255,.95) 0%, transparent 60%)" }} />
                       </div>
                       <div style={{ padding: "16px 28px 24px", textAlign: "center", marginTop: -30, position: "relative" }}>
                         <div style={{ fontSize: 20, fontWeight: 900, color: C.darkGreen, marginBottom: 14 }}>{nama}</div>
-                        <button onClick={() => setKonfirmasi(p)} style={{ width: "100%", padding: "14px", background: isSpecial ? C.cream : C.green, color: isSpecial ? C.lightGreen : "white", border: isSpecial ? `2px dashed ${C.lightGreen}` : "none", borderRadius: 14, fontSize: 15, fontWeight: 900, cursor: "pointer", boxShadow: isSpecial ? "none" : "0 6px 16px rgba(45,90,64,.25)" }}>
-                          {isSpecial ? "Pilih Opsi Ini" : "✅ COBLOS KANDIDAT"}
+                        <button onClick={() => setKonfirmasi(p)} style={{ width: "100%", padding: "14px", background: isSpecial ? C.cream : C.green, color: isSpecial ? C.lightGreen : "white", border: isSpecial ? `2px dashed ${C.lightGreen}` : "none", borderRadius: 14, fontSize: 15, fontWeight: 900, cursor: "pointer", boxShadow: isSpecial ? "none" : "0 6px 16px rgba(45,90,64,.25)", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                          {isSpecial ? "Pilih Opsi Ini" : <><CheckCircle size={18}/> COBLOS KANDIDAT</>}
                         </button>
                       </div>
                     </div>
@@ -501,15 +508,15 @@ export default function VotingPage() {
                   const isTolak = nama.toLowerCase().includes("tidak") || nama.toLowerCase().includes("tolak");
                   const isNetral = nama.toLowerCase().includes("netral") || nama.toLowerCase().includes("abstain");
                   const isGolput = nama.toLowerCase().includes("golput") || nama.toLowerCase().includes("kosong");
-                  const emoji = isSetuju ? "✅" : isTolak ? "❌" : isNetral ? "⚖️" : isGolput ? "🫙" : "📌";
+                  const icon = isSetuju ? <CheckCircle size={24}/> : isTolak ? <XCircle size={24}/> : isNetral ? <Scale size={24}/> : isGolput ? <Inbox size={24}/> : <MapPin size={24}/>;
                   return (
                     <div key={p.id} onClick={() => setKonfirmasi(p)} style={{ background: C.white, borderRadius: 20, padding: "28px 36px", display: "flex", alignItems: "center", justifyContent: "space-between", border: `2px solid ${isSetuju ? C.green : isTolak ? C.red : "#e0dccc"}`, boxShadow: "0 8px 20px rgba(0,0,0,.05)", cursor: "pointer", transition: "all .2s" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-                        <div style={{ width: 56, height: 56, borderRadius: "50%", background: C.cream, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24 }}>{emoji}</div>
+                        <div style={{ width: 56, height: 56, borderRadius: "50%", background: C.cream, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, color: isSetuju ? C.green : isTolak ? C.red : C.lightGreen }}>{icon}</div>
                         <div style={{ fontSize: 22, fontWeight: 900, color: C.darkGreen }}>{nama}</div>
                       </div>
-                      <button style={{ padding: "14px 28px", background: isSetuju ? C.green : isTolak ? C.red : C.darkGreen, color: "white", border: "none", borderRadius: 14, fontSize: 15, fontWeight: 900, cursor: "pointer", boxShadow: "0 6px 16px rgba(0,0,0,.15)" }}>
-                        Dukung Opsi Ini
+                      <button style={{ padding: "14px 28px", background: isSetuju ? C.green : isTolak ? C.red : C.darkGreen, color: "white", border: "none", borderRadius: 14, fontSize: 15, fontWeight: 900, cursor: "pointer", boxShadow: "0 6px 16px rgba(0,0,0,.15)", display: "flex", alignItems: "center", gap: 8 }}>
+                        <Sparkles size={18}/> Dukung Opsi Ini
                       </button>
                     </div>
                   );

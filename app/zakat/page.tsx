@@ -1,5 +1,9 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import { 
+  HandHeart, Landmark, CheckCircle, AlertTriangle, Scan, 
+  Power, X, Info, Coins, Wheat, History, ArrowRight, User
+} from "lucide-react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 const TAHUN_INI = 2026;
@@ -167,7 +171,7 @@ export default function ZakatKioskPage() {
       {/* HEADER */}
       <header style={{ padding: "24px 40px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(255,255,255,0.05)", zIndex: 10 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-          <div style={{ width: 56, height: 56, borderRadius: 16, background: "linear-gradient(135deg, #B8943F, #D4AC5A)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32 }}>🕌</div>
+          <div style={{ width: 56, height: 56, borderRadius: 16, background: "linear-gradient(135deg, #B8943F, #D4AC5A)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, color: "#1A1410" }}><HandHeart size={32} /></div>
           <div>
             <div style={{ fontSize: 11, color: "#B8943F", fontWeight: 900, letterSpacing: "0.25em" }}>CIBURIAL DIGITAL HUB</div>
             <div style={{ fontSize: 22, fontWeight: 900 }}>Kiosk Zakat Digital</div>
@@ -185,7 +189,6 @@ export default function ZakatKioskPage() {
             <div style={{ display: "flex", gap: 32, flexWrap: "wrap", alignItems: "center" }}>
                {/* LEFT: SCANNER */}
                <div className="heroic-card" style={{ flex: "1 1 350px", padding: "clamp(30px, 6vw, 60px) clamp(20px, 4vw, 40px)", textAlign: "center" }}>
-                  {/* NFC Circle — seragam Learning Hub & Ronda */}
                   <div style={{ position: "relative", width: 140, height: 140, margin: "0 auto 20px" }}>
                     {scanning && <>
                       <div style={{ position: "absolute", inset: 0, borderRadius: "50%", border: "2px solid rgba(184,148,63,0.5)", animation: "nfc-pulse-z 2.2s ease-out infinite" }} />
@@ -200,19 +203,16 @@ export default function ZakatKioskPage() {
                       transition: "all 0.5s",
                       backdropFilter: "blur(12px)",
                       boxShadow: scanning ? "0 0 40px rgba(184,148,63,0.25)" : "none",
+                      color: scanning ? "#B8943F" : "rgba(184,148,63,0.4)"
                     }}>
-                      <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke={scanning ? "#B8943F" : "rgba(184,148,63,0.4)"} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" style={{ transition: "stroke 0.5s" }}>
-                        <path d="M2 7V5a2 2 0 0 1 2-2h2"/><path d="M2 17v2a2 2 0 0 0 2 2h2"/>
-                        <path d="M22 7V5a2 2 0 0 0-2-2h-2"/><path d="M22 17v2a2 2 0 0 1-2 2h-2"/>
-                        <rect x="7" y="7" width="10" height="10" rx="1.5"/>
-                      </svg>
+                      <Scan size={52} strokeWidth={1.3} />
                     </div>
                   </div>
-                  <h2 style={{ marginTop: 8, fontSize: 20, fontWeight: 800, color: scanning ? "#D4AC5A" : "#FAF8F3" }}>
-                    {scanning ? "Tempelkan e-KTP ke HP..." : "Kiosk Standby"}
+                  <h2 style={{ marginTop: 8, fontSize: 20, fontWeight: 800, color: scanning ? "#D4AC5A" : "#FAF8F3", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                    {scanning ? <><Info size={20}/> Tempelkan e-KTP ke HP...</> : <><Power size={20}/> Kiosk Standby</>}
                   </h2>
-                  <div style={{ fontSize: 12, color: "rgba(250,248,243,0.35)", marginBottom: 24, marginTop: 4 }}>
-                    {scanning ? "Chrome Android · NFC harus aktif" : "Tap NFC e-KTP untuk mulai"}
+                  <div style={{ fontSize: 12, color: "rgba(250,248,243,0.35)", marginBottom: 24, marginTop: 4, display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+                    <Info size={12} /> {scanning ? "Chrome Android · NFC harus aktif" : "Tap NFC e-KTP untuk mulai"}
                   </div>
                   <button onClick={scanning ? () => setScanning(false) : startNFC}
                     style={{ padding: "14px 32px", borderRadius: 12,
@@ -220,8 +220,9 @@ export default function ZakatKioskPage() {
                       background: scanning ? "rgba(184,148,63,0.08)" : "linear-gradient(135deg, #B8943F, #D4AC5A)",
                       color: scanning ? "#D4AC5A" : "#1A1410", fontSize: 14, fontWeight: 800,
                       cursor: "pointer", letterSpacing: ".06em",
-                      boxShadow: scanning ? "none" : "0 10px 30px rgba(184,148,63,0.4)" }}>
-                    {scanning ? "⏹ Stop Scanning" : "⬡ Aktifkan NFC e-KTP"}
+                      boxShadow: scanning ? "none" : "0 10px 30px rgba(184,148,63,0.4)",
+                      display: "flex", alignItems: "center", justifyContent: "center", gap: 10 }}>
+                    {scanning ? <><X size={18} /> Stop Scanning</> : <><Scan size={18} /> Aktifkan NFC e-KTP</>}
                   </button>
                   <style>{`
                     @keyframes nfc-pulse-z {
@@ -246,19 +247,19 @@ export default function ZakatKioskPage() {
             <div className="heroic-card" style={{ padding: "clamp(24px, 5vw, 48px)", animation: "slideIn 0.5s ease", border: "2px solid #B8943F" }}>
                {/* (Hasil Scan UI tetap lengkap seperti sebelumnya) */}
                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 32 }}>
-                  <div><div style={{ fontSize: 11, fontWeight: 800, color: "#B8943F" }}>IDENTITAS WARGA</div><div style={{ fontSize: 32, fontWeight: 900 }}>{hasilScan.kepala}</div><div style={{ fontSize: 14, opacity: 0.5 }}>RT {hasilScan.rt} · {hasilScan.jiwa} Jiwa</div></div>
-                  <button onClick={() => setHasilScan(null)} style={{ background: "rgba(255,255,255,0.1)", border: "none", color: "white", width: 44, height: 44, borderRadius: "50%", cursor: "pointer" }}>✕</button>
+                  <div><div style={{ fontSize: 11, fontWeight: 800, color: "#B8943F" }}>IDENTITAS WARGA</div><div style={{ fontSize: 32, fontWeight: 900, display: "flex", alignItems: "center", gap: 12 }}><User size={32} /> {hasilScan.kepala}</div><div style={{ fontSize: 14, opacity: 0.5 }}>RT {hasilScan.rt} · {hasilScan.jiwa} Jiwa</div></div>
+                  <button onClick={() => setHasilScan(null)} style={{ background: "rgba(255,255,255,0.1)", border: "none", color: "white", width: 44, height: 44, borderRadius: "50%", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><X size={20} /></button>
                </div>
                <div style={{ display: "grid", gridTemplateColumns: hasilScan.isMustahiq || hasilScan.yatimCount > 0 ? "1fr 1fr" : "1fr", gap: 24 }}>
                   <div style={{ background: "rgba(255,255,255,0.03)", padding: 24, borderRadius: 24, border: "1px solid rgba(255,255,255,0.05)" }}>
-                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}><span style={{ fontSize: 11, fontWeight: 900, opacity: 0.5 }}>STATUS WAJIB ZAKAT</span><span style={{ background: hasilScan.statusBayar ? "rgba(47,143,78,0.2)" : "rgba(220,53,69,0.2)", color: hasilScan.statusBayar ? "#4FBF7E" : "#FF8A8A", padding: "4px 12px", borderRadius: 99, fontSize: 10, fontWeight: 900 }}>{hasilScan.statusBayar ? "✓ LUNAS" : "⚠️ BELUM"}</span></div>
-                     <div style={{ fontSize: 22, fontWeight: 900 }}>{hasilScan.statusBayar ? (hasilScan.statusBayar.jenis === 'beras' ? `${hasilScan.statusBayar.nominal_kg} kg Beras` : `Rp ${hasilScan.statusBayar.nominal_uang.toLocaleString()}`) : `${(hasilScan.jiwa * 2.5).toFixed(1)} kg Beras`}</div>
+                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}><span style={{ fontSize: 11, fontWeight: 900, opacity: 0.5, display: "flex", alignItems: "center", gap: 6 }}><Coins size={12}/> STATUS WAJIB ZAKAT</span><span style={{ background: hasilScan.statusBayar ? "rgba(47,143,78,0.2)" : "rgba(220,53,69,0.2)", color: hasilScan.statusBayar ? "#4FBF7E" : "#FF8A8A", padding: "4px 12px", borderRadius: 99, fontSize: 10, fontWeight: 900, display: "flex", alignItems: "center", gap: 4 }}>{hasilScan.statusBayar ? <><CheckCircle size={10}/> LUNAS</> : <><AlertTriangle size={10}/> BELUM</>}</span></div>
+                     <div style={{ fontSize: 22, fontWeight: 900, display: "flex", alignItems: "center", gap: 8 }}>{hasilScan.statusBayar ? <><Wheat size={24} color="#B8943F"/> {hasilScan.statusBayar.jenis === 'beras' ? `${hasilScan.statusBayar.nominal_kg} kg Beras` : `Rp ${hasilScan.statusBayar.nominal_uang.toLocaleString()}`}</> : <><Wheat size={24} color="rgba(255,255,255,0.2)"/> {(hasilScan.jiwa * 2.5).toFixed(1)} kg Beras`}</div>
                   </div>
                   {hasilScan.isMustahiq && (
                     <div style={{ background: "linear-gradient(135deg, rgba(184,148,63,0.15), rgba(184,148,63,0.03))", padding: 24, borderRadius: 24, border: "1.5px solid #B8943F50" }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}><span style={{ fontSize: 11, fontWeight: 900, color: "#B8943F" }}>HAK TERIMA BERAS</span>{hasilScan.sudahAmbilBeras && <span style={{ color: "#4fbf7e", fontSize: 10, fontWeight: 900 }}>✓ DIAMBIL</span>}</div>
+                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}><span style={{ fontSize: 11, fontWeight: 900, color: "#B8943F", display: "flex", alignItems: "center", gap: 6 }}><Landmark size={12}/> HAK TERIMA BERAS</span>{hasilScan.sudahAmbilBeras && <span style={{ color: "#4fbf7e", fontSize: 10, fontWeight: 900, display: "flex", alignItems: "center", gap: 4 }}><CheckCircle size={10}/> DIAMBIL</span>}</div>
                         <div style={{ fontSize: 32, fontWeight: 900, marginBottom: 20 }}>{hasilScan.totalJatahBeras.toFixed(1)} <span style={{ fontSize: 16, opacity: 0.5 }}>kg</span></div>
-                        {!hasilScan.sudahAmbilBeras && <button disabled={loading} onClick={() => konfirmasiAmil('zakat_beras', hasilScan.totalJatahBeras)} style={{ width: "100%", padding: "14px", borderRadius: 12, border: "none", background: "#2F8F4E", color: "white", fontSize: 13, fontWeight: 900, cursor: "pointer" }}>AMIL: KONFIRMASI SERAH</button>}
+                        {!hasilScan.sudahAmbilBeras && <button disabled={loading} onClick={() => konfirmasiAmil('zakat_beras', hasilScan.totalJatahBeras)} style={{ width: "100%", padding: "14px", borderRadius: 12, border: "none", background: "#2F8F4E", color: "white", fontSize: 13, fontWeight: 900, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}><ArrowRight size={18}/> AMIL: KONFIRMASI SERAH</button>}
                     </div>
                   )}
                </div>

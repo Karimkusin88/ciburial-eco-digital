@@ -1,5 +1,11 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import { 
+  Baby, Heart, CheckCircle, Info, Scan, Power, 
+  ChevronRight, Save, User, UserCheck, Sparkles, 
+  LayoutDashboard, LogOut, ArrowLeft, PartyPopper, Smile, 
+  Smartphone, CreditCard, Scale
+} from "lucide-react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 const POIN_POSYANDU = 15;
@@ -16,10 +22,10 @@ function statusGiziWHO(bb: number, tgl_lahir: string): { status: string; color: 
   const b = hitungUmurBulan(tgl_lahir);
   const ideal = b <= 12 ? b * 0.65 + 3 : 6 + (b - 12) * 0.22;
   const r = bb / ideal;
-  if (r >= 1.1) return { status: "lebih", color: "#F59E0B", label: "Gizi Lebih ⚠️" };
-  if (r >= 0.9) return { status: "normal", color: "#10B981", label: "Gizi Baik ✅" };
-  if (r >= 0.75) return { status: "kurang", color: "#F97316", label: "Gizi Kurang ⚠️" };
-  return { status: "buruk", color: "#EF4444", label: "Gizi Buruk 🚨" };
+  if (r >= 1.1) return { status: "lebih", color: "#F59E0B", label: "Gizi Lebih" };
+  if (r >= 0.9) return { status: "normal", color: "#10B981", label: "Gizi Baik" };
+  if (r >= 0.75) return { status: "kurang", color: "#F97316", label: "Gizi Kurang" };
+  return { status: "buruk", color: "#EF4444", label: "Gizi Buruk" };
 }
 
 // ─── RADAR ANIMATION ─────────────────────────────────────────────────────────
@@ -212,11 +218,11 @@ export default function PosyanduKioskPage() {
           <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: ".25em", color: "#F43F5E", marginBottom: 8, textTransform: "uppercase" }}>
             CLINIC & MATERNITY CIBURIAL
           </div>
-          <h1 style={{ margin: "0 0 10px", fontSize: "clamp(32px,8vw,48px)", fontWeight: 900, color: "#111827", lineHeight: 1, letterSpacing: "-.03em" }}>
-            Posyandu Ceria <span style={{ fontSize: "0.8em" }}>👶</span>
+          <h1 style={{ margin: "0 0 10px", fontSize: "clamp(32px,8vw,48px)", fontWeight: 900, color: "#111827", lineHeight: 1, letterSpacing: "-.03em", display: "flex", alignItems: "center", justifyContent: "center", gap: 12 }}>
+            Posyandu Ceria <Baby size={40} color="#F43F5E" />
           </h1>
           <p style={{ margin: 0, fontSize: 15, color: "#6B7280", fontWeight: 600, lineHeight: 1.6 }}>
-            {authenticatedIbu ? `Halo Bunda ${authenticatedIbu.nama}! 👋` : "Pantau tumbuh kembang si kecil secara digital"}
+            {authenticatedIbu ? <span style={{display:"flex", alignItems:"center", justifyContent:"center", gap:8}}><Smile size={18}/> Halo Bunda {authenticatedIbu.nama}!</span> : "Pantau tumbuh kembang si kecil secara digital"}
           </p>
         </header>
 
@@ -229,7 +235,6 @@ export default function PosyanduKioskPage() {
                 Tempelkan **e-KTP Bunda** untuk membuka data KIA & mencatat timbangan hari ini.
               </p>
 
-              {/* NFC Circle — seragam Learning Hub & Ronda */}
               <div style={{ position: "relative", width: 140, height: 140, margin: "0 auto 20px" }}>
                 {scanning && <>
                   <div style={{ position: "absolute", inset: 0, borderRadius: "50%", border: "2px solid rgba(244,63,94,0.5)", animation: "nfc-pulse 2.2s ease-out infinite" }} />
@@ -243,23 +248,21 @@ export default function PosyanduKioskPage() {
                   display: "flex", alignItems: "center", justifyContent: "center",
                   transition: "all 0.5s",
                   boxShadow: scanning ? "0 0 32px rgba(244,63,94,0.2)" : "none",
+                  color: scanning ? "#F43F5E" : "rgba(244,63,94,0.4)"
                 }}>
-                  <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke={scanning ? "#F43F5E" : "rgba(244,63,94,0.4)"} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" style={{ transition: "stroke 0.5s" }}>
-                    <path d="M2 7V5a2 2 0 0 1 2-2h2"/><path d="M2 17v2a2 2 0 0 0 2 2h2"/>
-                    <path d="M22 7V5a2 2 0 0 0-2-2h-2"/><path d="M22 17v2a2 2 0 0 1-2 2h-2"/>
-                    <rect x="7" y="7" width="10" height="10" rx="1.5"/>
-                  </svg>
+                  <Scan size={52} strokeWidth={1.3} />
                 </div>
               </div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: scanning ? "#F43F5E" : "#9CA3AF", marginBottom: 20, transition: "color 0.4s", textAlign: "center" }}>
-                {scanning ? "Tempelkan e-KTP ke belakang HP..." : "NFC Scanner Belum Aktif"}
+              <div style={{ fontSize: 13, fontWeight: 600, color: scanning ? "#F43F5E" : "#9CA3AF", marginBottom: 20, transition: "color 0.4s", textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                {scanning ? <><Info size={14}/> Tempelkan e-KTP ke belakang HP...</> : <><Power size={14}/> NFC Scanner Belum Aktif</>}
               </div>
               <button onClick={scanning ? stopNFC : startNFC} className="posyandu-btn"
                 style={{ width: "100%", borderRadius: 14, padding: "16px 24px", border: scanning ? "1px solid rgba(244,63,94,0.3)" : "none",
                   background: scanning ? "rgba(244,63,94,0.05)" : "linear-gradient(135deg,#F43F5E,#E11D48)",
                   color: scanning ? "#F43F5E" : "white", fontSize: 15, fontWeight: 800,
-                  boxShadow: scanning ? "none" : "0 10px 25px rgba(225,29,72,0.3)" }}>
-                {scanning ? "⏹ Stop Scanning" : "⬡ Aktifkan NFC e-KTP"}
+                  boxShadow: scanning ? "none" : "0 10px 25px rgba(225,29,72,0.3)",
+                  display: "flex", alignItems: "center", justifyContent: "center", gap: 10 }}>
+                {scanning ? <><X size={18} /> Stop Scanning</> : <><Scan size={18} /> Aktifkan NFC e-KTP</>}
               </button>
               {!scanning && <div style={{ marginTop: 10, fontSize: 10, color: "#9CA3AF", textAlign: "center" }}>Chrome Android · NFC harus aktif</div>}
               <style>{`
@@ -278,13 +281,13 @@ export default function PosyanduKioskPage() {
         {step === "select" && authenticatedIbu && (
           <div style={{ flex: 1, animation: "slide-up 0.4s ease" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-              <h3 style={{ margin: 0, fontSize: 20, fontWeight: 900, color: "#111827" }}>Pilih Buah Hati 🍼</h3>
-              <button onClick={resetAll} style={{ background: "#FFE4E6", border: "none", color: "#F43F5E", fontSize: 11, fontWeight: 900, padding: "8px 16px", borderRadius: 99, cursor: "pointer" }}>LOGOUT</button>
+              <h3 style={{ margin: 0, fontSize: 20, fontWeight: 900, color: "#111827", display: "flex", alignItems: "center", gap: 8 }}>Pilih Buah Hati <Baby size={20} color="#F43F5E" /></h3>
+              <button onClick={resetAll} style={{ background: "#FFE4E6", border: "none", color: "#F43F5E", fontSize: 11, fontWeight: 900, padding: "8px 16px", borderRadius: 99, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}><LogOut size={12}/> KELUAR</button>
             </div>
             
             {myAnakList.length === 0 ? (
               <div style={{ background: "white", borderRadius: 24, padding: "clamp(24px, 5vw, 40px)", textAlign: "center", color: "#9CA3AF", border: "2px dashed #FECACA" }}>
-                <div style={{ fontSize: 48, marginBottom: 12 }}>💤</div>
+                <div style={{ fontSize: 48, marginBottom: 12, display: "flex", justifyContent: "center" }}><Info size={48} /></div>
                 Bunda belum mendaftarkan data balita.<br/>Silakan hubungi Kader Posyandu.
               </div>
             ) : (
@@ -292,14 +295,14 @@ export default function PosyanduKioskPage() {
                 {myAnakList.map(a => (
                   <button key={a.id} onClick={() => { setSelectedAnak(a); setStep("input"); }} className="posyandu-btn"
                     style={{ background: "white", borderRadius: 24, padding: "clamp(16px, 4vw, 24px)", border: "1.5px solid #E5E7EB", display: "flex", alignItems: "center", gap: 16, width: "100%", textAlign: "left", boxShadow: "0 4px 12px rgba(0,0,0,0.04)" }}>
-                    <div style={{ width: 56, height: 56, borderRadius: 18, background: a.jenis_kelamin === "L" ? "#EFF6FF" : "#FDF2F8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28 }}>
-                      {a.jenis_kelamin === "L" ? "👦" : "👧"}
+                    <div style={{ width: 56, height: 56, borderRadius: 18, background: a.jenis_kelamin === "L" ? "#EFF6FF" : "#FDF2F8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, color: a.jenis_kelamin === "L" ? "#3B82F6" : "#EC4899" }}>
+                      <User size={32} />
                     </div>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontWeight: 900, fontSize: 18, color: "#111827" }}>{a.nama}</div>
                       <div style={{ fontSize: 13, color: "#9CA3AF", fontWeight: 700 }}>{hitungUmurLabel(a.tgl_lahir)} • Jagoan Bunda</div>
                     </div>
-                    <div style={{ fontSize: 24, color: "#F43F5E" }}>→</div>
+                    <div style={{ color: "#F43F5E" }}><ChevronRight size={24} /></div>
                   </button>
                 ))}
               </div>
@@ -310,12 +313,12 @@ export default function PosyanduKioskPage() {
         {/* ─── INPUT STEP ─── */}
         {step === "input" && selectedAnak && (
           <div style={{ flex: 1, animation: "slide-up 0.4s ease" }}>
-            <button onClick={() => setStep("select")} style={{ background: "none", border: "none", color: "#F43F5E", fontSize: 14, fontWeight: 800, cursor: "pointer", marginBottom: 20, display: "flex", alignItems: "center", gap: 6 }}>← Pilih Anak Lain</button>
+            <button onClick={() => setStep("select")} style={{ background: "none", border: "none", color: "#F43F5E", fontSize: 14, fontWeight: 800, cursor: "pointer", marginBottom: 20, display: "flex", alignItems: "center", gap: 6 }}><ArrowLeft size={18}/> Pilih Anak Lain</button>
 
             <div style={{ background: "white", borderRadius: 28, padding: "clamp(20px, 4vw, 32px)", boxShadow: "0 15px 35px rgba(244,63,94,0.1)", border: "1px solid #FFF1F2" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 32 }}>
-                <div style={{ width: 52, height: 52, borderRadius: 16, background: selectedAnak.jenis_kelamin === "L" ? "#EFF6FF" : "#FDF2F8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24 }}>
-                  {selectedAnak.jenis_kelamin === "L" ? "👦" : "👧"}
+                <div style={{ width: 52, height: 52, borderRadius: 16, background: selectedAnak.jenis_kelamin === "L" ? "#EFF6FF" : "#FDF2F8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, color: selectedAnak.jenis_kelamin === "L" ? "#3B82F6" : "#EC4899" }}>
+                  <User size={28} />
                 </div>
                 <div>
                   <div style={{ fontWeight: 900, fontSize: 20, color: "#111827" }}>{selectedAnak.nama}</div>
@@ -326,8 +329,8 @@ export default function PosyanduKioskPage() {
               {formTK.bb_kg && (() => {
                 const gz = statusGiziWHO(Number(formTK.bb_kg), selectedAnak.tgl_lahir);
                 return (
-                  <div style={{ padding: 16, background: gz.color + "1A", border: `2px solid ${gz.color}40`, borderRadius: 20, marginBottom: 24, fontSize: 15, color: gz.color, fontWeight: 800, textAlign: "center", animation: "pop 0.3s ease" }}>
-                    Status Gizi: <b>{gz.label}</b>
+                  <div style={{ padding: 16, background: gz.color + "1A", border: `2px solid ${gz.color}40`, borderRadius: 20, marginBottom: 24, fontSize: 15, color: gz.color, fontWeight: 800, textAlign: "center", animation: "pop 0.3s ease", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                    <Info size={18} /> Status Gizi: <b>{gz.label}</b>
                   </div>
                 );
               })()}
@@ -335,17 +338,23 @@ export default function PosyanduKioskPage() {
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 24 }}>
                 <div>
                   <label style={{ fontSize: 11, fontWeight: 800, color: "#9CA3AF", letterSpacing: ".1em", display: "block", marginBottom: 8 }}>BERAT (KG) *</label>
-                  <input type="number" value={formTK.bb_kg} onChange={e => setFormTK({ ...formTK, bb_kg: e.target.value })} placeholder="0.0" style={IS} />
+                  <div style={{position:"relative"}}>
+                    <input type="number" value={formTK.bb_kg} onChange={e => setFormTK({ ...formTK, bb_kg: e.target.value })} placeholder="0.0" style={IS} />
+                    <Scale size={18} style={{position:"absolute", right:16, top:"50%", transform:"translateY(-50%)", color:"#9CA3AF"}}/>
+                  </div>
                 </div>
                 <div>
                   <label style={{ fontSize: 11, fontWeight: 800, color: "#9CA3AF", letterSpacing: ".1em", display: "block", marginBottom: 8 }}>TINGGI (CM)</label>
-                  <input type="number" value={formTK.tb_cm} onChange={e => setFormTK({ ...formTK, tb_cm: e.target.value })} placeholder="0" style={IS} />
+                  <div style={{position:"relative"}}>
+                    <input type="number" value={formTK.tb_cm} onChange={e => setFormTK({ ...formTK, tb_cm: e.target.value })} placeholder="0" style={IS} />
+                    <LayoutDashboard size={18} style={{position:"absolute", right:16, top:"50%", transform:"translateY(-50%)", color:"#9CA3AF"}}/>
+                  </div>
                 </div>
               </div>
 
               <button onClick={simpanTK} disabled={loading} className="posyandu-btn"
-                style={{ width: "100%", background: loading ? "#D1D5DB" : "linear-gradient(135deg,#10B981,#059669)", color: "white", border: "none", borderRadius: 20, padding: "clamp(16px, 4vw, 20px)", fontSize: 17, fontWeight: 900, boxShadow: loading ? "none" : "0 10px 25px rgba(16,185,129,0.3)" }}>
-                {loading ? "MENYIMPAN..." : "💾 KUNCI DATA TIMBANGAN"}
+                style={{ width: "100%", background: loading ? "#D1D5DB" : "linear-gradient(135deg,#10B981,#059669)", color: "white", border: "none", borderRadius: 20, padding: "clamp(16px, 4vw, 20px)", fontSize: 17, fontWeight: 900, boxShadow: loading ? "none" : "0 10px 25px rgba(16,185,129,0.3)", display: "flex", alignItems: "center", justifyContent: "center", gap: 10 }}>
+                {loading ? "MENYIMPAN..." : <><Save size={20} /> KUNCI DATA TIMBANGAN</>}
               </button>
             </div>
           </div>
@@ -354,17 +363,19 @@ export default function PosyanduKioskPage() {
         {/* ─── SUCCESS STEP ─── */}
         {step === "success" && resultGizi && (
           <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", animation: "pop 0.5s ease" }}>
-            <div style={{ fontSize: 80, marginBottom: 24, animation: "float 2s ease-in-out infinite" }}>
-              {resultGizi.status === "normal" ? "🎉" : "💖"}
+            <div style={{ marginBottom: 24, animation: "float 2s ease-in-out infinite", color: "#F43F5E" }}>
+              {resultGizi.status === "normal" ? <PartyPopper size={80} /> : <Heart size={80} />}
             </div>
             <h2 style={{ margin: "0 0 12px", fontSize: 32, fontWeight: 900, color: "#111827" }}>Berhasil!</h2>
-            <div style={{ fontSize: 20, fontWeight: 800, color: resultGizi.color, marginBottom: 12 }}>{resultGizi.label}</div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: resultGizi.color, marginBottom: 12, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+              <CheckCircle size={24} /> {resultGizi.label}
+            </div>
             <p style={{ fontSize: 16, color: "#6B7280", fontWeight: 600, marginBottom: 32 }}>
               Data {selectedAnak?.nama} sudah tercatat.<br/>Bunda mendapat +{POIN_POSYANDU} Poin Sehat!
             </p>
             <button onClick={resetAll} className="posyandu-btn"
-              style={{ background: "linear-gradient(135deg,#F43F5E,#E11D48)", color: "white", border: "none", borderRadius: 20, padding: "clamp(16px, 4vw, 20px) clamp(30px, 6vw, 60px)", fontSize: 18, fontWeight: 900, boxShadow: "0 12px 25px rgba(225,29,72,0.3)" }}>
-              SELESAI ✓
+              style={{ background: "linear-gradient(135deg,#F43F5E,#E11D48)", color: "white", border: "none", borderRadius: 20, padding: "clamp(16px, 4vw, 20px) clamp(30px, 6vw, 60px)", fontSize: 18, fontWeight: 900, boxShadow: "0 12px 25px rgba(225,29,72,0.3)", display: "flex", alignItems: "center", justifyContent: "center", gap: 10 }}>
+              SELESAI <CheckCircle size={20} />
             </button>
           </div>
         )}

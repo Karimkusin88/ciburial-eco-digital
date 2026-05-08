@@ -1,5 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
+import { 
+  Megaphone, HardHat, Trash2, Lock, Users, Lightbulb, 
+  FileText, Send, CheckCircle, User, ArrowLeft, History,
+  Plus, MessageSquare, Info, Shield, Shovel, Sparkles, Notebook
+} from "lucide-react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 interface Pengaduan {
@@ -14,9 +19,13 @@ interface Pengaduan {
 }
 
 const KATEGORI = ["infrastruktur", "kebersihan", "keamanan", "sosial", "aspirasi", "lainnya"];
-const KATEGORI_ICON: Record<string, string> = {
-  infrastruktur: "🛣️", kebersihan: "🧹", keamanan: "🔒",
-  sosial: "🤝", aspirasi: "💡", lainnya: "📝",
+const KATEGORI_ICON: Record<string, React.ReactNode> = {
+  infrastruktur: <HardHat size={16} />, 
+  kebersihan: <Trash2 size={16} />, 
+  keamanan: <Shield size={16} />,
+  sosial: <Users size={16} />, 
+  aspirasi: <Lightbulb size={16} />, 
+  lainnya: <Notebook size={16} />,
 };
 const STATUS_COLOR: Record<string, string> = {
   masuk: "#b8943f", diproses: "#1a3a6b", selesai: "#2d5a40", ditolak: "#8b0000",
@@ -66,10 +75,10 @@ export default function PengaduanPage() {
         display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <a href="/" style={{ color: "#6b7c6d", textDecoration: "none", fontSize: 13 }}>← Beranda</a>
+          <a href="/" style={{ color: "#6b7c6d", textDecoration: "none", fontSize: 13, display: "flex", alignItems: "center", gap: 4 }}><ArrowLeft size={14}/> Beranda</a>
           <span style={{ color: "#c8bfaa" }}>|</span>
           <div>
-            <div style={{ fontWeight: 800, fontSize: 15, color: "#1a2e1f" }}>📢 Pengaduan & Aspirasi</div>
+            <div style={{ fontWeight: 800, fontSize: 15, color: "#1a2e1f", display: "flex", alignItems: "center", gap: 8 }}><Megaphone size={18}/> Pengaduan & Aspirasi</div>
             <div style={{ fontSize: 10, color: "#7a9a7e", textTransform: "uppercase", letterSpacing: "0.08em" }}>Suara Warga Ciburial</div>
           </div>
         </div>
@@ -80,7 +89,10 @@ export default function PengaduanPage() {
               border: "1.5px solid rgba(45,90,64,0.2)", cursor: "pointer",
               background: activeTab === t ? "#2d5a40" : "transparent",
               color: activeTab === t ? "white" : "#6b7c6d",
-            }}>{t === "form" ? "Buat Laporan" : `Riwayat (${list.length})`}</button>
+              display: "flex",
+              alignItems: "center",
+              gap: 6
+            }}>{t === "form" ? <><Plus size={14}/> Buat Laporan</> : <><History size={14}/> Riwayat ({list.length})</>}</button>
           ))}
         </div>
       </header>
@@ -94,8 +106,11 @@ export default function PengaduanPage() {
               background: "white", borderRadius: 20, padding: "clamp(24px, 5vw, 40px)",
               textAlign: "center", border: "1px solid rgba(45,90,64,0.12)",
               boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center"
             }}>
-              <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
+              <div style={{ color: "#2d5a40", marginBottom: 16 }}><CheckCircle size={48} /></div>
               <h2 style={{ color: "#1a2e1f", margin: "0 0 8px", fontSize: 20 }}>Laporan Terkirim!</h2>
               <p style={{ color: "#6b7c6d", margin: "0 0 24px" }}>
                 Terima kasih! Laporan kamu sudah diterima admin kampung dan akan segera ditindaklanjuti.
@@ -104,8 +119,8 @@ export default function PengaduanPage() {
                 style={{
                   background: "#2d5a40", color: "white", border: "none",
                   borderRadius: 12, padding: "12px 28px", fontSize: 14,
-                  fontWeight: 600, cursor: "pointer",
-                }}>Buat Laporan Lain</button>
+                  fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 8
+                }}><Plus size={16}/> Buat Laporan Lain</button>
             </div>
           ) : (
             <div style={{
@@ -113,7 +128,7 @@ export default function PengaduanPage() {
               border: "1px solid rgba(45,90,64,0.12)",
               boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
             }}>
-              <h2 style={{ margin: "0 0 6px", color: "#1a2e1f", fontSize: 18 }}>Sampaikan Laporan / Aspirasi</h2>
+              <h2 style={{ margin: "0 0 6px", color: "#1a2e1f", fontSize: 18, display: "flex", alignItems: "center", gap: 8 }}><MessageSquare size={20}/> Sampaikan Laporan / Aspirasi</h2>
               <p style={{ margin: "0 0 20px", color: "#7a9a7e", fontSize: 13 }}>
                 Identitas pelapor bersifat opsional dan tidak ditampilkan publik.
               </p>
@@ -130,6 +145,9 @@ export default function PengaduanPage() {
                         background: form.kategori === k ? "#2d5a40" : "transparent",
                         color: form.kategori === k ? "white" : "#2d5a40",
                         fontWeight: 500,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 6
                       }}>
                       {KATEGORI_ICON[k]} {k.charAt(0).toUpperCase() + k.slice(1)}
                     </button>
@@ -139,22 +157,25 @@ export default function PengaduanPage() {
 
               {/* Fields */}
               {[
-                { label: "Judul Laporan *", key: "judul", placeholder: "Contoh: Jalan RT 02 berlubang", type: "input" },
-                { label: "Nama (Opsional)", key: "nama_pelapor", placeholder: "Nama kamu atau kosongkan", type: "input" },
-                { label: "No. WhatsApp (Opsional)", key: "no_wa_pelapor", placeholder: "Untuk notif update laporan", type: "input" },
+                { label: "Judul Laporan *", key: "judul", placeholder: "Contoh: Jalan RT 02 berlubang", type: "input", icon: <FileText size={16}/> },
+                { label: "Nama (Opsional)", key: "nama_pelapor", placeholder: "Nama kamu atau kosongkan", type: "input", icon: <User size={16}/> },
+                { label: "No. WhatsApp (Opsional)", key: "no_wa_pelapor", placeholder: "Untuk notif update laporan", type: "input", icon: <Megaphone size={16}/> },
               ].map(f => (
                 <div key={f.key} style={{ marginBottom: 14 }}>
                   <label style={{ fontSize: 11, fontWeight: 700, color: "#6b7c6d", letterSpacing: "0.06em", textTransform: "uppercase", display: "block", marginBottom: 6 }}>{f.label}</label>
-                  <input
-                    value={(form as any)[f.key]}
-                    onChange={e => setForm({ ...form, [f.key]: e.target.value })}
-                    placeholder={f.placeholder}
-                    style={{
-                      width: "100%", padding: "10px 14px", borderRadius: 12,
-                      border: "1.5px solid rgba(45,90,64,0.2)", fontSize: 14,
-                      background: "#fafaf8", outline: "none", boxSizing: "border-box",
-                    }}
-                  />
+                  <div style={{position:"relative"}}>
+                    <input
+                      value={(form as any)[f.key]}
+                      onChange={e => setForm({ ...form, [f.key]: e.target.value })}
+                      placeholder={f.placeholder}
+                      style={{
+                        width: "100%", padding: "10px 14px 10px 40px", borderRadius: 12,
+                        border: "1.5px solid rgba(45,90,64,0.2)", fontSize: 14,
+                        background: "#fafaf8", outline: "none", boxSizing: "border-box",
+                      }}
+                    />
+                    <div style={{position:"absolute", left:14, top:"50%", transform:"translateY(-50%)", color:"#7a9a7e"}}>{f.icon}</div>
+                  </div>
                 </div>
               ))}
 
@@ -180,8 +201,12 @@ export default function PengaduanPage() {
                   border: "none", borderRadius: 14, padding: "14px",
                   fontSize: 15, fontWeight: 700, cursor: loading ? "not-allowed" : "pointer",
                   boxShadow: "0 2px 10px rgba(45,90,64,0.3)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 10
                 }}>
-                {loading ? "Mengirim..." : "📤 Kirim Laporan"}
+                {loading ? "Mengirim..." : <><Send size={18}/> Kirim Laporan</>}
               </button>
             </div>
           )
@@ -191,7 +216,10 @@ export default function PengaduanPage() {
         {activeTab === "list" && (
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {list.length === 0 ? (
-              <div style={{ textAlign: "center", padding: "clamp(24px, 5vw, 40px)", color: "#a8b5a9" }}>Belum ada laporan</div>
+              <div style={{ textAlign: "center", padding: "clamp(24px, 5vw, 40px)", color: "#a8b5a9", display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
+                <Inbox size={40} />
+                Belum ada laporan
+              </div>
             ) : list.map(p => (
               <div key={p.id} style={{
                 background: "white", borderRadius: 16, padding: "clamp(12px, 3vw, 16px) clamp(14px, 4vw, 18px)",
@@ -201,14 +229,14 @@ export default function PengaduanPage() {
                 <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10 }}>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-                      <span style={{ fontSize: 16 }}>{KATEGORI_ICON[p.kategori] || "📝"}</span>
+                      <span style={{ color: "#2d5a40" }}>{KATEGORI_ICON[p.kategori] || <Notebook size={16}/>}</span>
                       <span style={{ fontWeight: 700, fontSize: 14, color: "#1a2e1f" }}>{p.judul}</span>
                     </div>
                     <p style={{ margin: "0 0 8px", fontSize: 13, color: "#6b7c6d", lineHeight: 1.5 }}>
                       {p.deskripsi.length > 120 ? p.deskripsi.slice(0, 120) + "..." : p.deskripsi}
                     </p>
-                    <div style={{ fontSize: 11, color: "#a8b5a9" }}>
-                      👤 {p.nama_pelapor} · {new Date(p.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
+                    <div style={{ fontSize: 11, color: "#a8b5a9", display: "flex", alignItems: "center", gap: 6 }}>
+                      <User size={12}/> {p.nama_pelapor} · {new Date(p.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
                     </div>
                   </div>
                   <div style={{
@@ -218,7 +246,10 @@ export default function PengaduanPage() {
                     borderRadius: 20, padding: "4px 10px",
                     fontSize: 11, fontWeight: 600,
                     textTransform: "capitalize", flexShrink: 0,
-                  }}>{p.status}</div>
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 4
+                  }}>{p.status === 'selesai' ? <CheckCircle size={10}/> : p.status === 'diproses' ? <Sparkles size={10}/> : <Info size={10}/>} {p.status}</div>
                 </div>
               </div>
             ))}

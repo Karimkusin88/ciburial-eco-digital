@@ -1,5 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
+import { 
+  ArrowLeft, Users, RefreshCcw, Plus, X, Home, User, Smartphone, CreditCard, 
+  CheckCircle, Trash2, Edit2, Baby, Heart, Info, AlertCircle, Save, 
+  Building, Swords, Store, ShoppingCart, Wheat, Hammer, Anchor, Book, 
+  GraduationCap, FileText, PenTool, UserCheck, Smile, UserPlus
+} from "lucide-react";
 import "../admin-styles-heroic.css";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
@@ -44,7 +50,16 @@ function isBalita(tgl:string){if(!tgl)return false;const bulan=(new Date().getFu
 
 const SC:Record<string,string>={tetap:"#2d5a40",pendatang:"#b8943f",perantau:"#1a3a6b"};
 const GC:Record<string,string>={muzakki:"#2d5a40",mustahiq:"#b8943f",amil:"#1a3a6b",netral:"#9a8c85"};
-const HI:Record<string,string>={kepala:"👨",istri:"👩",anak:"👦",cucu:"👶",orang_tua:"👴",mertua:"👵",saudara:"🧑",lainnya:"👤"};
+const HI:Record<string,React.ReactNode>={
+  kepala:<User size={20}/>,
+  istri:<UserCheck size={20}/>,
+  anak:<Smile size={20}/>,
+  cucu:<Baby size={20}/>,
+  orang_tua:<User size={20}/>,
+  mertua:<UserCheck size={20}/>,
+  saudara:<Users size={20}/>,
+  lainnya:<UserPlus size={20}/>
+};
 const LS={fontSize:11,fontWeight:700 as const,color:"#6b7c6d",letterSpacing:"0.06em",textTransform:"uppercase" as const,display:"block",marginBottom:4};
 const IS={width:"100%",padding:"9px 12px",borderRadius:10,border:"1.5px solid rgba(45,90,64,0.2)",fontSize:13,background:"#fafaf8",outline:"none",boxSizing:"border-box" as const,fontFamily:"inherit"};
 
@@ -206,10 +221,10 @@ export default function AdminWargaPage(){
 
       <header style={{background:"#f5f0e8",borderBottom:"1px solid rgba(45,90,64,0.12)",padding:"14px 20px",position:"sticky",top:0,zIndex:10,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
         <div style={{display:"flex",alignItems:"center",gap:12}}>
-          <a href="/admin" style={{color:"#6b7c6d",textDecoration:"none",fontSize:13}}>← Admin</a>
+          <a href="/admin" style={{color:"#6b7c6d",textDecoration:"none",fontSize:13,display:"flex",alignItems:"center",gap:4}}><ArrowLeft size={14}/> Admin</a>
           <span style={{color:"#c8bfaa"}}>|</span>
           <div>
-            <div style={{fontWeight:800,fontSize:15,color:"#1a2e1f"}}>👥 Data Warga</div>
+            <div style={{fontWeight:800,fontSize:15,color:"#1a2e1f",display:"flex",alignItems:"center",gap:6}}><Users size={18}/> Data Warga</div>
             <div style={{fontSize:10,color:"#7a9a7e",textTransform:"uppercase",letterSpacing:"0.08em"}}>{kkList.length} KK · {Object.values(anggotaMap).flat().length} Jiwa</div>
           </div>
         </div>
@@ -218,14 +233,14 @@ export default function AdminWargaPage(){
           {kkList.some(k=>!(anggotaMap[k.id]||[]).some(a=>a.hubungan==="kepala"))&&(
             <button onClick={sinkronisasiKepala} disabled={loading}
               style={{background:"#b8943f",color:"white",border:"none",borderRadius:10,padding:"8px 14px",fontSize:12,fontWeight:700,cursor:loading?"not-allowed":"pointer",display:"flex",alignItems:"center",gap:6}}>
-              🔄 Sinkronisasi Kepala KK
+              <RefreshCcw size={14} className={loading?"animate-spin":""} /> Sinkronisasi Kepala KK
               <span style={{background:"rgba(255,255,255,0.25)",borderRadius:99,padding:"1px 7px",fontSize:11}}>
                 {kkList.filter(k=>!(anggotaMap[k.id]||[]).some(a=>a.hubungan==="kepala")).length}
               </span>
             </button>
           )}
-          <button onClick={()=>{setFormKK(emptyKK);setEditKKId(null);setShowFormKK(!showFormKK);setActiveKK(null);}} style={{background:"#2d5a40",color:"white",border:"none",borderRadius:10,padding:"8px 16px",fontSize:13,fontWeight:600,cursor:"pointer"}}>
-            {showFormKK?"✕ Tutup":"+ Tambah KK"}
+          <button onClick={()=>{setFormKK(emptyKK);setEditKKId(null);setShowFormKK(!showFormKK);setActiveKK(null);}} style={{background:"#2d5a40",color:"white",border:"none",borderRadius:10,padding:"8px 16px",fontSize:13,fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",gap:6}}>
+            {showFormKK ? <><X size={16}/> Tutup</> : <><Plus size={16}/> Tambah KK</>}
           </button>
         </div>
       </header>
@@ -235,7 +250,7 @@ export default function AdminWargaPage(){
         {/* Form KK */}
         {showFormKK&&(
           <div className="card-heroic">
-            <h3 style={{margin:"0 0 16px",color:"#1a2e1f",fontSize:15}}>{editKKId?"✏️ Edit KK":"➕ Tambah KK Baru"}</h3>
+            <h3 style={{margin:"0 0 16px",color:"#1a2e1f",fontSize:15,display:"flex",alignItems:"center",gap:8}}>{editKKId ? <><Edit2 size={16}/> Edit KK</> : <><Plus size={16}/> Tambah KK Baru</>}</h3>
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
               {[{label:"No. KK *",key:"no_kk",ph:"3204xxxxxxxxxxxx"},{label:"Kepala Keluarga *",key:"kepala_keluarga",ph:"Nama lengkap"},{label:"No. WhatsApp",key:"no_wa",ph:"08xxxxxxxxxx"},{label:"NFC Card ID",key:"nfc_id",ph:"ID chip NFC"}].map(f=>(
                 <div key={f.key}><label style={LS}>{f.label}</label><input value={(formKK as any)[f.key]} onChange={e=>setFormKK({...formKK,[f.key]:e.target.value})} placeholder={f.ph} style={IS}/></div>
@@ -248,19 +263,21 @@ export default function AdminWargaPage(){
               <div><label style={LS}>Golongan Zakat</label><select value={formKK.golongan_zakat} onChange={e=>setFormKK({...formKK,golongan_zakat:e.target.value})} style={IS}>{GOLONGAN_ZAKAT.map(g=><option key={g.v} value={g.v}>{g.l}</option>)}</select></div>
               {/* Auto-suggest hint */}
               {formKK.pekerjaan_kepala&&["pns","tni_polri","wiraswasta"].includes(formKK.pekerjaan_kepala)&&formKK.golongan_zakat==="netral"&&(
-                <div style={{gridColumn:"1/-1",padding:"8px 12px",background:"rgba(45,90,64,0.07)",borderRadius:10,fontSize:12,color:"#2d5a40"}}>
-                  💡 <strong>Saran:</strong> Pekerjaan {PEKERJAAN.find(p=>p.v===formKK.pekerjaan_kepala)?.l} biasanya termasuk <strong>Muzakki</strong> (wajib bayar zakat).
+                <div style={{gridColumn:"1/-1",padding:"8px 12px",background:"rgba(45,90,64,0.07)",borderRadius:10,fontSize:12,color:"#2d5a40",display:"flex",alignItems:"center",gap:8}}>
+                  <Info size={16} /> <div><strong>Saran:</strong> Pekerjaan {PEKERJAAN.find(p=>p.v===formKK.pekerjaan_kepala)?.l} biasanya termasuk <strong>Muzakki</strong> (wajib bayar zakat).</div>
                 </div>
               )}
               {formKK.pekerjaan_kepala&&["buruh","petani","tidak_bekerja","nelayan","guru_honorer"].includes(formKK.pekerjaan_kepala)&&formKK.golongan_zakat==="netral"&&(
-                <div style={{gridColumn:"1/-1",padding:"8px 12px",background:"rgba(184,148,63,0.08)",borderRadius:10,fontSize:12,color:"#b8943f"}}>
-                  💡 <strong>Saran:</strong> Pekerjaan {PEKERJAAN.find(p=>p.v===formKK.pekerjaan_kepala)?.l} perlu dikaji — kemungkinan termasuk <strong>Mustahiq</strong>.
+                <div style={{gridColumn:"1/-1",padding:"8px 12px",background:"rgba(184,148,63,0.08)",borderRadius:10,fontSize:12,color:"#b8943f",display:"flex",alignItems:"center",gap:8}}>
+                  <Info size={16} /> <div><strong>Saran:</strong> Pekerjaan {PEKERJAAN.find(p=>p.v===formKK.pekerjaan_kepala)?.l} perlu dikaji — kemungkinan termasuk <strong>Mustahiq</strong>.</div>
                 </div>
               )}
               {formKK.golongan_zakat==="mustahiq"&&<div><label style={LS}>Kategori Mustahiq</label><select value={formKK.kategori_mustahiq} onChange={e=>setFormKK({...formKK,kategori_mustahiq:e.target.value})} style={IS}><option value="">-- Pilih --</option>{KATEGORI_MUSTAHIQ.map(k=><option key={k.v} value={k.v}>{k.l}</option>)}</select></div>}
             </div>
             <div style={{display:"flex",gap:10,marginTop:16}}>
-              <button onClick={simpanKK} disabled={loading} className="btn-heroic">{loading?"Menyimpan...":editKKId?"💾 Update":"💾 Simpan"}</button>
+              <button onClick={simpanKK} disabled={loading} className="btn-heroic" style={{display:"flex",alignItems:"center",gap:8}}>
+                <Save size={18}/> {loading ? "Menyimpan..." : editKKId ? "Update" : "Simpan"}
+              </button>
               <button onClick={()=>{setShowFormKK(false);setFormKK(emptyKK);setEditKKId(null);}} style={{padding:"10px 20px",background:"transparent",border:"1.5px solid rgba(45,90,64,0.2)",borderRadius:10,fontSize:14,color:"#6b7c6d",cursor:"pointer"}}>Batal</button>
             </div>
           </div>
@@ -268,10 +285,15 @@ export default function AdminWargaPage(){
 
         {/* Stats */}
         <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12,marginBottom:20}}>
-          {[{i:"🏠",v:kkList.length,l:"Total KK"},{i:"👥",v:Object.values(anggotaMap).flat().length,l:"Total Jiwa"},{i:"✅",v:kkList.filter(k=>k.golongan_zakat==="muzakki").length,l:"Muzakki"},{i:"🤲",v:kkList.filter(k=>k.golongan_zakat==="mustahiq").length,l:"Mustahiq"}].map(s=>(
+          {[
+            {i:<Home size={20}/>,v:kkList.length,l:"Total KK",c:"#2d5a40"},
+            {i:<Users size={20}/>,v:Object.values(anggotaMap).flat().length,l:"Total Jiwa",c:"#2d5a40"},
+            {i:<CheckCircle size={20}/>,v:kkList.filter(k=>k.golongan_zakat==="muzakki").length,l:"Muzakki",c:"#2d5a40"},
+            {i:<Heart size={20}/>,v:kkList.filter(k=>k.golongan_zakat==="mustahiq").length,l:"Mustahiq",c:"#b8943f"}
+          ].map(s=>(
             <div key={s.l} style={{background:"white",borderRadius:14,padding:"14px 16px",border:"1px solid rgba(45,90,64,0.1)",boxShadow:"0 1px 6px rgba(0,0,0,0.04)"}}>
-              <div style={{fontSize:20,marginBottom:4}}>{s.i}</div>
-              <div style={{fontSize:22,fontWeight:900,color:"#2d5a40"}}>{s.v}</div>
+              <div style={{color: s.c, marginBottom:4}}>{s.i}</div>
+              <div style={{fontSize:22,fontWeight:900,color:s.c}}>{s.v}</div>
               <div style={{fontSize:11,color:"#7a9a7e",textTransform:"uppercase",letterSpacing:"0.06em"}}>{s.l}</div>
             </div>
           ))}
@@ -293,10 +315,12 @@ export default function AdminWargaPage(){
               return(
                 <div key={kk.id} onClick={()=>setActiveKK(kk.id===activeKK?null:kk.id)}
                   style={{padding:"14px 18px",borderBottom:i<filtered.length-1?"1px solid rgba(45,90,64,0.07)":"none",cursor:"pointer",background:activeKK===kk.id?"rgba(45,90,64,0.05)":"transparent",display:"flex",alignItems:"center",gap:12}}>
-                  <div style={{width:40,height:40,borderRadius:12,background:"rgba(45,90,64,0.08)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}>🏠</div>
+                  <div style={{width:40,height:40,borderRadius:12,background:"rgba(45,90,64,0.08)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0,color:"#2d5a40"}}><Home size={20}/></div>
                   <div style={{flex:1}}>
                     <div style={{fontWeight:700,fontSize:14,color:"#1a2e1f"}}>{kk.kepala_keluarga}</div>
-                    <div style={{fontSize:12,color:"#7a9a7e",marginTop:2}}>RT {kk.rt} · {jml} jiwa{kk.no_wa&&" · 📱"}{kk.nfc_id&&" · 💳"}</div>
+                    <div style={{fontSize:12,color:"#7a9a7e",marginTop:2,display:"flex",alignItems:"center",gap:4}}>
+                      RT {kk.rt} · {jml} jiwa {kk.no_wa&&<Smartphone size={12}/>} {kk.nfc_id&&<CreditCard size={12}/>}
+                    </div>
                     {kk.pekerjaan_kepala&&kk.pekerjaan_kepala!=="tidak_bekerja"&&<div style={{fontSize:11,color:"#a8b5a9"}}>{PEKERJAAN.find(p=>p.v===kk.pekerjaan_kepala)?.l||kk.pekerjaan_kepala}</div>}
                   </div>
                   <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:4}}>
@@ -304,8 +328,8 @@ export default function AdminWargaPage(){
                     {kk.golongan_zakat!=="netral"&&<div style={{background:gc+"15",color:gc,border:`1px solid ${gc}30`,borderRadius:20,padding:"2px 8px",fontSize:10,fontWeight:600}}>{kk.golongan_zakat}</div>}
                   </div>
                   <div style={{display:"flex",gap:4}}>
-                    <button onClick={e=>{e.stopPropagation();editKK(kk);}} style={{background:"rgba(45,90,64,0.08)",border:"none",borderRadius:8,padding:"6px 8px",cursor:"pointer",fontSize:13}}>✏️</button>
-                    <button onClick={e=>{e.stopPropagation();hapusKK(kk.id);}} style={{background:"rgba(220,53,69,0.08)",border:"none",borderRadius:8,padding:"6px 8px",cursor:"pointer",fontSize:13}}>🗑️</button>
+                    <button onClick={e=>{e.stopPropagation();editKK(kk);}} style={{background:"rgba(45,90,64,0.08)",border:"none",borderRadius:8,padding:"6px 8px",cursor:"pointer",fontSize:13,color:"#2d5a40"}}><Edit2 size={14}/></button>
+                    <button onClick={e=>{e.stopPropagation();hapusKK(kk.id);}} style={{background:"rgba(220,53,69,0.08)",border:"none",borderRadius:8,padding:"6px 8px",cursor:"pointer",fontSize:13,color:"#dc3545"}}><Trash2 size={14}/></button>
                   </div>
                 </div>
               );
@@ -321,13 +345,13 @@ export default function AdminWargaPage(){
                     <div style={{fontSize:11,opacity:0.7,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:4}}>Kepala Keluarga</div>
                     <div style={{fontWeight:800,fontSize:18}}>{activeKKData.kepala_keluarga}</div>
                     <div style={{fontSize:12,opacity:0.75,marginTop:4}}>RT {activeKKData.rt} · {activeKKData.no_kk}</div>
-                    {activeKKData.no_wa&&<div style={{fontSize:12,opacity:0.75}}>📱 {activeKKData.no_wa}</div>}
-                    {activeKKData.nfc_id&&<div style={{fontSize:12,opacity:0.75}}>💳 NFC: {activeKKData.nfc_id}</div>}
-                    <div style={{fontSize:11,opacity:0.6,marginTop:4}}>{GOLONGAN_ZAKAT.find(g=>g.v===activeKKData.golongan_zakat)?.l||"—"}</div>
+                    {activeKKData.no_wa&&<div style={{fontSize:12,opacity:0.75,display:"flex",alignItems:"center",gap:6}}><Smartphone size={12}/> {activeKKData.no_wa}</div>}
+                    {activeKKData.nfc_id&&<div style={{fontSize:12,opacity:0.75,display:"flex",alignItems:"center",gap:6}}><CreditCard size={12}/> NFC: {activeKKData.nfc_id}</div>}
+                    <div style={{fontSize:11,opacity:0.6,marginTop:4,display:"flex",alignItems:"center",gap:6}}><Heart size={12}/> {GOLONGAN_ZAKAT.find(g=>g.v===activeKKData.golongan_zakat)?.l||"—"}</div>
                   </div>
                   <button onClick={()=>{setFormAnggota({...emptyAnggota,kk_id:activeKK});setEditAnggotaId(null);setShowFormAnggota(!showFormAnggota);}}
-                    style={{background:"rgba(255,255,255,0.2)",border:"1px solid rgba(255,255,255,0.3)",borderRadius:10,padding:"8px 14px",color:"white",cursor:"pointer",fontSize:13,fontWeight:600}}>
-                    {showFormAnggota?"✕ Batal":"+ Tambah Anggota"}
+                    style={{background:"rgba(255,255,255,0.2)",border:"1px solid rgba(255,255,255,0.3)",borderRadius:10,padding:"8px 14px",color:"white",cursor:"pointer",fontSize:13,fontWeight:600,display:"flex",alignItems:"center",gap:6}}>
+                    {showFormAnggota ? <><X size={14}/> Batal</> : <><Plus size={14}/> Tambah Anggota</>}
                   </button>
                 </div>
               </div>
@@ -369,22 +393,22 @@ export default function AdminWargaPage(){
                   const balita=a.tgl_lahir&&isBalita(a.tgl_lahir);
                   return(
                     <div key={a.id} style={{padding:"12px 16px",borderBottom:i<activeAnggota.length-1?"1px solid rgba(45,90,64,0.07)":"none",display:"flex",alignItems:"center",gap:10}}>
-                      <div style={{fontSize:22,flexShrink:0}}>{HI[a.hubungan]||"👤"}</div>
+                      <div style={{color:"#2d5a40", flexShrink:0}}>{HI[a.hubungan]||<User size={20}/>}</div>
                       <div style={{flex:1}}>
-                        <div style={{fontWeight:700,fontSize:14,color:"#1a2e1f"}}>
+                        <div style={{fontWeight:700,fontSize:14,color:"#1a2e1f",display:"flex",alignItems:"center",gap:6}}>
                           {a.nama}
-                          {balita&&<span style={{marginLeft:6,fontSize:10,background:"rgba(45,90,64,0.1)",color:"#2d5a40",borderRadius:10,padding:"1px 6px",fontWeight:600}}>BALITA</span>}
+                          {balita&&<span style={{fontSize:10,background:"rgba(45,90,64,0.1)",color:"#2d5a40",borderRadius:10,padding:"1px 6px",fontWeight:600,display:"flex",alignItems:"center",gap:4}}><Baby size={10}/> BALITA</span>}
                         </div>
-                        <div style={{fontSize:11,color:"#7a9a7e",marginTop:2}}>
+                        <div style={{fontSize:11,color:"#7a9a7e",marginTop:2,display:"flex",alignItems:"center",gap:4,flexWrap:"wrap"}}>
                           {a.hubungan} · {a.tgl_lahir?hitungUmur(a.tgl_lahir):"—"}
                           {a.pekerjaan&&a.pekerjaan!=="tidak_bekerja"&&` · ${PEKERJAAN.find(p=>p.v===a.pekerjaan)?.l||a.pekerjaan}`}
-                          {a.nfc_id&&" · 💳"}
+                          {a.nfc_id&&<CreditCard size={12}/>}
                         </div>
-                        <div style={{fontSize:11,color:"#2d5a40",fontWeight:600,marginTop:2}}>💰 {a.saldo_poin||0} poin</div>
+                        <div style={{fontSize:11,color:"#2d5a40",fontWeight:600,marginTop:2,display:"flex",alignItems:"center",gap:4}}><Coins size={12}/> {a.saldo_poin||0} poin</div>
                       </div>
                       <div style={{display:"flex",gap:4}}>
-                        <button onClick={()=>editAnggota(a)} style={{background:"rgba(45,90,64,0.08)",border:"none",borderRadius:8,padding:"5px 8px",cursor:"pointer",fontSize:12}}>✏️</button>
-                        <button onClick={()=>hapusAnggota(a.id)} style={{background:"rgba(220,53,69,0.08)",border:"none",borderRadius:8,padding:"5px 8px",cursor:"pointer",fontSize:12}}>🗑️</button>
+                        <button onClick={()=>editAnggota(a)} style={{background:"rgba(45,90,64,0.08)",border:"none",borderRadius:8,padding:"5px 8px",cursor:"pointer",fontSize:12,color:"#2d5a40"}}><Edit2 size={12}/></button>
+                        <button onClick={()=>hapusAnggota(a.id)} style={{background:"rgba(220,53,69,0.08)",border:"none",borderRadius:8,padding:"5px 8px",cursor:"pointer",fontSize:12,color:"#dc3545"}}><Trash2 size={12}/></button>
                       </div>
                     </div>
                   );

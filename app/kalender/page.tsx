@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { CalendarDays, MapPin } from "lucide-react";
+import { CalendarDays, MapPin, ArrowLeft, ChevronLeft, ChevronRight, Clock, Info } from "lucide-react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 interface Kegiatan { id: string; judul: string; deskripsi: string; tanggal: string; jam_mulai: string; lokasi: string; kategori: string; foto_url: string; }
@@ -55,10 +55,10 @@ export default function KalenderPage() {
   return (
     <div style={{ minHeight: "100vh", background: "#f5f0e8", fontFamily: "'Segoe UI',system-ui,sans-serif" }}>
       <header style={{ background: "#f5f0e8", borderBottom: "1px solid rgba(45,90,64,0.12)", padding: "clamp(12px, 3vw, 14px) clamp(16px, 4vw, 20px)", position: "sticky", top: 0, zIndex: 10, display: "flex", alignItems: "center", gap: 12 }}>
-        <a href="/" style={{ color: "#6b7c6d", textDecoration: "none", fontSize: 13 }}>← Beranda</a>
+        <a href="/" style={{ color: "#6b7c6d", textDecoration: "none", fontSize: 13, display: "flex", alignItems: "center", gap: 4 }}><ArrowLeft size={14}/> Beranda</a>
         <span style={{ color: "#c8bfaa" }}>|</span>
         <div>
-          <div style={{ fontWeight: 800, fontSize: 15, color: "#1a2e1f" }}> Kalender Kegiatan</div>
+          <div style={{ fontWeight: 800, fontSize: 15, color: "#1a2e1f", display: "flex", alignItems: "center", gap: 8 }}><CalendarDays size={18} /> Kalender Kegiatan</div>
           <div style={{ fontSize: 10, color: "#7a9a7e", textTransform: "uppercase", letterSpacing: "0.08em" }}>Agenda Kampung Ciburial</div>
         </div>
       </header>
@@ -72,10 +72,10 @@ export default function KalenderPage() {
               {/* Nav bulan */}
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
                 <button onClick={() => { if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y - 1); } else setViewMonth(m => m - 1); }}
-                  style={{ background: "none", border: "1px solid rgba(45,90,64,0.2)", borderRadius: 8, padding: "6px 12px", cursor: "pointer", color: "#2d5a40" }}>‹</button>
+                  style={{ background: "none", border: "1px solid rgba(45,90,64,0.2)", borderRadius: 8, padding: "6px 12px", cursor: "pointer", color: "#2d5a40", display: "flex", alignItems: "center", justifyContent: "center" }}><ChevronLeft size={16}/></button>
                 <div style={{ fontWeight: 800, fontSize: 16, color: "#1a2e1f" }}>{BULAN[viewMonth]} {viewYear}</div>
                 <button onClick={() => { if (viewMonth === 11) { setViewMonth(0); setViewYear(y => y + 1); } else setViewMonth(m => m + 1); }}
-                  style={{ background: "none", border: "1px solid rgba(45,90,64,0.2)", borderRadius: 8, padding: "6px 12px", cursor: "pointer", color: "#2d5a40" }}>›</button>
+                  style={{ background: "none", border: "1px solid rgba(45,90,64,0.2)", borderRadius: 8, padding: "6px 12px", cursor: "pointer", color: "#2d5a40", display: "flex", alignItems: "center", justifyContent: "center" }}><ChevronRight size={16}/></button>
               </div>
               {/* Grid hari */}
               <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: 2, marginBottom: 6 }}>
@@ -131,10 +131,10 @@ export default function KalenderPage() {
                     <div style={{ fontSize: 11, opacity: 0.7, marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.06em" }}>{selectedKegiatan.kategori}</div>
                     <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 6 }}>{selectedKegiatan.judul}</div>
                     <div style={{ fontSize: 13, opacity: 0.8, lineHeight: 1.5 }}>{selectedKegiatan.deskripsi}</div>
-                    <div style={{ display: "flex", gap: 12, marginTop: 10, fontSize: 12, opacity: 0.8 }}>
-                      <span> {new Date(selectedKegiatan.tanggal).toLocaleDateString("id-ID", { day: "numeric", month: "long" })}</span>
-                      {selectedKegiatan.jam_mulai && <span>⏰ {selectedKegiatan.jam_mulai}</span>}
-                      {selectedKegiatan.lokasi && <span> {selectedKegiatan.lokasi}</span>}
+                    <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 10, fontSize: 12, opacity: 0.8 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}><CalendarDays size={14} /> {new Date(selectedKegiatan.tanggal).toLocaleDateString("id-ID", { day: "numeric", month: "long" })}</div>
+                      {selectedKegiatan.jam_mulai && <div style={{ display: "flex", alignItems: "center", gap: 6 }}><Clock size={14} /> {selectedKegiatan.jam_mulai}</div>}
+                      {selectedKegiatan.lokasi && <div style={{ display: "flex", alignItems: "center", gap: 6 }}><MapPin size={14} /> {selectedKegiatan.lokasi}</div>}
                     </div>
                   </div>
                   <button onClick={() => setSelected(null)} style={{ background: "rgba(255,255,255,0.2)", border: "none", borderRadius: 8, padding: "4px 8px", color: "white", cursor: "pointer", fontSize: 13 }}>X</button>
@@ -164,9 +164,9 @@ export default function KalenderPage() {
                   <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: 700, fontSize: 14, color: "#1a2e1f", marginBottom: 3 }}>{k.judul}</div>
                     <div style={{ fontSize: 12, color: "#6b7c6d", lineHeight: 1.4, marginBottom: 4 }}>{k.deskripsi?.slice(0, 80)}{k.deskripsi?.length > 80 ? "..." : ""}</div>
-                    <div style={{ display: "flex", gap: 10, fontSize: 11, color: "#a8b5a9" }}>
-                      {k.jam_mulai && <span>⏰ {k.jam_mulai}</span>}
-                      {k.lokasi && <span> {k.lokasi}</span>}
+                    <div style={{ display: "flex", gap: 12, fontSize: 11, color: "#a8b5a9" }}>
+                      {k.jam_mulai && <span style={{ display: "flex", alignItems: "center", gap: 4 }}><Clock size={12} /> {k.jam_mulai}</span>}
+                      {k.lokasi && <span style={{ display: "flex", alignItems: "center", gap: 4 }}><MapPin size={12} /> {k.lokasi}</span>}
                     </div>
                   </div>
                   <div style={{ width: 8, borderRadius: 4, background: color, flexShrink: 0 }}/>

@@ -3,6 +3,12 @@
 // Akses di: https://your-site.vercel.app/admin
 // PIN admin disimpan di environment variable ADMIN_PIN
 import { useState, useEffect, useCallback } from "react";
+import { 
+  LayoutDashboard, Users, Calendar, ShoppingCart, Wallet, MessageSquare, Video, UserCircle, 
+  Home, Recycle, Coins, Baby, Landmark, ArrowUpCircle, ArrowDownCircle, 
+  LogOut, ExternalLink, Mail, Trash2, Plus, ShieldCheck, FileText, 
+  Image as ImageIcon, Package, Book, Info, AlertTriangle, ChevronRight, Save, Send, Sparkles
+} from "lucide-react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 import "./admin-styles-heroic.css";
 
@@ -448,7 +454,9 @@ export default function AdminPage() {
     <div className="admin-page heroic-bg">
       <div style={{ minHeight:"100vh", display:"flex", alignItems:"center", justifyContent:"center", padding:"clamp(16px, 4vw, 24px)" }}>
         <div className="card-heroic" style={{ width:"100%", maxWidth:420, padding:"clamp(32px, 6vw, 48px) clamp(24px, 5vw, 40px)", textAlign:"center" }}>
-          <div className="float-heroic" style={{ width:80, height:80, borderRadius:"50%", background:"linear-gradient(135deg, #2F8F4E, #4FBF7E)", display:"flex", alignItems:"center", justifyContent:"center", margin:"0 auto 24px", fontSize:32, boxShadow: "0 10px 30px rgba(47,143,78,0.3)" }}>🌿</div>
+          <div className="float-heroic" style={{ width:80, height:80, borderRadius:"50%", background:"linear-gradient(135deg, #2F8F4E, #4FBF7E)", display:"flex", alignItems:"center", justifyContent:"center", margin:"0 auto 24px", fontSize:32, boxShadow: "0 10px 30px rgba(47,143,78,0.3)", color:"white" }}>
+            <ShieldCheck size={40} />
+          </div>
           <h1 className="section-title-heroic" style={{ fontSize:"clamp(28px, 6vw, 36px)", marginBottom:8 }}>Admin Panel</h1>
           <p className="section-subtitle-heroic" style={{ marginBottom:32 }}>Ciburial Eco-Digital Village</p>
           
@@ -461,11 +469,12 @@ export default function AdminPage() {
               onKeyDown={e => e.key === "Enter" && handleLogin()}
               style={{ textAlign:"center", fontSize:24, letterSpacing:".4em", fontWeight:800, padding: "16px" }}
             />
-            {pwErr && <p style={{ fontSize:12, color:"#8B2020", fontWeight:700, marginTop:8 }}>⚠️ PIN salah. Coba lagi.</p>}
+            {pwErr && <p style={{ fontSize:12, color:"#8B2020", fontWeight:700, marginTop:8 }}><AlertTriangle size={14} style={{display:"inline", marginRight:4, verticalAlign:"middle"}} /> PIN salah. Coba lagi.</p>}
           </div>
 
-          <button className="btn-heroic" onClick={handleLogin} disabled={loading} style={{ width:"100%" }}>
-            <span>{loading ? "MEMVERIFIKASI..." : "MASUK KE DASHBOARD →"}</span>
+          <button className="btn-heroic" onClick={handleLogin} disabled={loading} style={{ width:"100%", display:"flex", alignItems:"center", justifyContent:"center", gap:10 }}>
+            <span>{loading ? "MEMVERIFIKASI..." : "MASUK KE DASHBOARD"}</span>
+            {!loading && <ChevronRight size={18} />}
           </button>
           <p style={{ fontSize:11, color:"#9A8C85", marginTop:24, fontWeight: 500 }}>Akses terbatas untuk pengelola resmi Ciburial</p>
         </div>
@@ -494,7 +503,7 @@ export default function AdminPage() {
         boxShadow: "0 4px 20px rgba(0,0,0,0.15)"
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <div className="pulse-glow-heroic" style={{ width: 40, height: 40, borderRadius: "50%", background: "linear-gradient(135deg, #2F8F4E, #4FBF7E)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>🌿</div>
+          <div className="pulse-glow-heroic" style={{ width: 40, height: 40, borderRadius: "50%", background: "linear-gradient(135deg, #2F8F4E, #4FBF7E)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, color: "white" }}><Sparkles size={20} /></div>
           <div>
             <div style={{ fontSize: 18, fontWeight: 800, color: "#FAF8F3", letterSpacing: "-0.01em", lineHeight: 1 }}>CIBURIAL</div>
             <div style={{ fontSize: 10, fontWeight: 700, color: "#4FBF7E", letterSpacing: "0.15em", textTransform: "uppercase", marginTop: 4 }}>DASHBOARD UTAMA</div>
@@ -502,9 +511,9 @@ export default function AdminPage() {
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
           {!isSupabaseReady() && (
-            <div className="badge-heroic" style={{ background: "rgba(139, 32, 32, 0.15)", color: "#FF8A8A", borderColor: "rgba(139, 32, 32, 0.3)" }}>⚠️ OFFLINE MODE</div>
+            <div className="badge-heroic" style={{ background: "rgba(139, 32, 32, 0.15)", color: "#FF8A8A", borderColor: "rgba(139, 32, 32, 0.3)", display:"flex", alignItems:"center", gap:6 }}><AlertTriangle size={12}/> OFFLINE MODE</div>
           )}
-          <a href="/" target="_blank" className="badge-heroic" style={{ textDecoration: "none" }}>LIHAT WEB →</a>
+          <a href="/" target="_blank" className="badge-heroic" style={{ textDecoration: "none", display:"flex", alignItems:"center", gap:6 }}>LIHAT WEB <ExternalLink size={12}/></a>
           <button onClick={() => setAuth(false)} style={{ 
             padding: "8px 20px", 
             borderRadius: 8, 
@@ -514,11 +523,14 @@ export default function AdminPage() {
             fontSize: 11, 
             fontWeight: 700, 
             cursor: "pointer",
-            transition: "all 0.3s"
+            transition: "all 0.3s",
+            display: "flex",
+            alignItems: "center",
+            gap: 8
           }} 
           onMouseOver={e => e.currentTarget.style.background = "rgba(139, 32, 32, 0.2)"}
           onMouseOut={e => e.currentTarget.style.background = "rgba(255,255,255,0.05)"}
-          >KELUAR</button>
+          ><LogOut size={14} /> KELUAR</button>
         </div>
       </header>
 
@@ -542,18 +554,18 @@ export default function AdminPage() {
         {/* ── SUMMARY STATS HEROIC ── */}
         <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(220px, 1fr))", gap:20, marginBottom:40 }}>
           {[
-            { label:"Total Kegiatan", value: kegiatanList.length, unit: "Acara", icon:"📅", desc: "Agenda kampung aktif" },
-            { label:"Produk Desa",   value: produkList.length, unit: "Item", icon:"🛒", desc: "Karya UMKM lokal" },
-            { label:"Total Masuk",    value: formatRp(totalMasuk), unit: "", icon:"📈", desc: "Pemasukan dana", color: "#2F8F4E" },
-            { label:"Total Keluar",   value: formatRp(totalKeluar), unit: "", icon:"📉", desc: "Alokasi dana", color: "#8B2020" },
-            { label:"Saldo Aktual",   value: formatRp(saldo), unit: "", icon:"💎", desc: "Dana tersedia", color: "#1C3A2B" },
+            { label:"Total Kegiatan", value: kegiatanList.length, unit: "Acara", icon:<Calendar size={18} />, desc: "Agenda kampung aktif" },
+            { label:"Produk Desa",   value: produkList.length, unit: "Item", icon:<ShoppingCart size={18} />, desc: "Karya UMKM lokal" },
+            { label:"Total Masuk",    value: formatRp(totalMasuk), unit: "", icon:<ArrowUpCircle size={18} />, desc: "Pemasukan dana", color: "#2F8F4E" },
+            { label:"Total Keluar",   value: formatRp(totalKeluar), unit: "", icon:<ArrowDownCircle size={18} />, desc: "Alokasi dana", color: "#8B2020" },
+            { label:"Saldo Aktual",   value: formatRp(saldo), unit: "", icon:<Wallet size={18} />, desc: "Dana tersedia", color: "#1C3A2B" },
           ].map((card, i) => (
             <div key={i} className="stat-box-heroic">
               <div className="stat-label-heroic">{card.label}</div>
               <div className="stat-value-heroic" style={{ color: card.color }}>
                 {card.value}<span style={{ fontSize: 16, marginLeft: 4 }}>{card.unit}</span>
               </div>
-              <div className="stat-desc-heroic">{card.icon} {card.desc}</div>
+              <div className="stat-desc-heroic" style={{display:"flex", alignItems:"center", gap:6, justifyContent:"center"}}>{card.icon} {card.desc}</div>
             </div>
           ))}
         </div>
@@ -571,7 +583,15 @@ export default function AdminPage() {
           flexWrap:"wrap",
           backdropFilter: "blur(8px)"
         }}>
-          {([["dashboard","📊 Dashboard"],["pengurus","👥 Pengurus"],["kegiatan","📅 Kegiatan"],["produk","🛒 Produk"],["transaksi","💰 Transaksi"],["testimoni","💬 Tokoh & Berita"],["iklan","🎥 Iklan Promo"]] as const).map(([key, label]) => (
+          {([
+            ["dashboard", <><LayoutDashboard size={16}/> Dashboard</>],
+            ["pengurus", <><Users size={16}/> Pengurus</>],
+            ["kegiatan", <><Calendar size={16}/> Kegiatan</>],
+            ["produk", <><ShoppingCart size={16}/> Produk</>],
+            ["transaksi", <><Wallet size={16}/> Transaksi</>],
+            ["testimoni", <><MessageSquare size={16}/> Tokoh & Berita</>],
+            ["iklan", <><Video size={16}/> Iklan Promo</>]
+          ] as const).map(([key, label]) => (
             <button key={key} onClick={() => setActiveTab(key)} style={{
               padding:"10px 24px", 
               borderRadius:12, 
@@ -584,7 +604,10 @@ export default function AdminPage() {
               background: activeTab === key ? "linear-gradient(135deg, #2F8F4E, #4FBF7E)" : "transparent",
               color: activeTab === key ? "#fff" : "#5A4A40",
               boxShadow: activeTab === key ? "0 8px 20px rgba(47, 143, 78, 0.25)" : "none",
-              transform: activeTab === key ? "translateY(-2px)" : "none"
+              transform: activeTab === key ? "translateY(-2px)" : "none",
+              display: "flex",
+              alignItems: "center",
+              gap: 8
             }}>{label}</button>
           ))}
         </div>
@@ -643,13 +666,22 @@ export default function AdminPage() {
               </svg>
             );
           }
-          const ICON:Record<string,string>={posyandu:"👶",ronda:"🔦",bank_sampah:"♻️",tukar:"🎁",kerja_bakti:"🌿",masjid:"🕌",learning_hub:"📚",lapor_fasilitas:"🔧"};
+          const ICON:Record<string,React.ReactNode>={
+            posyandu:<Baby size={20}/>,
+            ronda:<ShieldCheck size={20}/>,
+            bank_sampah:<Recycle size={20}/>,
+            tukar:<Sparkles size={20}/>,
+            kerja_bakti:<Users size={20}/>,
+            masjid:<Landmark size={20}/>,
+            learning_hub:<Book size={20}/>,
+            lapor_fasilitas:<Info size={20}/>
+          };
           return (
             <div className="float-heroic-subtle">
               {/* Banner ultah hari ini heroic */}
               {ultahHari.length>0 && (
                 <div className="pulse-glow-heroic" style={{background:"linear-gradient(135deg, #2F8F4E, #4FBF7E)", borderRadius:16, padding:"clamp(16px, 4vw, 20px) clamp(20px, 5vw, 28px)", marginBottom:32, color:"white", display:"flex", alignItems:"center", gap:20, border: "none" }}>
-                  <span className="float-heroic" style={{fontSize:40}}>🎂</span>
+                  <div className="float-heroic" style={{background:"rgba(255,255,255,0.2)", width:60, height:60, borderRadius:"50%", display:"flex", alignItems:"center", justifyContent:"center"}}><Sparkles size={32} /></div>
                   <div>
                     <div style={{fontWeight:900, fontSize:18, letterSpacing: "-0.02em"}}>HARI SPESIAL DESA! 🎉</div>
                     <div style={{fontSize:15, opacity:0.95, fontWeight: 500}}>Warga berulang tahun: {ultahHari.map((a:any)=>{
@@ -663,15 +695,15 @@ export default function AdminPage() {
               {/* Stats row dash - mini heroic boxes */}
               <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))",gap:16,marginBottom:32}}>
                 {[
-                  {i:"🏠",v:dashData.totalKK||0,l:"TOTAL KK",c:"#1C3A2B"},
-                  {i:"👥",v:dashData.totalJiwa||0,l:"TOTAL JIWA",c:"#1C3A2B"},
-                  {i:"♻️",v:`${(dashData.totKg||0).toFixed(0)}`,u:"kg",l:"SAMPAH",c:"#2F8F4E"},
-                  {i:"🪙",v:(dashData.totPoin||0).toLocaleString(),l:"TOTAL POIN",c:"#4FBF7E"},
-                  {i:"👶",v:dashData.anakPosyandu||0,l:"ANAK POSYANDU",c:"#8B2020"},
-                  {i:"🕌",v:`${dashData.muzakki||0}/${dashData.mustahiq||0}`,l:"ZAKAT",c:"#1C3A2B"},
-                ].map(s=>(
-                  <div key={s.l} className="stat-box-heroic" style={{ padding: "20px", textAlign: "left" }}>
-                    <div style={{fontSize:24,marginBottom:12}}>{s.i}</div>
+                  {i:<Home size={24}/>,v:dashData.totalKK||0,l:"TOTAL KK",c:"#1C3A2B"},
+                  {i:<Users size={24}/>,v:dashData.totalJiwa||0,l:"TOTAL JIWA",c:"#1C3A2B"},
+                  {i:<Recycle size={24}/>,v:`${(dashData.totKg||0).toFixed(0)}`,u:"kg",l:"SAMPAH",c:"#2F8F4E"},
+                  {i:<Coins size={24}/>,v:(dashData.totPoin||0).toLocaleString(),l:"TOTAL POIN",c:"#4FBF7E"},
+                  {i:<Baby size={24}/>,v:dashData.anakPosyandu||0,l:"ANAK POSYANDU",c:"#8B2020"},
+                  {i:<Landmark size={24}/>,v:`${dashData.muzakki||0}/${dashData.mustahiq||0}`,l:"ZAKAT",c:"#1C3A2B"},
+                ].map((s, idx)=>(
+                  <div key={idx} className="stat-box-heroic" style={{ padding: "20px", textAlign: "left" }}>
+                    <div style={{color: s.c, marginBottom:12}}>{s.i}</div>
                     <div className="stat-value-heroic" style={{fontSize:24, color: s.c}}>{s.v}<span style={{fontSize:12, marginLeft:2}}>{s.u}</span></div>
                     <div className="stat-label-heroic" style={{fontSize:10}}>{s.l}</div>
                   </div>
@@ -742,16 +774,16 @@ export default function AdminPage() {
                     <div className="stat-label-heroic" style={{ color: "rgba(255,255,255,0.7)", marginBottom: 20 }}>AKSES CEPAT MODUL</div>
                     <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
                       {[
-                        {href:"/admin/warga",i:"👥",l:"DATA WARGA"},
-                        {href:"/admin/posyandu",i:"👶",l:"POSYANDU"},
-                        {href:"/admin/bank-sampah",i:"♻️",l:"BANK SAMPAH"},
-                        {href:"/admin/ronda",i:"🔦",l:"RONDA NFC"},
-                        {href:"/admin/zakat",i:"🕌",l:"ZAKAT"},
-                        {href:"/admin/dashboard",i:"📊",l:"ANALYTICS"},
-                        {href:"/admin/orders",i:"📦",l:"PESANAN"},
-                        {href:"/admin/kalender",i:"📅",l:"KALENDER"},
-                        {href:"/admin/voting",i:"🗳️",l:"VOTING"},
-                        {href:"/admin/learning-hub",i:"📚",l:"LEARNING HUB"},
+                        {href:"/admin/warga",i:<Users size={16}/>,l:"DATA WARGA"},
+                        {href:"/admin/posyandu",i:<Baby size={16}/>,l:"POSYANDU"},
+                        {href:"/admin/bank-sampah",i:<Recycle size={16}/>,l:"BANK SAMPAH"},
+                        {href:"/admin/ronda",i:<ShieldCheck size={16}/>,l:"RONDA NFC"},
+                        {href:"/admin/zakat",i:<Landmark size={16}/>,l:"ZAKAT"},
+                        {href:"/admin/dashboard",i:<LayoutDashboard size={16}/>,l:"ANALYTICS"},
+                        {href:"/admin/orders",i:<Package size={16}/>,l:"PESANAN"},
+                        {href:"/admin/kalender",i:<Calendar size={16}/>,l:"KALENDER"},
+                        {href:"/admin/voting",i:<Coins size={16}/>,l:"VOTING"},
+                        {href:"/admin/learning-hub",i:<Book size={16}/>,l:"LEARNING HUB"},
                       ].map(l=>(
                         <a key={l.href} href={l.href} style={{display:"flex",alignItems:"center",gap:10,padding:"14px",borderRadius:12,background:"rgba(255,255,255,0.1)",border:"1px solid rgba(255,255,255,0.1)",textDecoration:"none",color:"white",fontSize:12,fontWeight:800, transition: "all 0.3s"}} 
                         onMouseOver={e => {e.currentTarget.style.background = "rgba(255,255,255,0.2)"; e.currentTarget.style.transform = "translateX(4px)"}}
