@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { 
   Shield, CreditCard, CheckCircle, Clock, Users, Calendar, 
-  Scan, Power, X, Sparkles, Moon, Info, ChevronRight, Zap
+  Scan, Power, X, Sparkles, Moon, Info, ChevronRight, Zap, Edit2, Coins
 } from "lucide-react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 

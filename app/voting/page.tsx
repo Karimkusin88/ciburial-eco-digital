@@ -4,7 +4,8 @@ import {
   Vote, Lock, CheckCircle, XCircle, Info, Scan, Power, 
   ChevronRight, ArrowLeft, PartyPopper, Users, Landmark, 
   Mail, MapPin, ShieldCheck, AlertCircle, Quote, Megaphone, 
-  ClipboardList, Inbox, Scale, User, Image as ImageIcon, Sparkles
+  ClipboardList, Inbox, Scale, User, Image as ImageIcon, Sparkles,
+  History, RefreshCw
 } from "lucide-react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 

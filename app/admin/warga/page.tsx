@@ -4,7 +4,7 @@ import {
   ArrowLeft, Users, RefreshCcw, Plus, X, Home, User, Smartphone, CreditCard, 
   CheckCircle, Trash2, Edit2, Baby, Heart, Info, AlertCircle, Save, 
   Building, Swords, Store, ShoppingCart, Wheat, Hammer, Anchor, Book, 
-  GraduationCap, FileText, PenTool, UserCheck, Smile, UserPlus
+  GraduationCap, FileText, PenTool, UserCheck, Smile, UserPlus, Coins
 } from "lucide-react";
 import "../admin-styles-heroic.css";
 import { supabase, isSupabaseReady } from "@/lib/supabase";

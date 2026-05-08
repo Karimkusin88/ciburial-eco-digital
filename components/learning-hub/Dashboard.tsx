@@ -4,7 +4,7 @@ import {
   Smartphone, Book, Laptop, PlaySquare, FileText, Bot, 
   Image as ImageIcon, Search, Bookmark, CheckCircle, 
   LogOut, ArrowLeft, Inbox, Monitor, ChevronRight, 
-  Sparkles, Leaf, Globe
+  Sparkles, Leaf, Globe, Info
 } from "lucide-react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 

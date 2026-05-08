@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { 
   Megaphone, HardHat, Trash2, Lock, Users, Lightbulb, 
   FileText, Send, CheckCircle, User, ArrowLeft, History,
-  Plus, MessageSquare, Info, Shield, Shovel, Sparkles, Notebook
+  Plus, MessageSquare, Info, Shield, Shovel, Sparkles, Notebook, Inbox
 } from "lucide-react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 

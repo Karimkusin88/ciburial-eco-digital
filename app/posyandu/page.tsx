@@ -4,7 +4,7 @@ import {
   Baby, Heart, CheckCircle, Info, Scan, Power, 
   ChevronRight, Save, User, UserCheck, Sparkles, 
   LayoutDashboard, LogOut, ArrowLeft, PartyPopper, Smile, 
-  Smartphone, CreditCard, Scale
+  Smartphone, CreditCard, Scale, X
 } from "lucide-react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
