@@ -1194,34 +1194,55 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                         cursor: "pointer", 
                         display: "flex", 
                         flexDirection: "column",
-                        transition: "all 0.3s cubic-bezier(.22,1,.36,1)",
+                        transition: "all 0.35s cubic-bezier(.16,.84,.44,1)",
                         position: "relative",
                         overflow: "hidden",
                         boxShadow: "0 4px 12px rgba(0,0,0,.04)"
                     }}
                     onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = "translateY(-6px) scale(1.01)";
-                        e.currentTarget.style.boxShadow = "0 12px 28px rgba(47,143,78,.15)";
+                        e.currentTarget.style.transform = "translateY(-8px) scale(1.02)";
+                        e.currentTarget.style.boxShadow = "0 16px 40px rgba(47,143,78,.2), 0 0 0 1px rgba(47,143,78,.06)";
+                        const img = e.currentTarget.querySelector('.product-img') as HTMLImageElement;
+                        if (img) img.style.transform = "scale(1.08)";
                     }}
                     onMouseLeave={(e) => {
                         e.currentTarget.style.transform = "translateY(0) scale(1)";
                         e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,.04)";
+                        const img = e.currentTarget.querySelector('.product-img') as HTMLImageElement;
+                        if (img) img.style.transform = "scale(1)";
                     }}
                 >
                   
                   {/* Product Image */}
-                  <div style={{ aspectRatio: "1/1", background: "linear-gradient(135deg,rgba(79,191,126,.08),rgba(47,143,78,.04))", display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
+                  <div style={{ aspectRatio: "1/1", background: "linear-gradient(135deg,rgba(79,191,126,.08),rgba(47,143,78,.04))", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
                     {(() => {
                       const mainPhoto = (p as any)?.fotos && Array.isArray((p as any).fotos) && (p as any).fotos.length > 0 ? (p as any).fotos[0] : p.foto;
                       return mainPhoto ? (
-                        <img src={mainPhoto} alt={p.nama} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                        <img src={mainPhoto} alt={p.nama} style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.3s ease-out" }} className="product-img" />
                       ) : (
                         <span style={{ fontSize: 64 }}>{p.icon || <TreePine size={120} strokeWidth={1} />}</span>
                       );
                     })()}
-                    {/* Badge Diskon / Label */}
+                    {/* Badge Diskon / Label - Pita Kontras */}
                     {p.tag && (
-                      <div style={{ position: "absolute", top: 12, left: 12, padding: "6px 12px", background: "linear-gradient(135deg, #D4AC5A, #B8943F)", color: "#FFF", borderRadius: 6, fontSize: 11, fontWeight: 800, boxShadow: "0 4px 12px rgba(184,148,63,.3)" }}>{p.tag}</div>
+                      <div style={{ 
+                        position: "absolute", 
+                        top: 10, 
+                        right: -35,
+                        width: 120,
+                        padding: "6px 0", 
+                        background: "linear-gradient(135deg, #C84B31, #E85D3F)", 
+                        color: "#FFF", 
+                        fontSize: 11, 
+                        fontWeight: 900,
+                        boxShadow: "0 4px 16px rgba(200,75,49,.4)",
+                        transform: "rotate(45deg)",
+                        textAlign: "center",
+                        letterSpacing: "0.05em",
+                        textTransform: "uppercase"
+                      }}>
+                        {p.tag}
+                      </div>
                     )}
                   </div>
 
@@ -1284,15 +1305,114 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
             })}
           </div>
         )}
+
+        {/* ── PAYMENT METHODS SHOWCASE (INFRASTRUKTUR PEMBAYARAN) ── */}
+        {!dataLoad && filteredProduk.length > 0 && (
+          <div style={{ marginTop: 80, paddingTop: 60, borderTop: "2px solid rgba(47,143,78,.1)" }}>
+            {/* Section Header */}
+            <div style={{ textAlign: "center", marginBottom: 48 }}>
+              <div style={{ display: "inline-block", width: "48px", height: "3px", background: "linear-gradient(90deg,#2F8F4E,#4FBF7E)", borderRadius: "99px", boxShadow: "0 0 16px rgba(47,143,78,.3)", marginBottom: "16px" }} />
+              <h2 style={{ fontSize: "clamp(24px, 4vw, 32px)", fontWeight: 800, background: "linear-gradient(135deg,#1C3A2B,#2F8F4E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", margin: "0 0 8px 0" }}>
+                💳 Metode Pembayaran Terpercaya
+              </h2>
+              <p style={{ margin: "12px 0 0 0", fontSize: 14, color: "#5A4A40", fontWeight: 500 }}>Belanja dengan aman melalui berbagai metode pembayaran digital terbaik</p>
+            </div>
+
+            {/* Payment Methods Grid */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 20, maxWidth: 1100, margin: "0 auto", padding: "0 clamp(16px, 4vw, 32px)" }}>
+              
+              {/* E-Wallet & QRIS Section */}
+              <div style={{ background: "linear-gradient(135deg, rgba(47,191,178,.08), rgba(79,191,126,.04))", borderRadius: 16, padding: 24, border: "1.5px solid rgba(47,143,78,.15)", textAlign: "center", transition: "all 0.3s", cursor: "default" }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-4px)";
+                  e.currentTarget.style.boxShadow = "0 12px 32px rgba(47,143,78,.12)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              >
+                <div style={{ fontSize: 32, marginBottom: 8 }}>📱</div>
+                <h4 style={{ margin: "0 0 4px 0", fontSize: 13, fontWeight: 800, color: "#1C3A2B", textTransform: "uppercase", letterSpacing: "0.05em" }}>E-Wallet</h4>
+                <p style={{ margin: 0, fontSize: 11, color: "#5A4A40", fontWeight: 500 }}>GoPay, OVO, DANA</p>
+              </div>
+
+              {/* QRIS */}
+              <div style={{ background: "linear-gradient(135deg, rgba(75,52,148,.08), rgba(79,191,126,.04))", borderRadius: 16, padding: 24, border: "1.5px solid rgba(47,143,78,.15)", textAlign: "center", transition: "all 0.3s", cursor: "default" }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-4px)";
+                  e.currentTarget.style.boxShadow = "0 12px 32px rgba(47,143,78,.12)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              >
+                <div style={{ fontSize: 32, marginBottom: 8 }}>🔲</div>
+                <h4 style={{ margin: "0 0 4px 0", fontSize: 13, fontWeight: 800, color: "#1C3A2B", textTransform: "uppercase", letterSpacing: "0.05em" }}>QRIS</h4>
+                <p style={{ margin: 0, fontSize: 11, color: "#5A4A40", fontWeight: 500 }}>Instan & Aman</p>
+              </div>
+
+              {/* Bank Transfers */}
+              <div style={{ background: "linear-gradient(135deg, rgba(220,53,69,.08), rgba(79,191,126,.04))", borderRadius: 16, padding: 24, border: "1.5px solid rgba(47,143,78,.15)", textAlign: "center", transition: "all 0.3s", cursor: "default" }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-4px)";
+                  e.currentTarget.style.boxShadow = "0 12px 32px rgba(47,143,78,.12)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              >
+                <div style={{ fontSize: 32, marginBottom: 8 }}>🏦</div>
+                <h4 style={{ margin: "0 0 4px 0", fontSize: 13, fontWeight: 800, color: "#1C3A2B", textTransform: "uppercase", letterSpacing: "0.05em" }}>Transfer Bank</h4>
+                <p style={{ margin: 0, fontSize: 11, color: "#5A4A40", fontWeight: 500 }}>BCA, BNI, BRI, Mandiri</p>
+              </div>
+
+              {/* Secure Payment Badge */}
+              <div style={{ background: "linear-gradient(135deg, rgba(255,193,7,.08), rgba(255,193,7,.04))", borderRadius: 16, padding: 24, border: "1.5px solid rgba(255,193,7,.2)", textAlign: "center", transition: "all 0.3s", cursor: "default" }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-4px)";
+                  e.currentTarget.style.boxShadow = "0 12px 32px rgba(255,193,7,.12)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              >
+                <div style={{ fontSize: 32, marginBottom: 8 }}>🔒</div>
+                <h4 style={{ margin: "0 0 4px 0", fontSize: 13, fontWeight: 800, color: "#1C3A2B", textTransform: "uppercase", letterSpacing: "0.05em" }}>Keamanan</h4>
+                <p style={{ margin: 0, fontSize: 11, color: "#5A4A40", fontWeight: 500 }}>Terjamin Midtrans</p>
+              </div>
+            </div>
+
+            {/* Trust Badge */}
+            <div style={{ marginTop: 40, textAlign: "center", padding: "24px", background: "linear-gradient(135deg, rgba(79,191,126,.04), rgba(47,143,78,.03))", borderRadius: 16, border: "1.5px dashed rgba(47,143,78,.2)" }}>
+              <p style={{ margin: 0, fontSize: 13, color: "#5A4A40", fontWeight: 600 }}>
+                ✓ Pembayaran diproses melalui <span style={{ fontWeight: 800, color: "#2F8F4E" }}>Midtrans</span> - Payment Gateway Terpercaya Indonesia
+              </p>
+            </div>
+          </div>
+        )}
       </div>
 
       <style>{`
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
         
+        /* Product Image Zoom Effect */
+        .product-img {
+          transition: transform 0.35s cubic-bezier(.16,.84,.44,1);
+        }
+
         /* Tombol keranjang efek Heroic */
         .product-card .btn-add-cart {
             opacity: 1;
+        }
+        
+        /* Product Card Enhancement */
+        .product-card {
+          backdrop-filter: blur(8px);
         }
         
         @media (min-width: 768px) {
