@@ -181,3 +181,148 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;backg
   .visi-wrap{ gap:28px !important; }
   .visi-left{ flex:0 0 100% !important; }
 }
+
+
+
+/* ──────────────────────────────────────────────────────────── */
+/*  DARK MODE — Moonlight Eco Theme                             */
+/*  Activated via <html data-theme="dark">                      */
+/* ──────────────────────────────────────────────────────────── */
+[data-theme="dark"]{
+  /* Forest palette — invert to moonlit-forest */
+  --fo:#E8F2EC; --fm:#B6D7C1; --fl:#7FB190;
+  /* Cream → deep charcoal-green */
+  --cr:#0E1814; --cd:#142221; --cw:#1A2A26;
+  /* Gold stays warm, slightly richer */
+  --go:#D4AC5A; --gl:#E8C477;
+  /* Earth → warm neutrals (a bit lighter) */
+  --ea:#0A0F0D; --em:#3A2F27; --el:#6B5A4E;
+  /* Text */
+  --tp:#F2F0EA; --ts:#C5C0B4; --tm:#8A8678;
+  /* Border */
+  --bo:#2A3A35;
+  /* Status colors */
+  --gb:#0E3B23; --gt:#7CE0A3;
+  --rb:#3B0F12; --rt:#FF9E9E;
+  /* Accent — slightly brighter for contrast on dark */
+  --accent:#5ED089; --accent-light:#7FDFA3; --accent-dark:#2F8F4E;
+}
+
+[data-theme="dark"] body{
+  background:var(--cr) !important;
+  color:var(--tp);
+}
+
+/* Adjust background radial-gradient overlay for dark mode */
+[data-theme="dark"] body::before{
+  background:
+    radial-gradient(circle at 20% 50%, rgba(94,208,137,.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(232,196,119,.04) 0%, transparent 50%);
+}
+
+/* Navbar glass surface on dark */
+[data-theme="dark"] .ng{
+  background:rgba(14,24,20,.92) !important;
+  box-shadow:0 8px 32px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+/* Mobile menu surface */
+[data-theme="dark"] .mob{
+  background:rgba(14,24,20,.96) !important;
+  box-shadow:0 8px 32px rgba(0,0,0,.5);
+}
+
+/* Dropdown surfaces */
+[data-theme="dark"] .drop-menu{
+  background:rgba(20,34,33,.98);
+  border-color:rgba(94,208,137,.15);
+  box-shadow:0 16px 48px rgba(0,0,0,.5);
+}
+
+/* Inputs in dark */
+[data-theme="dark"] .fi{
+  background:rgba(20,34,33,.5);
+  border-color:var(--bo);
+}
+[data-theme="dark"] .fi:focus{
+  background:rgba(20,34,33,.8);
+  border-color:var(--accent);
+  box-shadow:0 0 0 4px rgba(94,208,137,.18), inset 0 0 0 1px rgba(94,208,137,.15);
+}
+
+/* Skeleton shimmer on dark */
+[data-theme="dark"] .sk{
+  background:linear-gradient(90deg, #1A2A26 25%, #22332E 50%, #1A2A26 75%);
+  background-size:800px;
+}
+
+/* Tables on dark */
+[data-theme="dark"] .tbl th{
+  background:rgba(94,208,137,.05);
+  border-bottom-color:rgba(94,208,137,.18);
+}
+[data-theme="dark"] .tbl tr:hover td{
+  background:rgba(94,208,137,.05);
+}
+
+/* Scrollbar on dark */
+[data-theme="dark"] ::-webkit-scrollbar-track{ background:rgba(232,196,119,.04); }
+
+/* Button glow tweak */
+[data-theme="dark"] .btn-heroic{
+  background:linear-gradient(135deg,#2F8F4E 0%,#5ED089 100%);
+  box-shadow:0 12px 32px rgba(94,208,137,.25);
+}
+
+/* Badges */
+[data-theme="dark"] .badge-heroic{
+  background:linear-gradient(135deg,rgba(94,208,137,.12) 0%,rgba(127,223,163,.08) 100%);
+  border-color:rgba(94,208,137,.28);
+  color:var(--accent-light);
+}
+
+/* Divider line for deco */
+[data-theme="dark"] .dl{
+  box-shadow:0 0 16px rgba(232,196,119,.3);
+}
+
+/* Theme toggle hover affordance */
+.theme-toggle-btn:hover{
+  border-color:var(--accent) !important;
+  color:var(--accent) !important;
+  box-shadow:0 0 0 4px rgba(47,143,78,.1);
+}
+[data-theme="dark"] .theme-toggle-btn:hover{
+  box-shadow:0 0 0 4px rgba(94,208,137,.15);
+}
+
+/* Smooth color transitions when switching theme */
+body,.ng,.mob,.drop-menu,.fi,.tbl,.tbl th,.tbl td,.tag-heroic,.badge-heroic{
+  transition:background-color .35s ease, color .35s ease, border-color .35s ease;
+}
+
+/* ──────────────────────────────────────────────────────────── */
+/*  A11Y — Reduced Motion                                       */
+/* ──────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+    scroll-behavior:auto !important;
+  }
+  .mq{ animation:none !important; }
+}
+
+/* ──────────────────────────────────────────────────────────── */
+/*  Focus ring for keyboard users                               */
+/* ──────────────────────────────────────────────────────────── */
+:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:2px;
+  border-radius:4px;
+}
+button:focus-visible, a:focus-visible, input:focus-visible, [role="button"]:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:3px;
+}
