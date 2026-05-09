@@ -298,6 +298,7 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
  transition: "all .35s cubic-bezier(.22,1,.36,1)",
  display: "flex",
  alignItems: "center",
+ justifyContent: "center",
  gap: 8,
  }}
  onMouseEnter={e => {

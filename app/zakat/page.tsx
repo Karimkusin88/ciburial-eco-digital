@@ -221,7 +221,7 @@ export default function ZakatKioskPage() {
                       color: scanning ? "#D4AC5A" : "#1A1410", fontSize: 14, fontWeight: 800,
                       cursor: "pointer", letterSpacing: ".06em",
                       boxShadow: scanning ? "none" : "0 10px 30px rgba(184,148,63,0.4)",
-                      display: "flex", alignItems: "center", justifyContent: "center", gap: 10 }}>
+                      display: "flex", alignItems: "center", justifyContent: "center", gap: 10, margin: "0 auto" }}>
                     {scanning ? <><X size={18} /> Stop Scanning</> : <><Scan size={18} /> Aktifkan NFC e-KTP</>}
                   </button>
                   <style>{`
