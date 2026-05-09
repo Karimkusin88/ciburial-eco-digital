@@ -23,6 +23,7 @@ export interface Produk {
   tag: string;
   icon: React.ReactNode | string;
   foto?: string;
+  fotos?: string[];
 }
 
 export interface Transaksi {
@@ -87,7 +88,7 @@ export const DEF_KEG: Kegiatan[] = [
 
 export const DEF_PROD: Produk[] = [
   { id: "p1", nama: "Lampu Hex-Bamboo", deskripsi: "Lampu tidur estetik anyaman bambu asli pegunungan. Cahaya hangat, aroma alami.", harga: 150000, tag: "Best Seller", icon: <Lamp size={18} strokeWidth={1.5} /> },
-  { id: "p2", nama: "Keranjang Anyam", deskripsi: "Kerajinan tangan warga, multifungsi dan ramah lingkungan untuk dekorasi.", harga: 85000, tag: "Handmade", icon: <ShoppingBasket size={18} strokeWidth={1.5} /> },
+  { id: "p2", nama: "Keranjang Anyam", deskripsi: "Kerajinan tangan warga, multifungsi dan ramah lingkungan untuk dekorasi.", harga: 85000, tag: "Handmade", icon: <ShoppingBasket size={18} strokeWidth={1.5} />, fotos: ["https://images.unsplash.com/photo-1544816155-12df9643f363?w=800&q=80", "https://images.unsplash.com/photo-1586522336338-74c0b4dcb899?w=800&q=80", "https://images.unsplash.com/photo-1616489868749-d0f9d9217646?w=800&q=80"] },
   { id: "p3", nama: "Mini Pot Bambu", deskripsi: "Pot tanaman dari bambu pilihan. Natural, kuat, mempercantik ruangan.", harga: 60000, tag: "Eco", icon: <Leaf size={18} strokeWidth={1.5} /> },
   { id: "p4", nama: "Kompos Organik", deskripsi: "Pupuk dari Bank Sampah Ciburial. 100% organik, baik untuk tanaman.", harga: 25000, tag: "Eco-Waste", icon: <Sprout size={18} strokeWidth={1.5} /> },
   { id: "p5", nama: "Sayur Organik Box", deskripsi: "Sayuran segar dari ladang warga Ciburial, bebas pestisida kimia.", harga: 45000, tag: "Fresh Farm", icon: <Carrot size={18} strokeWidth={1.5} /> },

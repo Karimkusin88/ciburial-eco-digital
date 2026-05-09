@@ -96,6 +96,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
   const [newReview, setNewReview] = useState({ nama: "", rating: 5, komentar: "" });
   const [submittingReview, setSubmittingReview] = useState(false);
   const [detailQty, setDetailQty] = useState(1);
+  const [showReviewForm, setShowReviewForm] = useState(false);
 
   // Load keranjang dari localStorage pas komponen pertama kali jalan
   useEffect(() => {
@@ -191,7 +192,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
         if (error) throw error;
         setReviews(data || []);
       } catch (e) {
-        console.error("Gagal load reviews:", e);
+        console.warn("Gagal load reviews:", e);
       } finally {
         setReviewLoading(false);
       }
@@ -442,9 +443,12 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                 <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
                   {METODE_KIRIM.map(m=>(
                     <div key={m.v} onClick={()=>setOrderForm({...orderForm,metode_kirim:m.v as any})}
-                      style={{ padding:"clamp(8px, 2vw, 10px) clamp(10px, 3vw, 14px)", borderRadius:10, border:`1.5px solid ${orderForm.metode_kirim===m.v?"#2F8F4E":"rgba(47,143,78,.15)"}`, cursor:"pointer", background:orderForm.metode_kirim===m.v?"rgba(47,143,78,.06)":"white", display:"flex", justifyContent:"space-between", alignItems:"center", transition:"all 0.15s" }}>
-                      <span style={{ fontSize:13, color:"#1C3A2B", fontWeight:500 }}>{m.l}</span>
-                      <span style={{ fontSize:13, fontWeight:700, color: m.harga===0?"#2F8F4E":"#1C3A2B" }}>{m.harga===0?"Gratis":`+${fRp(m.harga)}`}</span>
+                      style={{ padding:"clamp(8px, 2vw, 10px) clamp(10px, 3vw, 14px)", borderRadius:10, border:`2px solid ${orderForm.metode_kirim===m.v?"#2F8F4E":"rgba(47,143,78,.15)"}`, cursor:"pointer", background:orderForm.metode_kirim===m.v?"#E8F5EE":"white", display:"flex", justifyContent:"space-between", alignItems:"center", transition:"all 0.15s" }}>
+                      <span style={{ fontSize:13, color:"#1C3A2B", fontWeight:orderForm.metode_kirim===m.v?800:500 }}>{m.l}</span>
+                      <span style={{ fontSize:13, fontWeight:700, color: m.harga===0?"#2F8F4E":"#1C3A2B", display: "flex", alignItems: "center" }}>
+                        {m.harga===0?"Gratis":`+${fRp(m.harga)}`}
+                        {orderForm.metode_kirim===m.v && <CheckCircle size={16} color="#2F8F4E" style={{marginLeft: 8}} />}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -495,9 +499,12 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                     <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:6 }}>
                       {METODE_BAYAR.filter(m=>m.grup===grup).map(m=>(
                         <div key={m.v} onClick={()=>setOrderForm({...orderForm,metode_bayar:m.v as any})}
-                          style={{ padding:"clamp(6px, 2vw, 8px) clamp(8px, 2vw, 10px)", borderRadius:10, border:`1.5px solid ${orderForm.metode_bayar===m.v?"#2F8F4E":"rgba(47,143,78,.15)"}`, cursor:"pointer", background:orderForm.metode_bayar===m.v?"rgba(47,143,78,.08)":"white", display:"flex", alignItems:"center", gap:6, transition:"all 0.15s" }}>
-                          <span style={{ fontSize:16 }}>{m.icon}</span>
-                          <span style={{ fontSize:11, fontWeight:600, color:"#1C3A2B" }}>{m.l}</span>
+                          style={{ padding:"clamp(6px, 2vw, 8px) clamp(8px, 2vw, 10px)", borderRadius:10, border:`2px solid ${orderForm.metode_bayar===m.v?"#2F8F4E":"rgba(47,143,78,.15)"}`, cursor:"pointer", background:orderForm.metode_bayar===m.v?"#E8F5EE":"white", display:"flex", alignItems:"center", justifyContent:"space-between", gap:6, transition:"all 0.15s" }}>
+                          <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+                            <span style={{ fontSize:16 }}>{m.icon}</span>
+                            <span style={{ fontSize:11, fontWeight:orderForm.metode_bayar===m.v?800:600, color:"#1C3A2B" }}>{m.l}</span>
+                          </div>
+                          {orderForm.metode_bayar===m.v && <CheckCircle size={16} color="#2F8F4E" />}
                         </div>
                       ))}
                     </div>
@@ -508,7 +515,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
               {/* Tombol bayar */}
               <button onClick={prosesCheckout} disabled={orderLoading}
                 style={{ padding:"clamp(10px, 3vw, 14px)", borderRadius:14, background:orderLoading?"rgba(47,143,78,.3)":"linear-gradient(135deg,#2F8F4E,#4FBF7E)", color:"white", border:"none", fontSize:15, fontWeight:800, cursor:orderLoading?"not-allowed":"pointer", boxShadow:"0 8px 20px rgba(47,143,78,.25)", letterSpacing:"0.03em", transition:"all 0.2s" }}>
-                {orderLoading ? "Memproses..." : `<Lock size={14} style={{display:"inline", marginRight:4}} /> Bayar ${fRp(totalBayar)}`}
+                {orderLoading ? "Memproses..." : <><Lock size={14} style={{display:"inline", marginRight:4}} /> Bayar {fRp(totalBayar)}</>}
               </button>
               <div style={{ fontSize:11, color:"#9A8C85", textAlign:"center", lineHeight:1.5 }}>
                 <Lock size={12} style={{display:"inline", marginRight:4}} /> Pembayaran aman via Midtrans<br/>
@@ -730,6 +737,10 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                 <div className="fnt" style={{ fontSize: "clamp(28px,5vw,40px)", fontWeight: 900, background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
                   {fRp(selectedProduct.harga)}
                 </div>
+                <div style={{ display: "flex", gap: 12, marginTop: 12 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "#B8943F", background: "rgba(184,148,63,0.1)", padding: "4px 8px", borderRadius: 6 }}>Sisa Stok: {Math.floor(Math.random() * 10) + 2}</div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "#2F8F4E", background: "rgba(47,143,78,0.1)", padding: "4px 8px", borderRadius: 6 }}>Pre-Order: 2-3 Hari</div>
+                </div>
               </div>
 
               {/* Deskripsi */}
@@ -839,9 +850,13 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
 
             {/* Form Tambah Review (Right) */}
             <div style={{ background: "white", borderRadius: 16, padding: 28, border: "1.5px solid rgba(47,143,78,.12)", boxShadow: "0 4px 16px rgba(47,143,78,.06)" }}>
-              <h3 style={{ margin: "0 0 20px", color: "#1C3A2B", fontSize: 16, fontWeight: 800 }}>Berikan Ulasan Anda</h3>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: showReviewForm ? 20 : 0 }}>
+                <h3 style={{ margin: 0, color: "#1C3A2B", fontSize: 16, fontWeight: 800 }}>Berikan Ulasan Anda</h3>
+                <button onClick={() => setShowReviewForm(!showReviewForm)} style={{ background: "none", border: "1.5px solid #2F8F4E", borderRadius: 8, padding: "6px 12px", fontSize: 12, fontWeight: 700, color: "#2F8F4E", cursor: "pointer", transition: "all 0.3s" }}>{showReviewForm ? "Batal" : "Tulis Ulasan"}</button>
+              </div>
               
-              <form onSubmit={submitReview} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+              {showReviewForm && (
+              <form onSubmit={submitReview} style={{ display: "flex", flexDirection: "column", gap: 14, marginTop: 20 }}>
                 {/* Nama */}
                 <input
                   type="text"
@@ -885,6 +900,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                   {submittingReview ? "⏳ Mengirim..." : "Kirim Ulasan"}
                 </button>
               </form>
+              )}
             </div>
           </div>
 
@@ -1004,8 +1020,21 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                >
                  {`Lanjut ke Checkout (${cart.length}) →`}
                </button>
-               <div style={{ marginTop:8, fontSize:11, color:"#9A8C85", textAlign:"center" }}>
-                 <Lock size={12} style={{display:"inline", marginRight:4}} /> VA Bank · GoPay · OVO · Dana · QRIS
+               <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 8, alignItems: "center" }}>
+                 <div style={{ fontSize: 10, fontWeight: 700, color: "#6b7c6d", letterSpacing: "0.1em", textTransform: "uppercase" }}>Didukung Oleh</div>
+                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center" }}>
+                   {["QRIS", "GoPay", "OVO", "DANA", "BCA", "BNI", "BRI", "Mandiri"].map(bank => (
+                     <div key={bank} style={{ padding: "4px 8px", background: "rgba(255,255,255,0.8)", border: "1px solid rgba(47,143,78,.15)", borderRadius: 6, fontSize: 10, fontWeight: 700, color: "#1C3A2B", display: "flex", alignItems: "center", gap: 4 }}>
+                       {bank === "QRIS" && <QrCode size={12}/>}
+                       {["GoPay", "OVO", "DANA"].includes(bank) && <Heart size={12}/>}
+                       {["BCA", "BNI", "BRI", "Mandiri"].includes(bank) && <Landmark size={12}/>}
+                       {bank}
+                     </div>
+                   ))}
+                 </div>
+                 <div style={{ fontSize:10, color:"#9A8C85", textAlign:"center", display: "flex", alignItems: "center", gap: 4, marginTop: 4 }}>
+                   <Lock size={10} color="#2F8F4E" /> Pembayaran Aman & Terenkripsi
+                 </div>
                </div>
             </div>
           </div>
@@ -1192,7 +1221,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                     })()}
                     {/* Badge Diskon / Label */}
                     {p.tag && (
-                      <div style={{ position: "absolute", top: 12, left: 12, padding: "6px 12px", background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", color: "#FFF", borderRadius: 6, fontSize: 11, fontWeight: 800, boxShadow: "0 4px 12px rgba(47,143,78,.3)" }}>{p.tag}</div>
+                      <div style={{ position: "absolute", top: 12, left: 12, padding: "6px 12px", background: "linear-gradient(135deg, #D4AC5A, #B8943F)", color: "#FFF", borderRadius: 6, fontSize: 11, fontWeight: 800, boxShadow: "0 4px 12px rgba(184,148,63,.3)" }}>{p.tag}</div>
                     )}
                   </div>
 
@@ -1223,7 +1252,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                         e.stopPropagation();
                         addToCart(p);
                       }}
-                      style={{ marginTop: 12, padding: "10px", background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", border: "none", borderRadius: 8, fontSize: 12, fontWeight: 700, color: "#FFF", cursor: "pointer", transition: "all 0.3s", boxShadow: "0 4px 12px rgba(47,143,78,.2)", width: "100%" }}>
+                      style={{ marginTop: 12, padding: "10px", background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", border: "none", borderRadius: 8, fontSize: 12, fontWeight: 700, color: "#FFF", cursor: "pointer", transition: "all 0.3s", boxShadow: "0 4px 12px rgba(47,143,78,.3)", width: "100%" }}>
                       + Keranjang
                     </button>
 
@@ -1235,7 +1264,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                         setDirectCheckoutItems([{ ...p, qty: 1 }]);
                         setShowCheckout(true);
                       }}
-                      style={{ marginTop: 8, padding: "8px 12px", background: "linear-gradient(135deg,#B8943F,#D4AC5A)", border: "none", borderRadius: 8, fontSize: 11, fontWeight: 700, color: "#FFF", cursor: "pointer", transition: "all 0.3s", boxShadow: "0 4px 12px rgba(184,148,63,.2)", width: "100%" }}>
+                      style={{ marginTop: 8, padding: "8px 12px", background: "linear-gradient(135deg,#1C3A2B,#2F8F4E)", border: "none", borderRadius: 8, fontSize: 11, fontWeight: 700, color: "#FFF", cursor: "pointer", transition: "all 0.3s", boxShadow: "0 4px 12px rgba(28,58,43,.3)", width: "100%" }}>
                       <Zap size={16} style={{display:"inline", marginRight:4}} /> Beli Langsung
                     </button>
 
@@ -1246,8 +1275,8 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                         e.stopPropagation();
                         setSelectedProduct(p);
                       }}
-                      style={{ padding: "8px 12px", background: "rgba(47,143,78,.1)", border: "1.5px solid rgba(47,143,78,.3)", borderRadius: 8, fontSize: 11, fontWeight: 600, color: "#2F8F4E", cursor: "pointer", transition: "all 0.3s", marginTop: 8, width: "100%" }}>
-                      ️ Detail
+                      style={{ padding: "8px 12px", background: "rgba(28,58,43,.05)", border: "1.5px solid rgba(28,58,43,.2)", borderRadius: 8, fontSize: 11, fontWeight: 600, color: "#1C3A2B", cursor: "pointer", transition: "all 0.3s", marginTop: 8, width: "100%" }}>
+                      Lihat Detail
                     </button>
                   </div>
                 </div>
