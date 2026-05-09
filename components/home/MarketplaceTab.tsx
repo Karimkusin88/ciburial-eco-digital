@@ -2,7 +2,7 @@
 import { Produk, Iklan, fRp } from "./types";
 import { useState, useRef, useEffect } from "react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
-import { Home, TreePine, Wheat, Soup, Recycle, Leaf, QrCode, Heart, Landmark, CheckCircle, Package, Truck, PartyPopper, XCircle, Search, MapPin, Zap, Eye, ShoppingCart, MessageSquare, Loader, Smartphone, FileText, CreditCard, Lock, ArrowRight, CornerDownRight } from "lucide-react";
+import { Home, TreePine, Wheat, Soup, Recycle, Leaf, QrCode, Heart, Landmark, CheckCircle, Package, Truck, PartyPopper, XCircle, Search, MapPin, Zap, Eye, ShoppingCart, MessageSquare, Loader, Smartphone, FileText, CreditCard, Lock, ArrowRight, CornerDownRight, Building2, Shield } from "lucide-react";
 
 interface MarketplaceTabProps {
   produk: Produk[];
@@ -1306,91 +1306,83 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
           </div>
         )}
 
-        {/* ── PAYMENT METHODS SHOWCASE (INFRASTRUKTUR PEMBAYARAN) ── */}
+        {/* ── PAYMENT METHODS SHOWCASE (MINIMALIST LINE ART) ── */}
         {!dataLoad && filteredProduk.length > 0 && (
-          <div style={{ marginTop: 80, paddingTop: 60, borderTop: "2px solid rgba(47,143,78,.1)" }}>
-            {/* Section Header */}
-            <div style={{ textAlign: "center", marginBottom: 48 }}>
-              <div style={{ display: "inline-block", width: "48px", height: "3px", background: "linear-gradient(90deg,#2F8F4E,#4FBF7E)", borderRadius: "99px", boxShadow: "0 0 16px rgba(47,143,78,.3)", marginBottom: "16px" }} />
-              <h2 style={{ fontSize: "clamp(24px, 4vw, 32px)", fontWeight: 800, background: "linear-gradient(135deg,#1C3A2B,#2F8F4E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", margin: "0 0 8px 0" }}>
-                💳 Metode Pembayaran Terpercaya
-              </h2>
-              <p style={{ margin: "12px 0 0 0", fontSize: 14, color: "#5A4A40", fontWeight: 500 }}>Belanja dengan aman melalui berbagai metode pembayaran digital terbaik</p>
+          <div style={{ marginTop: 60, paddingTop: 40, borderTop: "1px solid rgba(47,143,78,.08)" }}>
+            {/* Section Header - Minimalist */}
+            <div style={{ textAlign: "center", marginBottom: 32 }}>
+              <h3 style={{ fontSize: 14, fontWeight: 700, background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", margin: 0, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                Metode Pembayaran Tersedia
+              </h3>
+              <p style={{ margin: "8px 0 0 0", fontSize: 12, color: "#6b7c6d", fontWeight: 500 }}>Aman & Terpercaya</p>
             </div>
 
-            {/* Payment Methods Grid */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 20, maxWidth: 1100, margin: "0 auto", padding: "0 clamp(16px, 4vw, 32px)" }}>
+            {/* Payment Methods Grid - Compact */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))", gap: 12, maxWidth: 900, margin: "0 auto", padding: "0 clamp(16px, 4vw, 32px)" }}>
               
-              {/* E-Wallet & QRIS Section */}
-              <div style={{ background: "linear-gradient(135deg, rgba(47,191,178,.08), rgba(79,191,126,.04))", borderRadius: 16, padding: 24, border: "1.5px solid rgba(47,143,78,.15)", textAlign: "center", transition: "all 0.3s", cursor: "default" }}
+              {/* E-Wallet */}
+              <div style={{ background: "rgba(79,191,126,.03)", borderRadius: 12, padding: "14px 12px", border: "1px solid rgba(47,143,78,.1)", textAlign: "center", transition: "all 0.25s", cursor: "default" }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateY(-4px)";
-                  e.currentTarget.style.boxShadow = "0 12px 32px rgba(47,143,78,.12)";
+                  e.currentTarget.style.background = "rgba(79,191,126,.06)";
+                  e.currentTarget.style.borderColor = "rgba(47,143,78,.2)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow = "none";
+                  e.currentTarget.style.background = "rgba(79,191,126,.03)";
+                  e.currentTarget.style.borderColor = "rgba(47,143,78,.1)";
                 }}
               >
-                <div style={{ fontSize: 32, marginBottom: 8 }}>📱</div>
-                <h4 style={{ margin: "0 0 4px 0", fontSize: 13, fontWeight: 800, color: "#1C3A2B", textTransform: "uppercase", letterSpacing: "0.05em" }}>E-Wallet</h4>
-                <p style={{ margin: 0, fontSize: 11, color: "#5A4A40", fontWeight: 500 }}>GoPay, OVO, DANA</p>
+                <div style={{ display: "flex", justifyContent: "center", marginBottom: 6 }}><Smartphone size={20} strokeWidth={1.5} color="#2F8F4E" /></div>
+                <h4 style={{ margin: "0 0 3px 0", fontSize: 11, fontWeight: 700, color: "#1C3A2B" }}>E-Wallet</h4>
+                <p style={{ margin: 0, fontSize: 9, color: "#6b7c6d" }}>GoPay, OVO, DANA</p>
               </div>
 
               {/* QRIS */}
-              <div style={{ background: "linear-gradient(135deg, rgba(75,52,148,.08), rgba(79,191,126,.04))", borderRadius: 16, padding: 24, border: "1.5px solid rgba(47,143,78,.15)", textAlign: "center", transition: "all 0.3s", cursor: "default" }}
+              <div style={{ background: "rgba(75,52,148,.03)", borderRadius: 12, padding: "14px 12px", border: "1px solid rgba(47,143,78,.1)", textAlign: "center", transition: "all 0.25s", cursor: "default" }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateY(-4px)";
-                  e.currentTarget.style.boxShadow = "0 12px 32px rgba(47,143,78,.12)";
+                  e.currentTarget.style.background = "rgba(75,52,148,.06)";
+                  e.currentTarget.style.borderColor = "rgba(47,143,78,.2)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow = "none";
+                  e.currentTarget.style.background = "rgba(75,52,148,.03)";
+                  e.currentTarget.style.borderColor = "rgba(47,143,78,.1)";
                 }}
               >
-                <div style={{ fontSize: 32, marginBottom: 8 }}>🔲</div>
-                <h4 style={{ margin: "0 0 4px 0", fontSize: 13, fontWeight: 800, color: "#1C3A2B", textTransform: "uppercase", letterSpacing: "0.05em" }}>QRIS</h4>
-                <p style={{ margin: 0, fontSize: 11, color: "#5A4A40", fontWeight: 500 }}>Instan & Aman</p>
+                <div style={{ display: "flex", justifyContent: "center", marginBottom: 6 }}><QrCode size={20} strokeWidth={1.5} color="#4B348F" /></div>
+                <h4 style={{ margin: "0 0 3px 0", fontSize: 11, fontWeight: 700, color: "#1C3A2B" }}>QRIS</h4>
+                <p style={{ margin: 0, fontSize: 9, color: "#6b7c6d" }}>Instan</p>
               </div>
 
               {/* Bank Transfers */}
-              <div style={{ background: "linear-gradient(135deg, rgba(220,53,69,.08), rgba(79,191,126,.04))", borderRadius: 16, padding: 24, border: "1.5px solid rgba(47,143,78,.15)", textAlign: "center", transition: "all 0.3s", cursor: "default" }}
+              <div style={{ background: "rgba(220,53,69,.03)", borderRadius: 12, padding: "14px 12px", border: "1px solid rgba(47,143,78,.1)", textAlign: "center", transition: "all 0.25s", cursor: "default" }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateY(-4px)";
-                  e.currentTarget.style.boxShadow = "0 12px 32px rgba(47,143,78,.12)";
+                  e.currentTarget.style.background = "rgba(220,53,69,.06)";
+                  e.currentTarget.style.borderColor = "rgba(47,143,78,.2)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow = "none";
+                  e.currentTarget.style.background = "rgba(220,53,69,.03)";
+                  e.currentTarget.style.borderColor = "rgba(47,143,78,.1)";
                 }}
               >
-                <div style={{ fontSize: 32, marginBottom: 8 }}>🏦</div>
-                <h4 style={{ margin: "0 0 4px 0", fontSize: 13, fontWeight: 800, color: "#1C3A2B", textTransform: "uppercase", letterSpacing: "0.05em" }}>Transfer Bank</h4>
-                <p style={{ margin: 0, fontSize: 11, color: "#5A4A40", fontWeight: 500 }}>BCA, BNI, BRI, Mandiri</p>
+                <div style={{ display: "flex", justifyContent: "center", marginBottom: 6 }}><Building2 size={20} strokeWidth={1.5} color="#B8472F" /></div>
+                <h4 style={{ margin: "0 0 3px 0", fontSize: 11, fontWeight: 700, color: "#1C3A2B" }}>Bank</h4>
+                <p style={{ margin: 0, fontSize: 9, color: "#6b7c6d" }}>BCA, BNI, BRI</p>
               </div>
 
-              {/* Secure Payment Badge */}
-              <div style={{ background: "linear-gradient(135deg, rgba(255,193,7,.08), rgba(255,193,7,.04))", borderRadius: 16, padding: 24, border: "1.5px solid rgba(255,193,7,.2)", textAlign: "center", transition: "all 0.3s", cursor: "default" }}
+              {/* Secure Payment */}
+              <div style={{ background: "rgba(255,193,7,.03)", borderRadius: 12, padding: "14px 12px", border: "1px solid rgba(47,143,78,.1)", textAlign: "center", transition: "all 0.25s", cursor: "default" }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateY(-4px)";
-                  e.currentTarget.style.boxShadow = "0 12px 32px rgba(255,193,7,.12)";
+                  e.currentTarget.style.background = "rgba(255,193,7,.06)";
+                  e.currentTarget.style.borderColor = "rgba(47,143,78,.2)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow = "none";
+                  e.currentTarget.style.background = "rgba(255,193,7,.03)";
+                  e.currentTarget.style.borderColor = "rgba(47,143,78,.1)";
                 }}
               >
-                <div style={{ fontSize: 32, marginBottom: 8 }}>🔒</div>
-                <h4 style={{ margin: "0 0 4px 0", fontSize: 13, fontWeight: 800, color: "#1C3A2B", textTransform: "uppercase", letterSpacing: "0.05em" }}>Keamanan</h4>
-                <p style={{ margin: 0, fontSize: 11, color: "#5A4A40", fontWeight: 500 }}>Terjamin Midtrans</p>
+                <div style={{ display: "flex", justifyContent: "center", marginBottom: 6 }}><Shield size={20} strokeWidth={1.5} color="#D4AC5A" /></div>
+                <h4 style={{ margin: "0 0 3px 0", fontSize: 11, fontWeight: 700, color: "#1C3A2B" }}>Aman</h4>
+                <p style={{ margin: 0, fontSize: 9, color: "#6b7c6d" }}>Midtrans</p>
               </div>
-            </div>
-
-            {/* Trust Badge */}
-            <div style={{ marginTop: 40, textAlign: "center", padding: "24px", background: "linear-gradient(135deg, rgba(79,191,126,.04), rgba(47,143,78,.03))", borderRadius: 16, border: "1.5px dashed rgba(47,143,78,.2)" }}>
-              <p style={{ margin: 0, fontSize: 13, color: "#5A4A40", fontWeight: 600 }}>
-                ✓ Pembayaran diproses melalui <span style={{ fontWeight: 800, color: "#2F8F4E" }}>Midtrans</span> - Payment Gateway Terpercaya Indonesia
-              </p>
             </div>
           </div>
         )}
