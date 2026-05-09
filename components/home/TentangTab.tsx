@@ -6,6 +6,8 @@ import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 import CommunityDashboard from "@/components/home/CommunityDashboard";
 import { Transaksi, DEF_TX } from "./types";
+import Reveal from "@/components/ui/Reveal";
+import Counter from "@/components/ui/Counter";
 
 
 interface TentangTabProps {
@@ -152,7 +154,6 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
  color: "#FFFFFF",
  letterSpacing: "-.04em",
  marginBottom: 10,
- fontSize: "clamp(64px,13vw,148px)",
  textShadow: "0 8px 40px rgba(0,0,0,0.3)",
  }}
  >
@@ -168,7 +169,6 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
  color: "#95D5B2", // hijau sage
  letterSpacing: "-.01em",
  marginBottom: 0,
- fontSize: "clamp(26px,5vw,52px)",
  textShadow: "0 4px 16px rgba(0,0,0,0.2)",
  }}
  >
@@ -360,11 +360,13 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
  {/* CIBURIAL SMART HUB — DIGITAL SERVICES */}
  <section className="sec" style={{ padding: "clamp(48px,8vw,100px) clamp(16px,4vw,32px)", background: "linear-gradient(180deg, rgba(232,245,238,0.5) 0%, #FAF8F3 100%)" }}>
  <div style={{ maxWidth: 1320, margin: "0 auto" }}>
+ <Reveal>
  <div style={{ textAlign: "center", marginBottom: 48 }}>
  <span className="badge-heroic" style={{ padding: "6px 14px", fontSize: 10, borderRadius: 99, background: "rgba(47,143,78,0.1)", color: "#2F8F4E", border: "1px solid rgba(47,143,78,0.2)", fontWeight: 800, letterSpacing: "0.1em" }}>DIGITAL TRANSFORMATION</span>
  <h2 className="fnt" style={{ fontSize: "clamp(28px,4vw,48px)", fontWeight: 300, color: "#1C3A2B", marginTop: 16, marginBottom: 12 }}>Ciburial Smart Hub</h2>
  <p style={{ color: "#5A4A40", fontSize: "clamp(13px,3vw,15px)", maxWidth: 600, margin: "0 auto", fontWeight: 500, lineHeight: 1.6 }}>Pusat kendali dan layanan warga berbasis teknologi untuk transparansi dan efisiensi desa.</p>
  </div>
+ </Reveal>
 
  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))", gap: "clamp(16px, 3vw, 24px)", maxWidth: 1200 }} className="grid-2x3-hub">
  {[
@@ -432,7 +434,8 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
  comingSoon: false
  }
  ].map((item, i) => (
- <a key={i} href={item.link} style={{ textDecoration: "none", color: "inherit", pointerEvents: item.comingSoon ? "none" : "auto" }} className="hub-card-link">
+ <Reveal key={i} delay={i * 70} direction="up">
+ <a href={item.link} style={{ textDecoration: "none", color: "inherit", pointerEvents: item.comingSoon ? "none" : "auto", display: "block", height: "100%" }} className="hub-card-link">
  <div className="card-heroic" style={{ 
  height: "100%", 
  padding: "clamp(20px, 4vw, 32px) clamp(16px, 4vw, 24px)", 
@@ -481,6 +484,7 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
  )}
  </div>
  </a>
+ </Reveal>
  ))}
  </div>
  </div>
@@ -516,6 +520,7 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
  {/* DONASI SPLIT */}
  <section className="sec" style={{ padding: "0 clamp(12px,3vw,32px) clamp(48px,8vw,104px)" }}>
  <div style={{ maxWidth: 1320, margin: "0 auto" }}>
+ <Reveal>
  <div style={{ borderRadius: 28, overflow: "hidden", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 300px),1fr))" }}>
  <div style={{ background: "var(--fo)", padding: "clamp(32px, 6vw, 60px) clamp(24px, 5vw, 52px)" }}>
  <div className="dl" />
@@ -529,13 +534,13 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
  <div style={{ marginBottom: 28 }}>
  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
  <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "rgba(250,248,243,.6)" }}>Progress Donasi</span>
- <span style={{ fontSize: 12, fontWeight: 700, color: "var(--gl)" }}>{((saldo / 250000000) * 100).toFixed(1)}%</span>
+ <span style={{ fontSize: 12, fontWeight: 700, color: "var(--gl)" }}><Counter value={(saldo / 250000000) * 100} decimals={1} suffix="%" duration={1400} /></span>
  </div>
  <div style={{ width: "100%", height: 12, background: "rgba(255,255,255,.12)", borderRadius: 99, overflow: "hidden", boxShadow: "inset 0 1px 3px rgba(0,0,0,.2)" }}>
  <div style={{ width: `${Math.min((saldo / 250000000) * 100, 100)}%`, height: "100%", background: "linear-gradient(90deg, #4FBF7E, var(--gl))", borderRadius: 99, transition: "width 1s cubic-bezier(.22,1,.36,1)", boxShadow: "0 0 12px rgba(79,191,126,.6)" }} />
  </div>
  <div style={{ fontSize: 10, color: "rgba(250,248,243,.45)", marginTop: 6 }}>
- {((saldo / 1000000).toFixed(1))} dari 250 juta terkumpul
+ <Counter value={saldo / 1000000} decimals={1} duration={1400} /> dari 250 juta terkumpul
  </div>
  </div>
 
@@ -615,6 +620,7 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
  <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: "#2F8F4E", opacity: .65 }}>QS. Al-Baqarah: 201</span>
  </div>
  </div>
+ </Reveal>
  </div>
  </section>
 

@@ -181,3 +181,325 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;backg
   .visi-wrap{ gap:28px !important; }
   .visi-left{ flex:0 0 100% !important; }
 }
+
+
+
+/* ──────────────────────────────────────────────────────────── */
+/*  DARK MODE — Moonlight Eco Theme                             */
+/*  Activated via <html data-theme="dark">                      */
+/* ──────────────────────────────────────────────────────────── */
+[data-theme="dark"]{
+  /* Forest palette — invert to moonlit-forest */
+  --fo:#E8F2EC; --fm:#B6D7C1; --fl:#7FB190;
+  /* Cream → deep charcoal-green */
+  --cr:#0E1814; --cd:#142221; --cw:#1A2A26;
+  /* Gold stays warm, slightly richer */
+  --go:#D4AC5A; --gl:#E8C477;
+  /* Earth → warm neutrals (a bit lighter) */
+  --ea:#0A0F0D; --em:#3A2F27; --el:#6B5A4E;
+  /* Text */
+  --tp:#F2F0EA; --ts:#C5C0B4; --tm:#8A8678;
+  /* Border */
+  --bo:#2A3A35;
+  /* Status colors */
+  --gb:#0E3B23; --gt:#7CE0A3;
+  --rb:#3B0F12; --rt:#FF9E9E;
+  /* Accent — slightly brighter for contrast on dark */
+  --accent:#5ED089; --accent-light:#7FDFA3; --accent-dark:#2F8F4E;
+}
+
+[data-theme="dark"] body{
+  background:var(--cr) !important;
+  color:var(--tp);
+}
+
+/* Adjust background radial-gradient overlay for dark mode */
+[data-theme="dark"] body::before{
+  background:
+    radial-gradient(circle at 20% 50%, rgba(94,208,137,.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(232,196,119,.04) 0%, transparent 50%);
+}
+
+/* Navbar glass surface on dark */
+[data-theme="dark"] .ng{
+  background:rgba(14,24,20,.92) !important;
+  box-shadow:0 8px 32px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+/* Mobile menu surface */
+[data-theme="dark"] .mob{
+  background:rgba(14,24,20,.96) !important;
+  box-shadow:0 8px 32px rgba(0,0,0,.5);
+}
+
+/* Dropdown surfaces */
+[data-theme="dark"] .drop-menu{
+  background:rgba(20,34,33,.98);
+  border-color:rgba(94,208,137,.15);
+  box-shadow:0 16px 48px rgba(0,0,0,.5);
+}
+
+/* Inputs in dark */
+[data-theme="dark"] .fi{
+  background:rgba(20,34,33,.5);
+  border-color:var(--bo);
+}
+[data-theme="dark"] .fi:focus{
+  background:rgba(20,34,33,.8);
+  border-color:var(--accent);
+  box-shadow:0 0 0 4px rgba(94,208,137,.18), inset 0 0 0 1px rgba(94,208,137,.15);
+}
+
+/* Skeleton shimmer on dark */
+[data-theme="dark"] .sk{
+  background:linear-gradient(90deg, #1A2A26 25%, #22332E 50%, #1A2A26 75%);
+  background-size:800px;
+}
+
+/* Tables on dark */
+[data-theme="dark"] .tbl th{
+  background:rgba(94,208,137,.05);
+  border-bottom-color:rgba(94,208,137,.18);
+}
+[data-theme="dark"] .tbl tr:hover td{
+  background:rgba(94,208,137,.05);
+}
+
+/* Scrollbar on dark */
+[data-theme="dark"] ::-webkit-scrollbar-track{ background:rgba(232,196,119,.04); }
+
+/* Button glow tweak */
+[data-theme="dark"] .btn-heroic{
+  background:linear-gradient(135deg,#2F8F4E 0%,#5ED089 100%);
+  box-shadow:0 12px 32px rgba(94,208,137,.25);
+}
+
+/* Badges */
+[data-theme="dark"] .badge-heroic{
+  background:linear-gradient(135deg,rgba(94,208,137,.12) 0%,rgba(127,223,163,.08) 100%);
+  border-color:rgba(94,208,137,.28);
+  color:var(--accent-light);
+}
+
+/* Divider line for deco */
+[data-theme="dark"] .dl{
+  box-shadow:0 0 16px rgba(232,196,119,.3);
+}
+
+/* Theme toggle hover affordance */
+.theme-toggle-btn:hover{
+  border-color:var(--accent) !important;
+  color:var(--accent) !important;
+  box-shadow:0 0 0 4px rgba(47,143,78,.1);
+}
+[data-theme="dark"] .theme-toggle-btn:hover{
+  box-shadow:0 0 0 4px rgba(94,208,137,.15);
+}
+
+/* Smooth color transitions when switching theme */
+body,.ng,.mob,.drop-menu,.fi,.tbl,.tbl th,.tbl td,.tag-heroic,.badge-heroic{
+  transition:background-color .35s ease, color .35s ease, border-color .35s ease;
+}
+
+/* ──────────────────────────────────────────────────────────── */
+/*  A11Y — Reduced Motion                                       */
+/* ──────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+    scroll-behavior:auto !important;
+  }
+  .mq{ animation:none !important; }
+}
+
+/* ──────────────────────────────────────────────────────────── */
+/*  Focus ring for keyboard users                               */
+/* ──────────────────────────────────────────────────────────── */
+:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:2px;
+  border-radius:4px;
+}
+button:focus-visible, a:focus-visible, input:focus-visible, [role="button"]:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:3px;
+}
+
+
+
+/* ──────────────────────────────────────────────────────────── */
+/*  DARK MODE — Inline-style overrides (blanket)                */
+/*  Many components use hardcoded colors inline; override       */
+/*  them via attribute selectors since inline beats class.      */
+/* ──────────────────────────────────────────────────────────── */
+
+/* ── Text colors ── */
+[data-theme="dark"] [style*="color: #1C3A2B"],
+[data-theme="dark"] [style*="color:#1C3A2B"],
+[data-theme="dark"] [style*="color: #1A1410"],
+[data-theme="dark"] [style*="color:#1A1410"],
+[data-theme="dark"] [style*="color: #1a2e1f"],
+[data-theme="dark"] [style*="color:#1a2e1f"],
+[data-theme="dark"] [style*="color: #1E293B"],
+[data-theme="dark"] [style*="color:#1E293B"],
+[data-theme="dark"] [style*="color: #000"]:not([style*="#0000"]),
+[data-theme="dark"] [style*="color:#000"]:not([style*="#0000"]){
+  color: var(--tp) !important;
+}
+
+[data-theme="dark"] [style*="color: #5A4A40"],
+[data-theme="dark"] [style*="color:#5A4A40"],
+[data-theme="dark"] [style*="color: #6b7c6d"],
+[data-theme="dark"] [style*="color:#6b7c6d"],
+[data-theme="dark"] [style*="color: #64748B"],
+[data-theme="dark"] [style*="color:#64748B"],
+[data-theme="dark"] [style*="color: #6B7280"],
+[data-theme="dark"] [style*="color:#6B7280"]{
+  color: var(--ts) !important;
+}
+
+/* ── White / cream backgrounds ── */
+[data-theme="dark"] [style*="background: white"],
+[data-theme="dark"] [style*="background:white"],
+[data-theme="dark"] [style*="background: \"white\""],
+[data-theme="dark"] [style*="background-color: white"],
+[data-theme="dark"] [style*="background-color:white"],
+[data-theme="dark"] [style*="background: #fff"],
+[data-theme="dark"] [style*="background:#fff"],
+[data-theme="dark"] [style*="background: #FFF"],
+[data-theme="dark"] [style*="background:#FFF"],
+[data-theme="dark"] [style*="background: #FFFEF9"],
+[data-theme="dark"] [style*="background:#FFFEF9"],
+[data-theme="dark"] [style*="background: #FAF8F3"],
+[data-theme="dark"] [style*="background:#FAF8F3"],
+[data-theme="dark"] [style*="background: #f8faf9"],
+[data-theme="dark"] [style*="background:#f8faf9"],
+[data-theme="dark"] [style*="background: #F8FAFC"],
+[data-theme="dark"] [style*="background:#F8FAFC"],
+[data-theme="dark"] [style*="background: #F1F5F9"],
+[data-theme="dark"] [style*="background:#F1F5F9"],
+[data-theme="dark"] [style*="background: #F0FDF4"],
+[data-theme="dark"] [style*="background:#F0FDF4"],
+[data-theme="dark"] [style*="background: #FFFFFF"],
+[data-theme="dark"] [style*="background:#FFFFFF"]{
+  background-color: var(--cw) !important;
+  background-image: none !important;
+}
+
+/* ── Light-cream gradient backgrounds (e.g. community dashboard) ── */
+[data-theme="dark"] [style*="rgba(255,254,249"],
+[data-theme="dark"] [style*="rgba(250,248,243"],
+[data-theme="dark"] [style*="rgba(232,245,238"]{
+  background-image: linear-gradient(135deg, var(--cw), var(--cd)) !important;
+}
+
+/* ── Border colors ── */
+[data-theme="dark"] [style*="border: 1px solid #E2E8F0"],
+[data-theme="dark"] [style*="border: 1.5px solid #E2E8F0"],
+[data-theme="dark"] [style*="border:1px solid #E2E8F0"]{
+  border-color: var(--bo) !important;
+}
+
+/* ── Button hover bright backgrounds (donation card contents) ── */
+[data-theme="dark"] [style*="rgba(47,143,78,.05)"],
+[data-theme="dark"] [style*="rgba(79,191,126,.05)"]{
+  background: rgba(94,208,137,.06) !important;
+}
+
+/* ── Kegiatan / marketplace card surfaces (rgba(0,0,0,0.04) borders) ── */
+[data-theme="dark"] [style*="border: 1.5px solid rgba(0,0,0,0.04)"],
+[data-theme="dark"] [style*="border:1.5px solid rgba(0,0,0,0.04)"]{
+  border-color: var(--bo) !important;
+}
+
+/* ── Ciburial Widget dark polish ── */
+[data-theme="dark"] .ciburial-bottom-nav{
+  background:rgba(14,24,20,.94) !important;
+  border-top-color:var(--bo) !important;
+}
+
+/* ──────────────────────────────────────────────────────────── */
+/*  Mobile responsive — smaller hero, better grids              */
+/* ──────────────────────────────────────────────────────────── */
+@media (max-width: 640px){
+  /* force hero font smaller on small phones (inline style inside
+     tentangTab hero is removed; these rules take over) */
+  .hero-title{ font-size:clamp(40px, 12vw, 64px) !important; line-height:.95 !important; }
+  .hero-sub  { font-size:clamp(18px, 5.5vw, 30px) !important; }
+}
+
+/* community dashboard big stats — always at least 2 columns on phones */
+@media (max-width: 480px){
+  .ciburial-big-stats{ grid-template-columns: repeat(2, 1fr) !important; }
+  .ciburial-charts-3  { grid-template-columns: 1fr !important; }
+}
+@media (min-width: 481px) and (max-width: 767px){
+  .ciburial-big-stats{ grid-template-columns: repeat(4, 1fr) !important; }
+}
+
+
+
+/* ──────────────────────────────────────────────────────────── */
+/*  GENERAL MOBILE GRID FIX                                     */
+/*  Many grids use auto-fit minmax(min(100%, 280px), 1fr)       */
+/*  which collapses to 1 col on phones < 340px viewport.        */
+/*  Force 2-col minimum for most card grids on mobile.          */
+/* ──────────────────────────────────────────────────────────── */
+@media (max-width: 767px){
+  /* Fallback mobile grid override for heroic card grids */
+  section .ch-grid,
+  section .card-grid-auto{
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+@media (max-width: 420px){
+  /* On tiny phones, marketplace/kegiatan cards can be 1 col */
+  section .ch-grid-1-below-420{
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Smaller padding on phones */
+@media (max-width: 640px){
+  .hero-content{ padding: 48px 12px 24px !important; }
+  .sec{ padding: 40px 14px !important; }
+}
+
+
+
+/* ──────────────────────────────────────────────────────────── */
+/*  Extra dark-mode polish for existing inline-styled text      */
+/* ──────────────────────────────────────────────────────────── */
+
+/* Dashboard header "Denyut Nadi" title – gradient stays bright */
+[data-theme="dark"] h2[style*="linear-gradient(135deg,#1C3A2B,#2F8F4E)"]{
+  background: linear-gradient(135deg, var(--fm), var(--accent-light)) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+/* Dark mode cards (Smart Hub) should not be solid white */
+[data-theme="dark"] .card-heroic{
+  background: linear-gradient(135deg, var(--cw), var(--cd)) !important;
+  border-color: var(--bo) !important;
+}
+
+/* Make "Ciburial Smart Hub" section gradient readable on dark */
+[data-theme="dark"] .sec[style*="linear-gradient(180deg, rgba(232,245,238,0.5)"]{
+  background: linear-gradient(180deg, var(--cr) 0%, var(--cd) 100%) !important;
+}
+
+/* Navbar kbd hint fix for dark */
+[data-theme="dark"] kbd{
+  background: var(--cd) !important;
+  color: var(--ts) !important;
+  border-color: var(--bo) !important;
+}
+
+/* Hero tag pills need brighter text in dark mode */
+[data-theme="dark"] .hero-section [style*="color: rgba(255,255,255,0.85)"]{
+  color: var(--tp) !important;
+}

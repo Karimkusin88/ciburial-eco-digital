@@ -2,6 +2,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 import { Home, Users, Recycle, Baby, Loader, Radio, BarChart2, CheckCircle, AlertTriangle, AlertCircle, PartyPopper } from "lucide-react";
+import Counter from "@/components/ui/Counter";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 /* ─── SVG Area Chart ─── */
 function SvgArea({ data, color = "#2F8F4E", h = 80, labels = [] }: { data: number[]; color?: string; h?: number; labels?: string[] }) {
@@ -198,13 +200,13 @@ export default function CommunityDashboard() {
         </div>
 
         {/* Big stats */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 110px),1fr))", gap: "clamp(8px, 2vw, 16px)", marginBottom: 44 }}>
-          {[
-            { icon: <Home size={28} strokeWidth={1.5} />, val: loading ? "—" : d.kk, label: "Kartu Keluarga", color: "#2F8F4E" },
-            { icon: <Users size={28} strokeWidth={1.5} />, val: loading ? "—" : d.jiwa, label: "Total Jiwa", color: "#4FBF7E" },
-            { icon: <Recycle size={28} strokeWidth={1.5} />, val: loading ? "—" : `${d.totKg.toFixed(0)} kg`, label: "Sampah Dikelola", color: "#2F8F4E" },
-            { icon: <Baby size={28} strokeWidth={1.5} />, val: loading ? "—" : d.anakNormal + d.anakRisiko + d.anakStunting, label: "Anak Posyandu", color: "#9B7D4C" },
-          ].map((s, i) => (
+        <div className="ciburial-big-stats" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "clamp(8px, 2vw, 16px)", marginBottom: 44 }}>
+          {([
+            { icon: <Home size={28} strokeWidth={1.5} />, val: d.kk,                                               suffix: "",    decimals: 0, label: "Kartu Keluarga", color: "#2F8F4E" },
+            { icon: <Users size={28} strokeWidth={1.5} />, val: d.jiwa,                                             suffix: "",    decimals: 0, label: "Total Jiwa",     color: "#4FBF7E" },
+            { icon: <Recycle size={28} strokeWidth={1.5} />, val: d.totKg,                                          suffix: " kg", decimals: 0, label: "Sampah Dikelola",color: "#2F8F4E" },
+            { icon: <Baby size={28} strokeWidth={1.5} />, val: d.anakNormal + d.anakRisiko + d.anakStunting,        suffix: "",    decimals: 0, label: "Anak Posyandu",  color: "#9B7D4C" },
+          ] as const).map((s, i) => (
             <div key={i} style={{ minWidth: 0, overflow: "hidden", background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))", border: "1.5px solid rgba(47,143,78,.12)", borderRadius: 14, padding: "clamp(16px, 4vw, 28px) clamp(8px, 2vw, 16px)", textAlign: "center", transition: "all 0.35s cubic-bezier(.22,1,.36,1)", cursor: "pointer" }}
               onMouseEnter={(e) => {
                 const el = e.currentTarget as HTMLElement;
@@ -217,14 +219,20 @@ export default function CommunityDashboard() {
                 el.style.boxShadow = "none";
               }}>
               <div style={{ display: "flex", justifyContent: "center", marginBottom: 8, color: s.color }}>{s.icon}</div>
-              <div style={{ fontSize: "clamp(24px, 5vw, 32px)", fontWeight: 300, color: s.color, lineHeight: 1, letterSpacing: "-0.02em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{s.val}</div>
+              <div style={{ fontSize: "clamp(24px, 5vw, 32px)", fontWeight: 300, color: s.color, lineHeight: 1, letterSpacing: "-0.02em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                {loading ? (
+                  <Skeleton width={60} height={28} radius={6} />
+                ) : (
+                  <Counter value={s.val} suffix={s.suffix} decimals={s.decimals} duration={1300} />
+                )}
+              </div>
               <div style={{ fontSize: "clamp(9px, 2.5vw, 11px)", color: "#5A4A40", marginTop: 8, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{s.label}</div>
             </div>
           ))}
         </div>
 
         {/* 3 chart cards */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 260px),1fr))", gap: "clamp(16px, 3vw, 24px)" }}>
+        <div className="ciburial-charts-3" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "clamp(16px, 3vw, 24px)" }}>
 
           {/* Demografi Donut */}
           <div style={{ background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))", border: "1.5px solid rgba(47,143,78,.12)", borderRadius: 16, padding: "clamp(20px, 5vw, 32px) clamp(16px, 4vw, 28px)", transition: "all 0.35s cubic-bezier(.22,1,.36,1)" }}>
