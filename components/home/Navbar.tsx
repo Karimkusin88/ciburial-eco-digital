@@ -143,27 +143,27 @@ export default function Navbar({ tab, checkout, scrolled, onNavigate }: NavbarPr
         </div>
       </div>
 
-      <div className={`mob md:hidden ${mobOpen ? "op" : ""}`} style={{ background: "var(--cw)", borderTop: "1px solid var(--bo)", padding: "12px clamp(12px, 4vw, 28px) 20px" }}>
+      <div className={`mob md:hidden ${mobOpen ? "op" : ""}`} style={{ background: "var(--cw)", borderTop: "1px solid var(--bo)", padding: "8px clamp(12px, 4vw, 20px) 14px", maxHeight: "70vh", overflowY: "auto" }}>
         {TABS.map(t => (
-          <button key={t.key} onClick={() => go(t.key)} style={{ display: "block", width: "100%", textAlign: "left", padding: "11px 0", fontSize: 12, fontWeight: 600, letterSpacing: ".08em", textTransform: "uppercase", background: "none", border: "none", color: tab === t.key ? "var(--fo)" : "var(--ts)", cursor: "pointer", borderBottom: "1px solid var(--bo)" }}>
+          <button key={t.key} onClick={() => go(t.key)} style={{ display: "block", width: "100%", textAlign: "left", padding: "9px 0", fontSize: 11, fontWeight: 600, letterSpacing: ".06em", textTransform: "uppercase", background: "none", border: "none", color: tab === t.key ? "var(--fo)" : "var(--ts)", cursor: "pointer", borderBottom: "1px solid var(--bo)" }}>
             {t.label}
           </button>
         ))}
-        <a href="/ai" style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 0", fontSize: 12, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "#2d5a40", textDecoration: "none", borderBottom: "1px solid var(--bo)" }}>
-          <Bot size={16} strokeWidth={1.5} /> Ciburial AI <span style={{ fontSize: 9, padding: "2px 6px", background: "rgba(45,90,64,0.1)", borderRadius: 99, color: "#4a7c59" }}>BETA</span>
+        <a href="/ai" style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 0", fontSize: 11, fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase", color: "#2d5a40", textDecoration: "none", borderBottom: "1px solid var(--bo)" }}>
+          <Bot size={14} strokeWidth={1.5} /> Ciburial AI <span style={{ fontSize: 8, padding: "2px 5px", background: "rgba(45,90,64,0.1)", borderRadius: 99, color: "#4a7c59" }}>BETA</span>
         </a>
-        <div style={{ padding: "8px 0 4px", borderBottom: "1px solid var(--bo)" }}>
-          <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".15em", textTransform: "uppercase", color: "var(--tm)", marginBottom: 8 }}>Layanan Warga</div>
+        <div style={{ padding: "6px 0 4px", borderBottom: "1px solid var(--bo)" }}>
+          <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--tm)", marginBottom: 6 }}>Layanan Warga</div>
           {[
-            { href: "/kalender", icon: <CalendarDays size={18} strokeWidth={1.5} />, title: "Kalender Kegiatan", sub: "Agenda & jadwal kampung" },
-            { href: "/info-harian", icon: <Newspaper size={18} strokeWidth={1.5} />, title: "Info Harian", sub: "Dukungan & liputan terbaru" },
-            { href: "/tentang", icon: <Info size={18} strokeWidth={1.5} />, title: "Tentang", sub: "Profil Ciburial Eco-Digital" },
+            { href: "/kalender", icon: <CalendarDays size={16} strokeWidth={1.5} />, title: "Kalender Kegiatan", sub: "Agenda & jadwal" },
+            { href: "/info-harian", icon: <Newspaper size={16} strokeWidth={1.5} />, title: "Info Harian", sub: "Liputan terbaru" },
+            { href: "/tentang", icon: <Info size={16} strokeWidth={1.5} />, title: "Tentang", sub: "Profil Ciburial" },
           ].map((item, i, arr) => (
-            <a key={i} href={item.href} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 0", textDecoration: "none", borderBottom: i < arr.length - 1 ? "1px solid rgba(229,224,216,.5)" : "none" }}>
+            <a key={i} href={item.href} style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 0", textDecoration: "none", borderBottom: i < arr.length - 1 ? "1px solid rgba(229,224,216,.5)" : "none" }}>
               {item.icon}
               <div>
-                <div style={{ fontSize: 12, fontWeight: 700, color: "var(--tp)", letterSpacing: ".04em", textTransform: "uppercase" }}>{item.title}</div>
-                <div style={{ fontSize: 11, color: "var(--tm)" }}>{item.sub}</div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: "var(--tp)", letterSpacing: ".03em", textTransform: "uppercase" }}>{item.title}</div>
+                <div style={{ fontSize: 10, color: "var(--tm)" }}>{item.sub}</div>
               </div>
             </a>
           ))}

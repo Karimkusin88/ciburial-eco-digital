@@ -1173,14 +1173,14 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
 
         {/* ── SKELETON ── */}
         {dataLoad && (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(180px,1fr))", gap: 16 }}>
-            {[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="sk" style={{ height: 280, borderRadius: 12, background: "#FFF" }} />)}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(140px,1fr))", gap: "clamp(8px, 2vw, 16px)" }} className="produk-grid">
+            {[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="sk" style={{ height: 240, borderRadius: 10, background: "#FFF" }} />)}
           </div>
         )}
 
         {/* ── PRODUK GRID (CARD ALA TOKPED) ── */}
         {!dataLoad && (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(190px,1fr))", gap: 16 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(140px,1fr))", gap: "clamp(8px, 2vw, 16px)" }} className="produk-grid">
             {filteredProduk.map((p, i) => {
               const sold = MOCK_SOLD[i % MOCK_SOLD.length];
               const rating = MOCK_RATING[i % MOCK_RATING.length];
@@ -1247,23 +1247,23 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                   </div>
 
                   {/* Info */}
-                  <div style={{ padding: "16px", display: "flex", flexDirection: "column", gap: 6, flex: 1 }}>
-                    <div style={{ fontSize: 14, color: "#1C3A2B", lineHeight: 1.4, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", minHeight: 40, fontWeight: 500 }}>{p.nama}</div>
+                  <div style={{ padding: "clamp(10px, 2.5vw, 16px)", display: "flex", flexDirection: "column", gap: 4, flex: 1 }}>
+                    <div style={{ fontSize: "clamp(11px, 2.8vw, 14px)", color: "#1C3A2B", lineHeight: 1.3, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", minHeight: 32, fontWeight: 500 }}>{p.nama}</div>
                     
-                    <div className="fnt" style={{ fontSize: 16, fontWeight: 800, background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginTop: 4 }}>{fRp(p.harga)}</div>
+                    <div className="fnt" style={{ fontSize: "clamp(13px, 3.5vw, 16px)", fontWeight: 800, background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginTop: 2 }}>{fRp(p.harga)}</div>
                     
                     {/* Badge Lokasi */}
-                    <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 6 }}>
-                      <span style={{fontSize: 12}}><MapPin size={12} /></span>
-                      <span style={{ fontSize: 12, color: "#5A4A40", fontWeight: 500 }}>Kp. Ciburial</span>
+                    <div style={{ display: "flex", alignItems: "center", gap: 3, marginTop: 4 }}>
+                      <span style={{fontSize: 10}}><MapPin size={10} /></span>
+                      <span style={{ fontSize: "clamp(9px, 2.2vw, 12px)", color: "#5A4A40", fontWeight: 500 }}>Kp. Ciburial</span>
                     </div>
 
                     {/* Rating & Sold */}
-                    <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4 }}>
-                      <span style={{ fontSize: 12, color: "#FFC400" }}>⭐</span>
-                      <span style={{ fontSize: 12, color: "#5A4A40", fontWeight: 500 }}>{rating}</span>
-                      <span style={{ fontSize: 10, color: "#D6D6D6" }}>|</span>
-                      <span style={{ fontSize: 12, color: "#5A4A40", fontWeight: 500 }}>Terjual {sold}</span>
+                    <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 2 }}>
+                      <span style={{ fontSize: 10, color: "#FFC400" }}>⭐</span>
+                      <span style={{ fontSize: "clamp(9px, 2.2vw, 12px)", color: "#5A4A40", fontWeight: 500 }}>{rating}</span>
+                      <span style={{ fontSize: 8, color: "#D6D6D6" }}>|</span>
+                      <span style={{ fontSize: "clamp(9px, 2.2vw, 12px)", color: "#5A4A40", fontWeight: 500 }}>Terjual {sold}</span>
                     </div>
 
                     {/* Tombol Tambah Keranjang (Muncul pas di-hover) */}
@@ -1273,7 +1273,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                         e.stopPropagation();
                         addToCart(p);
                       }}
-                      style={{ marginTop: 12, padding: "10px", background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", border: "none", borderRadius: 8, fontSize: 12, fontWeight: 700, color: "#FFF", cursor: "pointer", transition: "all 0.3s", boxShadow: "0 4px 12px rgba(47,143,78,.3)", width: "100%" }}>
+                      style={{ marginTop: 8, padding: "clamp(6px, 1.5vw, 10px)", background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", border: "none", borderRadius: 6, fontSize: "clamp(10px, 2.5vw, 12px)", fontWeight: 700, color: "#FFF", cursor: "pointer", transition: "all 0.3s", boxShadow: "0 4px 12px rgba(47,143,78,.3)", width: "100%" }}>
                       + Keranjang
                     </button>
 
@@ -1285,8 +1285,8 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                         setDirectCheckoutItems([{ ...p, qty: 1 }]);
                         setShowCheckout(true);
                       }}
-                      style={{ marginTop: 8, padding: "8px 12px", background: "linear-gradient(135deg,#1C3A2B,#2F8F4E)", border: "none", borderRadius: 8, fontSize: 11, fontWeight: 700, color: "#FFF", cursor: "pointer", transition: "all 0.3s", boxShadow: "0 4px 12px rgba(28,58,43,.3)", width: "100%" }}>
-                      <Zap size={16} style={{display:"inline", marginRight:4}} /> Beli Langsung
+                      style={{ marginTop: 6, padding: "clamp(5px, 1.2vw, 8px) clamp(8px, 2vw, 12px)", background: "linear-gradient(135deg,#1C3A2B,#2F8F4E)", border: "none", borderRadius: 6, fontSize: "clamp(9px, 2.2vw, 11px)", fontWeight: 700, color: "#FFF", cursor: "pointer", transition: "all 0.3s", boxShadow: "0 4px 12px rgba(28,58,43,.3)", width: "100%" }}>
+                      <Zap size={14} style={{display:"inline", marginRight:3}} /> Beli Langsung
                     </button>
 
                     {/* Tombol Lihat Detail */}
@@ -1296,7 +1296,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                         e.stopPropagation();
                         setSelectedProduct(p);
                       }}
-                      style={{ padding: "8px 12px", background: "rgba(28,58,43,.05)", border: "1.5px solid rgba(28,58,43,.2)", borderRadius: 8, fontSize: 11, fontWeight: 600, color: "#1C3A2B", cursor: "pointer", transition: "all 0.3s", marginTop: 8, width: "100%" }}>
+                      style={{ padding: "clamp(5px, 1.2vw, 8px) clamp(8px, 2vw, 12px)", background: "rgba(28,58,43,.05)", border: "1.5px solid rgba(28,58,43,.2)", borderRadius: 6, fontSize: "clamp(9px, 2.2vw, 11px)", fontWeight: 600, color: "#1C3A2B", cursor: "pointer", transition: "all 0.3s", marginTop: 6, width: "100%" }}>
                       Lihat Detail
                     </button>
                   </div>

@@ -68,20 +68,20 @@ export default function KegiatanTab({ kegiatan, dataLoad }: KegiatanTabProps) {
  </div>
 
  {dataLoad && (
- <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(min(100%, 280px),1fr))", gap: "clamp(16px, 3vw, 20px)" }}>
- {[1, 2, 3].map(i => <div key={i} className="sk" style={{ height: 240, borderRadius: 18, background: "linear-gradient(135deg,rgba(255,254,249,.8),rgba(250,248,243,.6))", border: "1.5px solid rgba(47,143,78,.1)" }} />)}
+ <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(min(100%, 160px),1fr))", gap: "clamp(10px, 2vw, 20px)" }}>
+ {[1, 2, 3].map(i => <div key={i} className="sk" style={{ height: 200, borderRadius: 14, background: "linear-gradient(135deg,rgba(255,254,249,.8),rgba(250,248,243,.6))", border: "1.5px solid rgba(47,143,78,.1)" }} />)}
  </div>
  )}
 
  {!dataLoad && (
  kegFil.length === 0 ? (
- <div style={{ textAlign: "center", padding: "clamp(40px, 8vw, 80px) clamp(16px, 4vw, 20px)", color: "#5A4A40" }}>
- <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><CalendarDays size={56} strokeWidth={1.5} color="currentColor" /></div>
- <div style={{ fontSize: 18, fontWeight: 700, color: "#1C3A2B", marginBottom: 6 }}>Belum ada kegiatan di kategori ini.</div>
- <div style={{ fontSize: 13, color: "#5A4A40" }}>Admin dapat menambahkan melalui panel admin.</div>
+ <div style={{ textAlign: "center", padding: "clamp(32px, 6vw, 60px) clamp(12px, 3vw, 16px)", color: "#5A4A40" }}>
+ <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}><CalendarDays size={44} strokeWidth={1.5} color="currentColor" /></div>
+ <div style={{ fontSize: 16, fontWeight: 700, color: "#1C3A2B", marginBottom: 4 }}>Belum ada kegiatan di kategori ini.</div>
+ <div style={{ fontSize: 12, color: "#5A4A40" }}>Admin dapat menambahkan melalui panel admin.</div>
  </div>
  ) : (
- <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(min(100%, 280px),1fr))", gap: "clamp(16px, 3vw, 20px)" }}>
+ <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(min(100%, 160px),1fr))", gap: "clamp(10px, 2vw, 20px)" }} className="kegiatan-grid">
  {kegFil.map((k, i) => {
  const kat = KAT_CFG[k.kategori] || { label: "Lainnya", bg: "rgba(90,74,64,.08)", color: "#5A4A40" };
  const d = new Date(k.tanggal);
@@ -90,7 +90,7 @@ export default function KegiatanTab({ kegiatan, dataLoad }: KegiatanTabProps) {
  <div key={k.id} className="keg-card" style={{ 
  background: "linear-gradient(135deg,rgba(255,254,249,.95),rgba(250,248,243,.85))", 
  border: "1.5px solid rgba(47,143,78,.12)", 
- borderRadius: 16, 
+ borderRadius: 12, 
  overflow: "hidden",
  transition: "all 0.35s cubic-bezier(.22,1,.36,1)",
  cursor: "pointer",
@@ -98,8 +98,8 @@ export default function KegiatanTab({ kegiatan, dataLoad }: KegiatanTabProps) {
  }}
  onMouseEnter={e => {
  const el = e.currentTarget as HTMLElement;
- el.style.transform = "translateY(-8px) scale(1.01)";
- el.style.boxShadow = "0 16px 36px rgba(47,143,78,.15)";
+ el.style.transform = "translateY(-6px) scale(1.01)";
+ el.style.boxShadow = "0 12px 28px rgba(47,143,78,.12)";
  }}
  onMouseLeave={e => {
  const el = e.currentTarget as HTMLElement;
@@ -120,18 +120,18 @@ export default function KegiatanTab({ kegiatan, dataLoad }: KegiatanTabProps) {
  ) : (
  <div style={{ aspectRatio: "4/3", background: `linear-gradient(135deg,${kat.color}30,${kat.color}10)`, borderBottom: `4px solid ${kat.color}` }} />
  )}
- <div style={{ padding: "clamp(16px, 4vw, 22px) clamp(16px, 4vw, 24px)" }}>
- <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
- <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".08em", padding: "6px 13px", borderRadius: 8, background: kat.bg, color: kat.color }}>{kat.label}</span>
- <div style={{ textAlign: "right" }}>
- <div className="fnt" style={{ fontSize: 28, fontWeight: 300, color: "#2F8F4E", lineHeight: 1, marginBottom: 2 }}>{d.getDate()}</div>
- <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: "#5A4A40" }}>
+ <div style={{ padding: "clamp(12px, 3vw, 22px) clamp(12px, 3vw, 24px)" }}>
+ <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10, gap: 8 }}>
+ <span style={{ fontSize: "clamp(9px, 2.5vw, 11px)", fontWeight: 700, letterSpacing: ".08em", padding: "clamp(4px, 1vw, 6px) clamp(8px, 2vw, 13px)", borderRadius: 6, background: kat.bg, color: kat.color }}>{kat.label}</span>
+ <div style={{ textAlign: "right", flexShrink: 0 }}>
+ <div className="fnt" style={{ fontSize: "clamp(20px, 5vw, 28px)", fontWeight: 300, color: "#2F8F4E", lineHeight: 1, marginBottom: 2 }}>{d.getDate()}</div>
+ <div style={{ fontSize: "clamp(8px, 2vw, 10px)", fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: "#5A4A40" }}>
  {d.toLocaleDateString("id-ID", { month: "short" })} {d.getFullYear()}
  </div>
  </div>
  </div>
- <h3 style={{ fontSize: 16, fontWeight: 700, color: "#1C3A2B", marginBottom: 9, lineHeight: 1.4 }}>{k.judul}</h3>
- {k.deskripsi && <p style={{ fontSize: 13, lineHeight: 1.6, color: "#5A4A40", marginBottom: 0 }}>{k.deskripsi}</p>}
+ <h3 style={{ fontSize: "clamp(13px, 3.5vw, 16px)", fontWeight: 700, color: "#1C3A2B", marginBottom: 6, lineHeight: 1.3 }}>{k.judul}</h3>
+ {k.deskripsi && <p style={{ fontSize: "clamp(11px, 2.8vw, 13px)", lineHeight: 1.5, color: "#5A4A40", marginBottom: 0 }}>{k.deskripsi}</p>}
  </div>
  </div>
  );

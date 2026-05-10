@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, ReactNode } from "react";
+import { useState, useEffect, ReactNode, useRef } from "react";
 import { MapPin, Droplets, Wind, Moon, Sun, CloudSun, Cloud, CloudFog, CloudRain, CloudSnow, CloudLightning, Sunset, Star, Landmark } from "lucide-react";
 
 interface Cuaca { suhu: number; deskripsi: string; icon: ReactNode; kota: string; kelembaban: number; angin: number; }
@@ -40,6 +40,11 @@ export default function CuacaSholatWidget() {
  const [now, setNow] = useState(new Date());
  const [loading, setLoading] = useState(true);
  const [isOpen, setIsOpen] = useState(false);
+ 
+ // Draggable state
+ const [position, setPosition] = useState({ x: 24, y: 24 }); // bottom-right offset
+ const [isDragging, setIsDragging] = useState(false);
+ const dragRef = useRef<{ startX: number; startY: number; startPosX: number; startPosY: number } | null>(null);
 
  useEffect(() => {
  const timer = setInterval(() => setNow(new Date()), 60000);
@@ -50,6 +55,57 @@ export default function CuacaSholatWidget() {
  setSholat(hitungSholat(LAT, LON, now));
  fetchCuaca();
  }, []);
+
+ // Drag handlers
+ const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
+   e.preventDefault();
+   const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+   const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+   
+   dragRef.current = {
+     startX: clientX,
+     startY: clientY,
+     startPosX: position.x,
+     startPosY: position.y,
+   };
+   setIsDragging(true);
+ };
+
+ useEffect(() => {
+   const handleDragMove = (e: MouseEvent | TouchEvent) => {
+     if (!isDragging || !dragRef.current) return;
+     
+     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+     const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+     
+     const deltaX = dragRef.current.startX - clientX;
+     const deltaY = dragRef.current.startY - clientY;
+     
+     const newX = Math.max(10, Math.min(window.innerWidth - 70, dragRef.current.startPosX + deltaX));
+     const newY = Math.max(10, Math.min(window.innerHeight - 150, dragRef.current.startPosY + deltaY));
+     
+     setPosition({ x: newX, y: newY });
+   };
+
+   const handleDragEnd = () => {
+     setIsDragging(false);
+     dragRef.current = null;
+   };
+
+   if (isDragging) {
+     window.addEventListener('mousemove', handleDragMove);
+     window.addEventListener('mouseup', handleDragEnd);
+     window.addEventListener('touchmove', handleDragMove);
+     window.addEventListener('touchend', handleDragEnd);
+   }
+
+   return () => {
+     window.removeEventListener('mousemove', handleDragMove);
+     window.removeEventListener('mouseup', handleDragEnd);
+     window.removeEventListener('touchmove', handleDragMove);
+     window.removeEventListener('touchend', handleDragEnd);
+   };
+ }, [isDragging, position]);
 
  async function fetchCuaca() {
  try {
@@ -105,7 +161,15 @@ export default function CuacaSholatWidget() {
  const next = sholatBerikutnya();
 
  return (
- <div className="fixed bottom-6 right-6 z-[100] flex flex-col items-end gap-4" style={{ fontFamily: "'Segoe UI',system-ui,sans-serif" }}>
+ <div 
+   className="fixed z-[100] flex flex-col items-end gap-4" 
+   style={{ 
+     fontFamily: "'Segoe UI',system-ui,sans-serif",
+     right: position.x,
+     bottom: position.y,
+     transition: isDragging ? 'none' : 'right 0.1s, bottom 0.1s',
+   }}
+ >
  {/* Widget Content Container */}
  {isOpen && (
  <div className="animate-masuk bg-white rounded-3xl p-5 shadow-[0_20px_60px_rgba(28,58,43,0.25)] border border-[rgba(45,90,64,0.12)] w-[min(90vw,650px)] relative">
@@ -181,10 +245,16 @@ export default function CuacaSholatWidget() {
  </div>
  )}
 
- {/* Toggle FAB */}
+ {/* Toggle FAB - Draggable */}
  <button 
- onClick={() => setIsOpen(!isOpen)}
+ onMouseDown={handleDragStart}
+ onTouchStart={handleDragStart}
+ onClick={(e) => {
+   // Only toggle if not dragging (prevent click after drag)
+   if (!isDragging) setIsOpen(!isOpen);
+ }}
  className={`w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 active:scale-95 group relative ${isOpen ? 'bg-white text-[var(--fo)]' : 'bg-gradient-to-br from-[var(--fo)] to-[var(--accent)] text-white glow'}`}
+ style={{ cursor: isDragging ? 'grabbing' : 'grab', touchAction: 'none' }}
  >
  {isOpen ? (
  <span className="text-xl font-bold">X</span>
