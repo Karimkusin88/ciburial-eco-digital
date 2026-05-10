@@ -62,6 +62,9 @@ export default function Home() {
     const tabParam = searchParams.get("tab");
     if (tabParam && ["tentang", "kegiatan", "proposal", "transparansi", "marketplace"].includes(tabParam)) {
       setTab(tabParam as TabType);
+    } else if (!tabParam) {
+      // Reset to default tab when no tab param (e.g., navigating to "/" from "/?tab=marketplace")
+      setTab("tentang");
     }
   }, [searchParams]);
 

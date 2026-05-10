@@ -2,6 +2,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 import { Home, Users, Recycle, Baby, Loader, Radio, BarChart2, CheckCircle, AlertTriangle, AlertCircle, PartyPopper } from "lucide-react";
+import Counter from "@/components/ui/Counter";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 /* ─── SVG Area Chart ─── */
 function SvgArea({ data, color = "#2F8F4E", h = 80, labels = [] }: { data: number[]; color?: string; h?: number; labels?: string[] }) {
@@ -176,67 +178,63 @@ export default function CommunityDashboard() {
   const stunMax = Math.max(d.anakNormal, d.anakRisiko, d.anakStunting, 1);
 
   return (
-    <section style={{ padding: "clamp(60px,8vw,100px) clamp(16px,4vw,40px)", background: "linear-gradient(135deg,rgba(255,254,249,.95) 0%,rgba(232,245,238,.6) 100%)", position: "relative", overflow: "hidden", fontFamily: "var(--font-dm-sans,'DM Sans'),sans-serif", borderTop: "1.5px solid rgba(47,143,78,.15)" }}>
+    <section style={{ padding: "clamp(40px,6vw,80px) clamp(12px,3vw,32px)", background: "linear-gradient(135deg,rgba(255,254,249,.95) 0%,rgba(232,245,238,.6) 100%)", position: "relative", overflow: "hidden", fontFamily: "var(--font-dm-sans,'DM Sans'),sans-serif", borderTop: "1.5px solid rgba(47,143,78,.15)" }}>
       {/* Ambient glow - Heroic */}
       <div style={{ position: "absolute", inset: 0, backgroundImage: `radial-gradient(ellipse at 15% 25%, rgba(47,143,78,0.08) 0%, transparent 55%), radial-gradient(ellipse at 85% 75%, rgba(184,148,63,0.06) 0%, transparent 55%)`, pointerEvents: "none" }} />
 
       <div style={{ maxWidth: 1100, margin: "0 auto", position: "relative", zIndex: 1 }}>
         {/* Header */}
-        <div style={{ textAlign: "center", marginBottom: 48 }}>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(79,191,126,.1)", border: "1.5px solid rgba(47,143,78,.2)", borderRadius: 99, padding: "8px 18px", marginBottom: 20 }}>
-            <div style={{ width: 8, height: 8, borderRadius: "50%", background: live ? "#2F8F4E" : "#9A8C85", animation: live ? "pulse-glow 2s infinite" : "none", boxShadow: live ? "0 0 12px rgba(47,143,78,.6)" : "none" }} />
-            <span style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: live ? "#2F8F4E" : "#9A8C85", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase" }}>
-              {live ? <><Radio size={12} strokeWidth={2} /> Live — {d.updated}</> : <><Loader size={12} strokeWidth={2} /> Memuat…</>}
+        <div style={{ textAlign: "center", marginBottom: 32 }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(79,191,126,.1)", border: "1.5px solid rgba(47,143,78,.2)", borderRadius: 99, padding: "6px 14px", marginBottom: 14 }}>
+            <div style={{ width: 6, height: 6, borderRadius: "50%", background: live ? "#2F8F4E" : "#9A8C85", animation: live ? "pulse-glow 2s infinite" : "none", boxShadow: live ? "0 0 10px rgba(47,143,78,.6)" : "none" }} />
+            <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 9, color: live ? "#2F8F4E" : "#9A8C85", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" }}>
+              {live ? <><Radio size={10} strokeWidth={2} /> Live — {d.updated}</> : <><Loader size={10} strokeWidth={2} /> Memuat…</>}
             </span>
           </div>
-          <h2 style={{ margin: "0 0 16px", fontSize: "clamp(32px,5vw,48px)", fontWeight: 300, background: "linear-gradient(135deg,#1C3A2B,#2F8F4E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", lineHeight: 1.1, letterSpacing: "-0.03em" }}>
-            Denyut Nadi Kampung <em style={{ background: "linear-gradient(135deg,#4FBF7E,#2F8F4E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontStyle: "italic" }}>Ciburial RW 08</em>
+          <h2 style={{ margin: "0 0 10px", fontSize: "clamp(24px,4.5vw,40px)", fontWeight: 300, background: "linear-gradient(135deg,#1C3A2B,#2F8F4E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", lineHeight: 1.1, letterSpacing: "-0.03em" }}>
+            Denyut Nadi <em style={{ background: "linear-gradient(135deg,#4FBF7E,#2F8F4E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontStyle: "italic" }}>Ciburial</em>
           </h2>
-          <p style={{ color: "#5A4A40", fontSize: 14, maxWidth: 500, margin: "0 auto", lineHeight: 1.8, fontWeight: 500 }}>
-            Data nyata diperbarui otomatis setiap 30 detik langsung dari sistem digital kampung.
+          <p style={{ color: "#5A4A40", fontSize: 12, maxWidth: 420, margin: "0 auto", lineHeight: 1.6, fontWeight: 500 }}>
+            Data nyata diperbarui otomatis setiap 30 detik.
           </p>
         </div>
 
         {/* Big stats */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 110px),1fr))", gap: "clamp(8px, 2vw, 16px)", marginBottom: 44 }}>
-          {[
-            { icon: <Home size={28} strokeWidth={1.5} />, val: loading ? "—" : d.kk, label: "Kartu Keluarga", color: "#2F8F4E" },
-            { icon: <Users size={28} strokeWidth={1.5} />, val: loading ? "—" : d.jiwa, label: "Total Jiwa", color: "#4FBF7E" },
-            { icon: <Recycle size={28} strokeWidth={1.5} />, val: loading ? "—" : `${d.totKg.toFixed(0)} kg`, label: "Sampah Dikelola", color: "#2F8F4E" },
-            { icon: <Baby size={28} strokeWidth={1.5} />, val: loading ? "—" : d.anakNormal + d.anakRisiko + d.anakStunting, label: "Anak Posyandu", color: "#9B7D4C" },
-          ].map((s, i) => (
-            <div key={i} style={{ minWidth: 0, overflow: "hidden", background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))", border: "1.5px solid rgba(47,143,78,.12)", borderRadius: 14, padding: "clamp(16px, 4vw, 28px) clamp(8px, 2vw, 16px)", textAlign: "center", transition: "all 0.35s cubic-bezier(.22,1,.36,1)", cursor: "pointer" }}
-              onMouseEnter={(e) => {
-                const el = e.currentTarget as HTMLElement;
-                el.style.transform = "translateY(-6px)";
-                el.style.boxShadow = "0 12px 28px rgba(47,143,78,.12)";
-              }}
-              onMouseLeave={(e) => {
-                const el = e.currentTarget as HTMLElement;
-                el.style.transform = "translateY(0)";
-                el.style.boxShadow = "none";
-              }}>
-              <div style={{ display: "flex", justifyContent: "center", marginBottom: 8, color: s.color }}>{s.icon}</div>
-              <div style={{ fontSize: "clamp(24px, 5vw, 32px)", fontWeight: 300, color: s.color, lineHeight: 1, letterSpacing: "-0.02em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{s.val}</div>
-              <div style={{ fontSize: "clamp(9px, 2.5vw, 11px)", color: "#5A4A40", marginTop: 8, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{s.label}</div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "clamp(4px, 1.5vw, 12px)", marginBottom: "clamp(20px, 4vw, 32px)" }} className="dash-stats-grid">
+          {([
+            { icon: <Home size={22} strokeWidth={1.5} />, val: d.kk,                                               suffix: "",    decimals: 0, label: "KK", color: "#2F8F4E" },
+            { icon: <Users size={22} strokeWidth={1.5} />, val: d.jiwa,                                             suffix: "",    decimals: 0, label: "Jiwa",     color: "#4FBF7E" },
+            { icon: <Recycle size={22} strokeWidth={1.5} />, val: d.totKg,                                          suffix: "kg", decimals: 0, label: "Sampah",color: "#2F8F4E" },
+            { icon: <Baby size={22} strokeWidth={1.5} />, val: d.anakNormal + d.anakRisiko + d.anakStunting,        suffix: "",    decimals: 0, label: "Posyandu",  color: "#9B7D4C" },
+          ] as const).map((s, i) => (
+            <div key={i} style={{ minWidth: 0, overflow: "hidden", background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))", border: "1.5px solid rgba(47,143,78,.12)", borderRadius: 12, padding: "clamp(12px, 3vw, 20px) clamp(6px, 1.5vw, 12px)", textAlign: "center", transition: "all 0.35s cubic-bezier(.22,1,.36,1)" }}>
+              <div style={{ display: "flex", justifyContent: "center", marginBottom: 6, color: s.color }}>{s.icon}</div>
+              <div style={{ fontSize: "clamp(18px, 4vw, 26px)", fontWeight: 300, color: s.color, lineHeight: 1, letterSpacing: "-0.02em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                {loading ? (
+                  <Skeleton width={40} height={22} radius={5} />
+                ) : (
+                  <Counter value={s.val} suffix={s.suffix ? ` ${s.suffix}` : ""} decimals={s.decimals} duration={1300} />
+                )}
+              </div>
+              <div style={{ fontSize: "clamp(8px, 2vw, 10px)", color: "#5A4A40", marginTop: 4, textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{s.label}</div>
             </div>
           ))}
         </div>
 
         {/* 3 chart cards */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 260px),1fr))", gap: "clamp(16px, 3vw, 24px)" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 200px),1fr))", gap: "clamp(8px, 2vw, 18px)" }} className="dash-charts-grid">
 
           {/* Demografi Donut */}
-          <div style={{ background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))", border: "1.5px solid rgba(47,143,78,.12)", borderRadius: 16, padding: "clamp(20px, 5vw, 32px) clamp(16px, 4vw, 28px)", transition: "all 0.35s cubic-bezier(.22,1,.36,1)" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "#2F8F4E", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 24 }}><BarChart2 size={16} strokeWidth={2} /> Komposisi Jiwa</div>
-            <div style={{ display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap", justifyContent: "center" }}>
+          <div style={{ background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))", border: "1.5px solid rgba(47,143,78,.12)", borderRadius: 14, padding: "clamp(14px, 4vw, 24px) clamp(12px, 3vw, 20px)", transition: "all 0.35s cubic-bezier(.22,1,.36,1)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 10, color: "#2F8F4E", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 16 }}><BarChart2 size={14} strokeWidth={2} /> Komposisi Jiwa</div>
+            <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap", justifyContent: "center" }}>
               <Donut segs={donutSegs} jiwa={d.jiwa} />
-              <div style={{ flex: 1, minWidth: 120 }}>
+              <div style={{ flex: 1, minWidth: 100 }}>
                 {donutSegs.map((s, i) => (
-                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
-                    <div style={{ width: 10, height: 10, borderRadius: 3, background: s.color, flexShrink: 0, boxShadow: `0 2px 8px ${s.color}40` }} />
-                    <span style={{ fontSize: 13, color: "#1C3A2B", flex: 1, fontWeight: 500 }}>{s.label}</span>
-                    <span style={{ fontSize: 14, fontWeight: 800, color: s.color }}>{s.value}</span>
+                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                    <div style={{ width: 8, height: 8, borderRadius: 2, background: s.color, flexShrink: 0, boxShadow: `0 2px 6px ${s.color}40` }} />
+                    <span style={{ fontSize: 11, color: "#1C3A2B", flex: 1, fontWeight: 500 }}>{s.label}</span>
+                    <span style={{ fontSize: 12, fontWeight: 800, color: s.color }}>{s.value}</span>
                   </div>
                 ))}
               </div>
@@ -244,20 +242,20 @@ export default function CommunityDashboard() {
           </div>
 
           {/* Bank Sampah */}
-          <div style={{ background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))", border: "1.5px solid rgba(47,143,78,.12)", borderRadius: 16, padding: "clamp(20px, 5vw, 32px) clamp(16px, 4vw, 28px)", transition: "all 0.35s cubic-bezier(.22,1,.36,1)" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "#2F8F4E", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 8 }}><Recycle size={16} strokeWidth={2} /> Bank Sampah — 6 Bulan</div>
-            <div style={{ fontSize: 28, fontWeight: 300, color: "#2F8F4E", marginBottom: 22, letterSpacing: "-0.02em" }}>{d.totKg.toFixed(1)} <span style={{ fontSize: "0.5em", opacity: 0.7 }}>kg</span></div>
-            <SvgArea data={d.sampahKg} color={C.bright} h={90} labels={d.sampahLbl} />
+          <div style={{ background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))", border: "1.5px solid rgba(47,143,78,.12)", borderRadius: 14, padding: "clamp(14px, 4vw, 24px) clamp(12px, 3vw, 20px)", transition: "all 0.35s cubic-bezier(.22,1,.36,1)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 10, color: "#2F8F4E", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 6 }}><Recycle size={14} strokeWidth={2} /> Bank Sampah — 6 Bulan</div>
+            <div style={{ fontSize: 22, fontWeight: 300, color: "#2F8F4E", marginBottom: 14, letterSpacing: "-0.02em" }}>{d.totKg.toFixed(1)} <span style={{ fontSize: "0.5em", opacity: 0.7 }}>kg</span></div>
+            <SvgArea data={d.sampahKg} color={C.bright} h={70} labels={d.sampahLbl} />
           </div>
 
           {/* Gizi Balita */}
-          <div style={{ background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))", border: "1.5px solid rgba(47,143,78,.12)", borderRadius: 16, padding: "clamp(20px, 5vw, 32px) clamp(16px, 4vw, 28px)", transition: "all 0.35s cubic-bezier(.22,1,.36,1)" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "#2F8F4E", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 24 }}><Baby size={16} strokeWidth={2} /> Status Gizi Balita</div>
-            <HBar value={d.anakNormal} max={stunMax} color={C.bright} label={<div style={{ display: "flex", alignItems: "center", gap: 6 }}><CheckCircle size={14} strokeWidth={2} /> Normal</div> as any} count={d.anakNormal} />
-            <HBar value={d.anakRisiko} max={stunMax} color={C.gold} label={<div style={{ display: "flex", alignItems: "center", gap: 6 }}><AlertTriangle size={14} strokeWidth={2} /> Risiko</div> as any} count={d.anakRisiko} />
-            <HBar value={d.anakStunting} max={stunMax} color={C.red} label={<div style={{ display: "flex", alignItems: "center", gap: 6 }}><AlertCircle size={14} strokeWidth={2} /> Stunting</div> as any} count={d.anakStunting} />
-            <div style={{ marginTop: 20, padding: "14px 16px", background: d.anakStunting === 0 ? "linear-gradient(135deg,rgba(79,191,126,.1),rgba(47,143,78,.05))" : "linear-gradient(135deg,rgba(248,113,113,.1),rgba(184,80,80,.05))", borderRadius: 12, fontSize: 13, border: d.anakStunting === 0 ? "1px solid rgba(47,143,78,.2)" : "1px solid rgba(248,113,113,.2)", color: d.anakStunting === 0 ? "#2F8F4E" : "#B8472F", fontWeight: 600 }}>
-              {d.anakStunting === 0 ? <div style={{ display: "flex", alignItems: "center", gap: 6 }}><PartyPopper size={16} strokeWidth={2} /> Tidak ada balita stunting saat ini!</div> : <div style={{ display: "flex", alignItems: "center", gap: 6 }}><AlertTriangle size={16} strokeWidth={2} /> {d.anakStunting} balita perlu perhatian khusus</div>}
+          <div style={{ background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))", border: "1.5px solid rgba(47,143,78,.12)", borderRadius: 14, padding: "clamp(14px, 4vw, 24px) clamp(12px, 3vw, 20px)", transition: "all 0.35s cubic-bezier(.22,1,.36,1)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 10, color: "#2F8F4E", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 16 }}><Baby size={14} strokeWidth={2} /> Status Gizi Balita</div>
+            <HBar value={d.anakNormal} max={stunMax} color={C.bright} label={<div style={{ display: "flex", alignItems: "center", gap: 4 }}><CheckCircle size={12} strokeWidth={2} /> Normal</div> as any} count={d.anakNormal} />
+            <HBar value={d.anakRisiko} max={stunMax} color={C.gold} label={<div style={{ display: "flex", alignItems: "center", gap: 4 }}><AlertTriangle size={12} strokeWidth={2} /> Risiko</div> as any} count={d.anakRisiko} />
+            <HBar value={d.anakStunting} max={stunMax} color={C.red} label={<div style={{ display: "flex", alignItems: "center", gap: 4 }}><AlertCircle size={12} strokeWidth={2} /> Stunting</div> as any} count={d.anakStunting} />
+            <div style={{ marginTop: 14, padding: "10px 12px", background: d.anakStunting === 0 ? "linear-gradient(135deg,rgba(79,191,126,.1),rgba(47,143,78,.05))" : "linear-gradient(135deg,rgba(248,113,113,.1),rgba(184,80,80,.05))", borderRadius: 10, fontSize: 11, border: d.anakStunting === 0 ? "1px solid rgba(47,143,78,.2)" : "1px solid rgba(248,113,113,.2)", color: d.anakStunting === 0 ? "#2F8F4E" : "#B8472F", fontWeight: 600 }}>
+              {d.anakStunting === 0 ? <div style={{ display: "flex", alignItems: "center", gap: 4 }}><PartyPopper size={14} strokeWidth={2} /> Tidak ada balita stunting!</div> : <div style={{ display: "flex", alignItems: "center", gap: 4 }}><AlertTriangle size={14} strokeWidth={2} /> {d.anakStunting} balita perlu perhatian</div>}
             </div>
           </div>
         </div>
@@ -267,7 +265,24 @@ export default function CommunityDashboard() {
         </div>
       </div>
 
-      <style>{`@keyframes dashPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.2)}}`}</style>
+      <style>{`
+        @keyframes dashPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.2)}}
+        @media(max-width:640px){
+          .dash-stats-grid{
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 6px !important;
+          }
+          .dash-charts-grid{
+            grid-template-columns: 1fr !important;
+            gap: 10px !important;
+          }
+        }
+        @media(max-width:380px){
+          .dash-stats-grid{
+            gap: 4px !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }
