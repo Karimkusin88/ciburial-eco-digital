@@ -1,7 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TabType, TABS } from "./types";
-import { CalendarDays, Newspaper, Info, Bot } from "lucide-react";
+import { CalendarDays, Newspaper, Info, Bot, Search } from "lucide-react";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 
 interface NavbarProps {
   tab: TabType;
@@ -13,6 +14,15 @@ interface NavbarProps {
 export default function Navbar({ tab, checkout, scrolled, onNavigate }: NavbarProps) {
   const [mobOpen, setMobOpen] = useState(false);
   const [dropOpen, setDropOpen] = useState(false);
+  const [isMac, setIsMac] = useState(false);
+
+  useEffect(() => {
+    if (typeof navigator !== "undefined") {
+      setIsMac(/Mac|iPod|iPhone|iPad/.test(navigator.platform));
+    }
+  }, []);
+
+  const openPalette = () => window.dispatchEvent(new Event("ciburial:open-palette"));
 
   const go = (t: TabType) => { onNavigate(t); setMobOpen(false); };
 
@@ -91,37 +101,69 @@ export default function Navbar({ tab, checkout, scrolled, onNavigate }: NavbarPr
             Ciburial AI
             <span style={{ fontSize: 9, padding: "2px 6px", background: "rgba(74,140,92,0.25)", borderRadius: 99, letterSpacing: ".06em" }}>BETA</span>
           </a>
+          {/* Search (⌘K) button */}
+          <button
+            onClick={openPalette}
+            aria-label="Buka pencarian cepat"
+            title="Pencarian cepat"
+            style={{
+              display: "flex", alignItems: "center", gap: 8,
+              padding: "7px 12px 7px 12px", marginLeft: 6,
+              fontSize: 11, fontWeight: 600, color: "var(--ts)",
+              background: "var(--cw)", border: "1px solid var(--bo)",
+              borderRadius: 99, cursor: "pointer", transition: "all .25s",
+            }}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--accent)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--accent)"; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--bo)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--ts)"; }}
+          >
+            <Search size={14} strokeWidth={1.7} />
+            <span>Cari</span>
+            <kbd style={{ fontSize: 9, fontWeight: 700, padding: "2px 6px", borderRadius: 5, background: "var(--cd)", border: "1px solid var(--bo)", color: "var(--tm)", letterSpacing: ".02em" }}>{isMac ? "⌘K" : "Ctrl K"}</kbd>
+          </button>
+
+          {/* Theme toggle */}
+          <div style={{ marginLeft: 6 }}><ThemeToggle /></div>
         </div>
 
         {/* Mobile burger */}
-        <button className="md:hidden" onClick={() => setMobOpen(!mobOpen)} style={{ background: "none", border: "none", cursor: "pointer", padding: 8, display: "flex", flexDirection: "column", gap: 5 }}>
-          <div style={{ width: 22, height: 2, background: "var(--fo)", borderRadius: 2 }} />
-          <div style={{ width: 15, height: 2, background: "var(--fo)", borderRadius: 2 }} />
-          <div style={{ width: 22, height: 2, background: "var(--fo)", borderRadius: 2 }} />
-        </button>
+        <div className="md:hidden" style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <button
+            onClick={openPalette}
+            aria-label="Pencarian cepat"
+            style={{ width: 38, height: 38, borderRadius: 99, border: "1px solid var(--bo)", background: "var(--cw)", color: "var(--ts)", display: "inline-flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
+          >
+            <Search size={16} strokeWidth={1.7} />
+          </button>
+          <ThemeToggle />
+          <button onClick={() => setMobOpen(!mobOpen)} aria-label="Buka menu" style={{ background: "none", border: "none", cursor: "pointer", padding: 8, display: "flex", flexDirection: "column", gap: 5 }}>
+            <div style={{ width: 22, height: 2, background: "var(--fo)", borderRadius: 2 }} />
+            <div style={{ width: 15, height: 2, background: "var(--fo)", borderRadius: 2 }} />
+            <div style={{ width: 22, height: 2, background: "var(--fo)", borderRadius: 2 }} />
+          </button>
+        </div>
       </div>
 
-      <div className={`mob md:hidden ${mobOpen ? "op" : ""}`} style={{ background: "var(--cw)", borderTop: "1px solid var(--bo)", padding: "12px clamp(12px, 4vw, 28px) 20px" }}>
+      <div className={`mob md:hidden ${mobOpen ? "op" : ""}`} style={{ background: "var(--cw)", borderTop: "1px solid var(--bo)", padding: "8px clamp(12px, 4vw, 20px) 14px", maxHeight: "70vh", overflowY: "auto" }}>
         {TABS.map(t => (
-          <button key={t.key} onClick={() => go(t.key)} style={{ display: "block", width: "100%", textAlign: "left", padding: "11px 0", fontSize: 12, fontWeight: 600, letterSpacing: ".08em", textTransform: "uppercase", background: "none", border: "none", color: tab === t.key ? "var(--fo)" : "var(--ts)", cursor: "pointer", borderBottom: "1px solid var(--bo)" }}>
+          <button key={t.key} onClick={() => go(t.key)} style={{ display: "block", width: "100%", textAlign: "left", padding: "9px 0", fontSize: 11, fontWeight: 600, letterSpacing: ".06em", textTransform: "uppercase", background: "none", border: "none", color: tab === t.key ? "var(--fo)" : "var(--ts)", cursor: "pointer", borderBottom: "1px solid var(--bo)" }}>
             {t.label}
           </button>
         ))}
-        <a href="/ai" style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 0", fontSize: 12, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "#2d5a40", textDecoration: "none", borderBottom: "1px solid var(--bo)" }}>
-          <Bot size={16} strokeWidth={1.5} /> Ciburial AI <span style={{ fontSize: 9, padding: "2px 6px", background: "rgba(45,90,64,0.1)", borderRadius: 99, color: "#4a7c59" }}>BETA</span>
+        <a href="/ai" style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 0", fontSize: 11, fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase", color: "#2d5a40", textDecoration: "none", borderBottom: "1px solid var(--bo)" }}>
+          <Bot size={14} strokeWidth={1.5} /> Ciburial AI <span style={{ fontSize: 8, padding: "2px 5px", background: "rgba(45,90,64,0.1)", borderRadius: 99, color: "#4a7c59" }}>BETA</span>
         </a>
-        <div style={{ padding: "8px 0 4px", borderBottom: "1px solid var(--bo)" }}>
-          <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".15em", textTransform: "uppercase", color: "var(--tm)", marginBottom: 8 }}>Layanan Warga</div>
+        <div style={{ padding: "6px 0 4px", borderBottom: "1px solid var(--bo)" }}>
+          <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--tm)", marginBottom: 6 }}>Layanan Warga</div>
           {[
-            { href: "/kalender", icon: <CalendarDays size={18} strokeWidth={1.5} />, title: "Kalender Kegiatan", sub: "Agenda & jadwal kampung" },
-            { href: "/info-harian", icon: <Newspaper size={18} strokeWidth={1.5} />, title: "Info Harian", sub: "Dukungan & liputan terbaru" },
-            { href: "/tentang", icon: <Info size={18} strokeWidth={1.5} />, title: "Tentang", sub: "Profil Ciburial Eco-Digital" },
+            { href: "/kalender", icon: <CalendarDays size={16} strokeWidth={1.5} />, title: "Kalender Kegiatan", sub: "Agenda & jadwal" },
+            { href: "/info-harian", icon: <Newspaper size={16} strokeWidth={1.5} />, title: "Info Harian", sub: "Liputan terbaru" },
+            { href: "/tentang", icon: <Info size={16} strokeWidth={1.5} />, title: "Tentang", sub: "Profil Ciburial" },
           ].map((item, i, arr) => (
-            <a key={i} href={item.href} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 0", textDecoration: "none", borderBottom: i < arr.length - 1 ? "1px solid rgba(229,224,216,.5)" : "none" }}>
+            <a key={i} href={item.href} style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 0", textDecoration: "none", borderBottom: i < arr.length - 1 ? "1px solid rgba(229,224,216,.5)" : "none" }}>
               {item.icon}
               <div>
-                <div style={{ fontSize: 12, fontWeight: 700, color: "var(--tp)", letterSpacing: ".04em", textTransform: "uppercase" }}>{item.title}</div>
-                <div style={{ fontSize: 11, color: "var(--tm)" }}>{item.sub}</div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: "var(--tp)", letterSpacing: ".03em", textTransform: "uppercase" }}>{item.title}</div>
+                <div style={{ fontSize: 10, color: "var(--tm)" }}>{item.sub}</div>
               </div>
             </a>
           ))}

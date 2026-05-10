@@ -236,19 +236,19 @@ export default function TransparansiTab() {
         </div>
 
         {/* KPI Cards - Heroic */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 130px),1fr))", gap: "clamp(12px, 2vw, 18px)", marginBottom: 36 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "clamp(8px, 2vw, 18px)", marginBottom: 28 }} className="kpi-grid">
           {[
-            { label: "Total Masuk", val: fRp(totMasuk), icon: <TrendingUp size={20} strokeWidth={1.5} />, color: "#1C3A2B", valColor: "#2F8F4E", bg: "linear-gradient(135deg,rgba(79,191,126,.08) 0%,rgba(47,143,78,.04) 100%)", border: "rgba(47,143,78,.2)" },
-            { label: "Total Keluar", val: fRp(totKeluar), icon: <TrendingDown size={20} strokeWidth={1.5} />, color: "#1C3A2B", valColor: "#B8472F", bg: "linear-gradient(135deg,rgba(248,113,113,.08) 0%,rgba(248,113,113,.02) 100%)", border: "rgba(248,113,113,.2)" },
-            { label: "Saldo Dana", val: fRp(saldo), icon: <Coins size={20} strokeWidth={1.5} color="currentColor" />, color: "#1C3A2B", valColor: "#2F8F4E", bg: "linear-gradient(135deg,rgba(255,254,249,.8) 0%,rgba(232,245,238,.4) 100%)", border: "rgba(47,143,78,.15)" },
-            { label: "Target RAB", val: fRp(RAB_TARGET), icon: <Target size={20} strokeWidth={1.5} color="currentColor" />, color: "#1C3A2B", valColor: "#9B7D4C", bg: "linear-gradient(135deg,rgba(184,148,63,.1) 0%,rgba(184,148,63,.04) 100%)", border: "rgba(184,148,63,.2)" },
+            { label: "Total Masuk", val: fRp(totMasuk), icon: <TrendingUp size={18} strokeWidth={1.5} />, color: "#1C3A2B", valColor: "#2F8F4E", bg: "linear-gradient(135deg,rgba(79,191,126,.08) 0%,rgba(47,143,78,.04) 100%)", border: "rgba(47,143,78,.2)" },
+            { label: "Total Keluar", val: fRp(totKeluar), icon: <TrendingDown size={18} strokeWidth={1.5} />, color: "#1C3A2B", valColor: "#B8472F", bg: "linear-gradient(135deg,rgba(248,113,113,.08) 0%,rgba(248,113,113,.02) 100%)", border: "rgba(248,113,113,.2)" },
+            { label: "Saldo Dana", val: fRp(saldo), icon: <Coins size={18} strokeWidth={1.5} color="currentColor" />, color: "#1C3A2B", valColor: "#2F8F4E", bg: "linear-gradient(135deg,rgba(255,254,249,.8) 0%,rgba(232,245,238,.4) 100%)", border: "rgba(47,143,78,.15)" },
+            { label: "Target RAB", val: fRp(RAB_TARGET), icon: <Target size={18} strokeWidth={1.5} color="currentColor" />, color: "#1C3A2B", valColor: "#9B7D4C", bg: "linear-gradient(135deg,rgba(184,148,63,.1) 0%,rgba(184,148,63,.04) 100%)", border: "rgba(184,148,63,.2)" },
           ].map((c, i) => (
             <div key={i} style={{ 
               minWidth: 0,
               background: c.bg, 
               border: `1.5px solid ${c.border}`,
-              borderRadius: 16, 
-              padding: "clamp(20px, 5vw, 28px) clamp(16px, 4vw, 22px)", 
+              borderRadius: 12, 
+              padding: "clamp(12px, 3vw, 28px) clamp(10px, 2.5vw, 22px)", 
               position: "relative", 
               overflow: "hidden",
               transition: "all 0.35s cubic-bezier(.22,1,.36,1)",
@@ -256,18 +256,18 @@ export default function TransparansiTab() {
               transform: "translateY(0)"
             }}
             onMouseEnter={e => {
-              (e.currentTarget as HTMLElement).style.transform = "translateY(-6px)";
-              (e.currentTarget as HTMLElement).style.boxShadow = "0 18px 52px rgba(47,143,78,.12)";
+              (e.currentTarget as HTMLElement).style.transform = "translateY(-4px)";
+              (e.currentTarget as HTMLElement).style.boxShadow = "0 12px 36px rgba(47,143,78,.1)";
             }}
             onMouseLeave={e => {
               (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
               (e.currentTarget as HTMLElement).style.boxShadow = "0 0 0 transparent";
             }}
             >
-              <div style={{ fontSize: "clamp(8px, 2vw, 10px)", fontWeight: 800, letterSpacing: ".05em", textTransform: "uppercase", color: "#1C3A2B", marginBottom: 12, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{c.label}</div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-                <div className="fnt" style={{ fontSize: "clamp(16px,4vw,24px)", fontWeight: 700, color: c.valColor || c.color, lineHeight: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", paddingRight: 4 }}>{c.val}</div>
-                <span style={{ fontSize: "clamp(18px, 4vw, 24px)", opacity: 0.7 }}>{c.icon}</span>
+              <div style={{ fontSize: "clamp(7px, 1.8vw, 10px)", fontWeight: 800, letterSpacing: ".05em", textTransform: "uppercase", color: "#1C3A2B", marginBottom: 8, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{c.label}</div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 4 }}>
+                <div className="fnt" style={{ fontSize: "clamp(12px,3vw,24px)", fontWeight: 700, color: c.valColor || c.color, lineHeight: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{c.val}</div>
+                <span style={{ fontSize: "clamp(14px, 3vw, 24px)", opacity: 0.7, flexShrink: 0 }}>{c.icon}</span>
               </div>
             </div>
           ))}
@@ -319,7 +319,7 @@ export default function TransparansiTab() {
         </div>
 
         {/* ── 2-col: Flow Chart + Alokasi Donut ── */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 240px),1fr))", gap: "clamp(16px, 3vw, 20px)", marginBottom: 28 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 200px),1fr))", gap: "clamp(12px, 2.5vw, 20px)", marginBottom: 24 }} className="chart-grid">
 
           {/* Area chart: performa aliran dana */}
           <div style={{ ...card("linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))") }}>
@@ -335,39 +335,39 @@ export default function TransparansiTab() {
         </div>
 
         {/* ── Rincian Alokasi RAB per Program ── */}
-        <div style={{ marginBottom: 28 }}>
-          <div style={{ fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "#2F8F4E", marginBottom: 18 }}>Rincian Alokasi Dana per Program RAB</div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 260px),1fr))", gap: "clamp(14px, 3vw, 20px)" }}>
+        <div style={{ marginBottom: 24 }}>
+          <div style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "#2F8F4E", marginBottom: 14 }}>Rincian Alokasi Dana per Program RAB</div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 160px),1fr))", gap: "clamp(10px, 2vw, 20px)" }} className="alokasi-grid">
             {ALOKASI.map((item, i) => {
               const used = transaksi.filter(t => t.tipe === "keluar" && t.kategori === item.label).reduce((s, t) => s + t.jumlah, 0);
               const pct = Math.min(100, (used / item.target) * 100);
               const sisa = item.target - used;
               const col = ALOKASI_COLORS[i];
               return (
-                <div key={i} style={{ minWidth: 0, ...card("linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))") }}>
-                  <div style={{ display: "flex", gap: 10, alignItems: "flex-start", marginBottom: 14 }}>
-                    <span style={{ fontSize: 22, lineHeight: 1, marginTop: 1 }}>{item.icon}</span>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: "#1C3A2B", lineHeight: 1.3, marginBottom: 3 }}>{item.label}</div>
-                      <div style={{ fontSize: 10, color: "#5A4A40", lineHeight: 1.4 }}>{item.desc}</div>
+                <div key={i} style={{ minWidth: 0, ...card("linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))"), padding: "clamp(12px, 3vw, 20px)", borderRadius: 12 }}>
+                  <div style={{ display: "flex", gap: 8, alignItems: "flex-start", marginBottom: 10 }}>
+                    <span style={{ fontSize: "clamp(16px, 4vw, 22px)", lineHeight: 1, marginTop: 1 }}>{item.icon}</span>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: "clamp(10px, 2.5vw, 12px)", fontWeight: 700, color: "#1C3A2B", lineHeight: 1.3, marginBottom: 2 }}>{item.label}</div>
+                      <div style={{ fontSize: "clamp(9px, 2.2vw, 10px)", color: "#5A4A40", lineHeight: 1.3 }}>{item.desc}</div>
                     </div>
-                    <span style={{ fontSize: 16, fontWeight: 900, color: col, whiteSpace: "nowrap", lineHeight: 1 }}>{Math.round(pct)}%</span>
+                    <span style={{ fontSize: "clamp(12px, 3vw, 16px)", fontWeight: 900, color: col, whiteSpace: "nowrap", lineHeight: 1 }}>{Math.round(pct)}%</span>
                   </div>
                   {/* Progress */}
-                  <div style={{ background: "rgba(47,143,78,.08)", borderRadius: 99, height: 8, overflow: "hidden", marginBottom: 12 }}>
+                  <div style={{ background: "rgba(47,143,78,.08)", borderRadius: 99, height: 6, overflow: "hidden", marginBottom: 8 }}>
                     <div style={{
                       width: `${pct}%`, height: "100%", borderRadius: 99, background: col,
                       transition: "width 1.2s cubic-bezier(.34,1.1,.64,1)",
-                      boxShadow: pct > 0 ? `0 0 8px ${col}60` : "none",
+                      boxShadow: pct > 0 ? `0 0 6px ${col}60` : "none",
                     }} />
                   </div>
                   {/* Angka */}
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 4 }}>
-                    <span style={{ color: col, fontWeight: 700 }}>{fRp(used)} terpakai</span>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "clamp(9px, 2.2vw, 11px)", marginBottom: 2 }}>
+                    <span style={{ color: col, fontWeight: 700 }}>{fRp(used)}</span>
                     <span style={{ color: "#5A4A40", fontWeight: 500 }}>{fRp(sisa)} sisa</span>
                   </div>
                   {/* Target */}
-                  <div style={{ fontSize: 10, color: "#9A8C85" }}>Target: {fRp(item.target)}</div>
+                  <div style={{ fontSize: "clamp(8px, 2vw, 10px)", color: "#9A8C85" }}>Target: {fRp(item.target)}</div>
                 </div>
               );
             })}
@@ -456,7 +456,7 @@ export default function TransparansiTab() {
           <div style={{ marginTop: 40, padding: 0 }}>
             <h3 className="fnt" style={{ fontSize: 24, fontWeight: 300, color: "#1C3A2B", marginBottom: 24, borderBottom: "2px solid rgba(47,143,78,.2)", paddingBottom: "clamp(8px, 2vw, 12px)" }}>Metode Donasi & Penerima</h3>
             
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 260px), 1fr))", gap: "clamp(14px, 3vw, 20px)" }}>
+            <div className="donasi-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 260px), 1fr))", gap: "clamp(14px, 3vw, 20px)" }}>
               {[
                 { 
                   icon: <Smartphone size={24} strokeWidth={1.5} />, 
