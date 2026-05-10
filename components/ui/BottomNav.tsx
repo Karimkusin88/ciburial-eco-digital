@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
-import { Home, ShoppingBag, Bot, Sparkles, LayoutGrid } from "lucide-react";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { Home, ShoppingBag, Bot, Images, User } from "lucide-react";
 
 interface Item {
   key: string;
@@ -15,28 +15,31 @@ interface Item {
 export default function BottomNav() {
   const pathname = usePathname();
   const search = useSearchParams();
+  const router = useRouter();
   const activeTab = search?.get("tab");
 
   const items: Item[] = [
     { key: "home", label: "Beranda", href: "/", icon: <Home size={20} strokeWidth={1.7} /> },
     { key: "market", label: "Produk", href: "/?tab=marketplace", icon: <ShoppingBag size={20} strokeWidth={1.7} />, matchTab: "marketplace" },
     { key: "ai", label: "AI", href: "/ai", icon: <Bot size={22} strokeWidth={1.7} />, special: true },
-    { key: "layanan", label: "Layanan", href: "/tukar-poin", icon: <LayoutGrid size={20} strokeWidth={1.7} /> },
-    { key: "search", label: "Cari", href: "#open-palette", icon: <Sparkles size={20} strokeWidth={1.7} /> },
+    { key: "galeri", label: "Galeri", href: "/?tab=kegiatan", icon: <Images size={20} strokeWidth={1.7} />, matchTab: "kegiatan" },
+    { key: "profil", label: "Profil", href: "/tentang", icon: <User size={20} strokeWidth={1.7} /> },
   ];
 
   const isActive = (it: Item) => {
     if (it.key === "ai") return pathname === "/ai";
     if (it.matchTab) return pathname === "/" && activeTab === it.matchTab;
     if (it.key === "home") return pathname === "/" && !activeTab;
-    if (it.key === "layanan") return ["/tukar-poin", "/voting", "/posyandu", "/ronda", "/zakat", "/pengaduan", "/learning-hub"].includes(pathname ?? "");
+    if (it.key === "profil") return pathname === "/tentang";
     return false;
   };
 
   const onClick = (e: React.MouseEvent, it: Item) => {
-    if (it.href === "#open-palette") {
+    // Handle Beranda click - force navigation to clear tab params
+    if (it.key === "home" && pathname === "/" && activeTab) {
       e.preventDefault();
-      window.dispatchEvent(new Event("ciburial:open-palette"));
+      router.push("/");
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
