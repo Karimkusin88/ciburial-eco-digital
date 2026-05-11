@@ -194,7 +194,7 @@ export default function CommunityDashboard() {
           <h2 style={{ margin: "0 0 10px", fontSize: "clamp(24px,4.5vw,40px)", fontWeight: 300, background: "linear-gradient(135deg,#1C3A2B,#2F8F4E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", lineHeight: 1.1, letterSpacing: "-0.03em" }}>
             Denyut Nadi <em style={{ background: "linear-gradient(135deg,#4FBF7E,#2F8F4E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontStyle: "italic" }}>Ciburial</em>
           </h2>
-          <p style={{ color: "#5A4A40", fontSize: 12, maxWidth: 420, margin: "0 auto", lineHeight: 1.6, fontWeight: 500 }}>
+          <p style={{ color: "#5A4A40", fontSize: 13, maxWidth: 420, margin: "0 auto", lineHeight: 1.6, fontWeight: 500 }}>
             Data nyata diperbarui otomatis setiap 30 detik.
           </p>
         </div>
