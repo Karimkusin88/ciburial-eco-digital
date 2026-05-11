@@ -1,6 +1,6 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
-import { Mic, Square, Send, Lock, AlertCircle, Trash2, ArrowLeft } from "lucide-react";
+import { Mic, Square, Send, Lock, AlertCircle, Trash2 } from "lucide-react";
 
 interface Message {
   role: "user" | "assistant";
@@ -190,7 +190,7 @@ export default function AIPage() {
     }}>
       {/* Header HEROIC */}
       <header style={{
-        padding: "16px 24px",
+        padding: "12px 16px",
         background: "rgba(255,254,249,0.85)",
         backdropFilter: "blur(16px)",
         borderBottom: "1.5px solid rgba(47,143,78,0.12)",
@@ -199,46 +199,33 @@ export default function AIPage() {
         justifyContent: "space-between",
         boxShadow: "0 4px 20px rgba(0,0,0,0.02)"
       }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <a href="/" style={{
-            color: "#2F8F4E", textDecoration: "none",
-            fontSize: 13, fontWeight: 700, display: "flex", alignItems: "center", gap: 6,
-            transition: "all 0.2s"
-          }}
-          onMouseEnter={e => e.currentTarget.style.color = "#1C3A2B"}
-          onMouseLeave={e => e.currentTarget.style.color = "#2F8F4E"}
-          >
-            <ArrowLeft size={16} strokeWidth={2} /> Beranda
-          </a>
-          <div style={{ width: 1.5, height: 24, background: "rgba(47,143,78,0.15)" }} />
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <CiburialLogo size={34} />
-            <div>
-              <div style={{
-                fontWeight: 900, fontSize: 16,
-                background: "linear-gradient(135deg,#1C3A2B,#2F8F4E)",
-                WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-                lineHeight: 1.2, letterSpacing: "-0.02em"
-              }}>Ciburial AI</div>
-              <div style={{
-                fontSize: 10, color: "#6B7C6D",
-                letterSpacing: "0.1em", fontWeight: 700,
-                textTransform: "uppercase", lineHeight: 1.2,
-              }}>Asisten Digital Kampung</div>
-            </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <CiburialLogo size={30} />
+          <div>
+            <div style={{
+              fontWeight: 900, fontSize: "clamp(13px,3.5vw,16px)",
+              background: "linear-gradient(135deg,#1C3A2B,#2F8F4E)",
+              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+              lineHeight: 1.2, letterSpacing: "-0.02em"
+            }}>Ciburial AI</div>
+            <div style={{
+              fontSize: "clamp(8px,2vw,10px)", color: "#6B7C6D",
+              letterSpacing: "0.1em", fontWeight: 700,
+              textTransform: "uppercase", lineHeight: 1.2,
+            }}>Asisten Digital Kampung</div>
           </div>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <div style={{
             display: "flex", alignItems: "center", gap: 6,
             background: "rgba(47,143,78,0.08)",
             border: "1.5px solid rgba(47,143,78,0.15)",
-            borderRadius: 99, padding: "6px 14px",
-            fontSize: 11, fontWeight: 800, color: "#2F8F4E",
+            borderRadius: 99, padding: "5px 12px",
+            fontSize: "clamp(9px,2.5vw,11px)", fontWeight: 800, color: "#2F8F4E",
             letterSpacing: "0.06em",
           }}>
             <div style={{
-              width: 8, height: 8, borderRadius: "50%",
+              width: 7, height: 7, borderRadius: "50%",
               background: "#2F8F4E",
               animation: "pulse-glow 2s infinite",
             }}/>
@@ -248,13 +235,13 @@ export default function AIPage() {
             <button onClick={clearChat} style={{
               background: "white",
               border: "1.5px solid rgba(184,71,47,0.2)",
-              borderRadius: 99, padding: "6px 14px", display: "flex", alignItems: "center", gap: 6,
-              color: "#B8472F", cursor: "pointer", fontSize: 12, fontWeight: 700, transition: "all 0.2s"
+              borderRadius: 99, padding: "5px 12px", display: "flex", alignItems: "center", gap: 5,
+              color: "#B8472F", cursor: "pointer", fontSize: "clamp(10px,2.5vw,12px)", fontWeight: 700, transition: "all 0.2s"
             }}
             onMouseEnter={e => { e.currentTarget.style.background = "rgba(184,71,47,0.05)" }}
             onMouseLeave={e => { e.currentTarget.style.background = "white" }}
             >
-              <Trash2 size={14} /> Hapus
+              <Trash2 size={13} /> Hapus
             </button>
           )}
         </div>
@@ -299,22 +286,22 @@ export default function AIPage() {
 
             <p style={{
               color: "#5A4A40", margin: 0,
-              fontSize: 16, maxWidth: 440, lineHeight: 1.7, fontWeight: 500
+              fontSize: "clamp(13px,3.5vw,16px)", maxWidth: 440, lineHeight: 1.7, fontWeight: 500
             }}>
               Tanya apapun — belajar, coding, info kampung, atau sekedar ngobrol seputar inovasi!
             </p>
 
             <div style={{
               display: "flex", flexWrap: "wrap",
-              gap: 12, justifyContent: "center", maxWidth: 600,
+              gap: 8, justifyContent: "center", maxWidth: 560,
             }}>
               {SUGGESTIONS.map((s) => (
                 <button key={s} onClick={() => sendMessage(s)} style={{
                   background: "white",
                   border: "1.5px solid rgba(47,143,78,0.15)",
-                  borderRadius: 99, padding: "10px 20px",
+                  borderRadius: 99, padding: "8px 16px",
                   color: "#1C3A2B", cursor: "pointer",
-                  fontSize: 13, fontWeight: 600,
+                  fontSize: "clamp(11px,2.8vw,13px)", fontWeight: 600,
                   transition: "all 0.3s cubic-bezier(.22,1,.36,1)",
                   boxShadow: "0 4px 12px rgba(0,0,0,0.03)",
                 }}
@@ -382,8 +369,8 @@ export default function AIPage() {
               borderRadius: msg.role === "user"
                 ? "24px 24px 6px 24px"
                 : "24px 24px 24px 6px",
-              padding: "16px 24px",
-              fontSize: 15, lineHeight: 1.7,
+              padding: "clamp(10px,3vw,16px) clamp(14px,4vw,24px)",
+              fontSize: "clamp(13px,3.5vw,15px)", lineHeight: 1.7,
               color: msg.role === "user" ? "white" : "#1C3A2B",
               border: msg.role === "assistant" ? "1.5px solid rgba(47,143,78,0.1)" : "none",
               boxShadow: msg.role === "user"
@@ -540,7 +527,7 @@ export default function AIPage() {
               style={{
                 width: "100%", background: "none",
                 border: "none", outline: "none",
-                color: "#1C3A2B", fontSize: 15,
+                color: "#1C3A2B", fontSize: "clamp(13px,3.5vw,15px)",
                 resize: "none", fontFamily: "inherit",
                 lineHeight: 1.6, maxHeight: 150,
                 overflowY: "auto", fontWeight: 500
@@ -589,8 +576,8 @@ export default function AIPage() {
         </div>
 
         <p style={{
-          textAlign: "center", fontSize: 12, fontWeight: 600,
-          color: "#9A8C85", margin: "14px 0 0", letterSpacing: "0.02em"
+          textAlign: "center", fontSize: "clamp(10px,2.5vw,12px)", fontWeight: 600,
+          color: "#9A8C85", margin: "12px 0 0", letterSpacing: "0.02em"
         }}>
           AI Ciburial dapat membuat kesalahan. Harap verifikasi informasi penting secara mandiri.
         </p>
