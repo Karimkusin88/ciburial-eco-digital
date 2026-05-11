@@ -154,7 +154,7 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
  color: "#FFFFFF",
  letterSpacing: "-.04em",
  marginBottom: 6,
- fontSize: "clamp(48px,11vw,130px)",
+ fontSize: "clamp(72px,15vw,180px)",
  textShadow: "0 8px 40px rgba(0,0,0,0.3)",
  }}
  >
@@ -170,7 +170,7 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
  color: "#95D5B2", // hijau sage
  letterSpacing: "-.01em",
  marginBottom: 0,
- fontSize: "clamp(20px,4.5vw,46px)",
+ fontSize: "clamp(24px,5.5vw,56px)",
  textShadow: "0 4px 16px rgba(0,0,0,0.2)",
  }}
  >
@@ -536,7 +536,7 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
  <div style={{ borderRadius: 28, overflow: "hidden", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 300px),1fr))" }}>
  <div className="donasi-panel-dark" style={{ background: "var(--fo)", padding: "clamp(32px, 6vw, 60px) clamp(24px, 5vw, 52px)" }}>
  <div className="dl" />
- <h2 className="fnt" style={{ fontSize: 36, fontWeight: 300, color: "var(--cr)", lineHeight: 1.15, letterSpacing: "-.02em", marginBottom: 14 }}>Donasi<br />Kemakmuran<br />Kampung</h2>
+ <h2 className="fnt" style={{ fontSize: "clamp(28px, 5vw, 36px)", fontWeight: 300, color: "var(--cr)", lineHeight: 1.15, letterSpacing: "-.02em", marginBottom: 14 }}>Donasi<br />Kemakmuran<br />Kampung</h2>
  <p style={{ fontSize: 13, lineHeight: 1.85, color: "rgba(250,248,243,.5)", marginBottom: 28 }}>
  Target RAB Global <strong style={{ color: "var(--gl)" }}>Rp 250.000.000</strong>.<br />
  Dukung Balai Warga, Smart Farming, Learning Hub, Smart PJU, dan Internet Desa.
