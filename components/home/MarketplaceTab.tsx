@@ -2,7 +2,7 @@
 import { Produk, Iklan, fRp } from "./types";
 import { useState, useRef, useEffect } from "react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
-import { Home, TreePine, Wheat, Soup, Recycle, Leaf, QrCode, Heart, Landmark, CheckCircle, Package, Truck, PartyPopper, XCircle, Search, MapPin, Zap, Eye, ShoppingCart, MessageSquare, Loader, Smartphone, FileText, CreditCard, Lock, ArrowRight, CornerDownRight, Building2, Shield, Plus, User, UserCheck } from "lucide-react";
+import { Home, TreePine, Wheat, Soup, Recycle, Leaf, QrCode, Heart, Landmark, CheckCircle, Package, Truck, PartyPopper, XCircle, Search, MapPin, Zap, Eye, ShoppingCart, MessageSquare, Loader, Smartphone, FileText, CreditCard, Lock, ArrowRight, CornerDownRight, Building2, Shield, Plus, User, UserCheck, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface MarketplaceTabProps {
   produk: Produk[];
@@ -259,9 +259,16 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
   // Auto-scroll banner
   useEffect(() => {
     if (iklan.length < 2) return;
-    const t = setInterval(() => setActiveSlide(s => (s + 1) % iklan.length), 4000);
-    return () => clearInterval(t);
-  }, [iklan.length]);
+    const currentIklan = iklan[activeSlide];
+    
+    // Jangan geser otomatis jika slide saat ini adalah video (tunggu event onEnded dari video)
+    if (currentIklan && currentIklan.tipe === "video") return;
+
+    const t = setTimeout(() => {
+      setActiveSlide(s => (s + 1) % iklan.length);
+    }, 4000);
+    return () => clearTimeout(t);
+  }, [iklan, activeSlide]);
 
   useEffect(() => {
     if (sliderRef.current) {
@@ -1245,13 +1252,24 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
           <div style={{ marginBottom: 40, position: "relative", borderRadius: 16, overflow: "hidden", border: "1.5px solid rgba(47,143,78,.15)" }}>
             <div ref={sliderRef} style={{ display: "flex", overflowX: "hidden", scrollSnapType: "x mandatory" }}>
               {iklan.map((ik, i) => (
-                <div key={ik.id || i} style={{ flex: "0 0 100%", scrollSnapAlign: "start", position: "relative", aspectRatio: "12/3", minHeight: 220, background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)" }}>
+                <div key={ik.id || i} style={{ flex: "0 0 100%", scrollSnapAlign: "start", position: "relative", aspectRatio: "16/9", minHeight: 220, maxHeight: 400, background: "#000", display: "flex", alignItems: "center", justifyContent: "center" }}>
                   {ik.tipe === "video" ? (
-                    <video src={ik.mediaUrl} autoPlay muted loop playsInline style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    <video 
+                      src={ik.mediaUrl} 
+                      autoPlay 
+                      muted 
+                      playsInline 
+                      onEnded={() => {
+                        if (iklan.length > 1) {
+                          setActiveSlide(s => (s + 1) % iklan.length);
+                        }
+                      }}
+                      style={{ width: "100%", height: "100%", objectFit: "contain" }} 
+                    />
                   ) : (
                     <img src={ik.mediaUrl} alt={ik.judul} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                   )}
-                  <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg,rgba(47,143,78,.6) 0%,rgba(47,143,78,.2) 100%)" }} />
+                  {/* Overlay hijau dihapus agar video tampil dengan warna aslinya (natural) */}
                 </div>
               ))}
             </div>
@@ -1262,6 +1280,23 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                   <div key={i} onClick={() => setActiveSlide(i)} style={{ width: i === activeSlide ? 28 : 10, height: 10, borderRadius: 5, background: i === activeSlide ? "white" : "rgba(255,255,255,.4)", cursor: "pointer", transition: "all 0.3s cubic-bezier(.22,1,.36,1)", boxShadow: i === activeSlide ? "0 4px 12px rgba(0,0,0,.2)" : "none" }} />
                 ))}
               </div>
+            )}
+            {/* Manual Slide Navigation Buttons */}
+            {iklan.length > 1 && (
+              <>
+                <button 
+                  onClick={() => setActiveSlide(s => (s - 1 + iklan.length) % iklan.length)}
+                  style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", width: 40, height: 40, borderRadius: "50%", background: "rgba(0,0,0,0.5)", border: "none", color: "white", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", backdropFilter: "blur(4px)", transition: "all 0.3s" }}
+                >
+                  <ChevronLeft size={24} />
+                </button>
+                <button 
+                  onClick={() => setActiveSlide(s => (s + 1) % iklan.length)}
+                  style={{ position: "absolute", right: 16, top: "50%", transform: "translateY(-50%)", width: 40, height: 40, borderRadius: "50%", background: "rgba(0,0,0,0.5)", border: "none", color: "white", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", backdropFilter: "blur(4px)", transition: "all 0.3s" }}
+                >
+                  <ChevronRight size={24} />
+                </button>
+              </>
             )}
           </div>
         )}
