@@ -289,40 +289,79 @@ async function execTool(name: string, args: any): Promise<string> {
       }
 
       case "get_struktur_organisasi": {
-        // Coba dari tabel pengurus_desa, fallback ke anggota_kk dengan jabatan
-        let data: any[] = [];
-        const pgRes = await supabase
-          .from("pengurus_desa")
-          .select("nama, jabatan, kontak")
-          .order("urutan", { ascending: true });
+        // ── Data resmi dari web /tentang (sumber kebenaran) ──────────────
+        const STRUKTUR_RESMI = {
+          dewan_pelindung: [
+            { nama: "— Hasil Musyawarah —", jabatan: "Tokoh Agama" },
+            { nama: "Bpk. Enang", jabatan: "Kepala Kewilayahan (Ketua RW)" },
+            { nama: "Sarip Hidayat", jabatan: "Koordinator RT 01" },
+            { nama: "Oneng", jabatan: "Koordinator RT 02" },
+            { nama: "Mumun", jabatan: "Koordinator RT 03" },
+          ],
+          dewan_pengawas: [
+            { nama: "Bpk. Pupu Apipudin", jabatan: "Pengelola Dana DKM" },
+          ],
+          tim_eksekutif: [
+            { nama: "— Hasil Voting —", jabatan: "Ketua Pelaksana (PM)" },
+            { nama: "— Hasil Voting —", jabatan: "Sekretaris" },
+            { nama: "— Hasil Voting —", jabatan: "Bendahara" },
+          ],
+          divisi: [
+            { nama: "Divisi Green Build", jabatan: "Infrastruktur & Konstruksi Hijau", tugas: "Balai Serba Guna, Smart PJU, drainase resapan" },
+            { nama: "Divisi Digital Hub", jabatan: "IT, Jaringan & Web3", tugas: "RT/RW Net, Learning Hub, Website, Crypto" },
+            { nama: "Divisi Eco-Waste & Farming", jabatan: "Smart Farming & Lingkungan", tugas: "Pertanian organik, peternakan, Bank Sampah" },
+            { nama: "Divisi Local Commerce", jabatan: "Ekonomi Kreatif & UMKM", tugas: "Pengrajin lokal, marketplace, quality control" },
+            { nama: "Divisi Public Relations", jabatan: "Humas & Transparansi Publik", tugas: "Dokumentasi, laporan dana, komunikasi CSR" },
+          ],
+          founder: { nama: "Ubay Rahmat H.", jabatan: "Founder & Builder — Ciburial Eco-Digital Village" },
+        };
 
-        if (pgRes.data && pgRes.data.length > 0) {
-          data = pgRes.data;
-          if (args?.jabatan) {
-            data = data.filter(d =>
-              d.jabatan?.toLowerCase().includes(args.jabatan.toLowerCase())
-            );
+        // Coba ambil data live dari DB (override jika ada)
+        try {
+          const pgRes = await supabase
+            .from("pengurus_desa")
+            .select("nama, jabatan, kategori, kontak")
+            .order("urutan", { ascending: true });
+
+          if (pgRes.data && pgRes.data.length > 0) {
+            // Data DB ada → merge dengan struktur resmi
+            const dbData = pgRes.data;
+            if (args?.jabatan) {
+              const filtered = dbData.filter(d =>
+                d.jabatan?.toLowerCase().includes(args.jabatan.toLowerCase())
+              );
+              if (filtered.length > 0) {
+                return JSON.stringify({ sumber: "database_live", data: filtered });
+              }
+            } else {
+              return JSON.stringify({ sumber: "database_live", data: dbData, struktur_resmi: STRUKTUR_RESMI });
+            }
           }
-        } else {
-          // Fallback: ambil dari keluarga (RT)
-          const kkRes = await supabase
-            .from("keluarga")
-            .select("nama_kepala, rt, alamat")
-            .order("rt", { ascending: true })
-            .limit(20);
-          if (kkRes.data && kkRes.data.length > 0) {
-            data = kkRes.data.map(k => ({
-              nama: k.nama_kepala,
-              jabatan: `Warga RT ${k.rt}`,
-              alamat: k.alamat,
-            }));
-          }
+        } catch (_) {
+          // tabel belum ada → pakai data statis
         }
 
-        if (data.length === 0) {
-          return JSON.stringify({ keterangan: "Data pengurus belum tersedia. Hubungi admin kampung langsung." });
+        // Filter berdasarkan jabatan jika diminta
+        if (args?.jabatan) {
+          const q = args.jabatan.toLowerCase();
+          const semua = [
+            ...STRUKTUR_RESMI.dewan_pelindung,
+            ...STRUKTUR_RESMI.dewan_pengawas,
+            ...STRUKTUR_RESMI.tim_eksekutif,
+            ...STRUKTUR_RESMI.divisi,
+            STRUKTUR_RESMI.founder,
+          ];
+          const filtered = semua.filter(p =>
+            p.jabatan?.toLowerCase().includes(q) || p.nama?.toLowerCase().includes(q)
+          );
+          return JSON.stringify({
+            sumber: "data_resmi_web",
+            data: filtered.length > 0 ? filtered : semua,
+            keterangan: filtered.length === 0 ? `Tidak ditemukan untuk jabatan "${args.jabatan}"` : undefined,
+          });
         }
-        return JSON.stringify(data);
+
+        return JSON.stringify({ sumber: "data_resmi_web", ...STRUKTUR_RESMI });
       }
 
       case "get_transparansi_dana": {

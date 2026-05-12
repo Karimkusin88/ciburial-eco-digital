@@ -364,8 +364,8 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
  <Reveal>
  <div style={{ textAlign: "center", marginBottom: 32 }}>
  <span className="badge-heroic" style={{ padding: "5px 12px", fontSize: 9, borderRadius: 99, background: "rgba(47,143,78,0.1)", color: "#2F8F4E", border: "1px solid rgba(47,143,78,0.2)", fontWeight: 800, letterSpacing: "0.08em" }}>DIGITAL TRANSFORMATION</span>
- <h2 className="fnt" style={{ fontSize: "clamp(24px,4vw,42px)", fontWeight: 300, color: "#1C3A2B", marginTop: 12, marginBottom: 8 }}>Ciburial Smart Hub</h2>
- <p style={{ color: "#5A4A40", fontSize: "clamp(11px,2.5vw,14px)", maxWidth: 500, margin: "0 auto", fontWeight: 500, lineHeight: 1.5 }}>Pusat kendali dan layanan warga berbasis teknologi.</p>
+ <h2 className="fnt" style={{ fontSize: "clamp(26px,4.5vw,40px)", fontWeight: 300, color: "#1C3A2B", marginTop: 12, marginBottom: 8, letterSpacing: "-.02em" }}>Ciburial Smart Hub</h2>
+ <p style={{ color: "#5A4A40", fontSize: "clamp(12px,2.5vw,14px)", maxWidth: 500, margin: "0 auto", fontWeight: 500, lineHeight: 1.6 }}>Pusat kendali dan layanan warga berbasis teknologi.</p>
  </div>
  </Reveal>
 
@@ -480,8 +480,8 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
  </div>
 
  <div style={{ minHeight: 0 }}>
- <h3 style={{ fontSize: "clamp(11px, 2.8vw, 14px)", fontWeight: 700, color: "#1C3A2B", marginBottom: 2, lineHeight: 1.2 }}>{item.title}</h3>
- <p style={{ fontSize: "clamp(9px, 2.2vw, 11px)", color: "#5A4A40", lineHeight: 1.3, fontWeight: 500 }}>{item.desc}</p>
+ <h3 style={{ fontSize: "clamp(12px, 3vw, 14px)", fontWeight: 700, color: "#1C3A2B", marginBottom: 2, lineHeight: 1.2 }}>{item.title}</h3>
+ <p style={{ fontSize: "clamp(10px, 2.5vw, 11px)", color: "#5A4A40", lineHeight: 1.4, fontWeight: 500 }}>{item.desc}</p>
  </div>
 
  {!item.comingSoon && (
@@ -536,10 +536,9 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
  <div style={{ borderRadius: 28, overflow: "hidden", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 300px),1fr))" }}>
  <div className="donasi-panel-dark" style={{ background: "var(--fo)", padding: "clamp(32px, 6vw, 60px) clamp(24px, 5vw, 52px)" }}>
  <div className="dl" />
- <h2 className="fnt" style={{ fontSize: "clamp(28px, 5vw, 36px)", fontWeight: 300, color: "var(--cr)", lineHeight: 1.15, letterSpacing: "-.02em", marginBottom: 14 }}>Donasi<br />Kemakmuran<br />Kampung</h2>
- <p style={{ fontSize: 13, lineHeight: 1.85, color: "rgba(250,248,243,.5)", marginBottom: 28 }}>
- Target RAB Global <strong style={{ color: "var(--gl)" }}>Rp 250.000.000</strong>.<br />
- Dukung Balai Warga, Smart Farming, Learning Hub, Smart PJU, dan Internet Desa.
+ <h2 className="fnt" style={{ fontSize: "clamp(26px, 4.5vw, 40px)", fontWeight: 300, color: "var(--cr)", lineHeight: 1.2, letterSpacing: "-.02em", marginBottom: 14 }}>Donasi Kemakmuran<br />Kampung Ciburial</h2>
+ <p style={{ fontSize: "clamp(12px,2.5vw,13px)", lineHeight: 1.75, color: "rgba(250,248,243,.5)", marginBottom: 28 }}>
+ Target RAB Global <strong style={{ color: "var(--gl)" }}>Rp 250.000.000</strong>. Dukung Balai Warga, Smart Farming, Learning Hub, Smart PJU, dan Internet Desa.
  </p>
 
  {/* PROGRESS BAR */}
