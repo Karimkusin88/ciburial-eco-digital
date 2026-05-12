@@ -35,7 +35,9 @@ interface OrderForm {
   nama: string;
   no_wa: string;
   alamat: string;
+  desa: string;
   kecamatan: string;
+  kode_pos: string;
   catatan: string;
   metode_kirim: "ambil_sendiri" | "kurir_kampung" | "jne" | "jnt" | "sicepat";
   metode_bayar: "qris" | "gopay" | "ovo" | "dana" | "va_bca" | "va_bni" | "va_bri" | "va_mandiri";
@@ -61,7 +63,7 @@ const METODE_BAYAR = [
 ];
 
 const emptyOrder: OrderForm = {
-  nama: "", no_wa: "", alamat: "", kecamatan: "Bungbulang", catatan: "",
+  nama: "", no_wa: "", alamat: "", desa: "", kecamatan: "Bungbulang", kode_pos: "", catatan: "",
   metode_kirim: "ambil_sendiri", metode_bayar: "qris",
 };
 
@@ -72,7 +74,7 @@ function ProductCard({ p, photos, sellerName, onDetail, onBuy, onAddToCart }: an
     if (!photos || photos.length < 2) return;
     const t = setInterval(() => {
       setPhotoIdx(prev => (prev + 1) % photos.length);
-    }, 2500); // ganti tiap 2.5 detik (slide otomatis pas diemin di beranda marketplace)
+    }, 4000); // ganti tiap 4 detik (lebih lambat)
     return () => clearInterval(t);
   }, [photos]);
 
@@ -88,58 +90,78 @@ function ProductCard({ p, photos, sellerName, onDetail, onBuy, onAddToCart }: an
         flexDirection: "column",
         position: "relative",
         overflow: "hidden",
-        boxShadow: "0 1px 4px rgba(0,0,0,.05)"
+        boxShadow: "0 1px 4px rgba(0,0,0,.05)",
+        height: "100%"
       }}
     >
 
       {/* Product Image */}
-      <div style={{ aspectRatio: "1/1", position: "relative", overflow: "hidden", borderBottom: "1px solid #E5E7E9" }}>
-        {photos[photoIdx] ? (
-          <img src={photos[photoIdx]} alt={p.nama} style={{ width: "100%", height: "100%", objectFit: "cover", transition: "opacity 0.5s ease-in-out" }} className="product-img" key={photos[photoIdx]} />
+      <div style={{ aspectRatio: "1/1", position: "relative", overflow: "hidden", borderBottom: "1px solid #E5E7E9", background: "linear-gradient(135deg,rgba(79,191,126,.08),rgba(47,143,78,.04))" }}>
+        {photos && photos.length > 0 ? (
+          photos.map((photo: string, idx: number) => (
+            <img 
+              key={idx}
+              src={photo} 
+              alt={p.nama} 
+              className="product-img"
+              style={{ 
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%", 
+                height: "100%", 
+                objectFit: "cover", 
+                transition: "opacity 1.2s ease-in-out",
+                opacity: idx === photoIdx ? 1 : 0,
+                zIndex: idx === photoIdx ? 1 : 0
+              }} 
+            />
+          ))
         ) : (
-          <span style={{ fontSize: 64, display: "flex", alignItems: "center", justifyContent: "center", height: "100%" }}>{p.icon || <TreePine size={64} strokeWidth={1} />}</span>
+          <span style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", fontSize: 64, display: "flex", alignItems: "center", justifyContent: "center" }}>{p.icon || <TreePine size={64} strokeWidth={1} />}</span>
         )}
       </div>
 
       {/* Info */}
-      <div style={{ padding: 12, display: "flex", flexDirection: "column", gap: 4, flex: 1 }}>
-        <div style={{ fontSize: 13, color: "#31353B", lineHeight: 1.4, height: 36, overflow: "hidden", fontWeight: 500 }}>{p.nama}</div>
+      <div style={{ padding: "10px 10px 12px", display: "flex", flexDirection: "column", gap: 3, flex: 1 }}>
+        <div style={{ fontSize: 12, color: "#31353B", lineHeight: 1.3, height: 31, overflow: "hidden", fontWeight: 500 }}>{p.nama}</div>
 
         {/* Mock original price */}
-        <div style={{ fontSize: 10, color: "#8E9094", textDecoration: "line-through", marginTop: 4 }}>{fRp(p.harga * 1.2)}</div>
+        <div style={{ fontSize: 9, color: "#8E9094", textDecoration: "line-through", marginTop: 2 }}>{fRp(p.harga * 1.2)}</div>
 
         {/* Current price */}
-        <div className="fnt" style={{ fontSize: 16, fontWeight: 800, color: "#E74C3C" }}>
-          {fRp(p.harga)} <span style={{ fontSize: 10, color: "#8E9094", fontWeight: 400 }}>/ pcs</span>
+        <div className="fnt" style={{ fontSize: 15, fontWeight: 800, color: "#E74C3C" }}>
+          {fRp(p.harga)} <span style={{ fontSize: 9, color: "#8E9094", fontWeight: 400 }}>/ pcs</span>
         </div>
 
         {/* Seller Info */}
-        <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 6, fontSize: 10, color: "#6D7588", fontWeight: 600 }}>
-          <User size={12} /> <span style={{ textTransform: "uppercase" }}>{sellerName}</span> <CheckCircle size={12} color="#00AA5B" />
+        <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 4, fontSize: 9, color: "#6D7588", fontWeight: 600 }}>
+          <User size={10} /> <span style={{ textTransform: "uppercase", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{sellerName}</span> <CheckCircle size={10} color="#00AA5B" style={{ flexShrink: 0 }} />
         </div>
 
-        {/* Buttons (Beli Sekarang & Keranjang) */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginTop: 12 }}>
-          {/* Tombol Beli Langsung (Teal/Blue) */}
+        {/* Buttons (Beli & Keranjang) */}
+        <div style={{ display: "flex", gap: 5, marginTop: "auto", paddingTop: 8, width: "100%", alignItems: "center" }}>
+          {/* Tombol Beli Langsung */}
           <button
             className="btn-buy-now"
             onClick={(e) => {
               e.stopPropagation();
               onBuy();
             }}
-            style={{ padding: "6px 0", background: "#008C8C", border: "none", borderRadius: 4, fontSize: 11, fontWeight: 700, color: "#FFF", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}>
-            <ShoppingCart size={14} /> Beli Sekarang
+            style={{ flex: 1, height: 26, minWidth: 0, padding: 0, background: "#008C8C", border: "none", borderRadius: 4, fontSize: 11, fontWeight: 700, color: "#FFF", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+            Beli
           </button>
 
-          {/* Tombol Tambah Keranjang (Yellow/Orange replacing Lokasi) */}
+          {/* Tombol Tambah Keranjang */}
           <button
             className="btn-add-cart"
             onClick={(e) => {
               e.stopPropagation();
               onAddToCart();
             }}
-            style={{ padding: "6px 0", background: "#D99511", border: "none", borderRadius: 4, fontSize: 11, fontWeight: 700, color: "#FFF", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}>
-            <Plus size={14} /> Keranjang
+            title="Tambah ke Keranjang"
+            style={{ width: 28, height: 26, flexShrink: 0, padding: 0, background: "#FFF", border: "1.2px solid #008C8C", borderRadius: 4, color: "#008C8C", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <ShoppingCart size={13} strokeWidth={2.5} />
           </button>
         </div>
       </div>
@@ -499,7 +521,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
           </button>
           <h2 style={{ margin: "0 0 24px", color: "#1C3A2B", fontSize: "clamp(22px,4vw,30px)", fontWeight: 800 }}><FileText size={22} style={{ display: "inline", marginRight: 6 }} /> Detail Pesanan</h2>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "clamp(20px, 4vw, 32px)" }} className="responsive-grid">
             {/* Form kiri */}
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               {/* Identitas */}
@@ -537,8 +559,27 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                 {orderForm.metode_kirim !== "ambil_sendiri" && (
                   <div style={{ marginTop: 12 }}>
                     <label style={{ fontSize: 11, fontWeight: 700, color: "#6b7c6d", letterSpacing: "0.06em", textTransform: "uppercase" as const, display: "block", marginBottom: 4 }}>Alamat Lengkap *</label>
-                    <textarea value={orderForm.alamat} onChange={e => setOrderForm({ ...orderForm, alamat: e.target.value })} placeholder="Nama jalan, RT/RW, desa..." rows={2}
-                      style={{ width: "100%", padding: "clamp(6px, 2vw, 9px) clamp(8px, 2vw, 12px)", borderRadius: 10, border: "1.5px solid rgba(47,143,78,.2)", fontSize: 13, outline: "none", resize: "none" as const, boxSizing: "border-box" as const, fontFamily: "inherit" }} />
+                    <textarea value={orderForm.alamat} onChange={e => setOrderForm({ ...orderForm, alamat: e.target.value })} placeholder="Nama jalan, RT/RW, blok/nomor rumah..." rows={2}
+                      style={{ width: "100%", padding: "clamp(6px, 2vw, 9px) clamp(8px, 2vw, 12px)", borderRadius: 10, border: "1.5px solid rgba(47,143,78,.2)", fontSize: 13, outline: "none", resize: "none" as const, boxSizing: "border-box" as const, fontFamily: "inherit", marginBottom: 12 }} />
+                    
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 12 }}>
+                      <div>
+                        <label style={{ fontSize: 11, fontWeight: 700, color: "#6b7c6d", letterSpacing: "0.06em", textTransform: "uppercase" as const, display: "block", marginBottom: 4 }}>Desa *</label>
+                        <input value={orderForm.desa} onChange={e => setOrderForm({ ...orderForm, desa: e.target.value })} placeholder="Contoh: Hanjuang"
+                          style={{ width: "100%", padding: "clamp(6px, 2vw, 9px) clamp(8px, 2vw, 12px)", borderRadius: 10, border: "1.5px solid rgba(47,143,78,.2)", fontSize: 13, outline: "none", boxSizing: "border-box" as const }} />
+                      </div>
+                      <div>
+                        <label style={{ fontSize: 11, fontWeight: 700, color: "#6b7c6d", letterSpacing: "0.06em", textTransform: "uppercase" as const, display: "block", marginBottom: 4 }}>Kecamatan *</label>
+                        <input value={orderForm.kecamatan} onChange={e => setOrderForm({ ...orderForm, kecamatan: e.target.value })} placeholder="Kecamatan"
+                          style={{ width: "100%", padding: "clamp(6px, 2vw, 9px) clamp(8px, 2vw, 12px)", borderRadius: 10, border: "1.5px solid rgba(47,143,78,.2)", fontSize: 13, outline: "none", boxSizing: "border-box" as const }} />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label style={{ fontSize: 11, fontWeight: 700, color: "#6b7c6d", letterSpacing: "0.06em", textTransform: "uppercase" as const, display: "block", marginBottom: 4 }}>Kode Pos *</label>
+                      <input type="number" value={orderForm.kode_pos} onChange={e => setOrderForm({ ...orderForm, kode_pos: e.target.value })} placeholder="Contoh: 44165"
+                        style={{ width: "100%", padding: "clamp(6px, 2vw, 9px) clamp(8px, 2vw, 12px)", borderRadius: 10, border: "1.5px solid rgba(47,143,78,.2)", fontSize: 13, outline: "none", boxSizing: "border-box" as const }} />
+                    </div>
                   </div>
                 )}
               </div>
@@ -906,32 +947,32 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
           </div>
 
           {/* Reviews Section */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "clamp(20px, 5vw, 40px)" }} className="responsive-grid">
             {/* Rating Distribution (Left) */}
-            <div style={{ background: "white", borderRadius: 16, padding: 28, border: "1.5px solid rgba(47,143,78,.12)", boxShadow: "0 4px 16px rgba(47,143,78,.06)" }}>
-              <h3 style={{ margin: "0 0 24px", color: "#1C3A2B", fontSize: 16, fontWeight: 800 }}>⭐ Rating & Ulasan</h3>
+            <div style={{ background: "white", borderRadius: 16, padding: "clamp(16px, 4vw, 28px)", border: "1.5px solid rgba(47,143,78,.12)", boxShadow: "0 4px 16px rgba(47,143,78,.06)" }}>
+              <h3 style={{ margin: "0 0 24px", color: "#1C3A2B", fontSize: "clamp(14px, 3.5vw, 16px)", fontWeight: 800 }}>⭐ Rating & Ulasan</h3>
 
               {/* Big Rating Display */}
               <div style={{ textAlign: "center", marginBottom: 24, paddingBottom: 24, borderBottom: "2px solid rgba(47,143,78,.15)" }}>
-                <div style={{ fontSize: 56, fontWeight: 900, color: "#2F8F4E", marginBottom: 8 }}>{totalRating}</div>
-                <div style={{ fontSize: 28, color: "#FFC400", marginBottom: 8 }}>{"⭐".repeat(Math.round(parseFloat(totalRating)))}</div>
-                <div style={{ fontSize: 13, color: "#6b7c6d", fontWeight: 600 }}>Berdasarkan {reviews.length} ulasan</div>
+                <div style={{ fontSize: "clamp(36px, 10vw, 56px)", fontWeight: 900, color: "#2F8F4E", marginBottom: 4, lineHeight: 1 }}>{totalRating}</div>
+                <div style={{ fontSize: "clamp(18px, 6vw, 28px)", color: "#FFC400", marginBottom: 8 }}>{"⭐".repeat(Math.round(parseFloat(totalRating)))}</div>
+                <div style={{ fontSize: "clamp(11px, 3vw, 13px)", color: "#6b7c6d", fontWeight: 600 }}>Berdasarkan {reviews.length} ulasan</div>
               </div>
 
               {/* Rating Distribution Bars */}
               {[5, 4, 3, 2, 1].map(star => (
                 <div key={star} style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: "#1C3A2B", minWidth: 30 }}>{star}⭐</span>
+                  <span style={{ fontSize: "clamp(11px, 3vw, 13px)", fontWeight: 700, color: "#1C3A2B", minWidth: 26 }}>{star}⭐</span>
                   <div style={{ flex: 1, height: 8, background: "rgba(47,143,78,.1)", borderRadius: 4, overflow: "hidden" }}>
                     <div style={{ height: "100%", background: "linear-gradient(90deg,#2F8F4E,#4FBF7E)", width: `${reviews.length > 0 ? (ratingDist[star as keyof typeof ratingDist] / reviews.length * 100) : 0}%`, transition: "width 0.6s ease" }} />
                   </div>
-                  <span style={{ fontSize: 12, color: "#6b7c6d", fontWeight: 600, minWidth: 30 }}>{ratingDist[star as keyof typeof ratingDist]}</span>
+                  <span style={{ fontSize: "clamp(10px, 2.5vw, 12px)", color: "#6b7c6d", fontWeight: 600, minWidth: 24 }}>{ratingDist[star as keyof typeof ratingDist]}</span>
                 </div>
               ))}
             </div>
 
             {/* Form Tambah Review (Right) */}
-            <div style={{ background: "white", borderRadius: 16, padding: 28, border: "1.5px solid rgba(47,143,78,.12)", boxShadow: "0 4px 16px rgba(47,143,78,.06)" }}>
+            <div style={{ background: "white", borderRadius: 16, padding: "clamp(16px, 4vw, 28px)", border: "1.5px solid rgba(47,143,78,.12)", boxShadow: "0 4px 16px rgba(47,143,78,.06)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: showReviewForm ? 20 : 0 }}>
                 <h3 style={{ margin: 0, color: "#1C3A2B", fontSize: 16, fontWeight: 800 }}>Berikan Ulasan Anda</h3>
                 <button onClick={() => setShowReviewForm(!showReviewForm)} style={{ background: "none", border: "1.5px solid #2F8F4E", borderRadius: 8, padding: "6px 12px", fontSize: 12, fontWeight: 700, color: "#2F8F4E", cursor: "pointer", transition: "all 0.3s" }}>{showReviewForm ? "Batal" : "Tulis Ulasan"}</button>
@@ -1296,11 +1337,11 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
               <p style={{ margin: "8px 0 0 0", fontSize: 12, color: "#6b7c6d", fontWeight: 500 }}>Aman & Terpercaya</p>
             </div>
 
-            {/* Payment Methods Grid - Compact */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))", gap: 12, maxWidth: 900, margin: "0 auto", padding: "0 clamp(16px, 4vw, 32px)" }}>
+            {/* Payment Methods Grid - 4 Columns Mobile */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "clamp(4px, 2vw, 12px)", maxWidth: 900, margin: "0 auto", padding: "0 clamp(12px, 3vw, 32px)" }}>
 
               {/* E-Wallet */}
-              <div style={{ background: "rgba(79,191,126,.03)", borderRadius: 12, padding: "14px 12px", border: "1px solid rgba(47,143,78,.1)", textAlign: "center", transition: "all 0.25s", cursor: "default" }}
+              <div style={{ background: "rgba(79,191,126,.03)", borderRadius: 10, padding: "clamp(8px, 1.5vw, 14px) clamp(2px, 1vw, 12px)", border: "1px solid rgba(47,143,78,.1)", textAlign: "center", transition: "all 0.25s", cursor: "default", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.background = "rgba(79,191,126,.06)";
                   e.currentTarget.style.borderColor = "rgba(47,143,78,.2)";
@@ -1310,13 +1351,13 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                   e.currentTarget.style.borderColor = "rgba(47,143,78,.1)";
                 }}
               >
-                <div style={{ display: "flex", justifyContent: "center", marginBottom: 6 }}><Smartphone size={20} strokeWidth={1.5} color="#2F8F4E" /></div>
-                <h4 style={{ margin: "0 0 3px 0", fontSize: 11, fontWeight: 700, color: "#1C3A2B" }}>E-Wallet</h4>
-                <p style={{ margin: 0, fontSize: 9, color: "#6b7c6d" }}>GoPay, OVO, DANA</p>
+                <div style={{ marginBottom: 4 }}><Smartphone size={16} strokeWidth={1.5} color="#2F8F4E" style={{ width: "clamp(14px, 3.5vw, 20px)", height: "auto" }} /></div>
+                <h4 style={{ margin: "0 0 2px 0", fontSize: "clamp(9px, 2.2vw, 11px)", fontWeight: 700, color: "#1C3A2B", width: "100%", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>E-Wallet</h4>
+                <p style={{ margin: 0, fontSize: "clamp(7.5px, 1.8vw, 9px)", color: "#6b7c6d", width: "100%", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>GoPay, dkk</p>
               </div>
 
               {/* QRIS */}
-              <div style={{ background: "rgba(75,52,148,.03)", borderRadius: 12, padding: "14px 12px", border: "1px solid rgba(47,143,78,.1)", textAlign: "center", transition: "all 0.25s", cursor: "default" }}
+              <div style={{ background: "rgba(75,52,148,.03)", borderRadius: 10, padding: "clamp(8px, 1.5vw, 14px) clamp(2px, 1vw, 12px)", border: "1px solid rgba(47,143,78,.1)", textAlign: "center", transition: "all 0.25s", cursor: "default", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.background = "rgba(75,52,148,.06)";
                   e.currentTarget.style.borderColor = "rgba(47,143,78,.2)";
@@ -1326,13 +1367,13 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                   e.currentTarget.style.borderColor = "rgba(47,143,78,.1)";
                 }}
               >
-                <div style={{ display: "flex", justifyContent: "center", marginBottom: 6 }}><QrCode size={20} strokeWidth={1.5} color="#4B348F" /></div>
-                <h4 style={{ margin: "0 0 3px 0", fontSize: 11, fontWeight: 700, color: "#1C3A2B" }}>QRIS</h4>
-                <p style={{ margin: 0, fontSize: 9, color: "#6b7c6d" }}>Instan</p>
+                <div style={{ marginBottom: 4 }}><QrCode size={16} strokeWidth={1.5} color="#4B348F" style={{ width: "clamp(14px, 3.5vw, 20px)", height: "auto" }} /></div>
+                <h4 style={{ margin: "0 0 2px 0", fontSize: "clamp(9px, 2.2vw, 11px)", fontWeight: 700, color: "#1C3A2B", width: "100%", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>QRIS</h4>
+                <p style={{ margin: 0, fontSize: "clamp(7.5px, 1.8vw, 9px)", color: "#6b7c6d", width: "100%", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>Instan</p>
               </div>
 
               {/* Bank Transfers */}
-              <div style={{ background: "rgba(220,53,69,.03)", borderRadius: 12, padding: "14px 12px", border: "1px solid rgba(47,143,78,.1)", textAlign: "center", transition: "all 0.25s", cursor: "default" }}
+              <div style={{ background: "rgba(220,53,69,.03)", borderRadius: 10, padding: "clamp(8px, 1.5vw, 14px) clamp(2px, 1vw, 12px)", border: "1px solid rgba(47,143,78,.1)", textAlign: "center", transition: "all 0.25s", cursor: "default", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.background = "rgba(220,53,69,.06)";
                   e.currentTarget.style.borderColor = "rgba(47,143,78,.2)";
@@ -1342,13 +1383,13 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                   e.currentTarget.style.borderColor = "rgba(47,143,78,.1)";
                 }}
               >
-                <div style={{ display: "flex", justifyContent: "center", marginBottom: 6 }}><Building2 size={20} strokeWidth={1.5} color="#B8472F" /></div>
-                <h4 style={{ margin: "0 0 3px 0", fontSize: 11, fontWeight: 700, color: "#1C3A2B" }}>Bank</h4>
-                <p style={{ margin: 0, fontSize: 9, color: "#6b7c6d" }}>BCA, BNI, BRI</p>
+                <div style={{ marginBottom: 4 }}><Building2 size={16} strokeWidth={1.5} color="#B8472F" style={{ width: "clamp(14px, 3.5vw, 20px)", height: "auto" }} /></div>
+                <h4 style={{ margin: "0 0 2px 0", fontSize: "clamp(9px, 2.2vw, 11px)", fontWeight: 700, color: "#1C3A2B", width: "100%", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>Bank</h4>
+                <p style={{ margin: 0, fontSize: "clamp(7.5px, 1.8vw, 9px)", color: "#6b7c6d", width: "100%", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>BCA, BNI, dll</p>
               </div>
 
               {/* Secure Payment */}
-              <div style={{ background: "rgba(255,193,7,.03)", borderRadius: 12, padding: "14px 12px", border: "1px solid rgba(47,143,78,.1)", textAlign: "center", transition: "all 0.25s", cursor: "default" }}
+              <div style={{ background: "rgba(255,193,7,.03)", borderRadius: 10, padding: "clamp(8px, 1.5vw, 14px) clamp(2px, 1vw, 12px)", border: "1px solid rgba(47,143,78,.1)", textAlign: "center", transition: "all 0.25s", cursor: "default", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.background = "rgba(255,193,7,.06)";
                   e.currentTarget.style.borderColor = "rgba(47,143,78,.2)";
@@ -1358,9 +1399,9 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                   e.currentTarget.style.borderColor = "rgba(47,143,78,.1)";
                 }}
               >
-                <div style={{ display: "flex", justifyContent: "center", marginBottom: 6 }}><Shield size={20} strokeWidth={1.5} color="#D4AC5A" /></div>
-                <h4 style={{ margin: "0 0 3px 0", fontSize: 11, fontWeight: 700, color: "#1C3A2B" }}>Aman</h4>
-                <p style={{ margin: 0, fontSize: 9, color: "#6b7c6d" }}>Midtrans</p>
+                <div style={{ marginBottom: 4 }}><Shield size={16} strokeWidth={1.5} color="#D4AC5A" style={{ width: "clamp(14px, 3.5vw, 20px)", height: "auto" }} /></div>
+                <h4 style={{ margin: "0 0 2px 0", fontSize: "clamp(9px, 2.2vw, 11px)", fontWeight: 700, color: "#1C3A2B", width: "100%", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>Aman</h4>
+                <p style={{ margin: 0, fontSize: "clamp(7.5px, 1.8vw, 9px)", color: "#6b7c6d", width: "100%", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>Midtrans</p>
               </div>
             </div>
           </div>
