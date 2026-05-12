@@ -18,6 +18,14 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;backg
 .fnt{font-family:var(--font-cormorant,'Cormorant Garamond'),serif;}
 .font-sans{font-family:var(--font-dm-sans,'DM Sans'),sans-serif;}
 
+/* ─── HIDE VERCEL TOOLBAR ─── */
+#vercel-toolbar-wrapper,
+#vercel-toolbar,
+vercel-toolbar,
+[data-vercel-toolbar],
+.__vercel_toolbar,
+.__vercel-toolbar { display: none !important; visibility: hidden !important; }
+
 /* ─── ANIMATIONS ─── */
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(30px); }
