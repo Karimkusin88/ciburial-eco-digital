@@ -1,6 +1,6 @@
 // app/api/ai/route.ts
 // ─────────────────────────────────────────────────────────────────────────
-// Ciburial AI — Groq + Tool Calling + Agentic Loop
+// Ciburial AI — Groq + Tool Calling + Agentic Loop + Vision
 // Support: Bahasa Indonesia & Sunda, context-aware, multi-step reasoning
 // ─────────────────────────────────────────────────────────────────────────
 import { NextRequest, NextResponse } from "next/server";
@@ -24,51 +24,97 @@ function checkRateLimit(ip: string): boolean {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   SYSTEM PROMPT — Multi-language (ID + Sunda), Ciburial-aware
+   MODEL CONFIG
+   - Text-only: llama-3.3-70b-versatile (cepat, cerdas)
+   - Vision: meta-llama/llama-4-scout-17b-16e-instruct (support gambar)
    ═══════════════════════════════════════════════════════════════════════ */
-const SYSTEM_PROMPT = `Kamu adalah **Ciburial AI**, asisten digital resmi Kampung Ciburial Eco-Digital Village di Garut, Jawa Barat.
+const MODEL_TEXT   = "llama-3.3-70b-versatile";
+const MODEL_VISION = "meta-llama/llama-4-scout-17b-16e-instruct";
+const GROQ_URL     = "https://api.groq.com/openai/v1/chat/completions";
+const MAX_ITERATIONS = 5;
 
-═══ IDENTITAS ═══
-- Nama: Ciburial AI
-- Asal: Kampung Ciburial, Desa Hanjuang, Kec. Bungbulang, Kab. Garut
-- Website: ciburial.my.id
-- Dibuat oleh: Ciburial Makers (dipimpin Ubay Rahmat H.)
+/* ═══════════════════════════════════════════════════════════════════════
+   SYSTEM PROMPT — Lengkap, konteks web utama, langsung ke inti
+   ═══════════════════════════════════════════════════════════════════════ */
+const SYSTEM_PROMPT = `Kamu adalah **Ciburial AI**, asisten digital resmi Kampung Ciburial Eco-Digital Village.
 
-═══ KEMAMPUAN UTAMA ═══
-Kamu punya akses ke TOOLS real-time untuk menjawab pertanyaan warga secara akurat:
-1. **get_jadwal_kegiatan** — jadwal kegiatan/agenda kampung
-2. **get_info_posyandu** — statistik balita, stunting, kesehatan
-3. **get_info_bank_sampah** — total setoran sampah & poin warga
-4. **get_voting_aktif** — musyawarah / voting yang sedang berjalan
-5. **get_struktur_organisasi** — pengurus, RT/RW/pemuda/DKM
-6. **get_transparansi_dana** — saldo donasi, pemasukan & alokasi
-7. **get_marketplace_produk** — produk warga yang dijual
-8. **submit_pengaduan** — buat laporan pengaduan warga
+═══ IDENTITAS KAMPUNG ═══
+- Nama Kampung: Kp. Ciburial, Desa Hanjuang, Kec. Bungbulang, Kab. Garut, Jawa Barat
+- Website: ciburial.my.id (ciburial-eco-digital.vercel.app)
+- Founder & Builder: Ubay Rahmat H. (dipimpin Ciburial Makers)
+- Didirikan: 2026 — Desa percontohan digital & ramah lingkungan pertama di Garut
+- Motto: "Start small. Build real. Create impact." & "Inovasi Desa Mandiri Berbasis Kearifan Lokal dan Teknologi Masa Depan"
 
-GUNAKAN TOOLS ini ketika user nanya hal spesifik tentang Ciburial. Jangan jawab ngarang — selalu cek data dulu lewat tool.
+═══ PROGRAM & LAYANAN UTAMA (Ciburial Smart Hub) ═══
+1. **E-Voting** (/voting) — Musyawarah digital & aman untuk warga
+2. **Posyandu Pintar** (/posyandu) — Tracking gizi & kesehatan balita, deteksi stunting
+3. **Monitoring Ronda** (/ronda) — Keamanan real-time berbasis NFC tap
+4. **Zakat Digital** (/zakat) — Cek kewajiban & hak zakat fitrah
+5. **Layanan Aduan** (/pengaduan) — Lapor masalah fasilitas publik (lampu mati, jalan rusak, dll)
+6. **Tukar Poin / Eco-Reward** (/tukar-poin) — Mini ATM & dompet reward dari setor sampah
+7. **Learning Hub** (/learning-hub) — E-Perpustakaan, Lab Komputer, video pelatihan digital
+8. **Bank Sampah Digital** — Warga setor sampah pilah, dapat poin, tukar hadiah
+9. **Ciburial AI** (/ai) — Asisten digital kampung (kamu sendiri)
+10. **Kalender Kegiatan** (/kalender) — Agenda & jadwal kampung
+11. **Marketplace** (/?tab=marketplace) — Produk lokal warga: sayur organik, kerajinan bambu, kompos
+12. **Cek Pesanan** (/cek-pesanan) & **Tracking** (/tracking) — Status pesanan marketplace
+13. **Transparansi Dana** (/?tab=transparansi) — Laporan keuangan kampung real-time
+
+═══ PRODUK UNGGULAN LOKAL ═══
+- Lampu Hex-Bamboo (Smart PJU berbahan bambu + panel surya)
+- Kerajinan anyam bambu
+- Sayur & hasil tani organik
+- Pupuk kompos dari bank sampah
+
+═══ RAB & DONASI ═══
+- Target dana: Rp 250.000.000
+- Alokasi:
+  • Balai Serba Guna & Ruang Publik: Rp 80.000.000
+  • Smart Farming & Peternakan Modern: Rp 60.000.000
+  • Learning Hub (PC, server, buku): Rp 45.000.000
+  • Smart PJU & Keamanan (panel surya, CCTV): Rp 25.000.000
+  • Jaringan Internet RT/RW Net: Rp 20.000.000
+  • Operasional Digital & Eco-Waste: Rp 20.000.000
+- Cara donasi:
+  • QRIS & E-Wallet: via Midtrans (langsung di web)
+  • Transfer Bank: SeaBank (Kode 901) — No. Rek: 90135555066 a.n. Ubay Rahmat H
+  • Crypto/Web3: 0x71723715478b344164e992b49ae1fCEb6467888B (Polygon, BSC, ETH, dll)
+
+═══ TECH STACK KAMPUNG ═══
+- Framework: Next.js 16 + TypeScript + Supabase (PostgreSQL)
+- Auth: PIN 4-digit + NFC (bukan Supabase Auth bawaan)
+- Styling: Tailwind CSS v4 + HEROIC Design System
+- AI: Groq API — Llama 3.3 70B + Llama 4 Scout (vision)
+- NFC: Web NFC API / NDEFReader — Chrome Android
+- Payment: Midtrans (QRIS, e-wallet, VA)
+- Deploy: Vercel
+
+═══ KEMAMPUAN TOOLS REAL-TIME ═══
+Kamu bisa akses data kampung secara live via tools:
+- get_jadwal_kegiatan — agenda & event kampung
+- get_info_posyandu — data balita, gizi, stunting
+- get_info_bank_sampah — statistik setoran sampah & poin
+- get_voting_aktif — musyawarah / voting aktif
+- get_struktur_organisasi — pengurus RT/RW/DKM/pemuda
+- get_transparansi_dana — saldo & laporan keuangan
+- get_marketplace_produk — daftar produk warga
+- submit_pengaduan — kirim laporan masalah
+
+PAKAI TOOLS kalau user tanya data spesifik Ciburial. Jangan ngarang — cek data dulu.
 
 ═══ BAHASA ═══
-- **Default**: Bahasa Indonesia yang natural, santai, akrab (bukan formal kaku)
-- **Bahasa Sunda**: Jika user bicara Sunda ATAU minta pakai Sunda, balas pakai Sunda halus (lemes) yang pantas untuk warga kampung. Contoh:
-  • "punten" (maaf/permisi), "hatur nuhun" (terima kasih)
-  • "Bapa/Ibu" (untuk tua), "kang/teteh" (untuk sebaya)
-  • "mangga" (silakan), "tiasa" (bisa), "aya" (ada)
-- **Bahasa Inggris**: Boleh campur kalau konteks teknis / coding
+- Default: Bahasa Indonesia natural, santai, akrab
+- Sunda: Balas pakai Sunda lemes kalau user pakai Sunda (punten, hatur nuhun, mangga, kang/teteh)
+- Inggris: Boleh campur untuk konteks coding/teknis
 
-═══ GAYA KOMUNIKASI ═══
-- Jawab langsung ke inti, jangan basa-basi
-- Tulis seperti orang yang benar-benar paham, bukan robot
-- Kalau data dari tool kosong, jujur bilang belum ada datanya
-- Kalau butuh info lebih, arahkan ke fitur yang tepat (misal: "buka menu Pengaduan di web")
-- Untuk coding/belajar: jelas, ada contoh, step by step
-
-═══ KONTEKS CIBURIAL ═══
-- Program unggulan: Smart PJU berbahan bambu, Bank Sampah Digital, Learning Hub, Posyandu Pintar
-- Produk lokal: Lampu Hex-Bamboo, kerajinan anyam, sayur organik, kompos
-- Visi: Desa percontohan digital & ramah lingkungan di Indonesia
-- Tabel database internal terhubung real-time via Supabase
-
-Kalau ada pertanyaan di luar Ciburial (belajar umum, coding, dll) — jawab seperti AI biasa tanpa tools.`;
+═══ GAYA MENJAWAB ═══
+- LANGSUNG ke inti, tidak bertele-tele
+- Jangan ulang pertanyaan user
+- Kalau data kosong → jujur bilang belum ada
+- Kalau ada foto → analisis dulu, baru jawab
+- Untuk coding → ada contoh kode + step-by-step
+- Untuk info kampung → gunakan tools real-time
+- Arahkan ke halaman web yang tepat kalau relevan (misal: "buka /pengaduan di web")`;
 
 /* ═══════════════════════════════════════════════════════════════════════
    TOOLS — OpenAI / Groq function-calling format
@@ -78,12 +124,12 @@ const TOOLS = [
     type: "function",
     function: {
       name: "get_jadwal_kegiatan",
-      description: "Ambil jadwal kegiatan kampung Ciburial. Pakai kalau user nanya agenda, jadwal, kegiatan, acara, atau event apa yang akan / sudah berlangsung di kampung.",
+      description: "Ambil jadwal kegiatan kampung Ciburial. Pakai kalau user nanya agenda, jadwal, kegiatan, acara, atau event.",
       parameters: {
         type: "object",
         properties: {
-          limit: { type: "number", description: "Jumlah kegiatan yang diambil (default 5)" },
-          kategori: { type: "string", description: "Filter kategori kegiatan (optional): gotong-royong, religi, pemuda, dll" },
+          limit: { type: "number", description: "Jumlah kegiatan (default 5)" },
+          kategori: { type: "string", description: "Filter kategori (optional): gotong-royong, religi, pemuda, dll" },
         },
       },
     },
@@ -92,7 +138,7 @@ const TOOLS = [
     type: "function",
     function: {
       name: "get_info_posyandu",
-      description: "Ambil statistik Posyandu kampung Ciburial — jumlah balita, status gizi, stunting. Pakai kalau user nanya soal kesehatan anak, balita, posyandu, gizi, atau stunting.",
+      description: "Ambil statistik Posyandu — jumlah balita, status gizi, stunting. Pakai kalau user nanya kesehatan anak, balita, posyandu, gizi, stunting.",
       parameters: { type: "object", properties: {} },
     },
   },
@@ -100,7 +146,7 @@ const TOOLS = [
     type: "function",
     function: {
       name: "get_info_bank_sampah",
-      description: "Ambil info Bank Sampah — total setoran kg, jumlah warga yang menyetor, total poin. Pakai kalau user nanya bank sampah, daur ulang, setor sampah, atau eco-reward.",
+      description: "Ambil info Bank Sampah — total setoran, warga aktif, total poin. Pakai kalau user nanya bank sampah, daur ulang, setor sampah, eco-reward.",
       parameters: { type: "object", properties: {} },
     },
   },
@@ -108,7 +154,7 @@ const TOOLS = [
     type: "function",
     function: {
       name: "get_voting_aktif",
-      description: "Ambil daftar voting / musyawarah desa yang sedang aktif. Pakai kalau user nanya voting, pemilihan, musyawarah, atau polling kampung.",
+      description: "Ambil daftar voting/musyawarah desa yang aktif. Pakai kalau user nanya voting, pemilihan, musyawarah, polling.",
       parameters: { type: "object", properties: {} },
     },
   },
@@ -116,11 +162,11 @@ const TOOLS = [
     type: "function",
     function: {
       name: "get_struktur_organisasi",
-      description: "Ambil struktur kepengurusan kampung — ketua RT/RW, kepala desa, DKM, pemuda, dll. Pakai kalau user nanya siapa ketua RT/RW, pengurus, tokoh, atau organisasi kampung.",
+      description: "Ambil struktur kepengurusan kampung — ketua RT/RW, DKM, pemuda, dll. Pakai kalau user nanya pengurus, tokoh, atau organisasi kampung.",
       parameters: {
         type: "object",
         properties: {
-          jabatan: { type: "string", description: "Filter jabatan (optional), misal: 'RT 01', 'Ketua Pemuda', 'DKM'" },
+          jabatan: { type: "string", description: "Filter jabatan (optional), misal: 'RT 01', 'Ketua'" },
         },
       },
     },
@@ -129,7 +175,7 @@ const TOOLS = [
     type: "function",
     function: {
       name: "get_transparansi_dana",
-      description: "Ambil info keuangan kampung — saldo, total donasi masuk, pengeluaran, target RAB. Pakai kalau user nanya dana, donasi, saldo, keuangan, atau transparansi.",
+      description: "Ambil info keuangan kampung — saldo, donasi, pengeluaran, target RAB. Pakai kalau user nanya dana, donasi, saldo, keuangan, transparansi.",
       parameters: { type: "object", properties: {} },
     },
   },
@@ -137,7 +183,7 @@ const TOOLS = [
     type: "function",
     function: {
       name: "get_marketplace_produk",
-      description: "Ambil daftar produk yang dijual warga. Pakai kalau user nanya produk lokal, apa yang dijual, marketplace, atau belanja.",
+      description: "Ambil daftar produk yang dijual warga. Pakai kalau user nanya produk lokal, marketplace, atau belanja.",
       parameters: {
         type: "object",
         properties: {
@@ -150,7 +196,7 @@ const TOOLS = [
     type: "function",
     function: {
       name: "submit_pengaduan",
-      description: "Buat laporan pengaduan warga ke sistem. Pakai kalau user ingin lapor masalah: lampu jalan mati, jalan rusak, konflik, keamanan, dll. WAJIB konfirmasi dulu sebelum submit.",
+      description: "Buat laporan pengaduan warga. Pakai kalau user ingin lapor masalah: lampu mati, jalan rusak, keamanan, dll. Konfirmasi dulu sebelum submit.",
       parameters: {
         type: "object",
         properties: {
@@ -177,14 +223,21 @@ async function execTool(name: string, args: any): Promise<string> {
     switch (name) {
       case "get_jadwal_kegiatan": {
         const limit = args?.limit || 5;
-        let q = supabase.from("kegiatan").select("judul, tanggal, kategori, deskripsi").order("tanggal", { ascending: false }).limit(limit);
+        let q = supabase
+          .from("kegiatan")
+          .select("judul, tanggal, kategori, deskripsi")
+          .order("tanggal", { ascending: false })
+          .limit(limit);
         if (args?.kategori) q = q.eq("kategori", args.kategori);
         const { data } = await q;
-        return JSON.stringify(data || []);
+        if (!data || data.length === 0) return JSON.stringify({ keterangan: "Belum ada kegiatan tercatat saat ini." });
+        return JSON.stringify(data);
       }
 
       case "get_info_posyandu": {
-        const { data: anak } = await supabase.from("anak_posyandu").select("nama, status_gizi, tgl_lahir");
+        const { data: anak } = await supabase
+          .from("anak_posyandu")
+          .select("nama, status_gizi, tgl_lahir");
         const total = anak?.length || 0;
         const normal = anak?.filter(a => !a.status_gizi || a.status_gizi === "normal").length || 0;
         const risiko = anak?.filter(a => a.status_gizi === "risiko").length || 0;
@@ -193,7 +246,7 @@ async function execTool(name: string, args: any): Promise<string> {
           total_balita: total,
           gizi_normal: normal,
           gizi_risiko: risiko,
-          stunting: stunting,
+          stunting,
           keterangan: stunting === 0
             ? "Alhamdulillah, tidak ada balita dengan kondisi stunting"
             : `Ada ${stunting} balita yang perlu perhatian khusus`,
@@ -201,55 +254,109 @@ async function execTool(name: string, args: any): Promise<string> {
       }
 
       case "get_info_bank_sampah": {
-        const { data: saldo } = await supabase.from("saldo_poin").select("total_setor_kg, total_poin");
-        const totalKg = saldo?.reduce((s, x) => s + Number(x.total_setor_kg || 0), 0) || 0;
-        const totalPoin = saldo?.reduce((s, x) => s + Number(x.total_poin || 0), 0) || 0;
-        const wargaAktif = saldo?.filter(x => Number(x.total_setor_kg || 0) > 0).length || 0;
+        // Query riwayat_poin untuk data setor sampah
+        const { data: setor } = await supabase
+          .from("riwayat_poin")
+          .select("anggota_id, jumlah, sumber")
+          .eq("sumber", "bank_sampah");
+
+        const { data: poinData } = await supabase
+          .from("saldo_poin")
+          .select("kk_id, total_poin");
+
+        const totalPoin = poinData?.reduce((s, x) => s + Number(x.total_poin || 0), 0) || 0;
+        const wargaAktif = poinData?.filter(x => Number(x.total_poin || 0) > 0).length || 0;
+        const totalTransaksi = setor?.length || 0;
+
         return JSON.stringify({
-          total_setoran_kg: totalKg.toFixed(1),
+          total_transaksi_setor: totalTransaksi,
           jumlah_warga_aktif: wargaAktif,
           total_poin_terkumpul: totalPoin,
-          keterangan: `Sudah ${totalKg.toFixed(1)} kg sampah didaur ulang dari ${wargaAktif} KK aktif`,
+          keterangan: `Bank Sampah Ciburial: ${wargaAktif} KK aktif, ${totalTransaksi} kali setor, total ${totalPoin} poin terkumpul`,
         });
       }
 
       case "get_voting_aktif": {
-        const { data } = await supabase.from("voting").select("id, judul, deskripsi, status, created_at").eq("status", "aktif").order("created_at", { ascending: false });
-        if (!data || data.length === 0) return JSON.stringify({ voting: [], keterangan: "Belum ada voting aktif saat ini" });
+        const { data } = await supabase
+          .from("voting")
+          .select("id, judul, deskripsi, status, created_at")
+          .eq("status", "aktif")
+          .order("created_at", { ascending: false });
+        if (!data || data.length === 0) {
+          return JSON.stringify({ voting: [], keterangan: "Belum ada voting/musyawarah aktif saat ini" });
+        }
         return JSON.stringify({ voting: data, total: data.length });
       }
 
       case "get_struktur_organisasi": {
-        let q = supabase.from("pengurus_desa").select("nama, jabatan, kontak, foto").order("urutan", { ascending: true });
-        if (args?.jabatan) q = q.ilike("jabatan", `%${args.jabatan}%`);
-        const { data } = await q;
-        return JSON.stringify(data || []);
+        // Coba dari tabel pengurus_desa, fallback ke anggota_kk dengan jabatan
+        let data: any[] = [];
+        const pgRes = await supabase
+          .from("pengurus_desa")
+          .select("nama, jabatan, kontak")
+          .order("urutan", { ascending: true });
+
+        if (pgRes.data && pgRes.data.length > 0) {
+          data = pgRes.data;
+          if (args?.jabatan) {
+            data = data.filter(d =>
+              d.jabatan?.toLowerCase().includes(args.jabatan.toLowerCase())
+            );
+          }
+        } else {
+          // Fallback: ambil dari keluarga (RT)
+          const kkRes = await supabase
+            .from("keluarga")
+            .select("nama_kepala, rt, alamat")
+            .order("rt", { ascending: true })
+            .limit(20);
+          if (kkRes.data && kkRes.data.length > 0) {
+            data = kkRes.data.map(k => ({
+              nama: k.nama_kepala,
+              jabatan: `Warga RT ${k.rt}`,
+              alamat: k.alamat,
+            }));
+          }
+        }
+
+        if (data.length === 0) {
+          return JSON.stringify({ keterangan: "Data pengurus belum tersedia. Hubungi admin kampung langsung." });
+        }
+        return JSON.stringify(data);
       }
 
       case "get_transparansi_dana": {
-        const { data: tx } = await supabase.from("transaksi").select("tipe, jumlah, kategori");
+        const { data: tx } = await supabase
+          .from("transaksi")
+          .select("tipe, jumlah, kategori, keterangan, tanggal")
+          .order("tanggal", { ascending: false })
+          .limit(50);
         const masuk = tx?.filter(t => t.tipe === "masuk").reduce((s, t) => s + Number(t.jumlah), 0) || 0;
         const keluar = tx?.filter(t => t.tipe === "keluar").reduce((s, t) => s + Number(t.jumlah), 0) || 0;
         const saldo = masuk - keluar;
         const RAB = 250_000_000;
         return JSON.stringify({
-          saldo_aktif: saldo,
-          saldo_format: `Rp ${saldo.toLocaleString("id-ID")}`,
-          total_masuk: masuk,
+          saldo_aktif_format: `Rp ${saldo.toLocaleString("id-ID")}`,
           total_masuk_format: `Rp ${masuk.toLocaleString("id-ID")}`,
-          total_keluar: keluar,
           total_keluar_format: `Rp ${keluar.toLocaleString("id-ID")}`,
-          target_rab: RAB,
           target_rab_format: `Rp ${RAB.toLocaleString("id-ID")}`,
           persen_target: ((masuk / RAB) * 100).toFixed(1) + "%",
+          transaksi_terakhir: tx?.slice(0, 5) || [],
         });
       }
 
       case "get_marketplace_produk": {
         const limit = args?.limit || 8;
-        const { data } = await supabase.from("produk").select("nama, harga, tag, deskripsi").order("created_at", { ascending: false }).limit(limit);
+        const { data } = await supabase
+          .from("produk")
+          .select("nama, harga, tag, deskripsi")
+          .order("created_at", { ascending: false })
+          .limit(limit);
+        if (!data || data.length === 0) {
+          return JSON.stringify({ keterangan: "Belum ada produk di marketplace saat ini." });
+        }
         return JSON.stringify(
-          (data || []).map(p => ({
+          data.map(p => ({
             ...p,
             harga_format: `Rp ${Number(p.harga).toLocaleString("id-ID")}`,
           }))
@@ -260,18 +367,24 @@ async function execTool(name: string, args: any): Promise<string> {
         if (!args?.judul || !args?.deskripsi) {
           return JSON.stringify({ error: "Judul dan deskripsi wajib diisi" });
         }
-        const { data, error } = await supabase.from("pengaduan").insert({
-          judul: args.judul,
-          deskripsi: args.deskripsi,
-          kategori: args.kategori || "lainnya",
-          nama_pelapor: args.nama_pelapor || "Anonim",
-          status: "baru",
-        }).select().single();
+        const { data, error } = await supabase
+          .from("pengaduan")
+          .insert({
+            judul: args.judul,
+            deskripsi: args.deskripsi,
+            kategori: args.kategori || "lainnya",
+            nama: args.nama_pelapor || "Anonim",
+            kontak: "-",
+            isi: args.deskripsi,
+            status: "baru",
+          })
+          .select()
+          .single();
         if (error) return JSON.stringify({ error: error.message });
         return JSON.stringify({
           success: true,
           id: data?.id,
-          message: "Pengaduan berhasil terkirim. Admin akan segera menindaklanjuti.",
+          message: "Pengaduan berhasil terkirim! Admin akan segera menindaklanjuti.",
         });
       }
 
@@ -284,28 +397,61 @@ async function execTool(name: string, args: any): Promise<string> {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   AGENTIC LOOP — AI bisa multi-step reasoning dengan tools
+   FORMAT MESSAGES — Handle multimodal (vision) messages
+   Groq vision format: content berupa array [{type: "text"}, {type: "image_url"}]
    ═══════════════════════════════════════════════════════════════════════ */
-const MAX_ITERATIONS = 5;
-const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
-const MODEL = "llama-3.3-70b-versatile";
+function formatMessagesForGroq(rawMessages: any[]): { formatted: any[]; hasImage: boolean } {
+  let hasImage = false;
+  const formatted = rawMessages.map((msg: any) => {
+    if (msg.role === "user" && msg.image) {
+      hasImage = true;
+      const parts: any[] = [];
+      if (msg.content && msg.content !== "[Foto dikirim]") {
+        parts.push({ type: "text", text: msg.content });
+      } else {
+        parts.push({ type: "text", text: "Tolong analisis foto ini." });
+      }
+      // Groq vision: image_url dengan base64
+      parts.push({
+        type: "image_url",
+        image_url: {
+          url: msg.image, // base64 data URL sudah ok: "data:image/jpeg;base64,..."
+        },
+      });
+      return { role: "user", content: parts };
+    }
+    // Pesan biasa — strip field image kalau ada
+    return { role: msg.role, content: msg.content };
+  });
+  return { formatted, hasImage };
+}
 
-async function callGroq(messages: any[]) {
+/* ═══════════════════════════════════════════════════════════════════════
+   GROQ API CALL
+   ═══════════════════════════════════════════════════════════════════════ */
+async function callGroq(messages: any[], useVision: boolean) {
+  const model = useVision ? MODEL_VISION : MODEL_TEXT;
+  // Tools tidak support di vision model — hanya pakai di text model
+  const body: any = {
+    model,
+    messages,
+    max_tokens: 2048,
+    temperature: 0.65,
+  };
+  if (!useVision) {
+    body.tools = TOOLS;
+    body.tool_choice = "auto";
+  }
+
   const res = await fetch(GROQ_URL, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      model: MODEL,
-      messages,
-      tools: TOOLS,
-      tool_choice: "auto",
-      max_tokens: 2048,
-      temperature: 0.7,
-    }),
+    body: JSON.stringify(body),
   });
+
   if (!res.ok) {
     const err = await res.text();
     throw new Error(`Groq error: ${err}`);
@@ -340,14 +486,32 @@ export async function POST(req: NextRequest) {
 
     // Batasi history 20 pesan terakhir
     const recentMessages = messages.slice(-20);
+
+    // Cek apakah ada gambar di pesan terakhir
+    const { formatted: formattedMessages, hasImage } = formatMessagesForGroq(recentMessages);
+
     const convo: any[] = [
       { role: "system", content: SYSTEM_PROMPT },
-      ...recentMessages,
+      ...formattedMessages,
     ];
 
-    // Agentic loop — AI bisa panggil tool berkali-kali sampai cukup info
+    // ── VISION MODE ─────────────────────────────────────────────────────
+    // Kalau ada gambar → pakai model vision, langsung jawab (no tool loop)
+    if (hasImage) {
+      const data = await callGroq(convo, true);
+      const msg = data.choices?.[0]?.message;
+      if (!msg) {
+        return NextResponse.json({ error: "AI tidak merespon. Coba lagi ya!" }, { status: 500 });
+      }
+      return NextResponse.json({
+        reply: msg.content || "Maaf, tidak bisa analisis foto sekarang.",
+        model: MODEL_VISION,
+      });
+    }
+
+    // ── TEXT + TOOL CALLING MODE (Agentic Loop) ───────────────────────
     for (let i = 0; i < MAX_ITERATIONS; i++) {
-      const data = await callGroq(convo);
+      const data = await callGroq(convo, false);
       const msg = data.choices?.[0]?.message;
 
       if (!msg) {
@@ -361,9 +525,10 @@ export async function POST(req: NextRequest) {
         // Eksekusi semua tool paralel
         const toolResults = await Promise.all(
           msg.tool_calls.map(async (tc: any) => {
-            const args = typeof tc.function.arguments === "string"
-              ? JSON.parse(tc.function.arguments || "{}")
-              : tc.function.arguments;
+            const args =
+              typeof tc.function.arguments === "string"
+                ? JSON.parse(tc.function.arguments || "{}")
+                : tc.function.arguments;
             const result = await execTool(tc.function.name, args);
             return {
               role: "tool",
@@ -374,13 +539,14 @@ export async function POST(req: NextRequest) {
         );
 
         convo.push(...toolResults);
-        continue; // lanjut iterasi biar AI bisa synthesize hasil tool
+        continue; // lanjut iterasi biar AI synthesize hasil tool
       }
 
       // Selesai — AI kasih final answer
       return NextResponse.json({
         reply: msg.content || "Maaf, gak bisa jawab sekarang.",
         iterations: i + 1,
+        model: MODEL_TEXT,
       });
     }
 

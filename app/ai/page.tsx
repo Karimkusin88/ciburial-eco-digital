@@ -1,10 +1,11 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
-import { Mic, Square, Send, Lock, AlertCircle, Trash2 } from "lucide-react";
+import { Mic, Square, Send, Lock, AlertCircle, Trash2, ImagePlus, Camera, X } from "lucide-react";
 
 interface Message {
   role: "user" | "assistant";
   content: string;
+  image?: string; // base64 data URL
 }
 
 function renderMarkdown(text: string): string {
@@ -89,9 +90,12 @@ export default function AIPage() {
   const [error, setError] = useState("");
   const [listening, setListening] = useState(false);
   const [voiceSupported, setVoiceSupported] = useState(false);
+  const [attachedImage, setAttachedImage] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const recognitionRef = useRef<any>(null);
+  const fileGalleryRef = useRef<HTMLInputElement>(null);
+  const fileCameraRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -131,19 +135,78 @@ export default function AIPage() {
     }
   }
 
+  async function handleImageFile(file: File) {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setError("File harus berupa gambar (jpg/png/webp).");
+      return;
+    }
+    // Max 4 MB sebelum dikompresi
+    if (file.size > 4 * 1024 * 1024) {
+      setError("Ukuran gambar maksimal 4 MB.");
+      return;
+    }
+    try {
+      const dataUrl = await compressImage(file, 1024, 0.82);
+      setAttachedImage(dataUrl);
+      setError("");
+    } catch {
+      setError("Gagal memproses gambar.");
+    }
+  }
+
+  // Kompres gambar client-side: resize max side & output JPEG
+  function compressImage(file: File, maxSide = 1024, quality = 0.82): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new window.Image();
+        img.onload = () => {
+          let { width, height } = img;
+          if (width > maxSide || height > maxSide) {
+            if (width > height) {
+              height = Math.round((height * maxSide) / width);
+              width = maxSide;
+            } else {
+              width = Math.round((width * maxSide) / height);
+              height = maxSide;
+            }
+          }
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          if (!ctx) return reject(new Error("canvas unsupported"));
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL("image/jpeg", quality));
+        };
+        img.onerror = () => reject(new Error("image load failed"));
+        img.src = reader.result as string;
+      };
+      reader.onerror = () => reject(new Error("read failed"));
+      reader.readAsDataURL(file);
+    });
+  }
+
   async function sendMessage(content: string) {
-    if (!content.trim() || loading) return;
+    const hasImage = !!attachedImage;
+    if ((!content.trim() && !hasImage) || loading) return;
     if (listening) {
       recognitionRef.current?.stop();
       setListening(false);
     }
     setError("");
-    const userMsg: Message = { role: "user", content: content.trim() };
+    const userMsg: Message = {
+      role: "user",
+      content: content.trim() || (hasImage ? "[Foto dikirim]" : ""),
+      ...(hasImage ? { image: attachedImage! } : {}),
+    };
     const newMessages = [...messages, userMsg];
     setMessages(newMessages);
     setInput("");
+    setAttachedImage(null);
     setLoading(true);
-    
+
     try {
       const res = await fetch("/api/ai", {
         method: "POST",
@@ -383,7 +446,24 @@ export default function AIPage() {
                   __html: `<p style="margin:0">${renderMarkdown(msg.content)}</p>`
                 }}/>
               ) : (
-                <div style={{ whiteSpace: "pre-wrap" }}>{msg.content}</div>
+                <div>
+                  {msg.image && (
+                    <img
+                      src={msg.image}
+                      alt="Lampiran"
+                      style={{
+                        maxWidth: "100%",
+                        maxHeight: 280,
+                        borderRadius: 12,
+                        marginBottom: msg.content && msg.content !== "[Foto dikirim]" ? 10 : 0,
+                        display: "block",
+                      }}
+                    />
+                  )}
+                  {msg.content && msg.content !== "[Foto dikirim]" && (
+                    <div style={{ whiteSpace: "pre-wrap" }}>{msg.content}</div>
+                  )}
+                </div>
               )}
             </div>
           </div>
@@ -442,6 +522,42 @@ export default function AIPage() {
         borderTop: "1.5px solid rgba(47,143,78,0.1)",
         backdropFilter: "blur(12px)"
       }}>
+        {/* Image preview before send */}
+        {attachedImage && (
+          <div style={{
+            maxWidth: 840, margin: "0 auto 12px",
+            display: "flex", alignItems: "center", gap: 12,
+            padding: "10px 14px",
+            background: "rgba(47,143,78,0.05)",
+            border: "1.5px solid rgba(47,143,78,0.2)",
+            borderRadius: 12,
+          }}>
+            <img
+              src={attachedImage}
+              alt="Preview"
+              style={{ width: 56, height: 56, objectFit: "cover", borderRadius: 8, flexShrink: 0 }}
+            />
+            <div style={{ flex: 1, fontSize: 13, color: "#1C3A2B", fontWeight: 600 }}>
+              Foto siap dikirim
+              <div style={{ fontSize: 11, color: "#6B7C6D", fontWeight: 500, marginTop: 2 }}>
+                Tambahkan pertanyaan tentang foto ini (opsional)
+              </div>
+            </div>
+            <button
+              onClick={() => setAttachedImage(null)}
+              aria-label="Hapus foto"
+              style={{
+                width: 32, height: 32, borderRadius: "50%",
+                background: "white", border: "1px solid rgba(0,0,0,0.08)",
+                color: "#B8472F", cursor: "pointer",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}
+            >
+              <X size={16} strokeWidth={2} />
+            </button>
+          </div>
+        )}
+
         {/* Voice indicator */}
         {listening && (
           <div style={{
@@ -469,18 +585,101 @@ export default function AIPage() {
 
         <div style={{
           maxWidth: 840, margin: "0 auto",
-          display: "flex", gap: 12, alignItems: "flex-end",
+          display: "flex", gap: 8, alignItems: "flex-end",
         }}>
+          {/* Hidden file inputs */}
+          <input
+            ref={fileGalleryRef}
+            type="file"
+            accept="image/*"
+            style={{ display: "none" }}
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) handleImageFile(f);
+              e.target.value = "";
+            }}
+          />
+          <input
+            ref={fileCameraRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            style={{ display: "none" }}
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) handleImageFile(f);
+              e.target.value = "";
+            }}
+          />
+
+          {/* Gallery / upload foto */}
+          <button
+            onClick={() => !loading && fileGalleryRef.current?.click()}
+            title="Kirim foto dari galeri"
+            aria-label="Kirim foto dari galeri"
+            disabled={loading}
+            style={{
+              width: 48, height: 48, flexShrink: 0,
+              background: "white",
+              border: "1.5px solid rgba(47,143,78,0.2)",
+              borderRadius: 14,
+              color: "#2F8F4E",
+              cursor: "pointer",
+              transition: "all 0.25s cubic-bezier(.22,1,.36,1)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.04)",
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.transform = "translateY(-2px)";
+              e.currentTarget.style.boxShadow = "0 8px 20px rgba(47,143,78,0.1)";
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.04)";
+            }}
+          >
+            <ImagePlus size={20} strokeWidth={2} />
+          </button>
+
+          {/* Camera capture */}
+          <button
+            onClick={() => !loading && fileCameraRef.current?.click()}
+            title="Ambil foto langsung"
+            aria-label="Ambil foto langsung"
+            disabled={loading}
+            style={{
+              width: 48, height: 48, flexShrink: 0,
+              background: "white",
+              border: "1.5px solid rgba(47,143,78,0.2)",
+              borderRadius: 14,
+              color: "#2F8F4E",
+              cursor: "pointer",
+              transition: "all 0.25s cubic-bezier(.22,1,.36,1)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.04)",
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.transform = "translateY(-2px)";
+              e.currentTarget.style.boxShadow = "0 8px 20px rgba(47,143,78,0.1)";
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.04)";
+            }}
+          >
+            <Camera size={20} strokeWidth={2} />
+          </button>
+
           {/* Voice button */}
           {voiceSupported && (
             <button
               onClick={toggleVoice}
               title={listening ? "Stop" : "Input suara"}
               style={{
-                width: 54, height: 54, flexShrink: 0,
+                width: 48, height: 48, flexShrink: 0,
                 background: listening ? "rgba(220,38,38,0.1)" : "white",
                 border: listening ? "1.5px solid rgba(220,38,38,0.4)" : "1.5px solid rgba(47,143,78,0.2)",
-                borderRadius: 16,
+                borderRadius: 14,
                 color: listening ? "#DC2626" : "#2F8F4E",
                 cursor: "pointer", 
                 transition: "all 0.25s cubic-bezier(.22,1,.36,1)",
@@ -501,7 +700,7 @@ export default function AIPage() {
                 }
               }}
             >
-              {listening ? <Square size={20} fill="currentColor" /> : <Mic size={22} strokeWidth={2} />}
+              {listening ? <Square size={18} fill="currentColor" /> : <Mic size={20} strokeWidth={2} />}
             </button>
           )}
 
@@ -545,27 +744,31 @@ export default function AIPage() {
           {/* Send button */}
           <button
             onClick={() => sendMessage(input)}
-            disabled={!input.trim() || loading}
+            disabled={(!input.trim() && !attachedImage) || loading}
             style={{
               width: 54, height: 54, flexShrink: 0,
-              background: input.trim() && !loading ? "linear-gradient(135deg,#1C3A2B,#2F8F4E)" : "rgba(47,143,78,0.1)",
+              background: (input.trim() || attachedImage) && !loading
+                ? "linear-gradient(135deg,#1C3A2B,#2F8F4E)"
+                : "rgba(47,143,78,0.1)",
               border: "none", borderRadius: 16,
-              color: input.trim() && !loading ? "white" : "rgba(47,143,78,0.4)",
-              cursor: input.trim() && !loading ? "pointer" : "not-allowed",
+              color: (input.trim() || attachedImage) && !loading
+                ? "white"
+                : "rgba(47,143,78,0.4)",
+              cursor: (input.trim() || attachedImage) && !loading ? "pointer" : "not-allowed",
               transition: "all 0.3s cubic-bezier(.22,1,.36,1)",
               display: "flex", alignItems: "center",
               justifyContent: "center",
-              boxShadow: input.trim() && !loading
+              boxShadow: (input.trim() || attachedImage) && !loading
                 ? "0 8px 24px rgba(47,143,78,0.3)" : "none",
             }}
             onMouseEnter={e => {
-              if (input.trim() && !loading) {
+              if ((input.trim() || attachedImage) && !loading) {
                 e.currentTarget.style.transform = "translateY(-2px)";
                 e.currentTarget.style.boxShadow = "0 12px 28px rgba(47,143,78,0.4)";
               }
             }}
             onMouseLeave={e => {
-              if (input.trim() && !loading) {
+              if ((input.trim() || attachedImage) && !loading) {
                 e.currentTarget.style.transform = "translateY(0)";
                 e.currentTarget.style.boxShadow = "0 8px 24px rgba(47,143,78,0.3)";
               }
