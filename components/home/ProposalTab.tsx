@@ -25,18 +25,18 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
       const res = await fetch("/api/midtrans/tokenize", {
         method: "POST",
         headers: { "Content-type": "application/json" },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           order_id: `DONASI-${Date.now()}`,
-          gross_amount: qty, 
+          gross_amount: qty,
           item_details: [{ id: "dn-custom", price: qty, quantity: 1, name: "Donasi Ciburial Eco-Digital" }]
         })
       });
       const data = await res.json();
       if (data.token && (window as any).snap) {
         (window as any).snap.pay(data.token, {
-          onSuccess: function(r:any){ alert("Donasi sukses diterima! Dana langsung terdata di transparansi."); },
-          onPending: function(r:any){ alert("Menunggu status pembayaran donasi."); },
-          onError: function(r:any){ alert("Pembayaran gagal."); }
+          onSuccess: function (r: any) { alert("Donasi sukses diterima! Dana langsung terdata di transparansi."); },
+          onPending: function (r: any) { alert("Menunggu status pembayaran donasi."); },
+          onError: function (r: any) { alert("Pembayaran gagal."); }
         });
       } else {
         alert("Server Midtrans belum nyambung! Cek .env di Settings Vercel. (Pesan sistem: " + (data.error || "Missing Token") + ")");
@@ -61,7 +61,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
           <p style={{ marginBottom: 14 }}>Puji syukur ke hadirat Tuhan Yang Maha Esa atas segala limpahan rahmat-Nya. Bersama surat ini, kami dari Paguyuban Warga & Pemuda Ciburial Makers bermaksud menyampaikan proposal program <strong>"Ciburial Eco-Digital Village"</strong>.</p>
           <p style={{ marginBottom: 14 }}>Program ini adalah inisiatif swadaya masyarakat akar rumput untuk membangun ekosistem desa yang mandiri, cerdas, dan ramah lingkungan. Mengawinkan kekayaan alam organik dengan literasi teknologi digital untuk menciptakan ketahanan pangan, keamanan lingkungan, dan peningkatan SDM generasi muda.</p>
           <p style={{ marginBottom: 28 }}>Mengingat besarnya skala pergerakan ini, kami membuka ruang kolaborasi dan memohon dukungan dari Bapak/Ibu/Saudara guna merealisasikan cetak biru kemakmuran desa ini.</p>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 180px),1fr))", gap: "clamp(8px, 2vw, 12px)" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 180px),1fr))", gap: "clamp(8px, 2vw, 12px)" }}>
             {[
               { role: "Ketua Pemuda Ciburial Makers", name: "— Soon —", label: "Tanda Tangan & Stempel" },
               { role: "Ketua DKM Ciburial", name: "Bpk. Pupu Apipudin", label: "Mengetahui / Menyetujui" },
@@ -202,7 +202,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
       content: (
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <p style={{ fontSize: 13, lineHeight: 1.7, color: "var(--ts)", marginBottom: 8, padding: "clamp(8px, 2vw, 12px) clamp(12px, 3vw, 16px)", background: "rgba(184,148,63,.07)", borderRadius: 10, border: "1px solid rgba(184,148,63,.18)" }}>
-            <Lightbulb size={14} style={{display:"inline", marginRight:4}}/> <strong>Catatan:</strong> Seluruh pengerjaan fisik/instalasi bernilai Rp 0 karena dilakukan secara <strong>swadaya & gotong royong</strong>. Dana donasi digunakan untuk material saja.
+            <Lightbulb size={14} style={{ display: "inline", marginRight: 4 }} /> <strong>Catatan:</strong> Seluruh pengerjaan fisik/instalasi bernilai Rp 0 karena dilakukan secara <strong>swadaya & gotong royong</strong>. Dana donasi digunakan untuk material saja.
           </p>
           {ALOKASI.map((item, i) => {
             const used = transaksi.filter(t => t.tipe === "keluar" && t.kategori === item.label).reduce((s, t) => s + t.jumlah, 0);
@@ -303,7 +303,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
 
         {/* Info strip */}
         <div style={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "center", marginBottom: 44 }}>
-          {[{ icon: <Search size={24} strokeWidth={1.5} />, l: "ciburial-eco-digital.vercel.app" }, { icon: <FileText size={16} strokeWidth={1.5} />, l: "ciburial.smarthub@gmail.com" }, { icon: <MapPin size={16} strokeWidth={1.5} />, l: "Garut, Jawa Barat 44165" }].map((item, i) => (
+          {[{ icon: <Search size={24} strokeWidth={1.5} />, l: "www.ciburial.my.id" }, { icon: <FileText size={16} strokeWidth={1.5} />, l: "ciburial.smarthub@gmail.com" }, { icon: <MapPin size={16} strokeWidth={1.5} />, l: "Garut, Jawa Barat 44165" }].map((item, i) => (
             <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "clamp(6px, 2vw, 9px) clamp(12px, 3vw, 18px)", background: "var(--cw)", border: "1px solid var(--bo)", borderRadius: 99 }}>
               <span>{item.icon}</span><span style={{ fontSize: 12, fontWeight: 600, color: "var(--ts)" }}>{item.l}</span>
             </div>
