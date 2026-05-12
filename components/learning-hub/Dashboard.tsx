@@ -20,6 +20,29 @@ const FEATURES = [
   { key: "galeri", icon: <ImageIcon size={24} />, title: "Galeri Kegiatan", desc: "Dokumentasi foto pelatihan & kegiatan Hub", color: "#D946EF" },
 ];
 
+const ILMIYYAH_EBOOKS = [
+  { id: "ilm-1", judul: "Ta’dzhimul ‘Ilm (Mengagungkan Ilmu)", penulis: "Syaikh Shalih Al-Ushaimi", kategori: "Kitab Dasar", jenis_buku: "ebook", file_url: "https://ilmiyyah.com/archives/11115", foto_sampul: null },
+  { id: "ilm-2", judul: "Al-Ushul Ats-Tsalatsah (Tiga Landasan Utama)", penulis: "Syaikh Muhammad bin Abdul Wahhab", kategori: "Kitab Dasar", jenis_buku: "ebook", file_url: "https://ilmiyyah.com/archives/10372", foto_sampul: null },
+  { id: "ilm-3", judul: "Sifat Sholat Nabi ﷺ", penulis: "Syaikh Al-Albani", kategori: "Fiqih", jenis_buku: "ebook", file_url: "https://ilmiyyah.com/archives/10311", foto_sampul: null },
+  { id: "ilm-4", judul: "Al-Arbain An-Nawawiyyah", penulis: "Imam An-Nawawi", kategori: "Kitab Dasar", jenis_buku: "ebook", file_url: "https://ilmiyyah.com/archives/12199", foto_sampul: null },
+  { id: "ilm-5", judul: "Kumpulan Fatwa Ulama Dalam Masalah Aqidah", penulis: "Ulama Ahlussunnah", kategori: "Aqidah", jenis_buku: "ebook", file_url: "https://ilmiyyah.com/archives/10095", foto_sampul: null },
+  { id: "ilm-6", judul: "Kewajiban Menuntut Ilmu Agama", penulis: "Tim Ilmiyyah", kategori: "Aqidah", jenis_buku: "ebook", file_url: "https://ilmiyyah.com/archives/10198", foto_sampul: null },
+  { id: "ilm-7", judul: "Bahasa Arab Mudah Metode Balik-Tangan", penulis: "Abu Ubaidah Yusuf", kategori: "Bahasa Arab", jenis_buku: "ebook", file_url: "https://ilmiyyah.com/archives/10081", foto_sampul: null },
+  { id: "ilm-8", judul: "Ilmu Nahwu Untuk Pemula", penulis: "Tim Ilmiyyah", kategori: "Bahasa Arab", jenis_buku: "ebook", file_url: "https://ilmiyyah.com/archives/10194", foto_sampul: null },
+  { id: "ilm-9", judul: "Kunci-Kunci Sukses Rumah Tangga Bahagia", penulis: "Abu Ubaidah Yusuf", kategori: "Keluarga", jenis_buku: "ebook", file_url: "https://ilmiyyah.com/archives/3801", foto_sampul: null },
+  { id: "ilm-10", judul: "5 Masalah Penting Seputar Shalat", penulis: "Abu Ubaidah Yusuf", kategori: "Fiqih", jenis_buku: "ebook", file_url: "https://ilmiyyah.com/archives/3771", foto_sampul: null },
+  { id: "ilm-11", judul: "Buku Pintar Ramadhan", penulis: "Tim Ilmiyyah", kategori: "Fiqih", jenis_buku: "ebook", file_url: "https://ilmiyyah.com/archives/10190", foto_sampul: null },
+  { id: "ilm-12", judul: "Panduan Zakat Minimal 2,5%", penulis: "Muhammad Abduh Tuasikal", kategori: "Fiqih", jenis_buku: "ebook", file_url: "https://ilmiyyah.com/archives/5427", foto_sampul: null },
+  { id: "ilm-13", judul: "Dzikir Pagi & Petang", penulis: "Tim Ilmiyyah", kategori: "Doa & Dzikir", jenis_buku: "ebook", file_url: "https://ilmiyyah.com/archives/3784", foto_sampul: null },
+  { id: "ilm-14", judul: "Misteri Kedahsyatan Dzikir dan Doa", penulis: "Tim Ilmiyyah", kategori: "Doa & Dzikir", jenis_buku: "ebook", file_url: "https://ilmiyyah.com/archives/10212", foto_sampul: null },
+  { id: "ilm-15", judul: "Aneh dan Lucu - 100 Kisah Menarik", penulis: "Abu Ubaidah Yusuf", kategori: "Sirah & Kisah", jenis_buku: "ebook", file_url: "https://ilmiyyah.com/archives/3776", foto_sampul: null },
+  { id: "ilm-16", judul: "Rindu Tanah Suci Makkah dan Madinah", penulis: "Tim Ilmiyyah", kategori: "Sirah & Kisah", jenis_buku: "ebook", file_url: "https://ilmiyyah.com/archives/6599", foto_sampul: null },
+  { id: "ilm-17", judul: "Sehat Dan Mabrur Saat Haji Dan Umrah", penulis: "Tim Kesehatan Muslim", kategori: "Kesehatan", jenis_buku: "ebook", file_url: "https://ilmiyyah.com/archives/10224", foto_sampul: null },
+  { id: "ilm-18", judul: "Ensiklopedi Khitan", penulis: "Tim Kesehatan Muslim", kategori: "Kesehatan", jenis_buku: "ebook", file_url: "https://ilmiyyah.com/archives/10192", foto_sampul: null },
+  { id: "ilm-19", judul: "Tuntunan Ibadah Ramadhan di Tengah Wabah", penulis: "Tim Ilmiyyah", kategori: "Fiqih", jenis_buku: "ebook", file_url: "https://ilmiyyah.com/archives/10229", foto_sampul: null },
+  { id: "ilm-20", judul: "54 Soal Jawab Aqidah", penulis: "Syaikh Muhammad bin Jamil Zainu", kategori: "Aqidah", jenis_buku: "ebook", file_url: "https://ilmiyyah.com/archives/6665", foto_sampul: null }
+];
+
 export function Dashboard({ user, onLogout, showToast }: { user: User; onLogout: () => void; showToast: (m: string, ok?: boolean) => void }) {
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const [books, setBooks] = useState<any[]>([]);
@@ -31,7 +54,10 @@ export function Dashboard({ user, onLogout, showToast }: { user: User; onLogout:
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    if (!isSupabaseReady()) return;
+    if (!isSupabaseReady()) {
+      setBooks(ILMIYYAH_EBOOKS);
+      return;
+    }
     (async () => {
       const [b, v, d, g, l] = await Promise.all([
         supabase.from("buku_perpustakaan").select("*").order("judul"),
@@ -40,7 +66,8 @@ export function Dashboard({ user, onLogout, showToast }: { user: User; onLogout:
         supabase.from("galeri_hub").select("*").order("created_at", { ascending: false }),
         supabase.from("lab_komputer").select("*").order("nomor_pc"),
       ]);
-      if (b.data) setBooks(b.data);
+      if (b.data) setBooks([...b.data, ...ILMIYYAH_EBOOKS]);
+      else setBooks(ILMIYYAH_EBOOKS);
       if (v.data) setVideos(v.data);
       if (d.data) setDocs(d.data);
       if (g.data) setGaleri(g.data);
