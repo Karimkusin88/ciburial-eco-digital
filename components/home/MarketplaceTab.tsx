@@ -148,7 +148,7 @@ function ProductCard({ p, photos, sellerName, onDetail, onBuy, onAddToCart }: an
               e.stopPropagation();
               onBuy();
             }}
-            style={{ flex: 1, height: 26, minWidth: 0, padding: 0, background: "#008C8C", border: "none", borderRadius: 4, fontSize: 11, fontWeight: 700, color: "#FFF", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+            style={{ flex: 1, height: 26, minWidth: 0, padding: 0, background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", border: "none", borderRadius: 4, fontSize: 11, fontWeight: 700, color: "#FFF", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
             Beli
           </button>
 
@@ -160,7 +160,7 @@ function ProductCard({ p, photos, sellerName, onDetail, onBuy, onAddToCart }: an
               onAddToCart();
             }}
             title="Tambah ke Keranjang"
-            style={{ width: 28, height: 26, flexShrink: 0, padding: 0, background: "#FFF", border: "1.2px solid #008C8C", borderRadius: 4, color: "#008C8C", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            style={{ width: 28, height: 26, flexShrink: 0, padding: 0, background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", border: "none", borderRadius: 4, color: "#FFF", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.3s ease" }}>
             <ShoppingCart size={13} strokeWidth={2.5} />
           </button>
         </div>
@@ -273,6 +273,17 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
   useEffect(() => {
     if (sliderRef.current) {
       sliderRef.current.scrollTo({ left: activeSlide * sliderRef.current.offsetWidth, behavior: "smooth" });
+      
+      // Mengatur pemutaran video: hanya mainkan video pada slide yang aktif dari awal
+      const videos = sliderRef.current.querySelectorAll("video");
+      videos.forEach((vid, idx) => {
+        if (idx === activeSlide) {
+          vid.currentTime = 0;
+          vid.play().catch(e => console.log("Video auto-play dicegah oleh browser", e));
+        } else {
+          vid.pause();
+        }
+      });
     }
   }, [activeSlide]);
 
@@ -1256,7 +1267,6 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                   {ik.tipe === "video" ? (
                     <video 
                       src={ik.mediaUrl} 
-                      autoPlay 
                       muted 
                       playsInline 
                       onEnded={() => {
@@ -1464,7 +1474,8 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
         
         @media (min-width: 768px) {
             .product-card .btn-add-cart {
-                opacity: 0;
+                /* Button keranjang selalu tampil */
+                opacity: 1;
             }
             .product-card:hover .btn-add-cart {
                 opacity: 1;
