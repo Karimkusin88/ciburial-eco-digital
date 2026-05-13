@@ -1124,8 +1124,8 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                   </div>
 
                   {cart.map((item) => (
-                    <div key={item.id} style={{ display: "flex", gap: 16, borderBottom: "1.5px solid rgba(47,143,78,.15)", paddingBottom: 24 }}>
-                      <div style={{ paddingTop: 35 }}>
+                    <div key={item.id} style={{ display: "flex", gap: 12, borderBottom: "1.5px solid rgba(47,143,78,.15)", paddingBottom: 20 }}>
+                      <div style={{ display: "flex", alignItems: "center" }}>
                         <input 
                           type="checkbox"
                           checked={item.selected !== false}
@@ -1136,40 +1136,40 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                           style={{ width: 18, height: 18, accentColor: "#2F8F4E", cursor: "pointer" }}
                         />
                       </div>
-                      <div style={{ width: 90, height: 90, borderRadius: 10, background: "linear-gradient(135deg,rgba(79,191,126,.08),rgba(47,143,78,.04))", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 40, flexShrink: 0, border: "1.5px solid rgba(47,143,78,.12)" }}>
-                        {item.foto ? <img src={item.foto} alt={item.nama} style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 8 }} /> : (item.icon || <Package size={64} strokeWidth={1} />)}
+                      <div style={{ width: 70, height: 70, borderRadius: 8, background: "linear-gradient(135deg,rgba(79,191,126,.08),rgba(47,143,78,.04))", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, flexShrink: 0, border: "1.5px solid rgba(47,143,78,.12)" }}>
+                        {item.foto ? <img src={item.foto} alt={item.nama} style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 6 }} /> : (item.icon || <Package size={40} strokeWidth={1} />)}
                       </div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: 16, fontWeight: 600, color: "#1C3A2B", marginBottom: 6 }}>{item.nama}</div>
-                        <div style={{ fontSize: 16, fontWeight: 800, background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginBottom: 12 }}>{fRp(item.harga)}</div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: 14, fontWeight: 700, color: "#1C3A2B", marginBottom: 4, lineHeight: 1.3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{item.nama}</div>
+                        <div style={{ fontSize: 14, fontWeight: 800, background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginBottom: 8 }}>{fRp(item.harga)}</div>
 
                         {/* Input Catatan */}
-                        <div style={{ marginBottom: 12 }}>
+                        <div style={{ marginBottom: 10 }}>
                           <input 
                             type="text"
                             placeholder="Tulis catatan (opsional)"
                             value={item.catatan || ""}
                             onChange={(e) => setCart(prev => prev.map(c => c.id === item.id ? { ...c, catatan: e.target.value } : c))}
-                            style={{ width: "100%", padding: "8px 12px", fontSize: 12, borderRadius: 8, border: "1.5px solid rgba(47,143,78,.15)", outline: "none", background: "rgba(255,254,249,.8)", color: "#1C3A2B" }}
+                            style={{ width: "100%", padding: "6px 10px", fontSize: 12, borderRadius: 6, border: "1.5px solid rgba(47,143,78,.15)", outline: "none", background: "rgba(255,254,249,.8)", color: "#1C3A2B" }}
                           />
                         </div>
 
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                          <button onClick={() => removeFromCart(item.id)} style={{ background: "none", border: "none", color: "#ef4444", fontSize: 13, fontWeight: 600, cursor: "pointer", padding: 0, transition: "all 0.3s", display: "flex", alignItems: "center", gap: 4 }}
+                          <button onClick={() => removeFromCart(item.id)} style={{ background: "none", border: "none", color: "#ef4444", fontSize: 12, fontWeight: 600, cursor: "pointer", padding: 0, transition: "all 0.3s", display: "flex", alignItems: "center", gap: 4 }}
                           >
-                            <Trash2 size={16} /> Hapus
+                            <Trash2 size={14} /> Hapus
                           </button>
 
-                          <div style={{ display: "flex", alignItems: "center", gap: 12, border: "1.5px solid rgba(47,143,78,.2)", borderRadius: 8, padding: "6px 10px", background: "rgba(255,254,249,.8)" }}>
-                            <button onClick={() => item.qty > 1 ? updateQty(item.id, -1) : removeFromCart(item.id)} style={{ background: "none", border: "none", color: item.qty > 1 ? "#2F8F4E" : "#5A4A40", fontSize: 16, fontWeight: 700, cursor: "pointer", width: 24, transition: "all 0.3s" }}>−</button>
-                            <span style={{ fontSize: 14, fontWeight: 600, color: "#1C3A2B", minWidth: 20, textAlign: "center" }}>{item.qty}</span>
-                            <button onClick={() => updateQty(item.id, 1)} style={{ background: "none", border: "none", color: "#2F8F4E", fontSize: 16, fontWeight: 700, cursor: "pointer", width: 24, transition: "all 0.3s" }}>+</button>
+                          <div style={{ display: "flex", alignItems: "center", gap: 8, border: "1.5px solid rgba(47,143,78,.2)", borderRadius: 6, padding: "4px 8px", background: "rgba(255,254,249,.8)" }}>
+                            <button onClick={() => item.qty > 1 ? updateQty(item.id, -1) : removeFromCart(item.id)} style={{ background: "none", border: "none", color: item.qty > 1 ? "#2F8F4E" : "#5A4A40", fontSize: 14, fontWeight: 700, cursor: "pointer", width: 20, transition: "all 0.3s", display: "flex", justifyContent: "center", alignItems: "center" }}>−</button>
+                            <span style={{ fontSize: 13, fontWeight: 600, color: "#1C3A2B", minWidth: 16, textAlign: "center" }}>{item.qty}</span>
+                            <button onClick={() => updateQty(item.id, 1)} style={{ background: "none", border: "none", color: "#2F8F4E", fontSize: 14, fontWeight: 700, cursor: "pointer", width: 20, transition: "all 0.3s", display: "flex", justifyContent: "center", alignItems: "center" }}>+</button>
                           </div>
                         </div>
 
-                        <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid rgba(47,143,78,.1)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                          <span style={{ fontSize: 12, color: "#6b7c6d", fontWeight: 500 }}>Subtotal</span>
-                          <span style={{ fontSize: 16, fontWeight: 800, color: "#2F8F4E" }}>{fRp(item.harga * item.qty)}</span>
+                        <div style={{ marginTop: 10, paddingTop: 10, borderTop: "1px solid rgba(47,143,78,.1)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                          <span style={{ fontSize: 11, color: "#6b7c6d", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>Subtotal</span>
+                          <span style={{ fontSize: 14, fontWeight: 800, color: "#2F8F4E" }}>{fRp(item.harga * item.qty)}</span>
                         </div>
                       </div>
                     </div>
