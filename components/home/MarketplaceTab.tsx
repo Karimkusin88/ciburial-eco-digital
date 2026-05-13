@@ -1165,7 +1165,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center" }}>
                   {METODE_BAYAR.map(m => (
                     <div key={m.v} style={{ padding: "6px 12px", background: "rgba(255,255,255,0.8)", border: "1px solid rgba(47,143,78,.15)", borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      {cloneElement(m.icon as React.ReactElement, { style: { height: 16, objectFit: "contain" } })}
+                      {cloneElement(m.icon as any, { style: { height: 16, objectFit: "contain" } })}
                     </div>
                   ))}
                 </div>
@@ -1393,7 +1393,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                     e.currentTarget.style.boxShadow = "0 2px 6px rgba(47,143,78,.03)";
                     e.currentTarget.style.borderColor = "rgba(47,143,78,.12)";
                   }}>
-                  {cloneElement(m.icon as React.ReactElement, { style: { height: 14, objectFit: "contain" } })}
+                  {cloneElement(m.icon as any, { style: { height: 14, objectFit: "contain" } })}
                 </div>
               ))}
               
