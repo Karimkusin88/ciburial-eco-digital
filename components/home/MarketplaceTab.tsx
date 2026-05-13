@@ -1286,7 +1286,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
               <h2 className="fnt" style={{ fontSize: "clamp(20px,4vw,28px)", fontWeight: 500, color: "#FFF", margin: "0 0 4px 0", letterSpacing: "0.02em" }}>
                 Marketplace Lokal
               </h2>
-              <p style={{ fontSize: 12, color: "rgba(255,255,255,0.85)", fontWeight: 400, margin: 0 }}>Pemberdayaan pengrajin & petani Ciburial</p>
+              <p style={{ fontSize: 12, color: "rgba(255,255,255,0.85)", fontWeight: 400, margin: 0 }}>Pusat Produk Lokal & UMKM Ciburial</p>
             </div>
             
             {/* Optional decoration */}
