@@ -29,6 +29,8 @@ const MOCK_RATING = [4.8, 4.9, 4.7, 5.0, 4.6, 4.8];
 // Tipe data untuk item di keranjang
 interface CartItem extends Produk {
   qty: number;
+  selected?: boolean;
+  catatan?: string;
 }
 
 interface OrderForm {
@@ -230,7 +232,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
         );
       }
       // Kalau belum ada, masukin baru dengan qty 1
-      return [...prev, { ...p, qty: 1 }];
+      return [...prev, { ...p, qty: 1, selected: true }];
     });
     alert(`${p.nama} berhasil masuk keranjang!`);
   };
@@ -254,7 +256,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
   };
 
   // Hitung total harga keranjang
-  const totalCartPrice = cart.reduce((total, item) => total + item.harga * item.qty, 0);
+  const totalCartPrice = cart.filter(c => c.selected !== false).reduce((total, item) => total + item.harga * item.qty, 0);
 
   // Auto-scroll banner
   useEffect(() => {
@@ -296,7 +298,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
   const ongkosKirim = METODE_KIRIM.find(m => m.v === orderForm.metode_kirim)?.harga || 0;
 
   // Use directCheckout items if doing direct purchase, otherwise use cart
-  const itemsForCheckout = directCheckoutItems.length > 0 ? directCheckoutItems : cart;
+  const itemsForCheckout = directCheckoutItems.length > 0 ? directCheckoutItems : cart.filter(c => c.selected !== false);
   const checkoutTotal = itemsForCheckout.reduce((total, item) => total + item.harga * item.qty, 0);
   const totalBayar = checkoutTotal + ongkosKirim;
 
@@ -362,7 +364,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
     const orderId = `MKT-${Date.now()}`;
 
     try {
-      const itemDetails = cart.map((item) => ({
+      const itemDetails = itemsForCheckout.map((item) => ({
         id: item.id,
         price: item.harga,
         quantity: item.qty,
@@ -425,11 +427,11 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                 total_harga: totalCartPrice,
                 ongkos_kirim: ongkosKirim,
                 total_bayar: totalBayar,
-                items: JSON.stringify(cart.map(c => ({ id: c.id, nama: c.nama, harga: c.harga, qty: c.qty }))),
+                items: JSON.stringify(itemsForCheckout.map(c => ({ id: c.id, nama: c.nama, harga: c.harga, qty: c.qty, catatan: c.catatan }))),
                 status: "dibayar",
               });
             }
-            setCart([]);
+            if (directCheckoutItems.length === 0) setCart(prev => prev.filter(c => c.selected === false));
             setShowCart(false);
             setShowCheckout(false);
             setOrderDone({ orderId, metode: r.payment_type || "Midtrans" });
@@ -446,7 +448,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                 metode_kirim: orderForm.metode_kirim,
                 metode_bayar: orderForm.metode_bayar,
                 total_bayar: totalBayar,
-                items: JSON.stringify(cart.map(c => ({ id: c.id, nama: c.nama, harga: c.harga, qty: c.qty }))),
+                items: JSON.stringify(itemsForCheckout.map(c => ({ id: c.id, nama: c.nama, harga: c.harga, qty: c.qty, catatan: c.catatan }))),
                 status: "pending",
               });
             }
@@ -614,8 +616,8 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               {/* Ringkasan order */}
               <div style={{ background: "white", borderRadius: 16, padding: "clamp(16px, 4vw, 20px)", border: "1.5px solid rgba(47,143,78,.12)", boxShadow: "0 4px 16px rgba(47,143,78,.06)" }}>
-                <h4 style={{ margin: "0 0 14px", color: "#1C3A2B", fontSize: 14, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>Ringkasan ({cart.length} produk)</h4>
-                {cart.map(item => (
+                <h4 style={{ margin: "0 0 14px", color: "#1C3A2B", fontSize: 14, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>Ringkasan ({itemsForCheckout.length} produk)</h4>
+                {itemsForCheckout.map(item => (
                   <div key={item.id} style={{ display: "flex", justifyContent: "space-between", padding: "clamp(4px, 1vw, 6px) 0", borderBottom: "1px solid rgba(47,143,78,.08)", fontSize: 13 }}>
                     <span style={{ color: "#1C3A2B" }}>{item.nama} ×{item.qty}</span>
                     <span style={{ fontWeight: 600, color: "#2F8F4E" }}>{fRp(item.harga * item.qty)}</span>
@@ -1107,20 +1109,56 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                 </div>
               ) : (
                 <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+                  {/* PILIH SEMUA */}
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, paddingBottom: 16, borderBottom: "1.5px solid rgba(47,143,78,.15)" }}>
+                    <input 
+                      type="checkbox"
+                      checked={cart.length > 0 && cart.every(c => c.selected !== false)}
+                      onChange={(e) => {
+                        const checked = e.target.checked;
+                        setCart(prev => prev.map(c => ({ ...c, selected: checked })));
+                      }}
+                      style={{ width: 18, height: 18, accentColor: "#2F8F4E", cursor: "pointer" }}
+                    />
+                    <span style={{ fontSize: 14, fontWeight: 700, color: "#1C3A2B" }}>Pilih Semua Produk</span>
+                  </div>
+
                   {cart.map((item) => (
                     <div key={item.id} style={{ display: "flex", gap: 16, borderBottom: "1.5px solid rgba(47,143,78,.15)", paddingBottom: 24 }}>
+                      <div style={{ paddingTop: 35 }}>
+                        <input 
+                          type="checkbox"
+                          checked={item.selected !== false}
+                          onChange={(e) => {
+                            const checked = e.target.checked;
+                            setCart(prev => prev.map(c => c.id === item.id ? { ...c, selected: checked } : c));
+                          }}
+                          style={{ width: 18, height: 18, accentColor: "#2F8F4E", cursor: "pointer" }}
+                        />
+                      </div>
                       <div style={{ width: 90, height: 90, borderRadius: 10, background: "linear-gradient(135deg,rgba(79,191,126,.08),rgba(47,143,78,.04))", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 40, flexShrink: 0, border: "1.5px solid rgba(47,143,78,.12)" }}>
                         {item.foto ? <img src={item.foto} alt={item.nama} style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 8 }} /> : (item.icon || <Package size={64} strokeWidth={1} />)}
                       </div>
                       <div style={{ flex: 1 }}>
                         <div style={{ fontSize: 16, fontWeight: 600, color: "#1C3A2B", marginBottom: 6 }}>{item.nama}</div>
-                        <div style={{ fontSize: 16, fontWeight: 800, background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginBottom: 16 }}>{fRp(item.harga)}</div>
+                        <div style={{ fontSize: 16, fontWeight: 800, background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginBottom: 12 }}>{fRp(item.harga)}</div>
+
+                        {/* Input Catatan */}
+                        <div style={{ marginBottom: 12 }}>
+                          <input 
+                            type="text"
+                            placeholder="Tulis catatan (opsional)"
+                            value={item.catatan || ""}
+                            onChange={(e) => setCart(prev => prev.map(c => c.id === item.id ? { ...c, catatan: e.target.value } : c))}
+                            style={{ width: "100%", padding: "8px 12px", fontSize: 12, borderRadius: 8, border: "1.5px solid rgba(47,143,78,.15)", outline: "none", background: "rgba(255,254,249,.8)", color: "#1C3A2B" }}
+                          />
+                        </div>
 
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                          <button onClick={() => removeFromCart(item.id)} style={{ background: "none", border: "none", color: "#5A4A40", fontSize: 12, fontWeight: 600, cursor: "pointer", padding: 0, transition: "all 0.3s" }}
-                            onMouseEnter={(e) => e.currentTarget.style.color = "#2F8F4E"}
-                            onMouseLeave={(e) => e.currentTarget.style.color = "#5A4A40"}
-                          >Tulis Catatan</button>
+                          <button onClick={() => removeFromCart(item.id)} style={{ background: "none", border: "none", color: "#ef4444", fontSize: 13, fontWeight: 600, cursor: "pointer", padding: 0, transition: "all 0.3s", display: "flex", alignItems: "center", gap: 4 }}
+                          >
+                            <Trash2 size={16} /> Hapus
+                          </button>
 
                           <div style={{ display: "flex", alignItems: "center", gap: 12, border: "1.5px solid rgba(47,143,78,.2)", borderRadius: 8, padding: "6px 10px", background: "rgba(255,254,249,.8)" }}>
                             <button onClick={() => item.qty > 1 ? updateQty(item.id, -1) : removeFromCart(item.id)} style={{ background: "none", border: "none", color: item.qty > 1 ? "#2F8F4E" : "#5A4A40", fontSize: 16, fontWeight: 700, cursor: "pointer", width: 24, transition: "all 0.3s" }}>−</button>
@@ -1144,7 +1182,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
             <div style={{ flex: "1 1 30%", minWidth: 280, background: "linear-gradient(135deg,rgba(255,254,249,.95),rgba(250,248,243,.9))", borderRadius: 14, padding: 28, boxShadow: "0 8px 24px rgba(47,143,78,.12)", position: "sticky", top: 100, border: "1.5px solid rgba(47,143,78,.12)" }}>
               <h3 style={{ margin: "0 0 24px 0", color: "#1C3A2B", fontSize: 18, fontWeight: 800, background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Ringkasan Belanja</h3>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16, fontSize: 13, color: "#5A4A40", fontWeight: 500 }}>
-                <span>Total Harga ({cart.length} barang)</span>
+                <span>Total Harga ({cart.filter(c => c.selected !== false).length} barang)</span>
                 <span style={{ fontWeight: 600 }}>{fRp(totalCartPrice)}</span>
               </div>
               <hr style={{ border: "none", borderTop: "1.5px solid rgba(47,143,78,.15)", margin: "20px 0" }} />
@@ -1154,11 +1192,17 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
               </div>
 
               <button
-                onClick={() => { setShowCart(false); setShowCheckout(true); }}
-                disabled={cart.length === 0}
-                style={{ width: "100%", padding: "14px", borderRadius: 10, fontSize: 16, fontWeight: 700, border: "none", cursor: cart.length === 0 ? "not-allowed" : "pointer", background: cart.length === 0 ? "rgba(47,143,78,.2)" : "linear-gradient(135deg,#2F8F4E,#4FBF7E)", color: cart.length === 0 ? "#5A4A40" : "#FFF", transition: "all 0.3s", letterSpacing: ".05em", boxShadow: cart.length === 0 ? "none" : "0 8px 16px rgba(47,143,78,.2)" }}
+                onClick={() => { 
+                  if (cart.filter(c => c.selected !== false).length === 0) {
+                    alert("Pilih minimal 1 produk untuk checkout!");
+                    return;
+                  }
+                  setShowCart(false); setShowCheckout(true); 
+                }}
+                disabled={cart.filter(c => c.selected !== false).length === 0}
+                style={{ width: "100%", padding: "14px", borderRadius: 10, fontSize: 16, fontWeight: 700, border: "none", cursor: cart.filter(c => c.selected !== false).length === 0 ? "not-allowed" : "pointer", background: cart.filter(c => c.selected !== false).length === 0 ? "rgba(47,143,78,.2)" : "linear-gradient(135deg,#2F8F4E,#4FBF7E)", color: cart.filter(c => c.selected !== false).length === 0 ? "#5A4A40" : "#FFF", transition: "all 0.3s", letterSpacing: ".05em", boxShadow: cart.filter(c => c.selected !== false).length === 0 ? "none" : "0 8px 16px rgba(47,143,78,.2)" }}
               >
-                {`Lanjut ke Checkout (${cart.length}) →`}
+                {`Lanjut ke Checkout (${cart.filter(c => c.selected !== false).length}) →`}
               </button>
               <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 8, alignItems: "center" }}>
                 <div style={{ fontSize: 10, fontWeight: 700, color: "#6b7c6d", letterSpacing: "0.1em", textTransform: "uppercase" }}>Didukung Oleh</div>
