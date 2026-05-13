@@ -2,7 +2,7 @@
 import { Produk, Iklan, fRp } from "./types";
 import { useState, useRef, useEffect, cloneElement } from "react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
-import { Home, TreePine, Wheat, Soup, Recycle, Leaf, QrCode, Heart, Landmark, CheckCircle, Package, Truck, PartyPopper, XCircle, Search, MapPin, Zap, Eye, ShoppingCart, MessageSquare, Loader, Smartphone, FileText, CreditCard, Lock, ArrowRight, CornerDownRight, Building2, Shield, Plus, User, UserCheck, ChevronLeft, ChevronRight } from "lucide-react";
+import { Home, TreePine, Wheat, Soup, Recycle, Leaf, QrCode, Heart, Landmark, CheckCircle, Package, Truck, PartyPopper, XCircle, Search, MapPin, Zap, Eye, ShoppingCart, MessageSquare, Loader, Smartphone, FileText, CreditCard, Lock, ArrowRight, CornerDownRight, Building2, Shield, Plus, User, UserCheck, ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
 
 interface MarketplaceTabProps {
   produk: Produk[];
