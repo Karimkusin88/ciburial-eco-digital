@@ -1,6 +1,6 @@
 "use client";
 import { Produk, Iklan, fRp } from "./types";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, cloneElement } from "react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 import { Home, TreePine, Wheat, Soup, Recycle, Leaf, QrCode, Heart, Landmark, CheckCircle, Package, Truck, PartyPopper, XCircle, Search, MapPin, Zap, Eye, ShoppingCart, MessageSquare, Loader, Smartphone, FileText, CreditCard, Lock, ArrowRight, CornerDownRight, Building2, Shield, Plus, User, UserCheck, ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -52,14 +52,14 @@ const METODE_KIRIM = [
 ];
 
 const METODE_BAYAR = [
-  { v: "qris", l: "QRIS", icon: <QrCode size={18} strokeWidth={1.5} />, grup: "E-Wallet & QRIS" },
-  { v: "gopay", l: "GoPay", icon: <Heart size={18} strokeWidth={1.5} color="#00a550" />, grup: "E-Wallet & QRIS" },
-  { v: "ovo", l: "OVO", icon: <Heart size={18} strokeWidth={1.5} color="#4c3494" />, grup: "E-Wallet & QRIS" },
-  { v: "dana", l: "DANA", icon: <Heart size={18} strokeWidth={1.5} color="#118ee9" />, grup: "E-Wallet & QRIS" },
-  { v: "va_bca", l: "Virtual Account BCA", icon: <Landmark size={18} strokeWidth={1.5} />, grup: "Transfer Bank" },
-  { v: "va_bni", l: "Virtual Account BNI", icon: <Landmark size={18} strokeWidth={1.5} />, grup: "Transfer Bank" },
-  { v: "va_bri", l: "Virtual Account BRI", icon: <Landmark size={18} strokeWidth={1.5} />, grup: "Transfer Bank" },
-  { v: "va_mandiri", l: "Virtual Account Mandiri", icon: <Landmark size={18} strokeWidth={1.5} />, grup: "Transfer Bank" },
+  { v: "qris", l: "QRIS", icon: <img src="https://upload.wikimedia.org/wikipedia/commons/a/a2/Logo_QRIS.svg" alt="QRIS" style={{ height: 18, objectFit: "contain" }} />, grup: "E-Wallet & QRIS" },
+  { v: "gopay", l: "GoPay", icon: <img src="https://upload.wikimedia.org/wikipedia/commons/8/86/Gopay_logo.svg" alt="GoPay" style={{ height: 18, objectFit: "contain" }} />, grup: "E-Wallet & QRIS" },
+  { v: "ovo", l: "OVO", icon: <svg viewBox="0 0 100 30" style={{ height: 18 }}><text x="50" y="24" fontFamily="sans-serif" fontWeight="900" fontSize="28" fill="#4c3494" textAnchor="middle" letterSpacing="-1.5">OVO</text></svg>, grup: "E-Wallet & QRIS" },
+  { v: "dana", l: "DANA", icon: <img src="https://upload.wikimedia.org/wikipedia/commons/7/72/Logo_dana_blue.svg" alt="DANA" style={{ height: 18, objectFit: "contain" }} />, grup: "E-Wallet & QRIS" },
+  { v: "va_bca", l: "Virtual Account BCA", icon: <img src="https://upload.wikimedia.org/wikipedia/commons/5/5c/Bank_Central_Asia.svg" alt="BCA" style={{ height: 18, objectFit: "contain" }} />, grup: "Transfer Bank" },
+  { v: "va_bni", l: "Virtual Account BNI", icon: <img src="https://upload.wikimedia.org/wikipedia/commons/f/f0/Bank_Negara_Indonesia_logo_%282004%29.svg" alt="BNI" style={{ height: 18, objectFit: "contain" }} />, grup: "Transfer Bank" },
+  { v: "va_bri", l: "Virtual Account BRI", icon: <img src="https://upload.wikimedia.org/wikipedia/commons/2/2e/BRI_2020.svg" alt="BRI" style={{ height: 18, objectFit: "contain" }} />, grup: "Transfer Bank" },
+  { v: "va_mandiri", l: "Virtual Account Mandiri", icon: <img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/Bank_Mandiri_logo_2016.svg" alt="Mandiri" style={{ height: 18, objectFit: "contain" }} />, grup: "Transfer Bank" },
 ];
 
 const emptyOrder: OrderForm = {
@@ -580,7 +580,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                     <textarea value={orderForm.alamat} onChange={e => setOrderForm({ ...orderForm, alamat: e.target.value })} placeholder="Nama jalan, RT/RW, blok/nomor rumah..." rows={2}
                       style={{ width: "100%", padding: "clamp(6px, 2vw, 9px) clamp(8px, 2vw, 12px)", borderRadius: 10, border: "1.5px solid rgba(47,143,78,.2)", fontSize: 13, outline: "none", resize: "none" as const, boxSizing: "border-box" as const, fontFamily: "inherit", marginBottom: 12 }} />
                     
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 12 }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 12 }} className="responsive-grid">
                       <div>
                         <label style={{ fontSize: 11, fontWeight: 700, color: "#6b7c6d", letterSpacing: "0.06em", textTransform: "uppercase" as const, display: "block", marginBottom: 4 }}>Desa *</label>
                         <input value={orderForm.desa} onChange={e => setOrderForm({ ...orderForm, desa: e.target.value })} placeholder="Contoh: Hanjuang"
@@ -637,13 +637,12 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                 {["E-Wallet & QRIS", "Transfer Bank"].map(grup => (
                   <div key={grup} style={{ marginBottom: 12 }}>
                     <div style={{ fontSize: 10, fontWeight: 700, color: "#9A8C85", letterSpacing: "0.1em", textTransform: "uppercase" as const, marginBottom: 6 }}>{grup}</div>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }} className="responsive-grid">
                       {METODE_BAYAR.filter(m => m.grup === grup).map(m => (
                         <div key={m.v} onClick={() => setOrderForm({ ...orderForm, metode_bayar: m.v as any })}
                           style={{ padding: "clamp(6px, 2vw, 8px) clamp(8px, 2vw, 10px)", borderRadius: 10, border: `2px solid ${orderForm.metode_bayar === m.v ? "#2F8F4E" : "rgba(47,143,78,.15)"}`, cursor: "pointer", background: orderForm.metode_bayar === m.v ? "#E8F5EE" : "white", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 6, transition: "all 0.15s" }}>
-                          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                            <span style={{ fontSize: 16 }}>{m.icon}</span>
-                            <span style={{ fontSize: 11, fontWeight: orderForm.metode_bayar === m.v ? 800 : 600, color: "#1C3A2B" }}>{m.l}</span>
+                          <div style={{ display: "flex", alignItems: "center", gap: 6, minHeight: 24 }}>
+                            <span style={{ display: "flex", alignItems: "center" }}>{m.icon}</span>
                           </div>
                           {orderForm.metode_bayar === m.v && <CheckCircle size={16} color="#2F8F4E" />}
                         </div>
@@ -1164,12 +1163,9 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
               <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 8, alignItems: "center" }}>
                 <div style={{ fontSize: 10, fontWeight: 700, color: "#6b7c6d", letterSpacing: "0.1em", textTransform: "uppercase" }}>Didukung Oleh</div>
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center" }}>
-                  {["QRIS", "GoPay", "OVO", "DANA", "BCA", "BNI", "BRI", "Mandiri"].map(bank => (
-                    <div key={bank} style={{ padding: "4px 8px", background: "rgba(255,255,255,0.8)", border: "1px solid rgba(47,143,78,.15)", borderRadius: 6, fontSize: 10, fontWeight: 700, color: "#1C3A2B", display: "flex", alignItems: "center", gap: 4 }}>
-                      {bank === "QRIS" && <QrCode size={12} />}
-                      {["GoPay", "OVO", "DANA"].includes(bank) && <Heart size={12} />}
-                      {["BCA", "BNI", "BRI", "Mandiri"].includes(bank) && <Landmark size={12} />}
-                      {bank}
+                  {METODE_BAYAR.map(m => (
+                    <div key={m.v} style={{ padding: "6px 12px", background: "rgba(255,255,255,0.8)", border: "1px solid rgba(47,143,78,.15)", borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      {cloneElement(m.icon as React.ReactElement, { style: { height: 16, objectFit: "contain" } })}
                     </div>
                   ))}
                 </div>
@@ -1187,61 +1183,53 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
 
   // ─── MAIN MARKETPLACE PAGE (HEROIC DESIGN) ─────────────────────────
   return (
-    <div className="pi" style={{ paddingTop: "clamp(60px,8vw,100px)", paddingBottom: "clamp(60px,8vw,100px)", background: "linear-gradient(135deg,rgba(250,248,243,.5) 0%,rgba(255,254,249,.8) 100%)", minHeight: "100vh", fontFamily: "var(--font-dm-sans)" }}>
-      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 clamp(16px,4vw,32px)" }}>
+    <div className="pi" style={{ paddingTop: "clamp(16px,3vw,48px)", paddingBottom: "clamp(32px,5vw,64px)", background: "linear-gradient(135deg,rgba(250,248,243,.5) 0%,rgba(255,254,249,.8) 100%)", minHeight: "100vh", fontFamily: "var(--font-dm-sans)" }}>
+      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 clamp(10px,2.5vw,20px)" }}>
 
         {/* ── HEADER SECTION ── */}
-        <div style={{ marginBottom: 48, display: "flex", flexDirection: "column", gap: 24 }}>
-          {/* Logo + Search Bar */}
-          <div style={{ background: "rgba(255,254,249,.9)", borderRadius: 16, border: "1.5px solid rgba(47,143,78,.15)", padding: "clamp(12px, 3vw, 20px) clamp(12px, 3vw, 24px)", display: "flex", gap: "clamp(12px, 2vw, 18px)", alignItems: "center", boxShadow: "0 8px 24px rgba(47,143,78,.08)" }}>
-            <div className="fnt" style={{ fontWeight: 700, fontSize: "clamp(18px, 4vw, 22px)", background: "linear-gradient(135deg,#1C3A2B,#2F8F4E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Ciburial<span style={{ WebkitTextFillColor: "#5A4A40" }}>Market</span></div>
+        <div style={{ marginBottom: 20, background: "linear-gradient(135deg, #1C3A2B 0%, #2F8F4E 100%)", borderRadius: 16, padding: "clamp(16px, 3vw, 24px)", boxShadow: "0 10px 30px rgba(47,143,78,.2)", position: "relative", overflow: "hidden" }}>
+          
+          {/* Subtle decorative pattern/shine */}
+          <div style={{ position: "absolute", top: 0, right: 0, width: "100%", height: "100%", background: "radial-gradient(circle at top right, rgba(255,255,255,0.1), transparent 50%)", pointerEvents: "none" }} />
 
-            <div style={{ flex: 1, position: "relative" }}>
-              <span style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", fontSize: 18, color: "#2F8F4E" }}><Search size={18} /></span>
+          {/* Top Row: Logo, Search, Actions */}
+          <div style={{ display: "flex", gap: "8px", alignItems: "center", position: "relative", zIndex: 1, marginBottom: 16 }}>
+            <div className="fnt" style={{ fontWeight: 800, fontSize: "clamp(16px, 4vw, 22px)", color: "#FFF", whiteSpace: "nowrap", textShadow: "0 2px 4px rgba(0,0,0,0.2)" }}>
+              Ciburial<span style={{ color: "#D4AC5A" }}>Market</span>
+            </div>
+
+            <div style={{ flex: 1, position: "relative", marginLeft: 4 }}>
+              <span style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#6b7c6d" }}><Search size={15} /></span>
               <input
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                placeholder="Cari produk desa lokal..."
-                style={{ width: "100%", padding: "12px 16px 12px 48px", borderRadius: 10, border: "2px solid rgba(47,143,78,.15)", color: "#1C3A2B", fontSize: 14, outline: "none", boxSizing: "border-box", transition: "all 0.25s", background: "rgba(255,254,249,.8)" }}
+                placeholder="Cari produk..."
+                style={{ width: "100%", padding: "10px 12px 10px 36px", borderRadius: 10, border: "none", color: "#1C3A2B", fontSize: 13, outline: "none", boxSizing: "border-box", transition: "all 0.25s", background: "#FFF", boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}
                 onFocus={(e) => {
-                  e.currentTarget.style.borderColor = "#2F8F4E";
-                  e.currentTarget.style.boxShadow = "0 0 0 3px rgba(47,143,78,.1)";
+                  e.currentTarget.style.boxShadow = "0 0 0 3px rgba(255,255,255,0.3)";
                 }}
                 onBlur={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(47,143,78,.15)";
-                  e.currentTarget.style.boxShadow = "none";
+                  e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.1)";
                 }}
               />
             </div>
 
             {/* Tracking Button */}
-            <button onClick={() => setShowTracking(true)} style={{ position: "relative", background: "linear-gradient(135deg,#4FBF7E,#6FD09E)", border: "none", cursor: "pointer", fontSize: 22, padding: "10px 14px", borderRadius: 10, color: "white", transition: "all 0.3s", fontWeight: 600, letterSpacing: ".05em", boxShadow: "0 8px 16px rgba(79,191,126,.2)" }}
-              onMouseEnter={e => {
-                e.currentTarget.style.transform = "translateY(-2px)";
-                e.currentTarget.style.boxShadow = "0 12px 24px rgba(79,191,126,.3)";
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 8px 16px rgba(79,191,126,.2)";
-              }}
+            <button onClick={() => setShowTracking(true)} style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.2)", cursor: "pointer", padding: "8px 10px", borderRadius: 10, color: "white", transition: "all 0.2s", flexShrink: 0 }}
+              onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.25)"}
+              onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.15)"}
             >
-              <Package size={24} strokeWidth={1.5} />
+              <Package size={18} strokeWidth={1.5} />
             </button>
 
             {/* Cart Button */}
-            <button onClick={() => setShowCart(true)} style={{ position: "relative", background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", border: "none", cursor: "pointer", fontSize: 22, padding: "10px 14px", borderRadius: 10, color: "white", transition: "all 0.3s", fontWeight: 600, letterSpacing: ".05em", boxShadow: "0 8px 16px rgba(47,143,78,.2)" }}
-              onMouseEnter={e => {
-                e.currentTarget.style.transform = "translateY(-2px)";
-                e.currentTarget.style.boxShadow = "0 12px 24px rgba(47,143,78,.3)";
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 8px 16px rgba(47,143,78,.2)";
-              }}
+            <button onClick={() => setShowCart(true)} style={{ position: "relative", background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.2)", cursor: "pointer", padding: "8px 10px", borderRadius: 10, color: "white", transition: "all 0.2s", flexShrink: 0 }}
+              onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.25)"}
+              onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.15)"}
             >
-              <ShoppingCart size={24} strokeWidth={1.5} />
+              <ShoppingCart size={18} strokeWidth={1.5} />
               {cart.length > 0 && (
-                <span style={{ position: "absolute", top: 0, right: 0, background: "#f87171", color: "#FFF", fontSize: 10, fontWeight: 700, padding: "2px 6px", borderRadius: "10px", minWidth: "20px", textAlign: "center", border: "2px solid white" }}>
+                <span style={{ position: "absolute", top: -5, right: -5, background: "#f87171", color: "#FFF", fontSize: 10, fontWeight: 800, padding: "2px 6px", borderRadius: "12px", minWidth: "18px", textAlign: "center", border: "2px solid #1C3A2B", boxShadow: "0 2px 4px rgba(0,0,0,0.2)" }}>
                   {cart.length}
                 </span>
               )}
@@ -1249,18 +1237,24 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
           </div>
 
           {/* Section Title */}
-          <div style={{ textAlign: "center", marginBottom: 12 }}>
-            <div style={{ display: "inline-block", width: "44px", height: "3px", background: "linear-gradient(90deg,#2F8F4E,#4FBF7E)", borderRadius: "99px", boxShadow: "0 0 16px rgba(47,143,78,.4)", marginBottom: "16px" }} />
-            <h2 className="fnt" style={{ fontSize: "clamp(28px,4vw,44px)", fontWeight: 300, background: "linear-gradient(135deg,#1C3A2B,#2F8F4E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", margin: "0 0 8px 0" }}>
-              Marketplace Lokal
-            </h2>
-            <p style={{ fontSize: 14, color: "#5A4A40", fontWeight: 500 }}>Produk asli dari pengrajin dan petani Ciburial</p>
+          <div style={{ position: "relative", zIndex: 1, display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+            <div>
+              <h2 className="fnt" style={{ fontSize: "clamp(20px,4vw,28px)", fontWeight: 500, color: "#FFF", margin: "0 0 4px 0", letterSpacing: "0.02em" }}>
+                Marketplace Lokal
+              </h2>
+              <p style={{ fontSize: 12, color: "rgba(255,255,255,0.85)", fontWeight: 400, margin: 0 }}>Pemberdayaan pengrajin & petani Ciburial</p>
+            </div>
+            
+            {/* Optional decoration */}
+            <div style={{ opacity: 0.15, marginBottom: -15, marginRight: -10, transform: "rotate(-10deg)" }}>
+              <ShoppingCart size={54} strokeWidth={1} color="#FFF" />
+            </div>
           </div>
         </div>
 
         {/* ── BANNER SLIDER (Heroic) ── */}
         {iklan.length > 0 && !dataLoad && (
-          <div style={{ marginBottom: 40, position: "relative", borderRadius: 16, overflow: "hidden", border: "1.5px solid rgba(47,143,78,.15)" }}>
+          <div style={{ marginBottom: 16, position: "relative", borderRadius: 12, overflow: "hidden", border: "1.5px solid rgba(47,143,78,.15)" }}>
             <div ref={sliderRef} style={{ display: "flex", overflowX: "hidden", scrollSnapType: "x mandatory" }}>
               {iklan.map((ik, i) => (
                 <div key={ik.id || i} style={{ flex: "0 0 100%", scrollSnapAlign: "start", position: "relative", aspectRatio: "16/9", minHeight: 220, maxHeight: 400, background: "#000", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -1311,25 +1305,28 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
           </div>
         )}
 
-        {/* ── KATEGORI POPULER (Heroic) ── */}
-        <div style={{ background: "linear-gradient(135deg,rgba(79,191,126,.06),rgba(47,143,78,.03))", borderRadius: 16, padding: "32px 24px", marginBottom: 48, border: "1.5px solid rgba(47,143,78,.12)", boxShadow: "0 4px 16px rgba(47,143,78,.06)" }}>
-          <h2 style={{ margin: "0 0 24px 0", color: "#1C3A2B", fontSize: "clamp(20px, 4vw, 24px)", fontWeight: 800, background: "linear-gradient(135deg,#2F8F4E,#4FBF7E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Kategori Desa</h2>
-          <div style={{ display: "flex", gap: 16, overflowX: "auto", paddingBottom: 8, flex: 1 }} className="hide-scroll">
-            {KATEGORI.map(k => (
-              <button key={k.id} onClick={() => setActiveKat(k.id)} style={{
-                flexShrink: 0, padding: "14px 24px", borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: "pointer", transition: "all 0.3s cubic-bezier(.22,1,.36,1)",
-                display: "flex", alignItems: "center", gap: 10,
-                background: activeKat === k.id ? "linear-gradient(135deg,#2F8F4E,#4FBF7E)" : "rgba(255,254,249,.8)",
-                border: `1.5px solid ${activeKat === k.id ? "#2F8F4E" : "rgba(47,143,78,.2)"}`,
-                color: activeKat === k.id ? "#FFF" : "#1C3A2B",
-                boxShadow: activeKat === k.id ? "0 8px 16px rgba(47,143,78,.2)" : "0 2px 8px rgba(0,0,0,.04)",
-                transform: activeKat === k.id ? "translateY(-2px)" : "translateY(0)",
-              }}>
-                <span style={{ fontSize: 20 }}>{k.icon}</span>
-                <span>{k.id}</span>
-              </button>
-            ))}
-          </div>
+        {/* ── KATEGORI FILTER (Compact Pills) ── */}
+        <div style={{ display: "flex", gap: 6, overflowX: "auto", paddingBottom: 4, marginBottom: 16, flexWrap: "nowrap" }} className="hide-scroll">
+          {KATEGORI.map(k => (
+            <button key={k.id} onClick={() => setActiveKat(k.id)} style={{
+              flexShrink: 0,
+              padding: "5px 12px",
+              borderRadius: 99,
+              fontSize: 11,
+              fontWeight: 600,
+              cursor: "pointer",
+              transition: "all 0.25s cubic-bezier(.22,1,.36,1)",
+              display: "flex", alignItems: "center", gap: 5,
+              background: activeKat === k.id ? "linear-gradient(135deg,#2F8F4E,#4FBF7E)" : "rgba(255,254,249,0.9)",
+              border: `1.5px solid ${activeKat === k.id ? "#2F8F4E" : "rgba(47,143,78,.2)"}`,
+              color: activeKat === k.id ? "#FFF" : "#1C3A2B",
+              boxShadow: activeKat === k.id ? "0 4px 12px rgba(47,143,78,.25)" : "none",
+              whiteSpace: "nowrap",
+            }}>
+              <span style={{ display: "flex", alignItems: "center" }}>{k.icon}</span>
+              <span>{k.id}</span>
+            </button>
+          ))}
         </div>
 
         {/* ── HEADER PRODUK ── */}
@@ -1348,7 +1345,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
 
         {/* ── PRODUK GRID (CARD ALA TOKPED) ── */}
         {!dataLoad && (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(220px,1fr))", gap: "20px" }} className="produk-grid">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(min(160px,47%),1fr))", gap: "clamp(8px,2vw,16px)" }} className="produk-grid">
             {filteredProduk.map((p, i) => {
               const sellerName = (p as any).penjual || "Pemuda Makers";
               const photos = (p as any)?.fotos && Array.isArray((p as any).fotos) && (p as any).fotos.length > 0 ? (p as any).fotos : [p.foto];
@@ -1382,71 +1379,36 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
               <p style={{ margin: "8px 0 0 0", fontSize: 12, color: "#6b7c6d", fontWeight: 500 }}>Aman & Terpercaya</p>
             </div>
 
-            {/* Payment Methods Grid - 4 Columns Mobile */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "clamp(4px, 2vw, 12px)", maxWidth: 900, margin: "0 auto", padding: "0 clamp(12px, 3vw, 32px)" }}>
-
-              {/* E-Wallet */}
-              <div style={{ background: "rgba(79,191,126,.03)", borderRadius: 10, padding: "clamp(8px, 1.5vw, 14px) clamp(2px, 1vw, 12px)", border: "1px solid rgba(47,143,78,.1)", textAlign: "center", transition: "all 0.25s", cursor: "default", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "rgba(79,191,126,.06)";
-                  e.currentTarget.style.borderColor = "rgba(47,143,78,.2)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "rgba(79,191,126,.03)";
-                  e.currentTarget.style.borderColor = "rgba(47,143,78,.1)";
-                }}
-              >
-                <div style={{ marginBottom: 4 }}><Smartphone size={16} strokeWidth={1.5} color="#2F8F4E" style={{ width: "clamp(14px, 3.5vw, 20px)", height: "auto" }} /></div>
-                <h4 style={{ margin: "0 0 2px 0", fontSize: "clamp(9px, 2.2vw, 11px)", fontWeight: 700, color: "#1C3A2B", width: "100%", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>E-Wallet</h4>
-                <p style={{ margin: 0, fontSize: "clamp(7.5px, 1.8vw, 9px)", color: "#6b7c6d", width: "100%", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>GoPay, dkk</p>
-              </div>
-
-              {/* QRIS */}
-              <div style={{ background: "rgba(75,52,148,.03)", borderRadius: 10, padding: "clamp(8px, 1.5vw, 14px) clamp(2px, 1vw, 12px)", border: "1px solid rgba(47,143,78,.1)", textAlign: "center", transition: "all 0.25s", cursor: "default", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "rgba(75,52,148,.06)";
-                  e.currentTarget.style.borderColor = "rgba(47,143,78,.2)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "rgba(75,52,148,.03)";
-                  e.currentTarget.style.borderColor = "rgba(47,143,78,.1)";
-                }}
-              >
-                <div style={{ marginBottom: 4 }}><QrCode size={16} strokeWidth={1.5} color="#4B348F" style={{ width: "clamp(14px, 3.5vw, 20px)", height: "auto" }} /></div>
-                <h4 style={{ margin: "0 0 2px 0", fontSize: "clamp(9px, 2.2vw, 11px)", fontWeight: 700, color: "#1C3A2B", width: "100%", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>QRIS</h4>
-                <p style={{ margin: 0, fontSize: "clamp(7.5px, 1.8vw, 9px)", color: "#6b7c6d", width: "100%", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>Instan</p>
-              </div>
-
-              {/* Bank Transfers */}
-              <div style={{ background: "rgba(220,53,69,.03)", borderRadius: 10, padding: "clamp(8px, 1.5vw, 14px) clamp(2px, 1vw, 12px)", border: "1px solid rgba(47,143,78,.1)", textAlign: "center", transition: "all 0.25s", cursor: "default", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "rgba(220,53,69,.06)";
-                  e.currentTarget.style.borderColor = "rgba(47,143,78,.2)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "rgba(220,53,69,.03)";
-                  e.currentTarget.style.borderColor = "rgba(47,143,78,.1)";
-                }}
-              >
-                <div style={{ marginBottom: 4 }}><Building2 size={16} strokeWidth={1.5} color="#B8472F" style={{ width: "clamp(14px, 3.5vw, 20px)", height: "auto" }} /></div>
-                <h4 style={{ margin: "0 0 2px 0", fontSize: "clamp(9px, 2.2vw, 11px)", fontWeight: 700, color: "#1C3A2B", width: "100%", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>Bank</h4>
-                <p style={{ margin: 0, fontSize: "clamp(7.5px, 1.8vw, 9px)", color: "#6b7c6d", width: "100%", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>BCA, BNI, dll</p>
-              </div>
-
+            {/* Payment Methods - Actual Brand Logos */}
+            <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "8px", maxWidth: 700, margin: "0 auto", padding: "0 clamp(12px, 3vw, 32px)" }}>
+              {METODE_BAYAR.map(m => (
+                <div key={m.v} style={{ padding: "6px 12px", background: "rgba(255,255,255,0.9)", border: "1px solid rgba(47,143,78,.12)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 6px rgba(47,143,78,.03)", transition: "all 0.2s", cursor: "default" }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-1px)";
+                    e.currentTarget.style.boxShadow = "0 3px 10px rgba(47,143,78,.06)";
+                    e.currentTarget.style.borderColor = "rgba(47,143,78,.25)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow = "0 2px 6px rgba(47,143,78,.03)";
+                    e.currentTarget.style.borderColor = "rgba(47,143,78,.12)";
+                  }}>
+                  {cloneElement(m.icon as React.ReactElement, { style: { height: 14, objectFit: "contain" } })}
+                </div>
+              ))}
+              
               {/* Secure Payment */}
-              <div style={{ background: "rgba(255,193,7,.03)", borderRadius: 10, padding: "clamp(8px, 1.5vw, 14px) clamp(2px, 1vw, 12px)", border: "1px solid rgba(47,143,78,.1)", textAlign: "center", transition: "all 0.25s", cursor: "default", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}
+              <div style={{ padding: "6px 12px", background: "rgba(255,193,7,.05)", border: "1px solid rgba(212,172,90,.3)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", gap: 4, boxShadow: "0 2px 6px rgba(212,172,90,.04)", transition: "all 0.2s", cursor: "default" }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "rgba(255,193,7,.06)";
-                  e.currentTarget.style.borderColor = "rgba(47,143,78,.2)";
+                  e.currentTarget.style.transform = "translateY(-1px)";
+                  e.currentTarget.style.boxShadow = "0 3px 10px rgba(212,172,90,.08)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "rgba(255,193,7,.03)";
-                  e.currentTarget.style.borderColor = "rgba(47,143,78,.1)";
-                }}
-              >
-                <div style={{ marginBottom: 4 }}><Shield size={16} strokeWidth={1.5} color="#D4AC5A" style={{ width: "clamp(14px, 3.5vw, 20px)", height: "auto" }} /></div>
-                <h4 style={{ margin: "0 0 2px 0", fontSize: "clamp(9px, 2.2vw, 11px)", fontWeight: 700, color: "#1C3A2B", width: "100%", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>Aman</h4>
-                <p style={{ margin: 0, fontSize: "clamp(7.5px, 1.8vw, 9px)", color: "#6b7c6d", width: "100%", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>Midtrans</p>
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "0 2px 6px rgba(212,172,90,.04)";
+                }}>
+                <Shield size={12} strokeWidth={2.5} color="#D4AC5A" />
+                <span style={{ fontSize: 9, fontWeight: 800, color: "#9A8C85", textTransform: "uppercase", letterSpacing: "0.05em" }}>Aman via Midtrans</span>
               </div>
             </div>
           </div>
