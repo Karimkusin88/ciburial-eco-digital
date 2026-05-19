@@ -4,23 +4,29 @@ Inovasi Desa Mandiri Berbasis Kearifan Lokal dan Teknologi Masa Depan.
 
 Website resmi Kampung Ciburial — desa inovatif di Garut, Jawa Barat yang mengawinkan kekayaan alam organik dengan literasi teknologi digital.
 
-## ✨ Fitur
+## ✨ Fitur Utama
 
-- **📊 Transparansi Dana** — Tracking pemasukan/pengeluaran real-time
-- **🛒 Marketplace** — Produk kerajinan bambu, sayur organik, kompos
-- **📅 Kalender Kegiatan** — Agenda dan jadwal kampung
-- **📢 Pengaduan Warga** — Sistem laporan dan aspirasi
-- **🗳️ Voting** — Musyawarah digital warga
-- **♻️ Tukar Poin** — Reward Bank Sampah digital (Eco-Reward)
-- **🤖 Ciburial AI** — Asisten digital kampung (powered by Groq)
-- **🕌 Widget Sholat & Cuaca** — Info real-time untuk warga
-- **🔐 Admin Panel** — Kelola kegiatan, produk, dan transaksi
+- **🎨 HEROIC Design System** — Tampilan UI/UX modern, responsif, dan elegan (Dark Mode, Command Palette, Scroll Reveal).
+- **🪪 NFC Integration** — Smart card warga untuk presensi Posyandu, Ronda, dan transaksi (Support Web NFC API).
+- **📊 Transparansi Dana** — Tracking pemasukan/pengeluaran desa secara real-time.
+- **🛒 Smart Marketplace** — Jual-beli produk lokal (kerajinan bambu, sayur organik, kompos) terintegrasi dengan Payment Gateway (Midtrans).
+- **📦 Order Tracking** — Lacak status pesanan secara real-time.
+- **👶 Posyandu & Tumbuh Kembang** — Sistem monitoring kesehatan anak dan pencegahan stunting.
+- **📅 Kalender Kegiatan** — Agenda dan jadwal aktivitas rutin kampung.
+- **📢 Pengaduan Warga** — Sistem laporan dan aspirasi masyarakat yang terpusat.
+- **🗳️ E-Voting** — Musyawarah dan pengambilan keputusan secara digital (Live Result).
+- **♻️ Bank Sampah & Eco-Reward** — Tukar poin digital dari hasil mengumpulkan sampah.
+- **🕌 Widget Sholat & Cuaca** — Info real-time terintegrasi untuk warga.
+- **🤖 Ciburial AI** — Asisten chatbot digital kampung (powered by Groq Llama 3).
+- **👮 Ronda & Zakat** — Manajemen jadwal keamanan lingkungan dan perhitungan zakat otomatis.
 
 ## 🛠 Tech Stack
 
-- **Framework**: [Next.js 16](https://nextjs.org) (App Router)
-- **Database**: [Supabase](https://supabase.com) (PostgreSQL + Realtime)
-- **Styling**: [Tailwind CSS v4](https://tailwindcss.com) + CSS Custom Properties
+- **Framework**: [Next.js 16](https://nextjs.org) (App Router, Turbopack)
+- **Language**: TypeScript
+- **Database**: [Supabase](https://supabase.com) (PostgreSQL + RLS + Realtime)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com) + HEROIC CSS Custom Properties
+- **Payment**: [Midtrans](https://midtrans.com)
 - **AI**: [Groq API](https://groq.com) (Llama 3.3 70B)
 - **Deployment**: [Vercel](https://vercel.com)
 
@@ -28,19 +34,22 @@ Website resmi Kampung Ciburial — desa inovatif di Garut, Jawa Barat yang menga
 
 1. **Clone & Install**
    ```bash
-   git clone https://github.com/your-repo/ciburial-eco-digital.git
+   git clone https://github.com/Karimkusin88/ciburial-eco-digital.git
    cd ciburial-eco-digital
    npm install
    ```
 
 2. **Setup Environment**
-   ```bash
-   cp .env.example .env.local
+   Buat file `.env.local` di root folder dan isi dengan credentials berikut:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhb...
+   NEXT_PUBLIC_ADMIN_PASSWORD=passwordkamu
+   GROQ_API_KEY=gsk_xxx...
    ```
-   Isi variabel di `.env.local` dengan credentials Supabase dan Groq API key.
 
 3. **Setup Database**
-   Jalankan SQL yang ada di `lib/supabase.ts` di Supabase SQL Editor.
+   Jalankan SQL schema yang ada di `lib/supabase.ts` di Supabase SQL Editor untuk inisialisasi tabel dan RLS (Row Level Security).
 
 4. **Run Development Server**
    ```bash
@@ -48,32 +57,34 @@ Website resmi Kampung Ciburial — desa inovatif di Garut, Jawa Barat yang menga
    ```
    Buka [http://localhost:3000](http://localhost:3000).
 
-## 📁 Struktur Project
+## 📁 Struktur Project Utama
 
 ```
 app/
-├── page.tsx           # Homepage (Tentang, Kegiatan, Proposal, Transparansi, Marketplace)
-├── admin/             # Panel admin (CRUD kegiatan, produk, transaksi)
-│   ├── page.tsx
+├── (routes)/           # Route publik (Homepage, Tentang, Kegiatan, dll)
+├── admin/              # Panel admin sistem desa
 │   ├── bank-sampah/
 │   ├── dashboard/
 │   ├── kalender/
+│   ├── orders/
 │   ├── posyandu/
 │   ├── ronda/
 │   ├── voting/
 │   ├── warga/
 │   └── zakat/
-├── ai/                # Halaman chatbot AI
-├── api/ai/            # API route untuk Groq integration
-├── kalender/          # Kalender kegiatan publik
-├── pengaduan/         # Pengaduan & aspirasi warga
-├── voting/            # Voting digital
-└── tukar-poin/        # Tukar poin Bank Sampah
+├── ai/                 # Halaman chatbot Ciburial AI
+├── api/                # API routes (Midtrans, Groq, Sync, Webhooks)
+├── cek-pesanan/        # Cek status pesanan publik
+├── pengaduan/          # Portal aspirasi warga
+├── tukar-poin/         # Penukaran eco-reward
+├── voting/             # Modul e-voting warga
+│   └── live/           # Live result display
 components/
-└── CuacaSholatWidget.tsx  # Widget cuaca & jadwal sholat
+├── home/               # Komponen UI homepage tab-based
+└── ui/                 # Reusable primitive UI (Skeleton, CommandPalette, dll)
 lib/
-├── supabase.ts        # Supabase client + SQL schema
-└── ecoReward.ts       # Sistem poin eco-reward
+├── ecoReward.ts        # Core logic sistem poin Bank Sampah
+└── supabase.ts         # Inisialisasi Supabase & skema referensi
 ```
 
 ## 📍 Lokasi
