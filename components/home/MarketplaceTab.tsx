@@ -2,6 +2,7 @@
 import { Produk, Iklan, fRp } from "./types";
 import { useState, useRef, useEffect, cloneElement } from "react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
+import { playSound } from "@/lib/sound";
 import { Home, TreePine, Wheat, Soup, Recycle, Leaf, QrCode, Heart, Landmark, CheckCircle, Package, Truck, PartyPopper, XCircle, Search, MapPin, Zap, Eye, ShoppingCart, MessageSquare, Loader, Smartphone, FileText, CreditCard, Lock, ArrowRight, CornerDownRight, Building2, Shield, Plus, User, UserCheck, ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
 
 interface MarketplaceTabProps {
@@ -223,6 +224,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
 
   // Fungsi tambah ke keranjang
   const addToCart = (p: Produk) => {
+    playSound("pop");
     setCart((prev) => {
       const existing = prev.find((item) => item.id === p.id);
       if (existing) {
@@ -413,6 +415,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
       if (data.token && (window as any).snap) {
         (window as any).snap.pay(data.token, {
           onSuccess: async (r: any) => {
+            playSound("success");
             // Simpan order ke Supabase
             if (isSupabaseReady()) {
               await supabase.from("orders_marketplace").insert({
@@ -454,7 +457,10 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
             }
             alert("Menunggu pembayaran. Cek WhatsApp kamu untuk konfirmasi!");
           },
-          onError: (r: any) => alert("Pembayaran gagal. Silakan coba lagi."),
+          onError: (r: any) => {
+            playSound("error");
+            alert("Pembayaran gagal. Silakan coba lagi.");
+          },
         });
       } else {
         alert("Payment Gateway belum aktif. (" + (data.error || "Missing Token") + ")");

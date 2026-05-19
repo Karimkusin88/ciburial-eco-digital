@@ -8,6 +8,7 @@ import CommunityDashboard from "@/components/home/CommunityDashboard";
 import { Transaksi, DEF_TX } from "./types";
 import Reveal from "@/components/ui/Reveal";
 import Counter from "@/components/ui/Counter";
+import { playSound } from "@/lib/sound";
 
 
 interface TentangTabProps {
@@ -436,7 +437,12 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
                             }
                         ].map((item, i) => (
                             <Reveal key={i} delay={i * 50} direction="up">
-                                <a href={item.link} style={{ textDecoration: "none", color: "inherit", pointerEvents: item.comingSoon ? "none" : "auto", display: "block", height: "100%" }} className="hub-card-link">
+                                <a 
+                                    href={item.link} 
+                                    onClick={() => playSound("tap")}
+                                    style={{ textDecoration: "none", color: "inherit", pointerEvents: item.comingSoon ? "none" : "auto", display: "block", height: "100%" }} 
+                                    className="hub-card-link"
+                                >
                                     <div className="card-heroic" style={{
                                         height: "100%",
                                         padding: "clamp(10px, 2.5vw, 24px) clamp(8px, 2.5vw, 20px)",

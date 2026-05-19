@@ -14,7 +14,7 @@ const KAT_COLOR: Record<string, string> = {
 
 // Dummy data untuk tampilan awal
 const DUMMY: Kegiatan[] = [
-  { id: "d1", judul: "Posyandu Bulan April", deskripsi: "Pemeriksaan tumbuh kembang balita & ibu hamil", tanggal: new Date(new Date().getFullYear(), new Date().getMonth(), 15).toISOString().split("T")[0], jam_mulai: "08:00", lokasi: "Balai Desa Ciburial", kategori: "kesehatan", foto_url: "" },
+  { id: "d1", judul: "Posyandu Bulan April", deskripsi: "Pemeriksaan tumbuh kembang balita & ibu hamil", tanggal: new Date(new Date().getFullYear(), new Date().getMonth(), 15).toISOString().split("T")[0], jam_mulai: "08:00", lokasi: "Balai Kampung Ciburial", kategori: "kesehatan", foto_url: "" },
   { id: "d2", judul: "Rapat Musyawarah Warga", deskripsi: "Pembahasan program bank sampah & Smart PJU fase 2", tanggal: new Date(new Date().getFullYear(), new Date().getMonth(), 20).toISOString().split("T")[0], jam_mulai: "19:30", lokasi: "Mushola Al-Ikhlas RT 01", kategori: "kemasyarakatan", foto_url: "" },
   { id: "d3", judul: "Pengajian Rutin Mingguan", deskripsi: "Pengajian bersama warga Ciburial setiap Jumat malam", tanggal: new Date(new Date().getFullYear(), new Date().getMonth(), 25).toISOString().split("T")[0], jam_mulai: "20:00", lokasi: "Masjid Baitussalam", kategori: "keagamaan", foto_url: "" },
 ];
