@@ -24,6 +24,13 @@ export interface Produk {
   icon: React.ReactNode | string;
   foto?: string;
   fotos?: string[];
+  toko_id?: string;
+  toko?: {
+    nama_toko: string;
+    no_wa: string;
+  };
+  rating_avg?: number;
+  rating_count?: number;
 }
 
 export interface Transaksi {

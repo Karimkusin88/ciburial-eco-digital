@@ -36,7 +36,7 @@ export default function Home() {
       setDataLoad(true);
       const [k, p, t] = await Promise.all([
         supabase.from("kegiatan").select("*").order("tanggal", { ascending: false }),
-        supabase.from("produk").select("*").order("created_at", { ascending: false }),
+        supabase.from("produk").select("*, toko(*)").order("created_at", { ascending: false }),
         supabase.from("transaksi").select("*").order("tanggal", { ascending: false }),
       ]);
       if (k.data?.length) setKegiatan(k.data as Kegiatan[]);

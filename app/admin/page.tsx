@@ -784,6 +784,7 @@ export default function AdminPage() {
                         {href:"/admin/kalender",i:<Calendar size={16}/>,l:"KALENDER"},
                         {href:"/admin/voting",i:<Coins size={16}/>,l:"VOTING"},
                         {href:"/admin/learning-hub",i:<Book size={16}/>,l:"LEARNING HUB"},
+                        {href:"/admin/toko",i:<ShoppingCart size={16}/>,l:"TOKO & PENJUAL"},
                       ].map(l=>(
                         <a key={l.href} href={l.href} style={{display:"flex",alignItems:"center",gap:10,padding:"14px",borderRadius:12,background:"rgba(255,255,255,0.1)",border:"1px solid rgba(255,255,255,0.1)",textDecoration:"none",color:"white",fontSize:12,fontWeight:800, transition: "all 0.3s"}} 
                         onMouseOver={e => {e.currentTarget.style.background = "rgba(255,255,255,0.2)"; e.currentTarget.style.transform = "translateX(4px)"}}
