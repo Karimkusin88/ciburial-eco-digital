@@ -39,8 +39,13 @@ export async function POST(request: Request) {
       });
       const data = await response.json();
       if (!data.status) {
-        return NextResponse.json({ success: false, message: "Gagal mengirim pesan WA", data });
+        return NextResponse.json({ success: false, message: `Gagal mengirim pesan WA: ${data.reason || JSON.stringify(data)}`, data });
       }
+      
+      return NextResponse.json({ 
+        success: true, 
+        message: "OTP terkirim via WA!"
+      });
     }
 
     // Di skenario nyata kita simpan `otp` ini di tabel db `auth_otp` yang expired 5 menit.

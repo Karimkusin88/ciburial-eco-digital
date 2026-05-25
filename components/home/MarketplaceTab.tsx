@@ -403,7 +403,8 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
       const data = await res.json();
       if (data.success) {
         if (data.mock_otp) {
-          alert(`(MOCK DEV) OTP Anda: ${data.mock_otp}`);
+          // Hanya tampil di mode dev/jika FONNTE API KEY kosong
+          alert(`⚠️ PERHATIAN (Mode Dev):\n\nAPI Key Fonnte belum di-set di .env!\n\nUntuk sementara, OTP Anda adalah: ${data.mock_otp}\n\nMohon masukkan kode ini untuk melanjutkan.`);
         }
         setLoginStep("otp");
       } else {
