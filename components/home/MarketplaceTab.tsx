@@ -151,15 +151,21 @@ function ProductCard({ p, photos, sellerName, onDetail, onBuy, onAddToCart }: an
 
         {/* Seller Info */}
         <div 
-          style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 4, fontSize: 9, color: "#6D7588", fontWeight: 600 }}
+          style={{ display: "inline-flex", alignItems: "center", gap: 4, marginTop: 6, marginBottom: 2, padding: "3px 6px", background: p.toko_id ? "rgba(47,143,78,0.06)" : "rgba(109,117,136,0.06)", borderRadius: 4, fontSize: 10, color: p.toko_id ? "#2F8F4E" : "#6D7588", fontWeight: 700, cursor: p.toko_id ? "pointer" : "default", width: "fit-content", transition: "all 0.2s" }}
           onClick={(e) => {
             if (p.toko_id) {
               e.stopPropagation();
               window.location.href = `/toko/${p.toko_id}`;
             }
           }}
+          onMouseEnter={(e) => {
+            if (p.toko_id) e.currentTarget.style.background = "rgba(47,143,78,0.12)";
+          }}
+          onMouseLeave={(e) => {
+            if (p.toko_id) e.currentTarget.style.background = "rgba(47,143,78,0.06)";
+          }}
         >
-          <Store size={10} /> <span style={{ textTransform: "uppercase", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", cursor: p.toko_id ? "pointer" : "default", textDecoration: p.toko_id ? "underline" : "none" }}>{sellerName}</span> {p.toko_id && <CheckCircle size={10} color="#00AA5B" style={{ flexShrink: 0 }} />}
+          <Store size={10} /> <span style={{ textTransform: "uppercase", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{sellerName}</span> {p.toko_id && <CheckCircle size={10} color="#00AA5B" style={{ flexShrink: 0 }} />}
         </div>
 
         {/* Buttons (Beli & Keranjang) */}

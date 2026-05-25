@@ -77,19 +77,24 @@ export default function PublicTokoPage() {
             </h1>
             <p className="text-[14px] text-[var(--ts)] mb-4 leading-relaxed max-w-2xl">{toko.deskripsi || "Belum ada deskripsi"}</p>
             
-            <div className="flex flex-wrap gap-4 mt-2">
-              <div className="flex items-center gap-2 text-[13px] font-semibold text-[var(--fo)] bg-[rgba(47,143,78,0.08)] px-3 py-1.5 rounded-lg">
+            <div className="flex flex-wrap gap-3 mt-4 mb-5">
+              <div className="flex items-center gap-2 text-[13px] font-semibold text-[var(--fo)] bg-[rgba(47,143,78,0.08)] px-3 py-1.5 rounded-lg border border-[rgba(47,143,78,0.1)]">
                 <MapPin size={16} /> Desa Ciburial
               </div>
-              {toko.no_wa && (
-                <a href={`https://wa.me/62${toko.no_wa.replace(/^0+/, '')}`} target="_blank" className="flex items-center gap-2 text-[13px] font-semibold text-[#128C7E] bg-[#128C7E]/10 px-3 py-1.5 rounded-lg no-underline">
-                  <Smartphone size={16} /> Hubungi Penjual
-                </a>
-              )}
-              <div className="flex items-center gap-2 text-[13px] font-semibold text-[var(--go)] bg-[var(--go)]/10 px-3 py-1.5 rounded-lg">
+              <div className="flex items-center gap-2 text-[13px] font-semibold text-[var(--go)] bg-[var(--go)]/10 px-3 py-1.5 rounded-lg border border-[var(--go)]/20">
                 <Box size={16} /> {produk.length} Produk
               </div>
             </div>
+
+            {toko.no_wa && (
+              <a 
+                href={`https://wa.me/62${toko.no_wa.replace(/^0+/, '')}?text=Halo%20kak,%20saya%20dapat%20info%20toko%20ini%20dari%20Ciburial%20Eco-Digital%20Village`} 
+                target="_blank" 
+                className="inline-flex items-center justify-center gap-2 text-[14px] font-bold text-white bg-[#128C7E] hover:bg-[#075E54] px-6 py-3 rounded-xl no-underline shadow-lg shadow-[#128C7E]/20 transition-all hover:-translate-y-1 w-full sm:w-auto"
+              >
+                <Smartphone size={18} /> Chat WhatsApp Penjual
+              </a>
+            )}
           </div>
         </div>
 

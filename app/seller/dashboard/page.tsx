@@ -5,7 +5,7 @@ import { supabase, isSupabaseReady } from "@/lib/supabase";
 import { 
   Store, Package, ShoppingBag, LogOut, Plus, Edit2, 
   Trash2, Wallet, CheckCircle, Clock, X, Image as ImageIcon,
-  Upload, Loader2
+  Upload, Loader2, Settings
 } from "lucide-react";
 import "../../globals.css";
 
@@ -13,7 +13,7 @@ export default function SellerDashboard() {
   const router = useRouter();
   const [tokoId, setTokoId] = useState<string | null>(null);
   const [toko, setToko] = useState<any>(null);
-  const [tab, setTab] = useState<"dashboard" | "produk" | "pesanan">("dashboard");
+  const [tab, setTab] = useState<"dashboard" | "produk" | "pesanan" | "pengaturan">("dashboard");
   const [produk, setProduk] = useState<any[]>([]);
   const [pesanan, setPesanan] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -22,6 +22,10 @@ export default function SellerDashboard() {
   const [formProduk, setFormProduk] = useState({ 
     id: "", nama: "", deskripsi: "", harga: 0, kategori: "makanan", fotos: [] as string[]
   });
+  const [formToko, setFormToko] = useState({
+    nama_toko: "", deskripsi: "", foto_toko: ""
+  });
+  const [savingToko, setSavingToko] = useState(false);
 
   useEffect(() => {
     // Cek session
@@ -44,7 +48,14 @@ export default function SellerDashboard() {
     
     // Fetch Toko
     const { data: tData } = await supabase.from("toko").select("*").eq("id", tokoId).single();
-    if (tData) setToko(tData);
+    if (tData) {
+      setToko(tData);
+      setFormToko({
+        nama_toko: tData.nama_toko || "",
+        deskripsi: tData.deskripsi || "",
+        foto_toko: tData.foto_toko || ""
+      });
+    }
 
     if (tab === "dashboard" || tab === "produk") {
       const { data: pData } = await supabase.from("produk").select("*").eq("toko_id", tokoId).order("created_at", { ascending: false });
@@ -106,6 +117,46 @@ export default function SellerDashboard() {
     setFormProduk({ ...formProduk, fotos: newFotos });
   };
 
+  const uploadFotoToko = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    const file = e.target.files[0];
+    const fileExt = file.name.split('.').pop();
+    const fileName = `toko_${tokoId}_${Date.now()}.${fileExt}`;
+
+    setUploading(true);
+    try {
+      const { error: uploadError } = await supabase.storage.from('ciburial-assets').upload(fileName, file);
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage.from('ciburial-assets').getPublicUrl(fileName);
+      setFormToko({ ...formToko, foto_toko: data.publicUrl });
+    } catch (e: any) {
+      alert("Gagal upload foto toko: " + e.message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  async function simpanPengaturanToko() {
+    if (!formToko.nama_toko.trim()) return alert("Nama toko tidak boleh kosong!");
+    setSavingToko(true);
+    try {
+      const { error } = await supabase.from("toko").update({
+        nama_toko: formToko.nama_toko,
+        deskripsi: formToko.deskripsi,
+        foto_toko: formToko.foto_toko
+      }).eq("id", tokoId);
+      
+      if (error) throw error;
+      alert("Pengaturan toko berhasil disimpan!");
+      fetchData();
+    } catch (e: any) {
+      alert("Gagal menyimpan: " + e.message);
+    } finally {
+      setSavingToko(false);
+    }
+  }
+
   async function simpanProduk() {
     if (!formProduk.nama || formProduk.harga <= 0) {
       alert("Nama dan harga valid wajib diisi.");
@@ -116,17 +167,26 @@ export default function SellerDashboard() {
       nama: formProduk.nama,
       deskripsi: formProduk.deskripsi,
       harga: formProduk.harga,
-      kategori: formProduk.kategori,
+      tag: formProduk.kategori,
       foto: formProduk.fotos.length > 0 ? formProduk.fotos[0] : "",
       fotos: formProduk.fotos,
       toko_id: tokoId,
-      status: "aktif"
+      aktif: true
     };
 
+    let error = null;
     if (formProduk.id) {
-      await supabase.from("produk").update(payload).eq("id", formProduk.id);
+      const res = await supabase.from("produk").update(payload).eq("id", formProduk.id);
+      error = res.error;
     } else {
-      await supabase.from("produk").insert(payload);
+      const res = await supabase.from("produk").insert(payload);
+      error = res.error;
+    }
+
+    if (error) {
+      alert("Gagal menyimpan produk: " + error.message);
+      console.error(error);
+      return;
     }
 
     setShowFormProduk(false);
@@ -175,6 +235,7 @@ export default function SellerDashboard() {
             { id: "dashboard", icon: <Wallet size={20}/>, label: "Dashboard" },
             { id: "produk", icon: <Package size={20}/>, label: "Katalog Produk" },
             { id: "pesanan", icon: <ShoppingBag size={20}/>, label: "Pesanan Masuk" },
+            { id: "pengaturan", icon: <Settings size={20}/>, label: "Pengaturan Toko" },
           ].map(item => (
             <button 
               key={item.id} 
@@ -205,6 +266,7 @@ export default function SellerDashboard() {
             { id: "dashboard", label: "Ringkasan" },
             { id: "produk", label: "Produk" },
             { id: "pesanan", label: "Pesanan" },
+            { id: "pengaturan", label: "Pengaturan" },
           ].map(item => (
             <button 
               key={item.id} 
@@ -496,6 +558,75 @@ export default function SellerDashboard() {
                   )}
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {tab === "pengaturan" && (
+          <div className="space-y-6 animate-fadeIn">
+            <h2 className="fnt text-2xl md:text-3xl font-bold text-[var(--tp)] flex items-center gap-2">
+              <Settings className="text-[var(--accent)]" /> Pengaturan Toko
+            </h2>
+            
+            <div className="card-heroic rounded-2xl border border-[var(--bo)] p-5 md:p-8">
+              <div className="flex flex-col md:flex-row gap-8">
+                {/* Upload Foto Toko */}
+                <div className="flex-shrink-0 flex flex-col items-center">
+                  <div className="w-32 h-32 rounded-full border-4 border-white shadow-xl bg-[var(--cr)] relative overflow-hidden group">
+                    {formToko.foto_toko ? (
+                      <img src={formToko.foto_toko} className="w-full h-full object-cover" alt="Foto Toko" />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center text-[var(--ts)] bg-[var(--gb)]">
+                        <Store size={32} className="mb-1 text-[var(--accent)]" />
+                      </div>
+                    )}
+                    <label className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity">
+                      {uploading ? <Loader2 className="animate-spin" size={24} /> : (
+                        <>
+                          <Upload size={24} className="mb-1" />
+                          <span className="text-xs font-bold">Ubah Foto</span>
+                        </>
+                      )}
+                      <input type="file" accept="image/*" className="hidden" onChange={uploadFotoToko} disabled={uploading} />
+                    </label>
+                  </div>
+                  <p className="text-xs text-[var(--ts)] mt-3 text-center max-w-[120px]">Disarankan resolusi 1:1, max 2MB.</p>
+                </div>
+
+                {/* Form Data Toko */}
+                <div className="flex-1 space-y-5">
+                  <div>
+                    <label className="block text-sm font-bold text-[var(--tp)] mb-1.5">Nama Toko <span className="text-red-500">*</span></label>
+                    <input 
+                      type="text" 
+                      value={formToko.nama_toko} 
+                      onChange={e => setFormToko({...formToko, nama_toko: e.target.value})} 
+                      className="w-full p-3.5 rounded-xl border border-[var(--bo)] bg-[var(--cr)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent transition-all font-semibold"
+                      placeholder="Masukkan nama toko"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-[var(--tp)] mb-1.5">Deskripsi Toko</label>
+                    <textarea 
+                      value={formToko.deskripsi} 
+                      onChange={e => setFormToko({...formToko, deskripsi: e.target.value})} 
+                      className="w-full p-3.5 rounded-xl border border-[var(--bo)] bg-[var(--cr)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent transition-all font-medium min-h-[120px]"
+                      placeholder="Ceritakan tentang toko dan produk yang Anda jual (Slogan, jam buka, dll)"
+                    />
+                  </div>
+
+                  <div className="pt-4 border-t border-[var(--bo)]">
+                    <button 
+                      onClick={simpanPengaturanToko} 
+                      disabled={savingToko}
+                      className="btn-heroic w-full md:w-auto px-8 py-3.5 rounded-xl flex items-center justify-center gap-2 font-bold shadow-lg"
+                    >
+                      {savingToko ? <Loader2 size={18} className="animate-spin" /> : <CheckCircle size={18} />}
+                      Simpan Pengaturan
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )}
