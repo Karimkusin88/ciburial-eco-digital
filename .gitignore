@@ -52,5 +52,6 @@ TEMPLATES_HEROIC.md
 IMPLEMENTATION_COMPLETE.md
 *.sql
 .gemini/
+.antigravitycli/
 
 
