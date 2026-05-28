@@ -75,9 +75,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://ciburial.my.id',
   },
-  icons: {
-    icon: '/favicon.ico',
-  },
+
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
