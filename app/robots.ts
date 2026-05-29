@@ -9,7 +9,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/admin/', '/api/'],
       },
     ],
-    sitemap: 'https://ciburial.my.id/sitemap.xml',
-    host: 'https://ciburial.my.id',
+    sitemap: 'https://www.ciburial.my.id/sitemap.xml',
+    host: 'https://www.ciburial.my.id',
   }
 }

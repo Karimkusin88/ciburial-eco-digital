@@ -26,7 +26,7 @@ const cormorant = Cormorant_Garamond({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://ciburial.my.id'),
+  metadataBase: new URL('https://www.ciburial.my.id'),
   title: {
     default: 'Ciburial Eco-Digital Village',
     template: '%s | Ciburial Eco-Digital Village',
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     'smart village', 'kampung digital', 'desa mandiri', 'bank sampah',
     'posyandu digital', 'voting desa', 'transparansi dana desa',
   ],
-  authors: [{ name: 'Ciburial Makers', url: 'https://ciburial.my.id' }],
+  authors: [{ name: 'Ciburial Makers', url: 'https://www.ciburial.my.id' }],
   creator: 'Ciburial Makers',
   publisher: 'Ciburial Eco-Digital Village',
   robots: {
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Ciburial Eco-Digital Village',
     description: 'Merawat akar, menumbuhkan harapan. Desa inovatif berbasis kearifan lokal dan teknologi masa depan.',
-    url: 'https://ciburial.my.id',
+    url: 'https://www.ciburial.my.id',
     siteName: 'Ciburial Eco-Digital Village',
     locale: 'id_ID',
     type: 'website',
@@ -73,7 +73,7 @@ export const metadata: Metadata = {
     images: ['/og-image.jpg'],
   },
   alternates: {
-    canonical: 'https://ciburial.my.id',
+    canonical: 'https://www.ciburial.my.id',
   },
 
 }
