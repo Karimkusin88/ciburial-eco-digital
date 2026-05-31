@@ -46,13 +46,12 @@ const KAT_MASUK = [
 // Kategori KELUAR — HARUS SAMA PERSIS dengan label ALOKASI di types.ts
 // agar chart distribusi pengeluaran di Transparansi Dana terpetakan dengan benar
 const KAT_KELUAR = [
-  "Balai Serba Guna & Ruang Publik",
-  "Smart Farming & Peternakan Modern",
-  "Learning Hub",
-  "Smart PJU & Keamanan",
-  "Jaringan Internet (RT/RW Net)",
-  "Operasional Digital & Eco-Waste",
-  "DKM / Masjid",
+  "Tiang PJU Stainless",
+  "Lampu 22 Watt",
+  "Kabel PJU",
+  "Semen & Pasir",
+  "Cetakan PJU",
+  "Cat & Material",
   "Lainnya",
 ];
 
