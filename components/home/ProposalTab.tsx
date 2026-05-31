@@ -198,37 +198,31 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
       )
     },
     {
-      title: "Bab VI — RAB Global (Target Rp 250.000.000)", icon: <Coins size={20} strokeWidth={1.5} color="currentColor" />,
+      title: "Bab VI — RAB Tahap 1 (Target Rp 5.952.308)", icon: <Coins size={20} strokeWidth={1.5} color="currentColor" />,
       content: (
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          <p style={{ fontSize: 13, lineHeight: 1.7, color: "var(--ts)", marginBottom: 8, padding: "clamp(8px, 2vw, 12px) clamp(12px, 3vw, 16px)", background: "rgba(184,148,63,.07)", borderRadius: 10, border: "1px solid rgba(184,148,63,.18)" }}>
-            <Lightbulb size={14} style={{ display: "inline", marginRight: 4 }} /> <strong>Catatan:</strong> Seluruh pengerjaan fisik/instalasi bernilai Rp 0 karena dilakukan secara <strong>swadaya & gotong royong</strong>. Dana donasi digunakan untuk material saja.
+          <p style={{ fontSize: 13, lineHeight: 1.7, color: "var(--ts)", marginBottom: 8 }}>
+            Untuk Tahap 1 ini, kami akan memfasilitasi pemasangan 20 Titik Penerangan Jalan Umum (PJU). Sebagai pijakan awal dan percontohan (pilot project), pengerjaan akan difokuskan di area RT 01 dan RT 02 terlebih dahulu. Keberhasilan di titik ini akan menjadi standar acuan sebelum program kita perluas secara bertahap ke seluruh wilayah kampung.
           </p>
-          {ALOKASI.map((item, i) => {
-            const used = transaksi.filter(t => t.tipe === "keluar" && t.kategori === item.label).reduce((s, t) => s + t.jumlah, 0);
-            const pct = Math.min(100, (used / item.target) * 100);
-            return (
-              <div key={i} style={{ padding: "clamp(12px, 3vw, 16px) clamp(16px, 4vw, 20px)", background: "var(--cr)", borderRadius: 13, border: "1px solid var(--bo)" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6, flexWrap: "wrap", gap: 6 }}>
-                  <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-                    <span style={{ fontSize: 20 }}>{item.icon}</span>
-                    <div>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: "var(--tp)" }}>{item.label}</div>
-                      <div style={{ fontSize: 11, color: "var(--tm)" }}>{item.desc}</div>
-                    </div>
-                  </div>
-                  <span className="fnt" style={{ fontSize: 17, fontWeight: 600, color: "var(--fo)" }}>{fRp(item.target)}</span>
-                </div>
-                <div className="pg" style={{ marginBottom: 5 }}><div className="pgf" style={{ background: item.color, width: `${pct}%` }} /></div>
-                <div style={{ fontSize: 11, color: "var(--tm)" }}>Terpakai: {fRp(used)} / Target {fRp(item.target)} ({Math.round(pct)}%)</div>
-              </div>
-            );
-          })}
+          <p style={{ fontSize: 13, lineHeight: 1.7, color: "var(--ts)", marginBottom: 8, padding: "clamp(8px, 2vw, 12px) clamp(12px, 3vw, 16px)", background: "rgba(184,148,63,.07)", borderRadius: 10, border: "1px solid rgba(184,148,63,.18)" }}>
+            <Lightbulb size={14} style={{ display: "inline", marginRight: 4 }} /> <strong>Catatan:</strong> Agar pengerjaan efisien, seluruh proses instalasi fisik dan kelistrikan akan dikerjakan langsung secara swadaya oleh pemuda lokal. Kami menggalang dukungan dana murni untuk kebutuhan belanja material.
+          </p>
+          <div style={{ padding: "clamp(12px, 3vw, 16px)", background: "var(--cr)", borderRadius: 13, border: "1px solid var(--bo)", marginBottom: 4 }}>
+            <div style={{ fontSize: 14, fontWeight: 700, color: "var(--tp)", marginBottom: 12 }}>💡 Rincian Anggaran Material (20 Titik PJU - Tahap 1):</div>
+            <ul style={{ fontSize: 13, lineHeight: 1.8, color: "var(--ts)", paddingLeft: 20, margin: 0 }}>
+              <li><strong>20 Tiang PJU Stainless</strong> = Rp 3.469.200</li>
+              <li><strong>20 pcs Lampu 22 Watt</strong> = Rp 837.000</li>
+              <li><strong>Kabel (50 meter)</strong> = Rp 611.108</li>
+              <li><strong>Semen & Pasir (untuk pondasi)</strong> = Rp 500.000</li>
+              <li><strong>Cetakan PJU</strong> = Rp 385.000</li>
+              <li><strong>Cat & Material Pendukung</strong> = Rp 150.000</li>
+            </ul>
+          </div>
           <div style={{ padding: "clamp(12px, 3vw, 16px) clamp(16px, 4vw, 22px)", background: "var(--fo)", borderRadius: 14, display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 8, marginTop: 4 }}>
-            <span style={{ fontSize: 13, fontWeight: 700, color: "var(--cr)" }}>TOTAL ESTIMASI KEBUTUHAN</span>
+            <span style={{ fontSize: 13, fontWeight: 700, color: "var(--cr)" }}>TOTAL KEBUTUHAN TAHAP 1</span>
             <div style={{ textAlign: "right" }}>
-              <span className="fnt" style={{ fontSize: 22, fontWeight: 600, color: "var(--gl)" }}>Rp 250.000.000</span>
-              <div style={{ fontSize: 11, color: "rgba(250,248,243,.45)" }}>Dua Ratus Lima Puluh Juta Rupiah</div>
+              <span className="fnt" style={{ fontSize: 22, fontWeight: 600, color: "var(--gl)" }}>Rp 5.952.308</span>
+              <div style={{ fontSize: 11, color: "rgba(250,248,243,.45)" }}>Lima Juta Sembilan Ratus Lima Puluh Dua Ribu Tiga Ratus Delapan Rupiah</div>
             </div>
           </div>
         </div>

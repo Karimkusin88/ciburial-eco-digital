@@ -77,12 +77,12 @@ export const KAT_CFG: Record<string, { label: string; bg: string; color: string 
 };
 
 export const ALOKASI = [
-  { label: "Balai Serba Guna & Ruang Publik", target: 80000000, icon: <Landmark size={18} strokeWidth={1.5} />, color: "#2D5A40", desc: "Material konstruksi baja ringan & bambu" },
-  { label: "Smart Farming & Peternakan Modern", target: 60000000, icon: <Wheat size={18} strokeWidth={1.5} />, color: "#4A7C59", desc: "Infrastruktur kandang, bibit, instalasi kebun, pupuk" },
-  { label: "Learning Hub", target: 45000000, icon: <BookOpen size={18} strokeWidth={1.5} />, color: "#B8943F", desc: "PC/Laptop, server, perabotan, buku perpustakaan" },
-  { label: "Smart PJU & Keamanan", target: 25000000, icon: <Lightbulb size={18} strokeWidth={1.5} />, color: "#1A3A6B", desc: "Panel surya, lampu DC, tiang, IP Camera CCTV" },
-  { label: "Jaringan Internet (RT/RW Net)", target: 20000000, icon: <Wifi size={18} strokeWidth={1.5} />, color: "#6B4F3A", desc: "Router utama, kabel distribusi, Wi-Fi publik" },
-  { label: "Operasional Digital & Eco-Waste", target: 20000000, icon: <Recycle size={18} strokeWidth={1.5} />, color: "#8A7065", desc: "Alat press limbah, server/domain, marketplace" },
+  { label: "Tiang PJU Stainless", target: 3469200, icon: <Landmark size={18} strokeWidth={1.5} />, color: "#2D5A40", desc: "20 Tiang PJU" },
+  { label: "Lampu 22 Watt", target: 837000, icon: <Lightbulb size={18} strokeWidth={1.5} />, color: "#4A7C59", desc: "20 pcs Lampu" },
+  { label: "Kabel PJU", target: 611108, icon: <Lamp size={18} strokeWidth={1.5} />, color: "#B8943F", desc: "Kabel instalasi 50m" },
+  { label: "Semen & Pasir", target: 500000, icon: <Leaf size={18} strokeWidth={1.5} />, color: "#1A3A6B", desc: "Material pondasi" },
+  { label: "Cetakan PJU", target: 385000, icon: <Recycle size={18} strokeWidth={1.5} />, color: "#6B4F3A", desc: "Cetakan cor" },
+  { label: "Cat & Material", target: 150000, icon: <Sprout size={18} strokeWidth={1.5} />, color: "#8A7065", desc: "Cat & pendukung lainnya" },
 ];
 
 // ─── DEFAULT DATA (fallback sebelum Supabase dikonfigurasi) ─────────────────

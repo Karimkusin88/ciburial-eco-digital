@@ -544,22 +544,8 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
                                 <div className="dl" />
                                 <h2 className="fnt" style={{ fontSize: "clamp(26px, 4.5vw, 40px)", fontWeight: 300, color: "var(--cr)", lineHeight: 1.2, letterSpacing: "-.02em", marginBottom: 14 }}>Donasi Kemakmuran<br />Kampung Ciburial</h2>
                                 <p style={{ fontSize: "clamp(12px,2.5vw,13px)", lineHeight: 1.75, color: "rgba(250,248,243,.5)", marginBottom: 28 }}>
-                                    Target RAB Global <strong style={{ color: "var(--gl)" }}>Rp 250.000.000</strong>. Dukung Balai Warga, Smart Farming, Learning Hub, Smart PJU, dan Internet Desa.
+                                    Dukung inisiatif Balai Warga, Smart Farming, Learning Hub, Smart PJU, dan Internet Desa untuk masa depan Ciburial.
                                 </p>
-
-                                {/* PROGRESS BAR */}
-                                <div style={{ marginBottom: 28 }}>
-                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-                                        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "rgba(250,248,243,.6)" }}>Progress Donasi</span>
-                                        <span style={{ fontSize: 12, fontWeight: 700, color: "var(--gl)" }}><Counter value={(saldo / 250000000) * 100} decimals={1} suffix="%" duration={1400} /></span>
-                                    </div>
-                                    <div style={{ width: "100%", height: 12, background: "rgba(255,255,255,.12)", borderRadius: 99, overflow: "hidden", boxShadow: "inset 0 1px 3px rgba(0,0,0,.2)" }}>
-                                        <div style={{ width: `${Math.min((saldo / 250000000) * 100, 100)}%`, height: "100%", background: "linear-gradient(90deg, #4FBF7E, var(--gl))", borderRadius: 99, transition: "width 1s cubic-bezier(.22,1,.36,1)", boxShadow: "0 0 12px rgba(79,191,126,.6)" }} />
-                                    </div>
-                                    <div style={{ fontSize: 10, color: "rgba(250,248,243,.45)", marginTop: 6 }}>
-                                        <Counter value={saldo / 1000000} decimals={1} duration={1400} /> dari 250 juta terkumpul
-                                    </div>
-                                </div>
 
                                 <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 24 }}>
                                     {[
