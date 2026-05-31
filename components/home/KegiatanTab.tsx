@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { Kegiatan, KAT_CFG } from "./types";
 import { CalendarDays, X, ChevronLeft, ChevronRight, ZoomIn } from "lucide-react";
 
@@ -34,7 +35,11 @@ function Lightbox({ fotos, judul, startIdx, onClose }: LightboxProps) {
   const url = fotos[cur];
   const isVideo = url.toLowerCase().includes(".mp4") || url.toLowerCase().includes(".webm");
 
-  return (
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
+
+  return createPortal(
     <div
       onClick={onClose}
       style={{
@@ -179,7 +184,8 @@ function Lightbox({ fotos, judul, startIdx, onClose }: LightboxProps) {
       <style>{`
         @keyframes lbFadeIn { from { opacity:0 } to { opacity:1 } }
       `}</style>
-    </div>
+    </div>,
+    document.body
   );
 }
 
