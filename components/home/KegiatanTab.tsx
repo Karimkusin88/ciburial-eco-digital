@@ -86,11 +86,9 @@ function Lightbox({ fotos, judul, startIdx, onClose }: LightboxProps) {
       <div
         onClick={e => e.stopPropagation()}
         style={{
-          width: "100%",
-          height: "100%",
-          padding: "80px 20px",
+          position: "absolute",
+          top: 80, bottom: 60, left: 16, right: 16,
           display: "flex", alignItems: "center", justifyContent: "center",
-          position: "relative",
         }}
       >
         {isVideo ? (
