@@ -550,7 +550,7 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
                                 <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 24 }}>
                                     {[
                                         { id: "midtrans", icon: <Smartphone size={24} strokeWidth={1.5} />, l: "QRIS & E-Wallet", s: "Donasi Instan via Midtrans" },
-                                        { id: "bank", icon: <Landmark size={24} strokeWidth={1.5} />, l: "Transfer Bank", s: "Rekening Resmi DKM Ciburial", rek: "90135555066", an: "Ubay Rahmat H", ket: "SeaBank (901)" },
+                                        { id: "bank", icon: <Landmark size={24} strokeWidth={1.5} />, l: "Transfer Bank", s: "Rekening Titipan Gotong Royong", rek: "90135555066", an: "Ubay Rahmat H", ket: "SeaBank (901)" },
                                         { id: "crypto", icon: <Search size={24} strokeWidth={1.5} />, l: "Crypto / Web3", s: "EVM-Compatible Wallet", rek: "0x71723715478b344164e992b49ae1fCEb6467888B", an: "Multi-Chain", ket: "Polygon, BSC, ETH, dll." }
                                     ].map((m, i) => {
                                         const isExp = expandedDonation === m.id;
@@ -669,7 +669,7 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
                                     <span style={{ fontSize: 32 }}><Landmark size={32} strokeWidth={1.5} /></span>
                                     <div>
                                         <h3 style={{ fontSize: 18, fontWeight: 800, color: "#1C3A2B", margin: 0 }}>Transfer Bank</h3>
-                                        <p style={{ fontSize: 11, color: "#6B7280", margin: 0 }}>Rekening Resmi DKM Ciburial</p>
+                                        <p style={{ fontSize: 11, color: "#6B7280", margin: 0 }}>Rekening Titipan Gotong Royong</p>
                                     </div>
                                 </div>
 
