@@ -86,8 +86,9 @@ function Lightbox({ fotos, judul, startIdx, onClose }: LightboxProps) {
       <div
         onClick={e => e.stopPropagation()}
         style={{
-          maxWidth: "min(92vw, 900px)",
-          maxHeight: "80vh",
+          width: "100%",
+          height: "100%",
+          padding: "80px 20px",
           display: "flex", alignItems: "center", justifyContent: "center",
           position: "relative",
         }}
@@ -98,14 +99,14 @@ function Lightbox({ fotos, judul, startIdx, onClose }: LightboxProps) {
             controls
             autoPlay
             playsInline
-            style={{ maxWidth: "100%", maxHeight: "80vh", borderRadius: 12, boxShadow: "0 32px 80px rgba(0,0,0,0.6)" }}
+            style={{ maxWidth: "100%", maxHeight: "100%", borderRadius: 12, boxShadow: "0 32px 80px rgba(0,0,0,0.6)" }}
           />
         ) : (
           <img
             src={url}
             alt={judul}
             style={{
-              maxWidth: "100%", maxHeight: "80vh",
+              maxWidth: "100%", maxHeight: "100%",
               objectFit: "contain",
               borderRadius: 12,
               boxShadow: "0 32px 80px rgba(0,0,0,0.6)",
