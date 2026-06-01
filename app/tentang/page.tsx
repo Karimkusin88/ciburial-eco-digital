@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, ReactNode } from "react";
-import { Landmark, Home, User, HandHeart, Zap, FileText, Coins, Building, Monitor, Wheat, ShoppingCart, Megaphone, Lightbulb, BookOpen, Sprout, BarChart2 } from "lucide-react";
+import { Landmark, Home, User, HandHeart, Zap, FileText, Coins, Building, Monitor, Wheat, ShoppingCart, Megaphone, Lightbulb, BookOpen, Sprout, BarChart2, Wrench } from "lucide-react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 // ─── STRUKTUR ORGANISASI ─────────────────────────────────────────────────
@@ -21,7 +21,19 @@ const timEksekutif = [
 ];
 const divisi = [
   {
+    icon: <BookOpen size={20} />, nama: "Syiar & Kemakmuran Masjid", full: "Keagamaan & Pengajian", tugas: "Pengajian pemuda, panitia PHBI, jadwal muadzin",
+    ketua: { nama: "— Hasil Voting —" }, wakil: { nama: "— Hasil Voting —" }
+  },
+  {
+    icon: <HandHeart size={20} />, nama: "Sosial & Tanggap Warga", full: "Dana Sosial & Kebencanaan", tugas: "Dana sosial warga, santunan yatim/dhuafa, tanggap bencana",
+    ketua: { nama: "— Hasil Voting —" }, wakil: { nama: "— Hasil Voting —" }
+  },
+  {
     icon: <Building size={20} />, nama: "Green Build", full: "Infrastruktur & Konstruksi Hijau", tugas: "Balai Serba Guna, Smart PJU, drainase resapan",
+    ketua: { nama: "— Hasil Voting —" }, wakil: { nama: "— Hasil Voting —" }
+  },
+  {
+    icon: <Wrench size={20} />, nama: "Logistik & Pemeliharaan", full: "Maintenance & Aset", tugas: "Maintenance harian, kelistrikan PJU, perbaikan peralatan",
     ketua: { nama: "— Hasil Voting —" }, wakil: { nama: "— Hasil Voting —" }
   },
   {
@@ -207,7 +219,7 @@ export default function TentangPage() {
 
           {/* 5 Divisi */}
           <div style={{ marginTop: 8 }}>
-            <div style={{ fontSize: "clamp(9px, 2.2vw, 11px)", fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "#2F8F4E", marginBottom: 16, background: "linear-gradient(90deg,transparent,#2F8F4E 50%,transparent)", backgroundSize: "100% 2px", backgroundPosition: "0 100%", backgroundRepeat: "no-repeat", paddingBottom: 10 }}>D. 5 Divisi Operasional (Garda Depan)</div>
+            <div style={{ fontSize: "clamp(9px, 2.2vw, 11px)", fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "#2F8F4E", marginBottom: 16, background: "linear-gradient(90deg,transparent,#2F8F4E 50%,transparent)", backgroundSize: "100% 2px", backgroundPosition: "0 100%", backgroundRepeat: "no-repeat", paddingBottom: 10 }}>D. 8 Divisi Operasional (Garda Depan)</div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(140px,1fr))", gap: "clamp(8px, 2vw, 16px)" }} className="divisi-grid">
               {divisi.map((d, i) => (
                 <div key={i} className={`div-card card-heroic d${i + 1}`} style={{ background: "linear-gradient(135deg,rgba(255,254,249,.95),rgba(232,245,238,.5))", border: "1.5px solid rgba(47,143,78,.15)", borderRadius: "clamp(10px, 2.5vw, 16px)", padding: "clamp(14px, 3.5vw, 24px)", transition: "all .35s cubic-bezier(.22,1,.36,1)", cursor: "pointer", position: "relative", overflow: "hidden" }}
