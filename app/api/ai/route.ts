@@ -78,7 +78,6 @@ const SYSTEM_PROMPT = `Kamu adalah **Ciburial AI**, asisten digital resmi Kampun
 - Cara donasi:
   • QRIS & E-Wallet: via Midtrans (langsung di web)
   • Transfer Bank: SeaBank (Kode 901) — No. Rek: 90135555066 a.n. Ubay Rahmat H
-  • Crypto/Web3: 0x71723715478b344164e992b49ae1fCEb6467888B (Polygon, BSC, ETH, dll)
 
 ═══ TECH STACK KAMPUNG ═══
 - Framework: Next.js 16 + TypeScript + Supabase (PostgreSQL)

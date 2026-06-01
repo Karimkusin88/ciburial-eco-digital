@@ -91,10 +91,10 @@ export default function TentangPage() {
           </div>
           <div className="visi-cards" style={{ flex: 1, minWidth: 240, display: "flex", flexDirection: "column", gap: "clamp(8px, 2vw, 14px)" }}>
             {[
-              { no: "01", icon: "", t: "Infrastruktur Cerdas", d: "Balai Serba Guna berkonsep hijau, Smart PJU, Jaringan CCTV, dan Internet Mandiri (Wi-Fi Kampung)." },
+              { no: "01", icon: "", t: "Syiar Digital & Kemakmuran Masjid", d: "Menjadikan Masjid Al Husain sebagai pusat ibadah, sosial, dan pergerakan pemuda yang berdaya guna melalui sentuhan teknologi tepat guna." },
               { no: "02", icon: "", t: "SDM Unggul", d: "Laboratorium Komputer & Perpustakaan sebagai inkubator pemuda Ciburial yang melek teknologi." },
               { no: "03", icon: "", t: "Ekonomi Sirkular & Smart Farming", d: "Pasar lokal untuk bambu, sayuran organik, peternakan terpadu, dan produk daur ulang limbah." },
-              { no: "04", icon: "", t: "Tata Kelola Transparan", d: "Aliran dana kemakmuran terbuka secara real-time, dari fiat konvensional hingga aset kripto (Web3)." },
+              { no: "04", icon: "", t: "Tata Kelola Transparan", d: "Aliran dana umat dan kas swadaya yang terbuka secara real-time melalui dasbor digital desa terintegrasi." },
             ].map((v, i) => (
               <div key={i} className={`rv ch d${i + 1} visi-card`}
                 style={{ padding: "clamp(14px, 3.5vw, 24px) clamp(16px, 4vw, 28px)", background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.6))", borderRadius: "clamp(10px, 2.5vw, 16px)", border: "1.5px solid rgba(47,143,78,.15)", display: "flex", gap: "clamp(10px, 2.5vw, 18px)", alignItems: "flex-start", transition: "all .35s cubic-bezier(.22,1,.36,1)", cursor: "pointer" }}

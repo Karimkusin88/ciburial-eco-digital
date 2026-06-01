@@ -94,8 +94,8 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
       content: (
         <div style={{ display: "flex", flexDirection: "column", gap: "clamp(8px, 2vw, 10px)" }}>
           {[
-            { n: "01", t: "Kemakmuran Masjid & Warga", d: "Membantu kas DKM agar kegiatan keagamaan dan sosial warga berjalan optimal." },
-            { n: "02", t: "Keamanan & Kenyamanan Lingkungan", d: "Menerangi jalan desa dengan Smart PJU dan mewujudkan Pos Ronda Digital berbasis pantauan CCTV." },
+            { n: "01", t: "Kemakmuran Masjid & Warga", d: "Mendukung operasional DKM Al Husain dan menginisiasi program sosial keagamaan yang modern, mandiri, dan transparan." },
+            { n: "02", t: "Keamanan & Kenyamanan Lingkungan", d: "Menerangi akses jalan warga menuju masjid dengan Smart PJU serta mewujudkan lingkungan yang aman lewat pantauan CCTV." },
             { n: "03", t: "Peningkatan SDM Generasi Muda", d: "Menyediakan fasilitas belajar interaktif untuk mencetak generasi penerus yang kompeten dan melek teknologi." },
             { n: "04", t: "Kemandirian Ekonomi & Ketahanan Pangan", d: "Sistem perdagangan sirkular dari warga untuk warga, memadukan pertanian dan peternakan modern dengan pemesanan digital." },
           ].map((item, i) => (
@@ -115,10 +115,10 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
       content: (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 12 }}>
           {[
-            { icon: <Lightbulb size={20} strokeWidth={1.5} color="currentColor" />, t: "Infrastruktur Cerdas", d: "Balai Serba Guna berkonsep hijau, Smart PJU, Jaringan CCTV, dan Internet Mandiri." },
+            { icon: <Lightbulb size={20} strokeWidth={1.5} color="currentColor" />, t: "Syiar Digital & Kemakmuran Masjid", d: "Menjadikan Masjid Al Husain sebagai pusat ibadah, sosial, dan pergerakan pemuda yang berdaya guna melalui sentuhan teknologi tepat guna." },
             { icon: <BookOpen size={20} strokeWidth={1.5} color="currentColor" />, t: "SDM Unggul", d: "Lab Komputer & Perpustakaan sebagai inkubator pemuda Ciburial." },
             { icon: <Leaf size={20} strokeWidth={1.5} color="currentColor" />, t: "Ekonomi Sirkular & Smart Farming", d: "Marketplace lokal untuk bambu, sayuran organik, peternakan, dan produk daur ulang." },
-            { icon: <BarChart2 size={20} strokeWidth={1.5} color="currentColor" />, t: "Tata Kelola Transparan", d: "Dana kemakmuran terbuka real-time, dari fiat konvensional hingga aset kripto (Web3)." },
+            { icon: <BarChart2 size={20} strokeWidth={1.5} color="currentColor" />, t: "Tata Kelola Transparan", d: "Aliran dana umat dan kas swadaya yang terbuka secara real-time melalui dasbor digital desa terintegrasi." },
           ].map((v, i) => (
             <div key={i} style={{ padding: "clamp(14px, 4vw, 18px)", background: "var(--cr)", borderRadius: 13, border: "1px solid var(--bo)" }}>
               <div style={{ fontSize: 26, marginBottom: 10 }}>{v.icon}</div>
@@ -134,11 +134,11 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
       content: (
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           {[
-            { icon: <Landmark size={20} strokeWidth={1.5} color="currentColor" />, t: "Ciburial Learning Hub & Balai Warga", d: "Balai Serba Guna berkonsep ramah lingkungan (bambu & baja ringan). Berfungsi sebagai pusat interaksi warga, perpustakaan desa, dan laboratorium komputer." },
+            { icon: <Landmark size={20} strokeWidth={1.5} color="currentColor" />, t: "Serambi Belajar Ciburial & Balai Warga", d: "Ruang interaksi ramah lingkungan untuk pengajian pemuda, perpustakaan desa, dan inkubator melek teknologi." },
             { icon: <Wheat size={20} strokeWidth={1.5} color="currentColor" />, t: "Smart Farming & Circular Eco-Waste", d: "Integrasi pertanian sayur organik dan peternakan modern komunal. Limbah kotoran hewan → pupuk kompos, plastik → material infrastruktur daur ulang." },
             { icon: <Zap size={20} strokeWidth={1.5} color="currentColor" />, t: "Instalasi Smart PJU & Pos Ronda Digital", d: "Lampu jalan cerdas bertenaga surya dan jaringan CCTV untuk sistem keamanan lingkungan." },
             { icon: <ShoppingCart size={20} strokeWidth={1.5} color="currentColor" />, t: "Ciburial Local Commerce (Web & App)", d: "Marketplace desa untuk memasarkan karya bambu, hasil panen, dan produk peternakan dengan sistem delivery." },
-            { icon: <Coins size={20} strokeWidth={1.5} color="currentColor" />, t: "Digitalisasi Kas Donasi (Fiat & Crypto)", d: "Sentralisasi dana melalui QRIS, Rekening Bank, dan Crypto Wallet (EVM Compatible) untuk menjangkau filantropis global." },
+            { icon: <Coins size={20} strokeWidth={1.5} color="currentColor" />, t: "Digitalisasi Kas Masjid & Donasi Warga", d: "Modernisasi pengelolaan dana umat dan swadaya melalui QRIS dan transfer bank terpadu guna menjangkau donatur luas tanpa batas." },
           ].map((p, i) => (
             <div key={i} style={{ display: "flex", gap: 14, padding: "clamp(12px, 3vw, 15px) clamp(14px, 4vw, 18px)", background: "var(--cr)", borderRadius: 12, border: "1px solid var(--bo)", alignItems: "flex-start" }}>
               <span style={{ fontSize: 22, minWidth: 28 }}>{p.icon}</span>
