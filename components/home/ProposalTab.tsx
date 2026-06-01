@@ -58,12 +58,12 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
             <div style={{ fontSize: 11, color: "var(--tm)" }}>Lampiran: 1 (Satu) Berkas Proposal</div>
           </div>
           <p style={{ marginBottom: 14 }}>Kepada Yth, <strong>[Instansi / Perusahaan / Donatur]</strong> di Tempat. Dengan hormat,</p>
-          <p style={{ marginBottom: 14 }}>Puji syukur ke hadirat Tuhan Yang Maha Esa atas segala limpahan rahmat-Nya. Bersama surat ini, kami dari Paguyuban Warga & Pemuda Irmas Al Husain Ciburial bermaksud menyampaikan proposal program <strong>"Ciburial Eco-Digital Village"</strong>.</p>
+          <p style={{ marginBottom: 14 }}>Puji syukur ke hadirat Tuhan Yang Maha Esa atas segala limpahan rahmat-Nya. Bersama surat ini, kami dari Irmas Al Husain Ciburial bermaksud menyampaikan proposal program <strong>"Ciburial Eco-Digital Village"</strong>.</p>
           <p style={{ marginBottom: 14 }}>Program ini adalah inisiatif swadaya masyarakat akar rumput untuk membangun ekosistem desa yang mandiri, cerdas, dan ramah lingkungan. Mengawinkan kekayaan alam organik dengan literasi teknologi digital untuk menciptakan ketahanan pangan, keamanan lingkungan, dan peningkatan SDM generasi muda.</p>
           <p style={{ marginBottom: 28 }}>Mengingat besarnya skala pergerakan ini, kami membuka ruang kolaborasi dan memohon dukungan dari Bapak/Ibu/Saudara guna merealisasikan cetak biru kemakmuran desa ini.</p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 180px),1fr))", gap: "clamp(8px, 2vw, 12px)" }}>
             {[
-              { role: "Ketua Pemuda Irmas Al Husain Ciburial", name: "— Soon —", label: "Tanda Tangan & Stempel" },
+              { role: "Ketua Irmas Al Husain Ciburial", name: "— Soon —", label: "Tanda Tangan & Stempel" },
               { role: "Ketua DKM Ciburial", name: "Bpk. Pupu Apipudin", label: "Mengetahui / Menyetujui" },
               { role: "Ketua RW Kp. Ciburial", name: "Bpk. Enang", label: "Mengetahui / Menyetujui" },
             ].map((s, i) => (
@@ -271,7 +271,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
           </div>
           <div style={{ marginTop: 22, textAlign: "right" }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: "var(--tp)" }}>Hormat Kami,</div>
-            <div className="fnt" style={{ fontSize: 22, fontWeight: 600, color: "var(--fo)", fontStyle: "italic" }}>Paguyuban & Pemuda Irmas Al Husain Ciburial</div>
+            <div className="fnt" style={{ fontSize: 22, fontWeight: 600, color: "var(--fo)", fontStyle: "italic" }}>Irmas Al Husain Ciburial</div>
           </div>
         </div>
       )
@@ -293,7 +293,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
             Inovasi Desa Mandiri Berbasis Kearifan Lokal dan Teknologi Masa Depan
           </p>
           <p style={{ fontSize: 13, color: "var(--ts)", lineHeight: 1.7, maxWidth: 480, margin: "0 auto" }}>
-            Diajukan oleh Paguyuban Warga & Pemuda Irmas Al Husain Ciburial<br />
+            Diajukan oleh Irmas Al Husain Ciburial<br />
             Kp. Ciburial RW 08, Desa Hanjuang, Kec. Bungbulang, Kab. Garut 44165
           </p>
         </div>
