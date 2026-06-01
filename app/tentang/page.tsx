@@ -33,7 +33,7 @@ const divisi = [
     ketua: { nama: "— Hasil Voting —" }, wakil: { nama: "— Hasil Voting —" }
   },
   {
-    icon: <Monitor size={20} />, nama: "Digital & Humas", full: "IT, Web3, & Publikasi", tugas: "Website, RT/RW Net, laporan dana, & CSR",
+    icon: <Monitor size={20} />, nama: "Digital & Humas", full: "IT, Media, & Publikasi", tugas: "Website, RT/RW Net, laporan dana, & CSR",
     ketua: { nama: "— Hasil Voting —" }, wakil: { nama: "— Hasil Voting —" }
   },
 ];

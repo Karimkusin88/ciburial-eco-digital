@@ -550,8 +550,7 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
                                 <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 24 }}>
                                     {[
                                         { id: "midtrans", icon: <Smartphone size={24} strokeWidth={1.5} />, l: "QRIS & E-Wallet", s: "Donasi Instan via Midtrans" },
-                                        { id: "bank", icon: <Landmark size={24} strokeWidth={1.5} />, l: "Transfer Bank", s: "Rekening Titipan Gotong Royong", rek: "90135555066", an: "Ubay Rahmat H", ket: "SeaBank (901)" },
-                                        { id: "crypto", icon: <Search size={24} strokeWidth={1.5} />, l: "Crypto / Web3", s: "EVM-Compatible Wallet", rek: "0x71723715478b344164e992b49ae1fCEb6467888B", an: "Multi-Chain", ket: "Polygon, BSC, ETH, dll." }
+                                        { id: "bank", icon: <Landmark size={24} strokeWidth={1.5} />, l: "Transfer Bank", s: "Rekening Titipan Gotong Royong", rek: "90135555066", an: "Ubay Rahmat H", ket: "SeaBank (901)" }
                                     ].map((m, i) => {
                                         const isExp = expandedDonation === m.id;
                                         return (
@@ -688,44 +687,11 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
                                     <span>SeaBank (Kode: 901) • Transfer sesama/e-wallet gratis.</span>
                                 </div>
                             </div>
-                        ) : selectedDonationMethod === "crypto" ? (
-                            <div style={{ textAlign: "left" }}>
-                                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
-                                    <span style={{ fontSize: 32 }}><Globe size={32} strokeWidth={1.5} /></span>
-                                    <div>
-                                        <h3 style={{ fontSize: 18, fontWeight: 800, color: "#1C3A2B", margin: 0 }}>Crypto / Web3</h3>
-                                        <p style={{ fontSize: 11, color: "#6B7280", margin: 0 }}>EVM-Compatible Wallet</p>
-                                    </div>
-                                </div>
-
-                                <div style={{ background: "#F8FAFC", border: "1.5px solid #E2E8F0", borderRadius: 12, padding: 16, marginBottom: 16 }}>
-                                    <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase", color: "#059669", marginBottom: 6 }}>Wallet Address (Multi-Chain)</div>
-                                    <div style={{ fontSize: 11, fontWeight: 700, color: "#1E293B", fontFamily: "monospace", wordBreak: "break-all", lineHeight: 1.5, background: "#F1F5F9", padding: "8px", borderRadius: "6px", marginBottom: 12 }}>
-                                        0x71723715478b344164e992b49ae1fCEb6467888B
-                                    </div>
-                                    <button
-                                        onClick={() => {
-                                            navigator.clipboard.writeText("0x71723715478b344164e992b49ae1fCEb6467888B");
-                                            alert(" Wallet address copied!");
-                                        }}
-                                        style={{ width: "100%", padding: "10px", background: "#2F8F4E", border: "none", borderRadius: "8px", color: "white", fontWeight: 700, fontSize: 12, cursor: "pointer", transition: "all .2s", boxShadow: "0 4px 12px rgba(47,143,78,0.2)" }}
-                                        onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "#1A5C32"; }}
-                                        onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "#2F8F4E"; }}
-                                    >
-                                        Copy Address
-                                    </button>
-                                </div>
-
-                                <div style={{ fontSize: 11, color: "#166534", background: "#F0FDF4", border: "1px solid #BBF7D0", borderRadius: 8, padding: 10, display: "flex", gap: 8, alignItems: "center" }}>
-                                    <span><Lightbulb size={16} strokeWidth={1.5} /></span>
-                                    <span>Polygon, BSC, ETH, Base, Arbitrum, Optimism.</span>
-                                </div>
-                            </div>
                         ) : (
                             <div style={{ padding: "clamp(16px, 4vw, 20px)", textAlign: "center", color: "#66463F", background: "#FFF5F0", borderRadius: 12, border: "1px solid #FFDDD0" }}>
                                 <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 8 }}><AlertCircle size={14} style={{ display: "inline", marginRight: 4 }} /> Invalid Method</div>
                                 <div style={{ fontSize: 11, color: "#8B6B63" }}>Method: <code style={{ background: "#FFE8DC", padding: "2px 6px", borderRadius: 4 }}>{selectedDonationMethod}</code></div>
-                                <div style={{ fontSize: 10, marginTop: 8, color: "#A0837B" }}>Expected: "bank" or "crypto"</div>
+                                <div style={{ fontSize: 10, marginTop: 8, color: "#A0837B" }}>Expected: "bank"</div>
                             </div>
                         )}
                     </div>

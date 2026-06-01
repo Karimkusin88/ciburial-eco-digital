@@ -180,7 +180,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
                 "Syiar & Sosial — Keagamaan, Dana Sosial & Kebencanaan",
                 "Infrastruktur & Lingkungan — Konstruksi Hijau & Maintenance Aset",
                 "Ekonomi Terapan — Smart Farming, Bank Sampah & UMKM",
-                "Digital & Humas — IT, Web3, & Transparansi Publik",
+                "Digital & Humas — IT, Media, & Transparansi Publik",
               ]
             },
           ].map((s, i) => (
@@ -235,7 +235,6 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
             {[
               { id: "bank", icon: <Landmark size={24} strokeWidth={1.5} />, t: "Rekening Bank Resmi", sub: "Bank SeaBank", detail: "No. Rek: 901355550666\nA.n: Ubay Rahmat H" },
               { id: "midtrans", icon: <Smartphone size={24} strokeWidth={1.5} />, t: "QRIS & E-Wallet", sub: "Secara Otomatis via Midtrans", detail: loadingDonasi ? "⏳ MEMUAT MIDTRANS..." : "SILAKAN KLIK KOTAK INI UNTUK MULAI DONASI" },
-              { id: "crypto", icon: <Search size={24} strokeWidth={1.5} />, t: "Crypto / Web3", sub: "EVM Compatible Wallet", detail: "Wallet Address:\n0x71723715478b344164e992b49ae1fCEb6467888B" },
             ].map((m, i) => (
               <div key={i} onClick={m.id === "midtrans" ? bayarDonasi : undefined} style={{ padding: "clamp(14px, 4vw, 18px)", background: "var(--fo)", borderRadius: 14, cursor: m.id === "midtrans" ? (loadingDonasi ? "wait" : "pointer") : "default", opacity: m.id === "midtrans" && loadingDonasi ? 0.6 : 1, transition: "opacity .2s, background .2s" }}
                 onMouseEnter={e => m.id === "midtrans" ? (e.currentTarget.style.background = "var(--cd)") : undefined}

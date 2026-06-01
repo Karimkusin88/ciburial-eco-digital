@@ -309,7 +309,7 @@ async function execTool(name: string, args: any): Promise<string> {
             { nama: "Divisi Syiar & Sosial", jabatan: "Keagamaan & Dana Sosial", tugas: "Pengajian, PHBI, tanggap bencana, & santunan" },
             { nama: "Divisi Infrastruktur & Lingkungan", jabatan: "Konstruksi Hijau & Maintenance", tugas: "Balai Serba Guna, Smart PJU, drainase, & aset" },
             { nama: "Divisi Ekonomi Terapan", jabatan: "Smart Farming & UMKM", tugas: "Pertanian organik, Bank Sampah, & marketplace" },
-            { nama: "Divisi Digital & Humas", jabatan: "IT, Web3, & Publikasi", tugas: "Website, RT/RW Net, laporan dana, & CSR" },
+            { nama: "Divisi Digital & Humas", jabatan: "IT, Media, & Publikasi", tugas: "Website, RT/RW Net, laporan dana, & CSR" },
           ],
           founder: { nama: "Ubay Rahmat H.", jabatan: "Founder & Builder — Ciburial Eco-Digital Village" },
         };

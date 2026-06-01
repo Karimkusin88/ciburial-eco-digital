@@ -231,7 +231,7 @@ export default function TransparansiTab() {
             Transparansi<br />Dana Kampung
           </h1>
           <p style={{ fontSize: 14, color: "#5A4A40", lineHeight: 1.8, maxWidth: 480, margin: "0 auto", fontWeight: 500 }}>
-            Setiap rupiah yang masuk dan keluar dicatat secara terbuka dengan integrasi blockchain Web3. Data diperbarui otomatis secara real-time.
+            Setiap rupiah yang masuk dan keluar dicatat secara terbuka dan dapat dipantau oleh seluruh warga. Data diperbarui otomatis secara real-time.
           </p>
         </div>
 
@@ -469,12 +469,6 @@ export default function TransparansiTab() {
                   title: "Transfer Bank", 
                   desc: "Rekening resmi untuk donasi melalui perbankan",
                   detail: "SeaBank: 90135555066\na.n Ubay Rahmat H"
-                },
-                { 
-                  icon: <Search size={24} strokeWidth={1.5} />, 
-                  title: "Crypto / Web3", 
-                  desc: "Untuk donasi menggunakan aset digital",
-                  detail: "0x71723715478b344164e992b49ae1fCEb6467888B\n(EVM-Compatible)"
                 }
               ].map((m, i) => (
                 <div key={i} style={{ padding: "clamp(16px, 4vw, 20px)", background: "rgba(47,143,78,.04)", border: "1.5px solid rgba(47,143,78,.12)", borderRadius: 14, display: "flex", flexDirection: "column", gap: 12 }}>
