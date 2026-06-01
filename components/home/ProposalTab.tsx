@@ -176,8 +176,11 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
               ]
             },
             {
-              group: "D. 5 Divisi Operasional", items: [
+              group: "D. 8 Divisi Operasional", items: [
+                "Syiar & Kemakmuran Masjid — Keagamaan & Pengajian",
+                "Sosial & Tanggap Warga — Dana Sosial & Kebencanaan",
                 "Green Build — Infrastruktur & Konstruksi Hijau",
+                "Logistik & Pemeliharaan — Maintenance & Aset",
                 "Digital Hub — IT, Jaringan & Web3",
                 "Eco-Waste & Farming — Smart Farming & Lingkungan",
                 "Local Commerce — Ekonomi Kreatif & UMKM",
