@@ -37,8 +37,8 @@ export const metadata: Metadata = {
     'smart village', 'kampung digital', 'desa mandiri', 'bank sampah',
     'posyandu digital', 'voting desa', 'transparansi dana desa',
   ],
-  authors: [{ name: 'Ciburial Makers', url: 'https://www.ciburial.my.id' }],
-  creator: 'Ciburial Makers',
+  authors: [{ name: 'Irmas Al Husain Ciburial', url: 'https://www.ciburial.my.id' }],
+  creator: 'Irmas Al Husain Ciburial',
   publisher: 'Ciburial Eco-Digital Village',
   robots: {
     index: true,
