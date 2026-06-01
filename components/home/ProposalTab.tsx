@@ -176,15 +176,11 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
               ]
             },
             {
-              group: "D. 8 Divisi Operasional", items: [
-                "Syiar & Kemakmuran Masjid — Keagamaan & Pengajian",
-                "Sosial & Tanggap Warga — Dana Sosial & Kebencanaan",
-                "Green Build — Infrastruktur & Konstruksi Hijau",
-                "Logistik & Pemeliharaan — Maintenance & Aset",
-                "Digital Hub — IT, Jaringan & Web3",
-                "Eco-Waste & Farming — Smart Farming & Lingkungan",
-                "Local Commerce — Ekonomi Kreatif & UMKM",
-                "Public Relations — Humas & Transparansi Publik",
+              group: "D. 4 Divisi Operasional", items: [
+                "Syiar & Sosial — Keagamaan, Dana Sosial & Kebencanaan",
+                "Infrastruktur & Lingkungan — Konstruksi Hijau & Maintenance Aset",
+                "Ekonomi Terapan — Smart Farming, Bank Sampah & UMKM",
+                "Digital & Humas — IT, Web3, & Transparansi Publik",
               ]
             },
           ].map((s, i) => (

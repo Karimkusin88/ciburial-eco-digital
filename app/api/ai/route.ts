@@ -307,14 +307,10 @@ async function execTool(name: string, args: any): Promise<string> {
             { nama: "— Hasil Voting —", jabatan: "Bendahara" },
           ],
           divisi: [
-            { nama: "Divisi Syiar & Kemakmuran Masjid", jabatan: "Keagamaan & Pengajian", tugas: "Pengajian pemuda, panitia PHBI, jadwal muadzin" },
-            { nama: "Divisi Sosial & Tanggap Warga", jabatan: "Dana Sosial & Kebencanaan", tugas: "Dana sosial warga, santunan yatim/dhuafa, tanggap bencana" },
-            { nama: "Divisi Green Build", jabatan: "Infrastruktur & Konstruksi Hijau", tugas: "Balai Serba Guna, Smart PJU, drainase resapan" },
-            { nama: "Divisi Logistik & Pemeliharaan", jabatan: "Maintenance & Aset", tugas: "Maintenance harian, kelistrikan PJU, perbaikan peralatan" },
-            { nama: "Divisi Digital Hub", jabatan: "IT, Jaringan & Web3", tugas: "RT/RW Net, Learning Hub, Website, Crypto" },
-            { nama: "Divisi Eco-Waste & Farming", jabatan: "Smart Farming & Lingkungan", tugas: "Pertanian organik, peternakan, Bank Sampah" },
-            { nama: "Divisi Local Commerce", jabatan: "Ekonomi Kreatif & UMKM", tugas: "Pengrajin lokal, marketplace, quality control" },
-            { nama: "Divisi Public Relations", jabatan: "Humas & Transparansi Publik", tugas: "Dokumentasi, laporan dana, komunikasi CSR" },
+            { nama: "Divisi Syiar & Sosial", jabatan: "Keagamaan & Dana Sosial", tugas: "Pengajian, PHBI, tanggap bencana, & santunan" },
+            { nama: "Divisi Infrastruktur & Lingkungan", jabatan: "Konstruksi Hijau & Maintenance", tugas: "Balai Serba Guna, Smart PJU, drainase, & aset" },
+            { nama: "Divisi Ekonomi Terapan", jabatan: "Smart Farming & UMKM", tugas: "Pertanian organik, Bank Sampah, & marketplace" },
+            { nama: "Divisi Digital & Humas", jabatan: "IT, Web3, & Publikasi", tugas: "Website, RT/RW Net, laporan dana, & CSR" },
           ],
           founder: { nama: "Ubay Rahmat H.", jabatan: "Founder & Builder — Ciburial Eco-Digital Village" },
         };
