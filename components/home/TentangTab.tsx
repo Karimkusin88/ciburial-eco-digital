@@ -201,7 +201,7 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
                             margin: "0 auto 12px",
                         }}
                     >
-                        Inovasi Desa Mandiri Berbasis Kearifan Lokal dan Teknologi Masa Depan
+                        Inovasi Desa Mandiri Berbasis Kearifan Lokal dan Teknologi Tepat Guna
                     </p>
 
                     {/* Description */}
@@ -221,7 +221,7 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
 
                     {/* Tags - kurangi jadi 4, hapus yang kurang penting */}
                     <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center", marginBottom: 28 }}>
-                        {["Pertanian Organik", "Kerajinan", "Eco-Waste", "Learning Hub"].map(tag => (
+                        {["Pertanian Organik", "Eco-Waste", "Learning Hub", "Kas Transparan"].map(tag => (
                             <span
                                 key={tag}
                                 style={{

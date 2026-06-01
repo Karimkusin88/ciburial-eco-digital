@@ -1,6 +1,6 @@
 # 🌿 Ciburial Eco-Digital Village
 
-Inovasi Desa Mandiri Berbasis Kearifan Lokal dan Teknologi Masa Depan.
+Inovasi Desa Mandiri Berbasis Kearifan Lokal dan Teknologi Tepat Guna.
 
 Website resmi Kampung Ciburial — desa inovatif di Garut, Jawa Barat yang mengawinkan kekayaan alam organik dengan literasi teknologi digital.
 

@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     default: 'Ciburial Eco-Digital Village',
     template: '%s | Ciburial Eco-Digital Village',
   },
-  description: 'Inovasi Desa Mandiri Berbasis Kearifan Lokal dan Teknologi Masa Depan — Kp. Ciburial, Garut, Jawa Barat.',
+  description: 'Inovasi Desa Mandiri Berbasis Kearifan Lokal dan Teknologi Tepat Guna — Kp. Ciburial, Garut, Jawa Barat.',
   keywords: [
     'ciburial', 'ciburial garut', 'desa digital', 'eco village', 'garut',
     'smart village', 'kampung digital', 'desa mandiri', 'bank sampah',
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Ciburial Eco-Digital Village',
-    description: 'Merawat akar, menumbuhkan harapan. Desa inovatif berbasis kearifan lokal dan teknologi masa depan.',
+    description: 'Merawat akar, menumbuhkan harapan. Desa inovatif berbasis kearifan lokal dan Teknologi Tepat Guna.',
     url: 'https://www.ciburial.my.id',
     siteName: 'Ciburial Eco-Digital Village',
     locale: 'id_ID',
@@ -69,7 +69,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Ciburial Eco-Digital Village',
-    description: 'Merawat akar, menumbuhkan harapan. Desa inovatif berbasis kearifan lokal dan teknologi masa depan.',
+    description: 'Merawat akar, menumbuhkan harapan. Desa inovatif berbasis kearifan lokal dan Teknologi Tepat Guna.',
     images: ['/og-image.jpg'],
   },
   alternates: {

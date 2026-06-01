@@ -84,7 +84,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
       content: (
         <div style={{ fontSize: 14, lineHeight: 1.9, color: "var(--ts)" }}>
           <p style={{ marginBottom: 16 }}>Dunia bergerak sangat cepat menuju era digital, namun masyarakat desa seringkali hanya menjadi penonton. Di Kampung Ciburial, kami menolak tertinggal. Kami memiliki kekayaan alam yang melimpah — pertanian organik, peternakan komunal, dan mahakarya bambu — namun potensinya kerap tidak maksimal akibat minimnya infrastruktur dan panjangnya rantai distribusi.</p>
-          <p style={{ marginBottom: 16 }}>Oleh karena itu, lahir sebuah inisiatif raksasa bernama <strong>"Ciburial Eco-Digital Village"</strong>. Ini bukan sekadar program pemasangan internet atau lampu jalan. Ini adalah <em>lompatan besar (quantum leap)</em> untuk mengawinkan kearifan lokal dengan teknologi masa depan.</p>
+          <p style={{ marginBottom: 16 }}>Oleh karena itu, lahir sebuah inisiatif raksasa bernama <strong>"Ciburial Eco-Digital Village"</strong>. Ini bukan sekadar program pemasangan internet atau lampu jalan. Ini adalah <em>lompatan besar (quantum leap)</em> untuk mengawinkan kearifan lokal dengan teknologi tepat guna.</p>
           <p>Kami ingin memutus rantai ketertinggalan dengan mendigitalisasi hasil bumi warga secara langsung tanpa tengkulak, membangun ekosistem sirkular di mana limbah diolah menjadi pupuk dan material infrastruktur yang berharga, serta membekali anak-anak desa dengan Learning Hub. Tujuannya: agar generasi muda Ciburial mampu bersaing secara global tanpa harus meninggalkan identitas dan kampung halamannya.</p>
         </div>
       )
@@ -285,7 +285,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
             Proposal Program<br /><em>Kemakmuran Kampung</em>
           </h1>
           <p className="fnt" style={{ fontSize: "clamp(14px,2vw,18px)", fontStyle: "italic", color: "var(--em)", marginBottom: 14 }}>
-            Inovasi Desa Mandiri Berbasis Kearifan Lokal dan Teknologi Masa Depan
+            Inovasi Desa Mandiri Berbasis Kearifan Lokal dan Teknologi Tepat Guna
           </p>
           <p style={{ fontSize: 13, color: "var(--ts)", lineHeight: 1.7, maxWidth: 480, margin: "0 auto" }}>
             Diajukan oleh Irmas Al Husain Ciburial<br />
