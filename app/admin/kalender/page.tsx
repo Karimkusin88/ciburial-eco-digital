@@ -12,7 +12,7 @@ interface Kegiatan {
   jam_selesai?: string;
   lokasi: string;
   kategori: string;
-  foto_url?: string;
+  foto?: string;
 }
 
 const BULAN = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
@@ -48,7 +48,7 @@ export default function KalenderPage() {
     jam_selesai: "",
     lokasi: "",
     kategori: "kemasyarakatan" as string,
-    foto_url: "",
+    foto: "",
   });
 
   async function fetchData() {
@@ -93,7 +93,7 @@ export default function KalenderPage() {
       jam_selesai: "",
       lokasi: "",
       kategori: "kemasyarakatan",
-      foto_url: "",
+      foto: "",
     });
     fetchData();
   }
@@ -117,7 +117,7 @@ export default function KalenderPage() {
         jam_selesai: kegiatanEdit.jam_selesai || "",
         lokasi: kegiatanEdit.lokasi || "",
         kategori: kegiatanEdit.kategori,
-        foto_url: kegiatanEdit.foto_url || "",
+        foto: kegiatanEdit.foto || "",
       });
     } else {
       setEditingId(null);
@@ -129,7 +129,7 @@ export default function KalenderPage() {
         jam_selesai: "",
         lokasi: "",
         kategori: "kemasyarakatan",
-        foto_url: "",
+        foto: "",
       });
     }
     setShowModal(true);
@@ -231,22 +231,51 @@ export default function KalenderPage() {
 
               {/* UPLOAD FOTO SUPABASE */}
               <div>
-                <label style={{ display: "block", fontSize: 13, color: "#555", marginBottom: 6 }}>Foto Kegiatan (Opsional)</label>
-                <input type="file" accept="image/*" onChange={async (e) => {
-                  const file = e.target.files?.[0];
-                  if (!file) return;
-                  const fileExt = file.name.split('.').pop();
-                  const fileName = `kegiatan-${Date.now()}.${fileExt}`;
+                <label style={{ display: "block", fontSize: 13, color: "#555", marginBottom: 6 }}>Foto Kegiatan (Maks 20)</label>
+                <input type="file" accept="image/*" multiple onChange={async (e) => {
+                  const files = Array.from(e.target.files || []);
+                  if (!files.length) return;
+                  
+                  const existingFotos = form.foto ? form.foto.split(',').filter(Boolean) : [];
+                  if (existingFotos.length + files.length > 20) {
+                     alert("Total maksimal foto adalah 20!");
+                     return;
+                  }
 
-                  const { error } = await supabase.storage.from('kegiatan-foto').upload(fileName, file, { upsert: true });
-                  if (error) return alert("Gagal upload: " + error.message);
-
-                  const { data: urlData } = supabase.storage.from('kegiatan-foto').getPublicUrl(fileName);
-                  setForm({ ...form, foto_url: urlData.publicUrl });
-                  alert("✅ Foto berhasil diupload!");
+                  const newUrls = [];
+                  for (const file of files) {
+                    const fileExt = file.name.split('.').pop();
+                    const fileName = `kegiatan-${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+                    const { error } = await supabase.storage.from('kegiatan-foto').upload(fileName, file, { upsert: true });
+                    if (error) {
+                      alert("Gagal upload " + file.name + ": " + error.message);
+                      continue;
+                    }
+                    const { data: urlData } = supabase.storage.from('kegiatan-foto').getPublicUrl(fileName);
+                    newUrls.push(urlData.publicUrl);
+                  }
+                  
+                  const updatedFotos = [...existingFotos, ...newUrls].join(',');
+                  setForm({ ...form, foto: updatedFotos });
+                  if (newUrls.length > 0) alert(`✅ ${newUrls.length} foto berhasil diupload!`);
+                  e.target.value = ''; // Reset input so same files can be selected again
                 }} style={{ padding: 10, border: "1px solid #ddd", borderRadius: 10, width: "100%" }} />
 
-                {form.foto_url && <img src={form.foto_url} alt="Preview" style={{ marginTop: 12, maxWidth: "100%", maxHeight: 220, borderRadius: 12, objectFit: "cover" }} />}
+                {form.foto && (
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 12 }}>
+                    {form.foto.split(',').filter(Boolean).map((url, i) => (
+                      <div key={i} style={{ position: "relative" }}>
+                        <img src={url} alt={`Preview ${i+1}`} style={{ width: 80, height: 80, borderRadius: 8, objectFit: "cover", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }} />
+                        <button onClick={(e) => {
+                          e.preventDefault();
+                          const arr = form.foto.split(',').filter(Boolean);
+                          arr.splice(i, 1);
+                          setForm({ ...form, foto: arr.join(',') });
+                        }} style={{ position: "absolute", top: -6, right: -6, background: "#e74c3c", color: "white", borderRadius: "50%", width: 20, height: 20, fontSize: 14, border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 4px rgba(0,0,0,0.2)" }}>&times;</button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 

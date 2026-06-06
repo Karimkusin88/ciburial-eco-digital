@@ -26,19 +26,32 @@ const cormorant = Cormorant_Garamond({
 })
 
 export const metadata: Metadata = {
+<<<<<<< HEAD
   metadataBase: new URL('https://ciburial.my.id'),
+=======
+  metadataBase: new URL('https://www.ciburial.my.id'),
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
   title: {
     default: 'Ciburial Eco-Digital Village',
     template: '%s | Ciburial Eco-Digital Village',
   },
+<<<<<<< HEAD
   description: 'Inovasi Desa Mandiri Berbasis Kearifan Lokal dan Teknologi Masa Depan — Kp. Ciburial, Garut, Jawa Barat.',
+=======
+  description: 'Inovasi Desa Mandiri Berbasis Kearifan Lokal dan Teknologi Tepat Guna — Kp. Ciburial, Garut, Jawa Barat.',
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
   keywords: [
     'ciburial', 'ciburial garut', 'desa digital', 'eco village', 'garut',
     'smart village', 'kampung digital', 'desa mandiri', 'bank sampah',
     'posyandu digital', 'voting desa', 'transparansi dana desa',
   ],
+<<<<<<< HEAD
   authors: [{ name: 'Ciburial Makers', url: 'https://ciburial.my.id' }],
   creator: 'Ciburial Makers',
+=======
+  authors: [{ name: 'Irmas Al Husain Ciburial', url: 'https://www.ciburial.my.id' }],
+  creator: 'Irmas Al Husain Ciburial',
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
   publisher: 'Ciburial Eco-Digital Village',
   robots: {
     index: true,
@@ -52,8 +65,13 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Ciburial Eco-Digital Village',
+<<<<<<< HEAD
     description: 'Merawat akar, menumbuhkan harapan. Desa inovatif berbasis kearifan lokal dan teknologi masa depan.',
     url: 'https://ciburial.my.id',
+=======
+    description: 'Merawat akar, menumbuhkan harapan. Desa inovatif berbasis kearifan lokal dan Teknologi Tepat Guna.',
+    url: 'https://www.ciburial.my.id',
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
     siteName: 'Ciburial Eco-Digital Village',
     locale: 'id_ID',
     type: 'website',
@@ -69,6 +87,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Ciburial Eco-Digital Village',
+<<<<<<< HEAD
     description: 'Merawat akar, menumbuhkan harapan. Desa inovatif berbasis kearifan lokal dan teknologi masa depan.',
     images: ['/og-image.jpg'],
   },
@@ -78,6 +97,15 @@ export const metadata: Metadata = {
   icons: {
     icon: '/favicon.ico',
   },
+=======
+    description: 'Merawat akar, menumbuhkan harapan. Desa inovatif berbasis kearifan lokal dan Teknologi Tepat Guna.',
+    images: ['/og-image.jpg'],
+  },
+  alternates: {
+    canonical: 'https://www.ciburial.my.id',
+  },
+
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

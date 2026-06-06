@@ -1,5 +1,9 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
+<<<<<<< HEAD
+=======
+import { createPortal } from "react-dom";
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
 import { Kegiatan, KAT_CFG } from "./types";
 import { CalendarDays, X, ChevronLeft, ChevronRight, ZoomIn } from "lucide-react";
 
@@ -34,7 +38,15 @@ function Lightbox({ fotos, judul, startIdx, onClose }: LightboxProps) {
   const url = fotos[cur];
   const isVideo = url.toLowerCase().includes(".mp4") || url.toLowerCase().includes(".webm");
 
+<<<<<<< HEAD
   return (
+=======
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
+
+  return createPortal(
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
     <div
       onClick={onClose}
       style={{
@@ -86,10 +98,16 @@ function Lightbox({ fotos, judul, startIdx, onClose }: LightboxProps) {
       <div
         onClick={e => e.stopPropagation()}
         style={{
+<<<<<<< HEAD
           maxWidth: "min(92vw, 900px)",
           maxHeight: "80vh",
           display: "flex", alignItems: "center", justifyContent: "center",
           position: "relative",
+=======
+          position: "absolute",
+          top: 80, bottom: 60, left: 16, right: 16,
+          display: "flex", alignItems: "center", justifyContent: "center",
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
         }}
       >
         {isVideo ? (
@@ -98,14 +116,22 @@ function Lightbox({ fotos, judul, startIdx, onClose }: LightboxProps) {
             controls
             autoPlay
             playsInline
+<<<<<<< HEAD
             style={{ maxWidth: "100%", maxHeight: "80vh", borderRadius: 12, boxShadow: "0 32px 80px rgba(0,0,0,0.6)" }}
+=======
+            style={{ maxWidth: "100%", maxHeight: "100%", borderRadius: 12, boxShadow: "0 32px 80px rgba(0,0,0,0.6)" }}
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
           />
         ) : (
           <img
             src={url}
             alt={judul}
             style={{
+<<<<<<< HEAD
               maxWidth: "100%", maxHeight: "80vh",
+=======
+              maxWidth: "100%", maxHeight: "100%",
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
               objectFit: "contain",
               borderRadius: 12,
               boxShadow: "0 32px 80px rgba(0,0,0,0.6)",
@@ -180,7 +206,12 @@ function Lightbox({ fotos, judul, startIdx, onClose }: LightboxProps) {
       <style>{`
         @keyframes lbFadeIn { from { opacity:0 } to { opacity:1 } }
       `}</style>
+<<<<<<< HEAD
     </div>
+=======
+    </div>,
+    document.body
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
   );
 }
 
@@ -235,6 +266,47 @@ function KegiatanSlider({ fotos, judul, onOpenLightbox }: SliderProps) {
   );
 }
 
+<<<<<<< HEAD
+=======
+/* ─── EXPANDABLE TEXT ─── */
+function ExpandableText({ text }: { text: string }) {
+  const [expanded, setExpanded] = useState(false);
+  const isLong = text.length > 120;
+
+  return (
+    <div>
+      <p style={{ 
+        fontSize: "clamp(11px, 2.8vw, 13px)", 
+        lineHeight: 1.5, 
+        color: "#5A4A40", 
+        marginBottom: isLong && !expanded ? 4 : (isLong && expanded ? 8 : 0),
+        display: expanded ? "block" : "-webkit-box",
+        WebkitLineClamp: expanded ? "unset" : 3,
+        WebkitBoxOrient: "vertical",
+        overflow: "hidden"
+      }}>
+        {text}
+      </p>
+      {isLong && (
+        <button 
+          onClick={(e) => { e.stopPropagation(); setExpanded(!expanded); }} 
+          style={{ 
+            background: "none", border: "none", color: "#2F8F4E", 
+            fontSize: "clamp(11px, 2.8vw, 12px)", fontWeight: 700, 
+            padding: 0, cursor: "pointer", display: "inline-block",
+            transition: "color 0.2s"
+          }}
+          onMouseEnter={e => e.currentTarget.style.color = "#1C3A2B"}
+          onMouseLeave={e => e.currentTarget.style.color = "#2F8F4E"}
+        >
+          {expanded ? "Sembunyikan" : "Lihat selengkapnya"}
+        </button>
+      )}
+    </div>
+  );
+}
+
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
 /* ─── MAIN ─── */
 interface KegiatanTabProps {
   kegiatan: Kegiatan[];
@@ -359,7 +431,11 @@ export default function KegiatanTab({ kegiatan, dataLoad }: KegiatanTabProps) {
                         </div>
                       </div>
                       <h3 style={{ fontSize: "clamp(13px, 3.5vw, 16px)", fontWeight: 700, color: "#1C3A2B", marginBottom: 6, lineHeight: 1.3 }}>{k.judul}</h3>
+<<<<<<< HEAD
                       {k.deskripsi && <p style={{ fontSize: "clamp(11px, 2.8vw, 13px)", lineHeight: 1.5, color: "#5A4A40", marginBottom: 0 }}>{k.deskripsi}</p>}
+=======
+                      {k.deskripsi && <ExpandableText text={k.deskripsi} />}
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
                     </div>
                   </div>
                 );

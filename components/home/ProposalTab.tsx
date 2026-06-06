@@ -58,12 +58,12 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
             <div style={{ fontSize: 11, color: "var(--tm)" }}>Lampiran: 1 (Satu) Berkas Proposal</div>
           </div>
           <p style={{ marginBottom: 14 }}>Kepada Yth, <strong>[Instansi / Perusahaan / Donatur]</strong> di Tempat. Dengan hormat,</p>
-          <p style={{ marginBottom: 14 }}>Puji syukur ke hadirat Tuhan Yang Maha Esa atas segala limpahan rahmat-Nya. Bersama surat ini, kami dari Paguyuban Warga & Pemuda Ciburial Makers bermaksud menyampaikan proposal program <strong>"Ciburial Eco-Digital Village"</strong>.</p>
+          <p style={{ marginBottom: 14 }}>Puji syukur ke hadirat Tuhan Yang Maha Esa atas segala limpahan rahmat-Nya. Bersama surat ini, kami dari Irmas Al Husain Ciburial bermaksud menyampaikan proposal program <strong>"Ciburial Eco-Digital Village"</strong>.</p>
           <p style={{ marginBottom: 14 }}>Program ini adalah inisiatif swadaya masyarakat akar rumput untuk membangun ekosistem desa yang mandiri, cerdas, dan ramah lingkungan. Mengawinkan kekayaan alam organik dengan literasi teknologi digital untuk menciptakan ketahanan pangan, keamanan lingkungan, dan peningkatan SDM generasi muda.</p>
           <p style={{ marginBottom: 28 }}>Mengingat besarnya skala pergerakan ini, kami membuka ruang kolaborasi dan memohon dukungan dari Bapak/Ibu/Saudara guna merealisasikan cetak biru kemakmuran desa ini.</p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 180px),1fr))", gap: "clamp(8px, 2vw, 12px)" }}>
             {[
-              { role: "Ketua Pemuda Ciburial Makers", name: "— Soon —", label: "Tanda Tangan & Stempel" },
+              { role: "Ketua Irmas Al Husain Ciburial", name: "— Soon —", label: "Tanda Tangan & Stempel" },
               { role: "Ketua DKM Ciburial", name: "Bpk. Pupu Apipudin", label: "Mengetahui / Menyetujui" },
               { role: "Ketua RW Kp. Ciburial", name: "Bpk. Enang", label: "Mengetahui / Menyetujui" },
             ].map((s, i) => (
@@ -83,9 +83,9 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
       title: "Bab I — Latar Belakang", icon: <BookOpen size={20} strokeWidth={1.5} color="currentColor" />,
       content: (
         <div style={{ fontSize: 14, lineHeight: 1.9, color: "var(--ts)" }}>
-          <p style={{ marginBottom: 16 }}>Dunia bergerak sangat cepat menuju era digital, namun masyarakat desa seringkali hanya menjadi penonton. Di Kampung Ciburial, kami menolak tertinggal. Kami memiliki kekayaan alam yang melimpah — pertanian organik, peternakan komunal, dan mahakarya bambu — namun potensinya kerap tidak maksimal akibat minimnya infrastruktur dan panjangnya rantai distribusi.</p>
-          <p style={{ marginBottom: 16 }}>Oleh karena itu, lahir sebuah inisiatif raksasa bernama <strong>"Ciburial Eco-Digital Village"</strong>. Ini bukan sekadar program pemasangan internet atau lampu jalan. Ini adalah <em>lompatan besar (quantum leap)</em> untuk mengawinkan kearifan lokal dengan teknologi masa depan.</p>
-          <p>Kami ingin memutus rantai ketertinggalan dengan mendigitalisasi hasil bumi warga secara langsung tanpa tengkulak, membangun ekosistem sirkular di mana limbah diolah menjadi pupuk dan material infrastruktur yang berharga, serta membekali anak-anak desa dengan Learning Hub. Tujuannya: agar generasi muda Ciburial mampu bersaing secara global tanpa harus meninggalkan identitas dan kampung halamannya.</p>
+          <p style={{ marginBottom: 16 }}>Dunia bergerak sangat cepat menuju era digital, namun masyarakat desa seringkali hanya menjadi penonton. Di Kampung Ciburial, kami menolak tertinggal. Kami memiliki kekayaan alam yang melimpah — pertanian organik, peternakan komunal — namun potensinya kerap tidak maksimal akibat minimnya infrastruktur dan panjangnya rantai distribusi.</p>
+          <p style={{ marginBottom: 16 }}>Oleh karena itu, melalui semangat gotong royong pemuda dan IRMAS Al Husain, lahir sebuah inisiatif bernama <strong>"Ciburial Eco-Digital Village"</strong>. Ini bukan sekadar program fisik seperti pemasangan lampu jalan atau internet. Ini adalah langkah nyata untuk mengawinkan kearifan lokal desa dengan teknologi tepat guna.</p>
+          <p>Kami ingin memutus rantai ketertinggalan dengan mendigitalisasi hasil bumi warga tanpa perantara tengkulak, membangun ekosistem sirkular pengolahan limbah, serta membekali anak-anak desa dengan fasilitas belajar (Learning Hub). Tujuannya satu: agar generasi muda Ciburial mampu bersaing di era digital dan membawa kemakmuran bagi warga, tanpa harus meninggalkan identitas agamis dan kearifan kampung halamannya.</p>
         </div>
       )
     },
@@ -94,8 +94,8 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
       content: (
         <div style={{ display: "flex", flexDirection: "column", gap: "clamp(8px, 2vw, 10px)" }}>
           {[
-            { n: "01", t: "Kemakmuran Masjid & Warga", d: "Membantu kas DKM agar kegiatan keagamaan dan sosial warga berjalan optimal." },
-            { n: "02", t: "Keamanan & Kenyamanan Lingkungan", d: "Menerangi jalan desa dengan Smart PJU dan mewujudkan Pos Ronda Digital berbasis pantauan CCTV." },
+            { n: "01", t: "Kemakmuran Masjid & Warga", d: "Mendukung operasional DKM Al Husain dan menginisiasi program sosial keagamaan yang modern, mandiri, dan transparan." },
+            { n: "02", t: "Keamanan & Kenyamanan Lingkungan", d: "Menerangi akses jalan warga menuju masjid dengan Smart PJU serta mewujudkan lingkungan yang aman lewat pantauan CCTV." },
             { n: "03", t: "Peningkatan SDM Generasi Muda", d: "Menyediakan fasilitas belajar interaktif untuk mencetak generasi penerus yang kompeten dan melek teknologi." },
             { n: "04", t: "Kemandirian Ekonomi & Ketahanan Pangan", d: "Sistem perdagangan sirkular dari warga untuk warga, memadukan pertanian dan peternakan modern dengan pemesanan digital." },
           ].map((item, i) => (
@@ -115,10 +115,10 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
       content: (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 12 }}>
           {[
-            { icon: <Lightbulb size={20} strokeWidth={1.5} color="currentColor" />, t: "Infrastruktur Cerdas", d: "Balai Serba Guna berkonsep hijau, Smart PJU, Jaringan CCTV, dan Internet Mandiri." },
+            { icon: <Lightbulb size={20} strokeWidth={1.5} color="currentColor" />, t: "Syiar Digital & Kemakmuran Masjid", d: "Menjadikan Masjid Al Husain sebagai pusat ibadah, sosial, dan pergerakan pemuda yang berdaya guna melalui sentuhan teknologi tepat guna." },
             { icon: <BookOpen size={20} strokeWidth={1.5} color="currentColor" />, t: "SDM Unggul", d: "Lab Komputer & Perpustakaan sebagai inkubator pemuda Ciburial." },
             { icon: <Leaf size={20} strokeWidth={1.5} color="currentColor" />, t: "Ekonomi Sirkular & Smart Farming", d: "Marketplace lokal untuk bambu, sayuran organik, peternakan, dan produk daur ulang." },
-            { icon: <BarChart2 size={20} strokeWidth={1.5} color="currentColor" />, t: "Tata Kelola Transparan", d: "Dana kemakmuran terbuka real-time, dari fiat konvensional hingga aset kripto (Web3)." },
+            { icon: <BarChart2 size={20} strokeWidth={1.5} color="currentColor" />, t: "Tata Kelola Transparan", d: "Aliran dana umat dan kas swadaya yang terbuka secara real-time melalui dasbor digital desa terintegrasi." },
           ].map((v, i) => (
             <div key={i} style={{ padding: "clamp(14px, 4vw, 18px)", background: "var(--cr)", borderRadius: 13, border: "1px solid var(--bo)" }}>
               <div style={{ fontSize: 26, marginBottom: 10 }}>{v.icon}</div>
@@ -134,11 +134,11 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
       content: (
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           {[
-            { icon: <Landmark size={20} strokeWidth={1.5} color="currentColor" />, t: "Ciburial Learning Hub & Balai Warga", d: "Balai Serba Guna berkonsep ramah lingkungan (bambu & baja ringan). Berfungsi sebagai pusat interaksi warga, perpustakaan desa, dan laboratorium komputer." },
+            { icon: <Landmark size={20} strokeWidth={1.5} color="currentColor" />, t: "Serambi Belajar Ciburial & Balai Warga", d: "Ruang interaksi ramah lingkungan untuk pengajian pemuda, perpustakaan desa, dan inkubator melek teknologi." },
             { icon: <Wheat size={20} strokeWidth={1.5} color="currentColor" />, t: "Smart Farming & Circular Eco-Waste", d: "Integrasi pertanian sayur organik dan peternakan modern komunal. Limbah kotoran hewan → pupuk kompos, plastik → material infrastruktur daur ulang." },
             { icon: <Zap size={20} strokeWidth={1.5} color="currentColor" />, t: "Instalasi Smart PJU & Pos Ronda Digital", d: "Lampu jalan cerdas bertenaga surya dan jaringan CCTV untuk sistem keamanan lingkungan." },
             { icon: <ShoppingCart size={20} strokeWidth={1.5} color="currentColor" />, t: "Ciburial Local Commerce (Web & App)", d: "Marketplace desa untuk memasarkan karya bambu, hasil panen, dan produk peternakan dengan sistem delivery." },
-            { icon: <Coins size={20} strokeWidth={1.5} color="currentColor" />, t: "Digitalisasi Kas Donasi (Fiat & Crypto)", d: "Sentralisasi dana melalui QRIS, Rekening Bank, dan Crypto Wallet (EVM Compatible) untuk menjangkau filantropis global." },
+            { icon: <Coins size={20} strokeWidth={1.5} color="currentColor" />, t: "Digitalisasi Kas Masjid & Donasi Warga", d: "Modernisasi pengelolaan dana umat dan swadaya melalui QRIS dan transfer bank terpadu guna menjangkau donatur luas tanpa batas." },
           ].map((p, i) => (
             <div key={i} style={{ display: "flex", gap: 14, padding: "clamp(12px, 3vw, 15px) clamp(14px, 4vw, 18px)", background: "var(--cr)", borderRadius: 12, border: "1px solid var(--bo)", alignItems: "flex-start" }}>
               <span style={{ fontSize: 22, minWidth: 28 }}>{p.icon}</span>
@@ -169,19 +169,18 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
               ]
             },
             {
-              group: "C. Tim Eksekutif Lapangan (Ciburial Makers)", items: [
+              group: "C. Tim Eksekutif Lapangan (Irmas Al Husain Ciburial)", items: [
                 "Ketua Pelaksana : [Hasil Voting]",
                 "Sekretaris & Administrasi: [Hasil Voting]",
                 "Bendahara Program: [Hasil Voting]",
               ]
             },
             {
-              group: "D. 5 Divisi Operasional", items: [
-                "Green Build — Infrastruktur & Konstruksi Hijau",
-                "Digital Hub — IT, Jaringan & Web3",
-                "Eco-Waste & Farming — Smart Farming & Lingkungan",
-                "Local Commerce — Ekonomi Kreatif & UMKM",
-                "Public Relations — Humas & Transparansi Publik",
+              group: "D. 4 Divisi Operasional", items: [
+                "Syiar & Sosial — Keagamaan, Dana Sosial & Kebencanaan",
+                "Infrastruktur & Lingkungan — Konstruksi Hijau & Maintenance Aset",
+                "Ekonomi Terapan — Smart Farming, Bank Sampah & UMKM",
+                "Digital & Humas — IT, Media, & Transparansi Publik",
               ]
             },
           ].map((s, i) => (
@@ -198,11 +197,14 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
       )
     },
     {
-      title: "Bab VI — RAB Global (Target Rp 250.000.000)", icon: <Coins size={20} strokeWidth={1.5} color="currentColor" />,
+      title: "Bab VI — RAB Tahap 1 (Target Rp 5.952.308)", icon: <Coins size={20} strokeWidth={1.5} color="currentColor" />,
       content: (
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <p style={{ fontSize: 13, lineHeight: 1.7, color: "var(--ts)", marginBottom: 8 }}>
+            Untuk Tahap 1 ini, kami akan memfasilitasi pemasangan 20 Titik Penerangan Jalan Umum (PJU). Sebagai pijakan awal dan percontohan (pilot project), pengerjaan akan difokuskan di area RT 01 dan RT 02 terlebih dahulu. Keberhasilan di titik ini akan menjadi standar acuan sebelum program kita perluas secara bertahap ke seluruh wilayah kampung.
+          </p>
           <p style={{ fontSize: 13, lineHeight: 1.7, color: "var(--ts)", marginBottom: 8, padding: "clamp(8px, 2vw, 12px) clamp(12px, 3vw, 16px)", background: "rgba(184,148,63,.07)", borderRadius: 10, border: "1px solid rgba(184,148,63,.18)" }}>
-            <Lightbulb size={14} style={{ display: "inline", marginRight: 4 }} /> <strong>Catatan:</strong> Seluruh pengerjaan fisik/instalasi bernilai Rp 0 karena dilakukan secara <strong>swadaya & gotong royong</strong>. Dana donasi digunakan untuk material saja.
+            <Lightbulb size={14} style={{display:"inline", marginRight:4}}/> <strong>Catatan:</strong> Seluruh pengerjaan fisik/instalasi bernilai Rp 0 karena dilakukan secara <strong>swadaya & gotong royong</strong>. Dana donasi digunakan untuk material saja.
           </p>
           {ALOKASI.map((item, i) => {
             const used = transaksi.filter(t => t.tipe === "keluar" && t.kategori === item.label).reduce((s, t) => s + t.jumlah, 0);
@@ -225,10 +227,10 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
             );
           })}
           <div style={{ padding: "clamp(12px, 3vw, 16px) clamp(16px, 4vw, 22px)", background: "var(--fo)", borderRadius: 14, display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 8, marginTop: 4 }}>
-            <span style={{ fontSize: 13, fontWeight: 700, color: "var(--cr)" }}>TOTAL ESTIMASI KEBUTUHAN</span>
+            <span style={{ fontSize: 13, fontWeight: 700, color: "var(--cr)" }}>TOTAL KEBUTUHAN TAHAP 1</span>
             <div style={{ textAlign: "right" }}>
-              <span className="fnt" style={{ fontSize: 22, fontWeight: 600, color: "var(--gl)" }}>Rp 250.000.000</span>
-              <div style={{ fontSize: 11, color: "rgba(250,248,243,.45)" }}>Dua Ratus Lima Puluh Juta Rupiah</div>
+              <span className="fnt" style={{ fontSize: 22, fontWeight: 600, color: "var(--gl)" }}>Rp 5.952.308</span>
+              <div style={{ fontSize: 11, color: "rgba(250,248,243,.45)" }}>Lima Juta Sembilan Ratus Lima Puluh Dua Ribu Tiga Ratus Delapan Rupiah</div>
             </div>
           </div>
         </div>
@@ -242,7 +244,6 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
             {[
               { id: "bank", icon: <Landmark size={24} strokeWidth={1.5} />, t: "Rekening Bank Resmi", sub: "Bank SeaBank", detail: "No. Rek: 901355550666\nA.n: Ubay Rahmat H" },
               { id: "midtrans", icon: <Smartphone size={24} strokeWidth={1.5} />, t: "QRIS & E-Wallet", sub: "Secara Otomatis via Midtrans", detail: loadingDonasi ? "⏳ MEMUAT MIDTRANS..." : "SILAKAN KLIK KOTAK INI UNTUK MULAI DONASI" },
-              { id: "crypto", icon: <Search size={24} strokeWidth={1.5} />, t: "Crypto / Web3", sub: "EVM Compatible Wallet", detail: "Wallet Address:\n0x71723715478b344164e992b49ae1fCEb6467888B" },
             ].map((m, i) => (
               <div key={i} onClick={m.id === "midtrans" ? bayarDonasi : undefined} style={{ padding: "clamp(14px, 4vw, 18px)", background: "var(--fo)", borderRadius: 14, cursor: m.id === "midtrans" ? (loadingDonasi ? "wait" : "pointer") : "default", opacity: m.id === "midtrans" && loadingDonasi ? 0.6 : 1, transition: "opacity .2s, background .2s" }}
                 onMouseEnter={e => m.id === "midtrans" ? (e.currentTarget.style.background = "var(--cd)") : undefined}
@@ -274,7 +275,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
           </div>
           <div style={{ marginTop: 22, textAlign: "right" }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: "var(--tp)" }}>Hormat Kami,</div>
-            <div className="fnt" style={{ fontSize: 22, fontWeight: 600, color: "var(--fo)", fontStyle: "italic" }}>Paguyuban & Pemuda Ciburial Makers</div>
+            <div className="fnt" style={{ fontSize: 22, fontWeight: 600, color: "var(--fo)", fontStyle: "italic" }}>Irmas Al Husain Ciburial</div>
           </div>
         </div>
       )
@@ -293,10 +294,10 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
             Proposal Program<br /><em>Kemakmuran Kampung</em>
           </h1>
           <p className="fnt" style={{ fontSize: "clamp(14px,2vw,18px)", fontStyle: "italic", color: "var(--em)", marginBottom: 14 }}>
-            Inovasi Desa Mandiri Berbasis Kearifan Lokal dan Teknologi Masa Depan
+            Inovasi Desa Mandiri Berbasis Kearifan Lokal dan Teknologi Tepat Guna
           </p>
           <p style={{ fontSize: 13, color: "var(--ts)", lineHeight: 1.7, maxWidth: 480, margin: "0 auto" }}>
-            Diajukan oleh Paguyuban Warga & Pemuda Ciburial Makers<br />
+            Diajukan oleh Irmas Al Husain Ciburial<br />
             Kp. Ciburial RW 08, Desa Hanjuang, Kec. Bungbulang, Kab. Garut 44165
           </p>
         </div>

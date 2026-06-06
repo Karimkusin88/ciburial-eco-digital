@@ -46,13 +46,12 @@ const KAT_MASUK = [
 // Kategori KELUAR — HARUS SAMA PERSIS dengan label ALOKASI di types.ts
 // agar chart distribusi pengeluaran di Transparansi Dana terpetakan dengan benar
 const KAT_KELUAR = [
-  "Balai Serba Guna & Ruang Publik",
-  "Smart Farming & Peternakan Modern",
-  "Learning Hub",
-  "Smart PJU & Keamanan",
-  "Jaringan Internet (RT/RW Net)",
-  "Operasional Digital & Eco-Waste",
-  "DKM / Masjid",
+  "Tiang PJU Stainless",
+  "Lampu 22 Watt",
+  "Kabel PJU",
+  "Semen & Pasir",
+  "Cetakan PJU",
+  "Cat & Material",
   "Lainnya",
 ];
 
@@ -110,7 +109,7 @@ export default function AdminPage() {
 
   const [kForm, setKForm] = useState(emptyK);
   const [kFile, setKFile] = useState<File | null>(null);
-  const [kFiles, setKFiles] = useState<(File | null)[]>(Array(8).fill(null));
+  const [kFiles, setKFiles] = useState<File[]>([]);
   const [pForm, setPForm] = useState(emptyP);
   const [pFile, setPFile] = useState<File | null>(null);
   const [pFiles, setPFiles] = useState<(File | null)[]>([null, null, null, null, null]); // 5 photo slots
@@ -286,7 +285,7 @@ export default function AdminPage() {
       
       setKForm(emptyK);
       setKFile(null);
-      setKFiles(Array(8).fill(null));
+      setKFiles([]);
       fetchAll();
       showToast("✅ Kegiatan berhasil ditambahkan!");
     } catch (err: any) {
@@ -784,6 +783,7 @@ export default function AdminPage() {
                         {href:"/admin/kalender",i:<Calendar size={16}/>,l:"KALENDER"},
                         {href:"/admin/voting",i:<Coins size={16}/>,l:"VOTING"},
                         {href:"/admin/learning-hub",i:<Book size={16}/>,l:"LEARNING HUB"},
+                        {href:"/admin/toko",i:<ShoppingCart size={16}/>,l:"TOKO & PENJUAL"},
                       ].map(l=>(
                         <a key={l.href} href={l.href} style={{display:"flex",alignItems:"center",gap:10,padding:"14px",borderRadius:12,background:"rgba(255,255,255,0.1)",border:"1px solid rgba(255,255,255,0.1)",textDecoration:"none",color:"white",fontSize:12,fontWeight:800, transition: "all 0.3s"}} 
                         onMouseOver={e => {e.currentTarget.style.background = "rgba(255,255,255,0.2)"; e.currentTarget.style.transform = "translateX(4px)"}}
@@ -841,19 +841,34 @@ export default function AdminPage() {
                   <textarea className="form-input-heroic" rows={3} value={kForm.deskripsi} onChange={e => setKForm({...kForm, deskripsi:e.target.value})} placeholder="Ceritakan sedikit tentang acara ini..." style={{ resize:"vertical" }} />
                 </div>
                 <div className="gradient-border-heroic" style={{ padding: 20 }}>
-                  <label className="form-label-heroic" style={{ color:"#1C3A2B", marginBottom:12, display: "block" }}>📸 GALERI FOTO (MAX 8)</label>
-                  <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:8 }}>
-                    {kFiles.map((f, i) => (
-                      <label key={i} style={{ aspectRatio:"1", background:f ? "rgba(47,143,78,0.1)" : "rgba(0,0,0,0.03)", border:f ? "2px solid #2F8F4E" : "1px dashed rgba(0,0,0,0.1)", borderRadius:10, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", overflow:"hidden", position:"relative", transition: "all 0.3s" }}>
-                        <input type="file" accept="image/*,video/mp4,video/webm" style={{ display:"none" }} onChange={e => {
-                          const n = [...kFiles];
-                          n[i] = e.target.files?.[0] || null;
-                          setKFiles(n);
-                        }} />
-                        {f ? <span style={{ fontSize:20 }}>🖼️</span> : <span style={{ fontSize:16, color:"rgba(0,0,0,0.2)" }}>+</span>}
-                      </label>
-                    ))}
-                  </div>
+                  <label className="form-label-heroic" style={{ color:"#1C3A2B", marginBottom:12, display: "block" }}>📸 GALERI FOTO (MAKS 20)</label>
+                  <input type="file" accept="image/*,video/mp4,video/webm" multiple onChange={e => {
+                    const files = Array.from(e.target.files || []);
+                    if (kFiles.length + files.length > 20) {
+                      alert("Maksimal 20 foto/video!");
+                      return;
+                    }
+                    setKFiles([...kFiles, ...files]);
+                    e.target.value = '';
+                  }} style={{ marginBottom: 12, display: 'block', width: '100%', padding: '10px', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '8px' }} />
+
+                  {kFiles.length > 0 && (
+                    <div style={{ display:"flex", flexWrap:"wrap", gap:8 }}>
+                      {kFiles.map((f, i) => (
+                        <div key={i} style={{ width: 80, height: 80, position: "relative", borderRadius: 8, overflow: "hidden", border: "1px solid rgba(0,0,0,0.1)" }}>
+                          {f.type.includes('video') ? (
+                            <video src={URL.createObjectURL(f)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          ) : (
+                            <img src={URL.createObjectURL(f)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          )}
+                          <button onClick={(e) => {
+                            e.preventDefault();
+                            setKFiles(kFiles.filter((_, idx) => idx !== i));
+                          }} style={{ position: "absolute", top: 4, right: 4, background: "#e74c3c", color: "white", borderRadius: "50%", width: 20, height: 20, fontSize: 14, border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 4px rgba(0,0,0,0.2)" }}>&times;</button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <button className="btn-heroic" onClick={addKegiatan} disabled={loading} style={{ marginTop: 8 }}>
                   <span>{loading ? "MENYIMPAN..." : "SIMPAN KEGIATAN"}</span>

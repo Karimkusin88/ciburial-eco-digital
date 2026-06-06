@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, ReactNode } from "react";
-import { Landmark, Home, User, HandHeart, Zap, FileText, Coins, Building, Monitor, Wheat, ShoppingCart, Megaphone, Lightbulb, BookOpen, Sprout, BarChart2 } from "lucide-react";
+import { Landmark, Home, User, HandHeart, Zap, FileText, Coins, Building, Monitor, Wheat, ShoppingCart, Megaphone, Lightbulb, BookOpen, Sprout, BarChart2, Wrench } from "lucide-react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 // ─── STRUKTUR ORGANISASI ─────────────────────────────────────────────────
@@ -21,23 +21,19 @@ const timEksekutif = [
 ];
 const divisi = [
   {
-    icon: <Building size={20} />, nama: "Green Build", full: "Infrastruktur & Konstruksi Hijau", tugas: "Balai Serba Guna, Smart PJU, drainase resapan",
+    icon: <HandHeart size={20} />, nama: "Syiar & Sosial", full: "Keagamaan & Dana Sosial", tugas: "Pengajian, PHBI, tanggap bencana, & santunan",
     ketua: { nama: "— Hasil Voting —" }, wakil: { nama: "— Hasil Voting —" }
   },
   {
-    icon: <Monitor size={20} />, nama: "Digital Hub", full: "IT, Jaringan & Web3", tugas: "RT/RW Net, Learning Hub, Website, Crypto",
+    icon: <Building size={20} />, nama: "Infrastruktur & Lingkungan", full: "Konstruksi Hijau & Maintenance", tugas: "Balai Serba Guna, Smart PJU, drainase, & aset",
     ketua: { nama: "— Hasil Voting —" }, wakil: { nama: "— Hasil Voting —" }
   },
   {
-    icon: <Wheat size={20} />, nama: "Eco-Waste & Farming", full: "Smart Farming & Lingkungan", tugas: "Pertanian organik, peternakan, Bank Sampah",
+    icon: <Wheat size={20} />, nama: "Ekonomi Terapan", full: "Smart Farming & UMKM", tugas: "Pertanian organik, Bank Sampah, & marketplace",
     ketua: { nama: "— Hasil Voting —" }, wakil: { nama: "— Hasil Voting —" }
   },
   {
-    icon: <ShoppingCart size={20} />, nama: "Local Commerce", full: "Ekonomi Kreatif & UMKM", tugas: "Pengrajin lokal, marketplace, quality control",
-    ketua: { nama: "— Hasil Voting —" }, wakil: { nama: "— Hasil Voting —" }
-  },
-  {
-    icon: <Megaphone size={20} />, nama: "Public Relations", full: "Humas & Transparansi Publik", tugas: "Dokumentasi, laporan dana, komunikasi CSR",
+    icon: <Monitor size={20} />, nama: "Digital & Humas", full: "IT, Media, & Publikasi", tugas: "Website, RT/RW Net, laporan dana, & CSR",
     ketua: { nama: "— Hasil Voting —" }, wakil: { nama: "— Hasil Voting —" }
   },
 ];
@@ -95,10 +91,10 @@ export default function TentangPage() {
           </div>
           <div className="visi-cards" style={{ flex: 1, minWidth: 240, display: "flex", flexDirection: "column", gap: "clamp(8px, 2vw, 14px)" }}>
             {[
-              { no: "01", icon: "", t: "Infrastruktur Cerdas", d: "Balai Serba Guna berkonsep hijau, Smart PJU, Jaringan CCTV, dan Internet Mandiri (Wi-Fi Kampung)." },
+              { no: "01", icon: "", t: "Syiar Digital & Kemakmuran Masjid", d: "Menjadikan Masjid Al Husain sebagai pusat ibadah, sosial, dan pergerakan pemuda yang berdaya guna melalui sentuhan teknologi tepat guna." },
               { no: "02", icon: "", t: "SDM Unggul", d: "Laboratorium Komputer & Perpustakaan sebagai inkubator pemuda Ciburial yang melek teknologi." },
               { no: "03", icon: "", t: "Ekonomi Sirkular & Smart Farming", d: "Pasar lokal untuk bambu, sayuran organik, peternakan terpadu, dan produk daur ulang limbah." },
-              { no: "04", icon: "", t: "Tata Kelola Transparan", d: "Aliran dana kemakmuran terbuka secara real-time, dari fiat konvensional hingga aset kripto (Web3)." },
+              { no: "04", icon: "", t: "Tata Kelola Transparan", d: "Aliran dana umat dan kas swadaya yang terbuka secara real-time melalui dasbor digital desa terintegrasi." },
             ].map((v, i) => (
               <div key={i} className={`rv ch d${i + 1} visi-card`}
                 style={{ padding: "clamp(14px, 3.5vw, 24px) clamp(16px, 4vw, 28px)", background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.6))", borderRadius: "clamp(10px, 2.5vw, 16px)", border: "1.5px solid rgba(47,143,78,.15)", display: "flex", gap: "clamp(10px, 2.5vw, 18px)", alignItems: "flex-start", transition: "all .35s cubic-bezier(.22,1,.36,1)", cursor: "pointer" }}
@@ -207,7 +203,11 @@ export default function TentangPage() {
 
           {/* 5 Divisi */}
           <div style={{ marginTop: 8 }}>
+<<<<<<< HEAD
             <div style={{ fontSize: "clamp(9px, 2.2vw, 11px)", fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "#2F8F4E", marginBottom: 16, background: "linear-gradient(90deg,transparent,#2F8F4E 50%,transparent)", backgroundSize: "100% 2px", backgroundPosition: "0 100%", backgroundRepeat: "no-repeat", paddingBottom: 10 }}>D. 5 Divisi Operasional (Garda Depan)</div>
+=======
+            <div style={{ fontSize: "clamp(9px, 2.2vw, 11px)", fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "#2F8F4E", marginBottom: 16, background: "linear-gradient(90deg,transparent,#2F8F4E 50%,transparent)", backgroundSize: "100% 2px", backgroundPosition: "0 100%", backgroundRepeat: "no-repeat", paddingBottom: 10 }}>D. 4 Divisi Operasional (Garda Depan)</div>
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(140px,1fr))", gap: "clamp(8px, 2vw, 16px)" }} className="divisi-grid">
               {divisi.map((d, i) => (
                 <div key={i} className={`div-card card-heroic d${i + 1}`} style={{ background: "linear-gradient(135deg,rgba(255,254,249,.95),rgba(232,245,238,.5))", border: "1.5px solid rgba(47,143,78,.15)", borderRadius: "clamp(10px, 2.5vw, 16px)", padding: "clamp(14px, 3.5vw, 24px)", transition: "all .35s cubic-bezier(.22,1,.36,1)", cursor: "pointer", position: "relative", overflow: "hidden" }}

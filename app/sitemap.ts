@@ -1,7 +1,11 @@
 import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
+<<<<<<< HEAD
   const base = 'https://ciburial.my.id'
+=======
+  const base = 'https://www.ciburial.my.id'
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
   const now = new Date()
 
   return [

@@ -1,8 +1,15 @@
 "use client";
 import { Produk, Iklan, fRp } from "./types";
 import { useState, useRef, useEffect, cloneElement } from "react";
+<<<<<<< HEAD
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 import { Home, TreePine, Wheat, Soup, Recycle, Leaf, QrCode, Heart, Landmark, CheckCircle, Package, Truck, PartyPopper, XCircle, Search, MapPin, Zap, Eye, ShoppingCart, MessageSquare, Loader, Smartphone, FileText, CreditCard, Lock, ArrowRight, CornerDownRight, Building2, Shield, Plus, User, UserCheck, ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
+=======
+import { createPortal } from "react-dom";
+import { supabase, isSupabaseReady } from "@/lib/supabase";
+import { playSound } from "@/lib/sound";
+import { Home, TreePine, Wheat, Soup, Recycle, Leaf, QrCode, Heart, Landmark, CheckCircle, Package, Truck, PartyPopper, XCircle, Search, MapPin, Zap, Eye, ShoppingCart, MessageSquare, Loader, Smartphone, FileText, CreditCard, Lock, ArrowRight, CornerDownRight, Building2, Shield, Plus, User, UserCheck, ChevronLeft, ChevronRight, Trash2, Store, X } from "lucide-react";
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
 
 interface MarketplaceTabProps {
   produk: Produk[];
@@ -136,9 +143,40 @@ function ProductCard({ p, photos, sellerName, onDetail, onBuy, onAddToCart }: an
           {fRp(p.harga)} <span style={{ fontSize: 9, color: "#8E9094", fontWeight: 400 }}>/ pcs</span>
         </div>
 
+<<<<<<< HEAD
         {/* Seller Info */}
         <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 4, fontSize: 9, color: "#6D7588", fontWeight: 600 }}>
           <User size={10} /> <span style={{ textTransform: "uppercase", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{sellerName}</span> <CheckCircle size={10} color="#00AA5B" style={{ flexShrink: 0 }} />
+=======
+        {/* Rating */}
+        {(p.rating_avg !== undefined && p.rating_avg > 0) ? (
+          <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 2, fontSize: 10, color: "#6D7588", fontWeight: 600 }}>
+            <span style={{ color: "#F39C12" }}>★</span> {p.rating_avg.toFixed(1)} <span style={{ opacity: 0.6 }}>({p.rating_count})</span>
+          </div>
+        ) : (
+          <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 2, fontSize: 10, color: "#6D7588", fontWeight: 600 }}>
+             Belum ada rating
+          </div>
+        )}
+
+        {/* Seller Info */}
+        <div 
+          style={{ display: "inline-flex", alignItems: "center", gap: 4, marginTop: 6, marginBottom: 2, padding: "3px 6px", background: p.toko_id ? "rgba(47,143,78,0.06)" : "rgba(109,117,136,0.06)", borderRadius: 4, fontSize: 10, color: p.toko_id ? "#2F8F4E" : "#6D7588", fontWeight: 700, cursor: p.toko_id ? "pointer" : "default", width: "fit-content", transition: "all 0.2s" }}
+          onClick={(e) => {
+            if (p.toko_id) {
+              e.stopPropagation();
+              window.location.href = `/toko/${p.toko_id}`;
+            }
+          }}
+          onMouseEnter={(e) => {
+            if (p.toko_id) e.currentTarget.style.background = "rgba(47,143,78,0.12)";
+          }}
+          onMouseLeave={(e) => {
+            if (p.toko_id) e.currentTarget.style.background = "rgba(47,143,78,0.06)";
+          }}
+        >
+          <Store size={10} /> <span style={{ textTransform: "uppercase", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{sellerName}</span> {p.toko_id && <CheckCircle size={10} color="#00AA5B" style={{ flexShrink: 0 }} />}
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
         </div>
 
         {/* Buttons (Beli & Keranjang) */}
@@ -203,6 +241,14 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
   const [submittingReview, setSubmittingReview] = useState(false);
   const [detailQty, setDetailQty] = useState(1);
   const [showReviewForm, setShowReviewForm] = useState(false);
+  const [hasPurchased, setHasPurchased] = useState(false);
+
+  // State untuk Pembeli Session & Login WA
+  const [pembeliSession, setPembeliSession] = useState<any>(null);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [loginStep, setLoginStep] = useState<"phone" | "otp">("phone");
+  const [loginForm, setLoginForm] = useState({ no_wa: "", otp: "" });
+  const [loginLoading, setLoginLoading] = useState(false);
 
   // Load keranjang dari localStorage pas komponen pertama kali jalan
   useEffect(() => {
@@ -214,6 +260,15 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
         console.error("Gagal load cart", e);
       }
     }
+    
+    const savedPembeli = localStorage.getItem("pembeli_session");
+    if (savedPembeli) {
+      try {
+        setPembeliSession(JSON.parse(savedPembeli));
+      } catch (e) {
+        console.error("Gagal load pembeli session", e);
+      }
+    }
   }, []);
 
   // Simpan keranjang ke localStorage setiap kali ada perubahan di 'cart'
@@ -223,6 +278,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
 
   // Fungsi tambah ke keranjang
   const addToCart = (p: Produk) => {
+    playSound("pop");
     setCart((prev) => {
       const existing = prev.find((item) => item.id === p.id);
       if (existing) {
@@ -321,8 +377,30 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
         setReviewLoading(false);
       }
     };
+
+    const checkPurchaseStatus = async () => {
+      if (!selectedProduct || !pembeliSession?.id) {
+        setHasPurchased(false);
+        return;
+      }
+      try {
+        const { data, error } = await supabase
+          .from("orders_marketplace")
+          .select("id")
+          .eq("pembeli_id", pembeliSession.id)
+          .ilike("items", `%${selectedProduct.id}%`)
+          .limit(1);
+        if (error) throw error;
+        setHasPurchased(data && data.length > 0);
+      } catch (e) {
+        console.warn("Gagal cek status pembelian:", e);
+        setHasPurchased(false);
+      }
+    };
+
     loadReviews();
-  }, [selectedProduct]);
+    checkPurchaseStatus();
+  }, [selectedProduct, pembeliSession]);
 
   // ─── SUBMIT REVIEW ────────────────────────────────────────────────────
   const submitReview = async (e: React.FormEvent) => {
@@ -351,6 +429,59 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
       alert("Gagal submit review");
     } finally {
       setSubmittingReview(false);
+    }
+  };
+
+  const handleSendOtp = async () => {
+    if (!loginForm.no_wa) return alert("Nomor WA wajib diisi!");
+    setLoginLoading(true);
+    try {
+      const res = await fetch("/api/auth/send-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ no_wa: loginForm.no_wa }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        if (data.mock_otp) {
+          // Hanya tampil di mode dev/jika FONNTE API KEY kosong
+          alert(`⚠️ PERHATIAN (Mode Dev):\n\nAPI Key Fonnte belum di-set di .env!\n\nUntuk sementara, OTP Anda adalah: ${data.mock_otp}\n\nMohon masukkan kode ini untuk melanjutkan.`);
+        }
+        setLoginStep("otp");
+      } else {
+        alert(data.message || "Gagal mengirim OTP");
+      }
+    } catch (e) {
+      alert("Terjadi kesalahan jaringan");
+    } finally {
+      setLoginLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    if (!loginForm.otp) return alert("OTP wajib diisi!");
+    setLoginLoading(true);
+    try {
+      const res = await fetch("/api/auth/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ no_wa: loginForm.no_wa, otp: loginForm.otp }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        localStorage.setItem("pembeli_session", JSON.stringify(data.pembeli));
+        setPembeliSession(data.pembeli);
+        setShowLoginModal(false);
+        setLoginStep("phone");
+        setLoginForm({ no_wa: "", otp: "" });
+        alert("Berhasil login!");
+      } else {
+        alert(data.message || "OTP salah");
+      }
+    } catch (e) {
+      alert("Terjadi kesalahan jaringan");
+    } finally {
+      setLoginLoading(false);
     }
   };
 
@@ -413,14 +544,16 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
       if (data.token && (window as any).snap) {
         (window as any).snap.pay(data.token, {
           onSuccess: async (r: any) => {
+            playSound("success");
             // Simpan order ke Supabase
             if (isSupabaseReady()) {
-              await supabase.from("orders_marketplace").insert({
+              supabase.from("orders_marketplace").insert({
                 order_id: orderId,
                 nama_pembeli: orderForm.nama,
                 no_wa: orderForm.no_wa,
+                pembeli_id: pembeliSession ? pembeliSession.id : null,
+                toko_id: itemsForCheckout[0]?.toko_id || null,
                 alamat: orderForm.alamat,
-                kecamatan: orderForm.kecamatan,
                 catatan: orderForm.catatan,
                 metode_kirim: orderForm.metode_kirim,
                 metode_bayar: r.payment_type || orderForm.metode_bayar,
@@ -444,6 +577,8 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                 order_id: orderId,
                 nama_pembeli: orderForm.nama,
                 no_wa: orderForm.no_wa,
+                pembeli_id: pembeliSession ? pembeliSession.id : null,
+                toko_id: itemsForCheckout[0]?.toko_id || null,
                 alamat: orderForm.alamat,
                 metode_kirim: orderForm.metode_kirim,
                 metode_bayar: orderForm.metode_bayar,
@@ -454,7 +589,10 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
             }
             alert("Menunggu pembayaran. Cek WhatsApp kamu untuk konfirmasi!");
           },
-          onError: (r: any) => alert("Pembayaran gagal. Silakan coba lagi."),
+          onError: (r: any) => {
+            playSound("error");
+            alert("Pembayaran gagal. Silakan coba lagi.");
+          },
         });
       } else {
         alert("Payment Gateway belum aktif. (" + (data.error || "Missing Token") + ")");
@@ -866,10 +1004,34 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                   </div>
                 </div>
 
-                {/* Lokasi */}
-                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 16 }}>
-                  <MapPin size={14} />
-                  <span style={{ fontSize: 14, color: "#5A4A40", fontWeight: 500 }}>Kampung Ciburial</span>
+                {/* Lokasi & Toko */}
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16, flexWrap: "wrap" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <MapPin size={14} />
+                    <span style={{ fontSize: 14, color: "#5A4A40", fontWeight: 500 }}>Kampung Ciburial</span>
+                  </div>
+                  <div style={{ width: 4, height: 4, borderRadius: "50%", background: "#ccc" }}></div>
+                  <div 
+                    style={{ display: "flex", alignItems: "center", gap: 6, cursor: selectedProduct.toko_id ? "pointer" : "default" }}
+                    onClick={() => {
+                      if (selectedProduct.toko_id) window.location.href = `/toko/${selectedProduct.toko_id}`;
+                    }}
+                  >
+                    <Store size={14} />
+                    <span style={{ fontSize: 14, color: "#2F8F4E", fontWeight: 700, textDecoration: selectedProduct.toko_id ? "underline" : "none" }}>
+                      {selectedProduct.toko?.nama_toko || (selectedProduct as any).penjual || "Ciburial Official"}
+                    </span>
+                  </div>
+                  
+                  {selectedProduct.toko?.no_wa && (
+                    <a 
+                      href={`https://wa.me/62${selectedProduct.toko.no_wa.replace(/^0+/, '')}?text=Halo%20kak,%20saya%20tertarik%20dengan%20produk%20${encodeURIComponent(selectedProduct.nama)}`}
+                      target="_blank"
+                      style={{ display: "flex", alignItems: "center", gap: 6, background: "#128C7E", color: "white", padding: "4px 10px", borderRadius: 8, fontSize: 12, fontWeight: 700, textDecoration: "none", marginLeft: "auto" }}
+                    >
+                      <Smartphone size={14} /> Tanya Penjual
+                    </a>
+                  )}
                 </div>
               </div>
 
@@ -992,6 +1154,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
 
             {/* Form Tambah Review (Right) */}
             <div style={{ background: "white", borderRadius: 16, padding: "clamp(16px, 4vw, 28px)", border: "1.5px solid rgba(47,143,78,.12)", boxShadow: "0 4px 16px rgba(47,143,78,.06)" }}>
+<<<<<<< HEAD
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: showReviewForm ? 20 : 0 }}>
                 <h3 style={{ margin: 0, color: "#1C3A2B", fontSize: 16, fontWeight: 800 }}>Berikan Ulasan Anda</h3>
                 <button onClick={() => setShowReviewForm(!showReviewForm)} style={{ background: "none", border: "1.5px solid #2F8F4E", borderRadius: 8, padding: "6px 12px", fontSize: 12, fontWeight: 700, color: "#2F8F4E", cursor: "pointer", transition: "all 0.3s" }}>{showReviewForm ? "Batal" : "Tulis Ulasan"}</button>
@@ -1042,6 +1205,69 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                     {submittingReview ? "⏳ Mengirim..." : "Kirim Ulasan"}
                   </button>
                 </form>
+=======
+              {hasPurchased ? (
+                <>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: showReviewForm ? 20 : 0 }}>
+                    <h3 style={{ margin: 0, color: "#1C3A2B", fontSize: 16, fontWeight: 800 }}>Berikan Ulasan Anda</h3>
+                    <button onClick={() => setShowReviewForm(!showReviewForm)} style={{ background: "none", border: "1.5px solid #2F8F4E", borderRadius: 8, padding: "6px 12px", fontSize: 12, fontWeight: 700, color: "#2F8F4E", cursor: "pointer", transition: "all 0.3s" }}>{showReviewForm ? "Batal" : "Tulis Ulasan"}</button>
+                  </div>
+
+                  {showReviewForm && (
+                    <form onSubmit={submitReview} style={{ display: "flex", flexDirection: "column", gap: 14, marginTop: 20 }}>
+                      {/* Nama */}
+                      <input
+                        type="text"
+                        placeholder="Nama Anda"
+                        value={newReview.nama}
+                        onChange={(e) => setNewReview({ ...newReview, nama: e.target.value })}
+                        style={{ padding: "10px 14px", borderRadius: 8, border: "1.5px solid rgba(47,143,78,.2)", fontSize: 13, outline: "none", boxSizing: "border-box", fontFamily: "inherit" }}
+                      />
+
+                      {/* Rating */}
+                      <div>
+                        <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "#6b7c6d", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>Rating</label>
+                        <div style={{ display: "flex", gap: 8 }}>
+                          {[1, 2, 3, 4, 5].map(star => (
+                            <button
+                              key={star}
+                              type="button"
+                              onClick={() => setNewReview({ ...newReview, rating: star })}
+                              style={{ fontSize: 24, background: "none", border: "none", cursor: "pointer", opacity: star <= newReview.rating ? 1 : 0.4, transition: "all 0.2s" }}
+                            >
+                              ⭐
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Komentar */}
+                      <textarea
+                        placeholder="Tulis ulasan Anda..."
+                        value={newReview.komentar}
+                        onChange={(e) => setNewReview({ ...newReview, komentar: e.target.value })}
+                        style={{ padding: "10px 14px", borderRadius: 8, border: "1.5px solid rgba(47,143,78,.2)", fontSize: 13, outline: "none", boxSizing: "border-box", minHeight: 80, fontFamily: "inherit", resize: "vertical" }}
+                      />
+
+                      {/* Submit Button */}
+                      <button
+                        type="submit"
+                        disabled={submittingReview}
+                        style={{ padding: "10px 16px", background: submittingReview ? "rgba(47,143,78,.3)" : "linear-gradient(135deg,#2F8F4E,#4FBF7E)", border: "none", borderRadius: 8, color: "#FFF", fontSize: 13, fontWeight: 700, cursor: submittingReview ? "not-allowed" : "pointer", transition: "all 0.2s", letterSpacing: "0.02em" }}
+                      >
+                        {submittingReview ? "⏳ Mengirim..." : "Kirim Ulasan"}
+                      </button>
+                    </form>
+                  )}
+                </>
+              ) : (
+                <div style={{ textAlign: "center", padding: "20px 0" }}>
+                  <h3 style={{ margin: "0 0 8px", color: "#1C3A2B", fontSize: 16, fontWeight: 800 }}>Ulasan Terbatas</h3>
+                  <p style={{ margin: 0, fontSize: 13, color: "#6b7c6d", lineHeight: 1.5 }}>
+                    Anda hanya dapat memberikan ulasan setelah membeli produk ini melalui Ciburial Eco-Digital Village.
+                  </p>
+                </div>
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
               )}
             </div>
           </div>
@@ -1236,6 +1462,7 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
           {/* Subtle decorative pattern/shine */}
           <div style={{ position: "absolute", top: 0, right: 0, width: "100%", height: "100%", background: "radial-gradient(circle at top right, rgba(255,255,255,0.1), transparent 50%)", pointerEvents: "none" }} />
 
+<<<<<<< HEAD
           {/* Top Row: Logo, Search, Actions */}
           <div style={{ display: "flex", gap: "8px", alignItems: "center", position: "relative", zIndex: 1, marginBottom: 16 }}>
             <div className="fnt" style={{ fontWeight: 800, fontSize: "clamp(16px, 4vw, 22px)", color: "#FFF", whiteSpace: "nowrap", textShadow: "0 2px 4px rgba(0,0,0,0.2)" }}>
@@ -1243,12 +1470,42 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
             </div>
 
             <div style={{ flex: 1, position: "relative", marginLeft: 4 }}>
+=======
+          {/* Header Layout: Responsive Grid/Flex */}
+          <div className="flex flex-col md:flex-row gap-3 md:gap-4 md:items-center relative z-10 mb-4">
+            
+            {/* Top Bar for Mobile: Logo + Cart + Tracking */}
+            <div className="flex justify-between items-center w-full md:w-auto">
+              <div className="fnt" style={{ fontWeight: 800, fontSize: "clamp(20px, 5vw, 24px)", color: "#FFF", whiteSpace: "nowrap", textShadow: "0 2px 4px rgba(0,0,0,0.2)" }}>
+                Ciburial<span style={{ color: "#D4AC5A" }}>Market</span>
+              </div>
+
+              {/* Mobile Actions (Tracking + Cart) */}
+              <div className="flex md:hidden gap-2 items-center">
+                <button onClick={() => setShowTracking(true)} style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.2)", padding: "8px 10px", borderRadius: 10, color: "white" }}>
+                  <Package size={18} strokeWidth={1.5} />
+                </button>
+                <button onClick={() => setShowCart(true)} style={{ position: "relative", background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.2)", padding: "8px 10px", borderRadius: 10, color: "white" }}>
+                  <ShoppingCart size={18} strokeWidth={1.5} />
+                  {cart.length > 0 && (
+                    <span style={{ position: "absolute", top: -5, right: -5, background: "#f87171", color: "#FFF", fontSize: 10, fontWeight: 800, padding: "2px 6px", borderRadius: "12px", minWidth: "18px", textAlign: "center", border: "2px solid #1C3A2B" }}>
+                      {cart.length}
+                    </span>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Search Bar - Full width on mobile, flex-1 on desktop */}
+            <div style={{ position: "relative" }} className="w-full md:flex-1">
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
               <span style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#6b7c6d" }}><Search size={15} /></span>
               <input
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder="Cari produk..."
                 style={{ width: "100%", padding: "10px 12px 10px 36px", borderRadius: 10, border: "none", color: "#1C3A2B", fontSize: 13, outline: "none", boxSizing: "border-box", transition: "all 0.25s", background: "#FFF", boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}
+<<<<<<< HEAD
                 onFocus={(e) => {
                   e.currentTarget.style.boxShadow = "0 0 0 3px rgba(255,255,255,0.3)";
                 }}
@@ -1278,6 +1535,69 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
                 </span>
               )}
             </button>
+=======
+                onFocus={(e) => { e.currentTarget.style.boxShadow = "0 0 0 3px rgba(255,255,255,0.3)"; }}
+                onBlur={(e) => { e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.1)"; }}
+              />
+            </div>
+
+            {/* Desktop Actions & Mobile Logins */}
+            <div className="flex w-full md:w-auto gap-2 items-center justify-between md:justify-start">
+              
+              {/* Logins (Buyer & Seller) */}
+              <div className="flex gap-2 flex-1 md:flex-none">
+                <button
+                  onClick={() => {
+                    if (pembeliSession) {
+                      if (confirm("Logout dari akun pembeli?")) {
+                        localStorage.removeItem("pembeli_session");
+                        setPembeliSession(null);
+                      }
+                    } else {
+                      setShowLoginModal(true);
+                    }
+                  }}
+                  className="flex-1 md:flex-none justify-center"
+                  style={{ position: "relative", border: "1px solid rgba(255,255,255,0.3)", background: pembeliSession ? "rgba(47,143,78,0.8)" : "rgba(255,255,255,0.1)", backdropFilter: "blur(4px)", color: "#FFF", height: 36, padding: "0 14px", borderRadius: "10px", display: "flex", alignItems: "center", gap: 6, cursor: "pointer", transition: "all 0.3s ease", fontSize: 12, fontWeight: 700 }}
+                >
+                  <User size={16} strokeWidth={1.5} />
+                  <span>{pembeliSession ? "Profil" : "Login Pembeli"}</span>
+                </button>
+
+                <button
+                  onClick={() => window.location.href = "/seller"}
+                  className="flex-1 md:flex-none justify-center"
+                  style={{ position: "relative", border: "1px solid rgba(255,255,255,0.3)", background: "rgba(255,255,255,0.1)", backdropFilter: "blur(4px)", color: "#FFF", height: 36, padding: "0 14px", borderRadius: "10px", display: "flex", alignItems: "center", gap: 6, cursor: "pointer", transition: "all 0.3s ease", fontSize: 12, fontWeight: 700 }}
+                >
+                  <Store size={16} strokeWidth={1.5} />
+                  <span>Login Penjual</span>
+                </button>
+              </div>
+
+              {/* Desktop Only: Cart & Tracking */}
+              <div className="hidden md:flex gap-2 items-center">
+                <button onClick={() => setShowTracking(true)} style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.2)", cursor: "pointer", padding: "8px 10px", borderRadius: 10, color: "white", transition: "all 0.2s", flexShrink: 0 }}
+                  onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.25)"}
+                  onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.15)"}
+                >
+                  <Package size={18} strokeWidth={1.5} />
+                </button>
+
+                <button onClick={() => setShowCart(true)} style={{ position: "relative", background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.2)", cursor: "pointer", padding: "8px 10px", borderRadius: 10, color: "white", transition: "all 0.2s", flexShrink: 0 }}
+                  onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.25)"}
+                  onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.15)"}
+                >
+                  <ShoppingCart size={18} strokeWidth={1.5} />
+                  {cart.length > 0 && (
+                    <span style={{ position: "absolute", top: -5, right: -5, background: "#f87171", color: "#FFF", fontSize: 10, fontWeight: 800, padding: "2px 6px", borderRadius: "12px", minWidth: "18px", textAlign: "center", border: "2px solid #1C3A2B", boxShadow: "0 2px 4px rgba(0,0,0,0.2)" }}>
+                      {cart.length}
+                    </span>
+                  )}
+                </button>
+              </div>
+
+            </div>
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
           </div>
 
           {/* Section Title */}
@@ -1286,7 +1606,11 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
               <h2 className="fnt" style={{ fontSize: "clamp(20px,4vw,28px)", fontWeight: 500, color: "#FFF", margin: "0 0 4px 0", letterSpacing: "0.02em" }}>
                 Marketplace Lokal
               </h2>
+<<<<<<< HEAD
               <p style={{ fontSize: 12, color: "rgba(255,255,255,0.85)", fontWeight: 400, margin: 0 }}>Pemberdayaan pengrajin & petani Ciburial</p>
+=======
+              <p style={{ fontSize: 12, color: "rgba(255,255,255,0.85)", fontWeight: 400, margin: 0 }}>Pusat Produk Lokal & UMKM Ciburial</p>
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
             </div>
             
             {/* Optional decoration */}
@@ -1391,7 +1715,11 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
         {!dataLoad && (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(min(160px,47%),1fr))", gap: "clamp(8px,2vw,16px)" }} className="produk-grid">
             {filteredProduk.map((p, i) => {
+<<<<<<< HEAD
               const sellerName = (p as any).penjual || "Pemuda Makers";
+=======
+              const sellerName = p.toko?.nama_toko || (p as any).penjual || "Ciburial Official";
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
               const photos = (p as any)?.fotos && Array.isArray((p as any).fotos) && (p as any).fotos.length > 0 ? (p as any).fotos : [p.foto];
 
               return (
@@ -1458,6 +1786,74 @@ export default function MarketplaceTab({ produk, iklan = [], dataLoad, checkout,
           </div>
         )}
       </div>
+
+      {/* ── MODAL LOGIN PEMBELI ── */}
+      {showLoginModal && typeof document !== "undefined" ? createPortal(
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }} onClick={() => setShowLoginModal(false)}>
+          <div style={{ background: "#FFF", borderRadius: 24, padding: "32px 24px", width: "100%", maxWidth: 400, position: "relative", boxShadow: "0 24px 48px rgba(0,0,0,0.2)" }} onClick={e => e.stopPropagation()}>
+            <button onClick={() => setShowLoginModal(false)} style={{ position: "absolute", top: 20, right: 20, background: "#F5F6F8", border: "none", width: 32, height: 32, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "#6b7c6d" }}>
+              <X size={16} />
+            </button>
+
+            <div style={{ textAlign: "center", marginBottom: 24 }}>
+              <div style={{ width: 64, height: 64, background: "rgba(47,143,78,.1)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", color: "#2F8F4E" }}>
+                <User size={32} />
+              </div>
+              <h3 className="fnt" style={{ fontSize: 24, fontWeight: 800, color: "#1C3A2B", margin: "0 0 8px" }}>Login Pembeli</h3>
+              <p style={{ fontSize: 13, color: "#6b7c6d", margin: 0 }}>Masuk untuk melacak pesanan dan memberi ulasan</p>
+            </div>
+
+            {loginStep === "phone" ? (
+              <div>
+                <div style={{ marginBottom: 20 }}>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "#1C3A2B", marginBottom: 8 }}>Nomor WhatsApp</label>
+                  <input 
+                    type="tel" 
+                    placeholder="Contoh: 08123456789" 
+                    value={loginForm.no_wa}
+                    onChange={e => setLoginForm({...loginForm, no_wa: e.target.value})}
+                    style={{ width: "100%", padding: "14px 16px", borderRadius: 12, border: "1.5px solid #E5E7E9", fontSize: 14, outline: "none", transition: "all 0.2s" }} 
+                  />
+                </div>
+                <button 
+                  onClick={handleSendOtp}
+                  disabled={loginLoading || !loginForm.no_wa}
+                  className="btn-heroic"
+                  style={{ width: "100%", padding: 14, borderRadius: 12, border: "none", background: "linear-gradient(135deg, #1C3A2B 0%, #2F8F4E 100%)", color: "#FFF", fontSize: 15, fontWeight: 700, cursor: "pointer", opacity: loginLoading ? 0.7 : 1 }}
+                >
+                  {loginLoading ? "Mengirim OTP..." : "Kirim OTP"}
+                </button>
+              </div>
+            ) : (
+              <div>
+                <div style={{ marginBottom: 20 }}>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "#1C3A2B", marginBottom: 8 }}>Kode OTP</label>
+                  <input 
+                    type="text" 
+                    placeholder="Masukkan 4 digit OTP" 
+                    maxLength={4}
+                    value={loginForm.otp}
+                    onChange={e => setLoginForm({...loginForm, otp: e.target.value})}
+                    style={{ width: "100%", padding: "14px 16px", borderRadius: 12, border: "1.5px solid #E5E7E9", fontSize: 20, letterSpacing: 8, textAlign: "center", outline: "none", transition: "all 0.2s" }} 
+                  />
+                  <p style={{ fontSize: 11, color: "#6b7c6d", textAlign: "center", marginTop: 12 }}>
+                    OTP dikirim ke {loginForm.no_wa} <span onClick={() => setLoginStep("phone")} style={{ color: "#2F8F4E", cursor: "pointer", fontWeight: 700 }}>Ubah</span>
+                  </p>
+                </div>
+                <button 
+                  onClick={handleVerifyOtp}
+                  disabled={loginLoading || loginForm.otp.length !== 4}
+                  className="btn-heroic"
+                  style={{ width: "100%", padding: 14, borderRadius: 12, border: "none", background: "linear-gradient(135deg, #1C3A2B 0%, #2F8F4E 100%)", color: "#FFF", fontSize: 15, fontWeight: 700, cursor: "pointer", opacity: loginLoading ? 0.7 : 1 }}
+                >
+                  {loginLoading ? "Memverifikasi..." : "Verifikasi & Masuk"}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>,
+        document.body
+      ) : null}
 
       <style>{`
         .hide-scroll::-webkit-scrollbar { display: none; }

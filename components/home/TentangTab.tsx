@@ -8,6 +8,10 @@ import CommunityDashboard from "@/components/home/CommunityDashboard";
 import { Transaksi, DEF_TX } from "./types";
 import Reveal from "@/components/ui/Reveal";
 import Counter from "@/components/ui/Counter";
+<<<<<<< HEAD
+=======
+import { playSound } from "@/lib/sound";
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
 
 
 interface TentangTabProps {
@@ -200,7 +204,11 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
                             margin: "0 auto 12px",
                         }}
                     >
+<<<<<<< HEAD
                         Inovasi Desa Mandiri Berbasis Kearifan Lokal dan Teknologi Masa Depan
+=======
+                        Inovasi Desa Mandiri Berbasis Kearifan Lokal dan Teknologi Tepat Guna
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
                     </p>
 
                     {/* Description */}
@@ -220,7 +228,11 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
 
                     {/* Tags - kurangi jadi 4, hapus yang kurang penting */}
                     <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center", marginBottom: 28 }}>
+<<<<<<< HEAD
                         {["Pertanian Organik", "Kerajinan", "Eco-Waste", "Learning Hub"].map(tag => (
+=======
+                        {["Pertanian Organik", "Eco-Waste", "Learning Hub", "Kas Transparan"].map(tag => (
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
                             <span
                                 key={tag}
                                 style={{
@@ -436,7 +448,16 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
                             }
                         ].map((item, i) => (
                             <Reveal key={i} delay={i * 50} direction="up">
+<<<<<<< HEAD
                                 <a href={item.link} style={{ textDecoration: "none", color: "inherit", pointerEvents: item.comingSoon ? "none" : "auto", display: "block", height: "100%" }} className="hub-card-link">
+=======
+                                <a 
+                                    href={item.link} 
+                                    onClick={() => playSound("tap")}
+                                    style={{ textDecoration: "none", color: "inherit", pointerEvents: item.comingSoon ? "none" : "auto", display: "block", height: "100%" }} 
+                                    className="hub-card-link"
+                                >
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
                                     <div className="card-heroic" style={{
                                         height: "100%",
                                         padding: "clamp(10px, 2.5vw, 24px) clamp(8px, 2.5vw, 20px)",
@@ -538,6 +559,7 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
                                 <div className="dl" />
                                 <h2 className="fnt" style={{ fontSize: "clamp(26px, 4.5vw, 40px)", fontWeight: 300, color: "var(--cr)", lineHeight: 1.2, letterSpacing: "-.02em", marginBottom: 14 }}>Donasi Kemakmuran<br />Kampung Ciburial</h2>
                                 <p style={{ fontSize: "clamp(12px,2.5vw,13px)", lineHeight: 1.75, color: "rgba(250,248,243,.5)", marginBottom: 28 }}>
+<<<<<<< HEAD
                                     Target RAB Global <strong style={{ color: "var(--gl)" }}>Rp 250.000.000</strong>. Dukung Balai Warga, Smart Farming, Learning Hub, Smart PJU, dan Internet Desa.
                                 </p>
 
@@ -681,6 +703,136 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
                                     </div>
                                 </div>
 
+=======
+                                    Dukung inisiatif Balai Warga, Smart Farming, Learning Hub, Smart PJU, dan Internet Desa untuk masa depan Ciburial.
+                                </p>
+
+                                <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 24 }}>
+                                    {[
+                                        { id: "midtrans", icon: <Smartphone size={24} strokeWidth={1.5} />, l: "QRIS & E-Wallet", s: "Donasi Instan via Midtrans" },
+                                        { id: "bank", icon: <Landmark size={24} strokeWidth={1.5} />, l: "Transfer Bank", s: "Rekening Titipan Gotong Royong", rek: "90135555066", an: "Ubay Rahmat H", ket: "SeaBank (901)" }
+                                    ].map((m, i) => {
+                                        const isExp = expandedDonation === m.id;
+                                        return (
+                                            <div key={i} style={{ borderRadius: 16, overflow: "hidden", border: "1px solid rgba(255,255,255,.12)", transition: "all .3s" }}>
+                                                <div
+                                                    onClick={() => {
+                                                        if (m.id === "midtrans") bayarDonasi();
+                                                        else setExpandedDonation(isExp ? null : m.id);
+                                                    }}
+                                                    style={{ display: "flex", alignItems: "center", gap: 14, padding: "clamp(12px, 3vw, 16px) clamp(16px, 4vw, 20px)", background: isExp ? "rgba(255,255,255,.15)" : "rgba(255,255,255,.06)", cursor: "pointer", transition: "all .2s" }}
+                                                    onMouseEnter={e => { if (!isExp) e.currentTarget.style.background = "rgba(255,255,255,.12)"; }}
+                                                    onMouseLeave={e => { if (!isExp) e.currentTarget.style.background = "rgba(255,255,255,.06)"; }}
+                                                >
+                                                    <span style={{ fontSize: 28 }}>{m.icon}</span>
+                                                    <div style={{ flex: 1 }}>
+                                                        <div style={{ fontSize: 14, fontWeight: 800, color: "var(--cr)" }}>{m.l}</div>
+                                                        <div style={{ fontSize: 11, color: "rgba(250,248,243,.5)" }}>{m.s}</div>
+                                                    </div>
+                                                    {m.id !== "midtrans" && (
+                                                        <span style={{ fontSize: 12, color: "var(--cr)", transform: isExp ? "rotate(180deg)" : "rotate(0)", transition: "transform .3s" }}>▼</span>
+                                                    )}
+                                                </div>
+
+                                                {/* Inline Details */}
+                                                {isExp && m.rek && (
+                                                    <div style={{ background: "white", padding: "clamp(16px, 4vw, 20px)", color: "#000" }}>
+                                                        <div style={{ background: "#F1F5F9", padding: "clamp(12px, 3vw, 16px)", borderRadius: 12, border: "1px solid #E2E8F0" }}>
+                                                            <div style={{ fontSize: 9, fontWeight: 800, color: "#059669", marginBottom: 4 }}>{m.id === "bank" ? "NOMOR REKENING" : "WALLET ADDRESS"}</div>
+                                                            <div style={{ fontSize: m.id === "bank" ? 22 : 11, fontWeight: 900, fontFamily: "monospace", wordBreak: "break-all", color: "#000" }}>{m.rek}</div>
+                                                            <div style={{ fontSize: 9, fontWeight: 800, color: "#64748B", marginTop: 10, marginBottom: 2 }}>{m.id === "bank" ? "ATAS NAMA" : "NETWORK"}</div>
+                                                            <div style={{ fontSize: 14, fontWeight: 700, color: "#000" }}>{m.an}</div>
+                                                        </div>
+                                                        <div style={{ marginTop: 12, fontSize: 11, color: "#166534", background: "#F0FDF4", padding: "8px 12px", borderRadius: 8, border: "1px solid #BBF7D0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                                            <span> {m.ket}</span>
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    navigator.clipboard.writeText(m.rek!);
+                                                                    alert(" Copied!");
+                                                                }}
+                                                                style={{ background: "#2F8F4E", border: "none", color: "white", padding: "4px 10px", borderRadius: 6, fontSize: 10, fontWeight: 700, cursor: "pointer" }}
+                                                            >
+                                                                SALIN
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                                <div style={{ display: "flex", gap: 14, flexWrap: "wrap", alignItems: "center" }}>
+                                    <button onClick={() => onNavigate("transparansi")} style={{ padding: "11px 22px", borderRadius: 99, fontSize: 11, fontWeight: 700, letterSpacing: ".09em", textTransform: "uppercase", border: "1.5px solid rgba(79,191,126,.4)", background: "rgba(79,191,126,.15)", color: "var(--cr)", cursor: "pointer", transition: "all .2s" }}
+                                        onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(79,191,126,.25)"; (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(79,191,126,.6)"; }}
+                                        onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(79,191,126,.15)"; (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(79,191,126,.4)"; }}
+                                    >
+                                        Lihat Transparansi Dana →
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="donasi-panel-light" style={{ background: "linear-gradient(135deg,rgba(47,143,78,.05) 0%,rgba(79,191,126,.05) 100%)", padding: "clamp(32px, 6vw, 60px) clamp(24px, 5vw, 52px)", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: "#2F8F4E", marginBottom: 20 }}>Doa untuk Donatur</div>
+                                <p dir="rtl" className="fnt" style={{ fontSize: "clamp(18px,4vw,27px)", lineHeight: 1.9, color: "#1C3A2B", fontWeight: 400, marginBottom: 22 }}>
+                                    رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ
+                                </p>
+                                <p style={{ fontSize: 13, fontStyle: "italic", lineHeight: 1.85, color: "#5A4A40", marginBottom: 14 }}>
+                                    &quot;Ya Tuhan kami, berilah mereka kebaikan di dunia dan di akhirat, serta lindungilah dari siksa neraka.&quot;
+                                </p>
+                                <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: "#2F8F4E", opacity: .65 }}>QS. Al-Baqarah: 201</span>
+                            </div>
+                        </div>
+                    </Reveal>
+                </div>
+            </section>
+
+            {/* DONASI DETAIL POPOVER */}
+            {selectedDonationMethod && (
+                <div
+                    style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, zIndex: 10000, background: "rgba(0,0,0,0.15)", backdropFilter: "blur(2px)" }}
+                    onClick={() => setSelectedDonationMethod(null)}
+                >
+                    <div
+                        style={{
+                            position: "fixed",
+                            top: Math.max(10, Math.min(popoverPos.top || 100, window.innerHeight - 320)),
+                            left: Math.max(10, Math.min(popoverPos.left || 20, window.innerWidth - 360)),
+                            width: "min(340px, 92vw)",
+                            maxHeight: "80vh",
+                            overflowY: "auto",
+                            background: "#FFFFFF",
+                            borderRadius: "20px",
+                            border: "2px solid #2F8F4E",
+                            boxShadow: "0 25px 50px -12px rgba(0,0,0,0.4)",
+                            padding: "24px",
+                            zIndex: 10001,
+                            color: "#1A1410",
+                            visibility: selectedDonationMethod ? "visible" : "hidden",
+                            opacity: selectedDonationMethod ? 1 : 0,
+                            transition: "opacity 0.3s ease"
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {/* Close Button */}
+                        <button
+                            onClick={() => setSelectedDonationMethod(null)}
+                            style={{ position: "absolute", top: 12, right: 12, width: 28, height: 28, borderRadius: "50%", background: "#F0FDF4", border: "1px solid #DCFCE7", color: "#166534", fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "bold" }}
+                        >
+                            X
+                        </button>
+
+                        {/* Render Berdasarkan ID Metode */}
+                        {selectedDonationMethod === "bank" ? (
+                            <div style={{ textAlign: "left" }}>
+                                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+                                    <span style={{ fontSize: 32 }}><Landmark size={32} strokeWidth={1.5} /></span>
+                                    <div>
+                                        <h3 style={{ fontSize: 18, fontWeight: 800, color: "#1C3A2B", margin: 0 }}>Transfer Bank</h3>
+                                        <p style={{ fontSize: 11, color: "#6B7280", margin: 0 }}>Rekening Titipan Gotong Royong</p>
+                                    </div>
+                                </div>
+
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
                                 <div style={{ background: "#F8FAFC", border: "1.5px solid #E2E8F0", borderRadius: 12, padding: 16, marginBottom: 16 }}>
                                     <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase", color: "#059669", marginBottom: 6 }}>Nomor Rekening (SeaBank)</div>
                                     <div style={{ fontSize: 18, fontWeight: 800, color: "#1E293B", fontFamily: "monospace", letterSpacing: "1.5px" }}>90135555066</div>
@@ -696,6 +848,7 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
                                     <span>SeaBank (Kode: 901) • Transfer sesama/e-wallet gratis.</span>
                                 </div>
                             </div>
+<<<<<<< HEAD
                         ) : selectedDonationMethod === "crypto" ? (
                             <div style={{ textAlign: "left" }}>
                                 <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
@@ -729,11 +882,17 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
                                     <span>Polygon, BSC, ETH, Base, Arbitrum, Optimism.</span>
                                 </div>
                             </div>
+=======
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
                         ) : (
                             <div style={{ padding: "clamp(16px, 4vw, 20px)", textAlign: "center", color: "#66463F", background: "#FFF5F0", borderRadius: 12, border: "1px solid #FFDDD0" }}>
                                 <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 8 }}><AlertCircle size={14} style={{ display: "inline", marginRight: 4 }} /> Invalid Method</div>
                                 <div style={{ fontSize: 11, color: "#8B6B63" }}>Method: <code style={{ background: "#FFE8DC", padding: "2px 6px", borderRadius: 4 }}>{selectedDonationMethod}</code></div>
+<<<<<<< HEAD
                                 <div style={{ fontSize: 10, marginTop: 8, color: "#A0837B" }}>Expected: "bank" or "crypto"</div>
+=======
+                                <div style={{ fontSize: 10, marginTop: 8, color: "#A0837B" }}>Expected: "bank"</div>
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
                             </div>
                         )}
                     </div>

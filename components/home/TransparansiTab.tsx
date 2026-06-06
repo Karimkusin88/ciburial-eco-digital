@@ -4,8 +4,8 @@ import { supabase, isSupabaseReady } from "@/lib/supabase";
 import { Home, TreePine, Wheat, Soup, Recycle, Leaf, QrCode, Heart, Landmark, CheckCircle, Package, Truck, PartyPopper, XCircle, Search, MapPin, Zap, Eye, ShoppingCart, MessageSquare, Loader, Smartphone, FileText, CreditCard, Lock, ArrowRight, CornerDownRight, AlertCircle, BarChart2, Coins, TrendingUp, TrendingDown, Target, Building, BookOpen, Lightbulb, Wifi, PenTool, Globe, Radio } from "lucide-react";
 import { Transaksi, ALOKASI, fRp, DEF_TX } from "./types";
 
-// ─── RAB target global ─────────────────────────────────────────────────────
-const RAB_TARGET = 250_000_000;
+// ─── RAB target tahap 1 ─────────────────────────────────────────────────────
+const RAB_TARGET = 5_952_308;
 
 // ─── Warna kategori alokasi ────────────────────────────────────────────────
 const ALOKASI_COLORS = ["#2D5A40","#4A7C59","#B8943F","#1A3A6B","#6B4F3A","#8A7065"];
@@ -231,7 +231,7 @@ export default function TransparansiTab() {
             Transparansi<br />Dana Kampung
           </h1>
           <p style={{ fontSize: 14, color: "#5A4A40", lineHeight: 1.8, maxWidth: 480, margin: "0 auto", fontWeight: 500 }}>
-            Setiap rupiah yang masuk dan keluar dicatat secara terbuka dengan integrasi blockchain Web3. Data diperbarui otomatis secara real-time.
+            Setiap rupiah yang masuk dan keluar dicatat secara terbuka dan dapat dipantau oleh seluruh warga. Data diperbarui otomatis secara real-time.
           </p>
         </div>
 
@@ -273,11 +273,11 @@ export default function TransparansiTab() {
           ))}
         </div>
 
-        {/* ── Progress RAB Global - Heroic ── */}
+        {/* ── Progress RAB Tahap 1 - Heroic ── */}
         <div style={{ background: "linear-gradient(135deg,rgba(255,254,249,.9),rgba(232,245,238,.5))", border: "1.5px solid rgba(47,143,78,.15)", borderRadius: 16, padding: "clamp(24px, 6vw, 32px) clamp(20px, 5vw, 28px)", marginBottom: 32, transition: "all 0.35s ease" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 20, flexWrap: "wrap", gap: 16 }}>
             <div>
-              <div style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "#2F8F4E", marginBottom: 6 }}><Target size={24} strokeWidth={1.5} />Target Global RAB 2026</div>
+              <div style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "#2F8F4E", marginBottom: 6 }}><Target size={24} strokeWidth={1.5} />Target RAB Tahap 1 (20 Titik PJU)</div>
               <div style={{ fontSize: 14, color: "#5A4A40", fontWeight: 500 }}>
                 Terkumpul <strong style={{ color: "#2F8F4E" }}>{fRp(totMasuk)}</strong> dari <strong>{fRp(RAB_TARGET)}</strong>
               </div>
@@ -313,7 +313,7 @@ export default function TransparansiTab() {
           {totMasuk < RAB_TARGET && (
             <div style={{ padding: "clamp(8px, 2vw, 12px) clamp(12px, 3vw, 16px)", background: "linear-gradient(135deg,rgba(184,148,63,.1) 0%,rgba(184,148,63,.05) 100%)", border: "1.5px solid rgba(184,148,63,.2)", borderRadius: 12, fontSize: 13, color: "#2F8F4E", fontWeight: 500, display: "flex", alignItems: "center", gap: 10 }}>
               <span><PartyPopper size={16} /></span>
-              <span>Masih butuh <strong>{fRp(RAB_TARGET - totMasuk)}</strong> untuk target global</span>
+              <span>Masih butuh <strong>{fRp(RAB_TARGET - totMasuk)}</strong> untuk tahap 1</span>
             </div>
           )}
         </div>
@@ -334,9 +334,15 @@ export default function TransparansiTab() {
           </div>
         </div>
 
+<<<<<<< HEAD
         {/* ── Rincian Alokasi RAB per Program ── */}
         <div style={{ marginBottom: 24 }}>
           <div style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "#2F8F4E", marginBottom: 14 }}>Rincian Alokasi Dana per Program RAB</div>
+=======
+        {/* ── Rincian Alokasi RAB Tahap 1 ── */}
+        <div style={{ marginBottom: 24 }}>
+          <div style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "#2F8F4E", marginBottom: 14 }}>Rincian Alokasi Dana Tahap 1</div>
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 160px),1fr))", gap: "clamp(10px, 2vw, 20px)" }} className="alokasi-grid">
             {ALOKASI.map((item, i) => {
               const used = transaksi.filter(t => t.tipe === "keluar" && t.kategori === item.label).reduce((s, t) => s + t.jumlah, 0);
@@ -469,12 +475,6 @@ export default function TransparansiTab() {
                   title: "Transfer Bank", 
                   desc: "Rekening resmi untuk donasi melalui perbankan",
                   detail: "SeaBank: 90135555066\na.n Ubay Rahmat H"
-                },
-                { 
-                  icon: <Search size={24} strokeWidth={1.5} />, 
-                  title: "Crypto / Web3", 
-                  desc: "Untuk donasi menggunakan aset digital",
-                  detail: "0x71723715478b344164e992b49ae1fCEb6467888B\n(EVM-Compatible)"
                 }
               ].map((m, i) => (
                 <div key={i} style={{ padding: "clamp(16px, 4vw, 20px)", background: "rgba(47,143,78,.04)", border: "1.5px solid rgba(47,143,78,.12)", borderRadius: 14, display: "flex", flexDirection: "column", gap: 12 }}>

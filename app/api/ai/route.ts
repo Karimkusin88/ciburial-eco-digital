@@ -41,9 +41,15 @@ const SYSTEM_PROMPT = `Kamu adalah **Ciburial AI**, asisten digital resmi Kampun
 ═══ IDENTITAS KAMPUNG ═══
 - Nama Kampung: Kp. Ciburial, Desa Hanjuang, Kec. Bungbulang, Kab. Garut, Jawa Barat
 - Website: ciburial.my.id (ciburial-eco-digital.vercel.app)
+<<<<<<< HEAD
 - Founder & Builder: Ubay Rahmat H. (dipimpin Ciburial Makers)
 - Didirikan: 2026 — Desa percontohan digital & ramah lingkungan pertama di Garut
 - Motto: "Start small. Build real. Create impact." & "Inovasi Desa Mandiri Berbasis Kearifan Lokal dan Teknologi Masa Depan"
+=======
+- Inisiator & Founder "Eco-Digital": Ubay Rahmat H. (dipimpin Irmas Al Husain Ciburial)
+- Transformasi Digital: Dimulai tahun 2026 sebagai desa percontohan digital & ramah lingkungan pertama di Garut
+- Motto: "Start small. Build real. Create impact." & "Inovasi Desa Mandiri Berbasis Kearifan Lokal dan Teknologi Tepat Guna"
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
 
 ═══ PROGRAM & LAYANAN UTAMA (Ciburial Smart Hub) ═══
 1. **E-Voting** (/voting) — Musyawarah digital & aman untuk warga
@@ -78,7 +84,10 @@ const SYSTEM_PROMPT = `Kamu adalah **Ciburial AI**, asisten digital resmi Kampun
 - Cara donasi:
   • QRIS & E-Wallet: via Midtrans (langsung di web)
   • Transfer Bank: SeaBank (Kode 901) — No. Rek: 90135555066 a.n. Ubay Rahmat H
+<<<<<<< HEAD
   • Crypto/Web3: 0x71723715478b344164e992b49ae1fCEb6467888B (Polygon, BSC, ETH, dll)
+=======
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
 
 ═══ TECH STACK KAMPUNG ═══
 - Framework: Next.js 16 + TypeScript + Supabase (PostgreSQL)
@@ -307,11 +316,18 @@ async function execTool(name: string, args: any): Promise<string> {
             { nama: "— Hasil Voting —", jabatan: "Bendahara" },
           ],
           divisi: [
+<<<<<<< HEAD
             { nama: "Divisi Green Build", jabatan: "Infrastruktur & Konstruksi Hijau", tugas: "Balai Serba Guna, Smart PJU, drainase resapan" },
             { nama: "Divisi Digital Hub", jabatan: "IT, Jaringan & Web3", tugas: "RT/RW Net, Learning Hub, Website, Crypto" },
             { nama: "Divisi Eco-Waste & Farming", jabatan: "Smart Farming & Lingkungan", tugas: "Pertanian organik, peternakan, Bank Sampah" },
             { nama: "Divisi Local Commerce", jabatan: "Ekonomi Kreatif & UMKM", tugas: "Pengrajin lokal, marketplace, quality control" },
             { nama: "Divisi Public Relations", jabatan: "Humas & Transparansi Publik", tugas: "Dokumentasi, laporan dana, komunikasi CSR" },
+=======
+            { nama: "Divisi Syiar & Sosial", jabatan: "Keagamaan & Dana Sosial", tugas: "Pengajian, PHBI, tanggap bencana, & santunan" },
+            { nama: "Divisi Infrastruktur & Lingkungan", jabatan: "Konstruksi Hijau & Maintenance", tugas: "Balai Serba Guna, Smart PJU, drainase, & aset" },
+            { nama: "Divisi Ekonomi Terapan", jabatan: "Smart Farming & UMKM", tugas: "Pertanian organik, Bank Sampah, & marketplace" },
+            { nama: "Divisi Digital & Humas", jabatan: "IT, Media, & Publikasi", tugas: "Website, RT/RW Net, laporan dana, & CSR" },
+>>>>>>> a637e63bec351e4f46e7425aaaea45b9a1ab3434
           ],
           founder: { nama: "Ubay Rahmat H.", jabatan: "Founder & Builder — Ciburial Eco-Digital Village" },
         };
