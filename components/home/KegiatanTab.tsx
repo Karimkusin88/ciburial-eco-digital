@@ -240,6 +240,44 @@ function KegiatanSlider({ fotos, judul, onOpenLightbox }: SliderProps) {
   );
 }
 
+/* ─── EXPANDABLE TEXT ─── */
+function ExpandableText({ text }: { text: string }) {
+  const [expanded, setExpanded] = useState(false);
+  const isLong = text.length > 120;
+
+  return (
+    <div>
+      <p style={{ 
+        fontSize: "clamp(11px, 2.8vw, 13px)", 
+        lineHeight: 1.5, 
+        color: "#5A4A40", 
+        marginBottom: isLong && !expanded ? 4 : (isLong && expanded ? 8 : 0),
+        display: expanded ? "block" : "-webkit-box",
+        WebkitLineClamp: expanded ? "unset" : 3,
+        WebkitBoxOrient: "vertical",
+        overflow: "hidden"
+      }}>
+        {text}
+      </p>
+      {isLong && (
+        <button 
+          onClick={(e) => { e.stopPropagation(); setExpanded(!expanded); }} 
+          style={{ 
+            background: "none", border: "none", color: "#2F8F4E", 
+            fontSize: "clamp(11px, 2.8vw, 12px)", fontWeight: 700, 
+            padding: 0, cursor: "pointer", display: "inline-block",
+            transition: "color 0.2s"
+          }}
+          onMouseEnter={e => e.currentTarget.style.color = "#1C3A2B"}
+          onMouseLeave={e => e.currentTarget.style.color = "#2F8F4E"}
+        >
+          {expanded ? "Sembunyikan" : "Lihat selengkapnya"}
+        </button>
+      )}
+    </div>
+  );
+}
+
 /* ─── MAIN ─── */
 interface KegiatanTabProps {
   kegiatan: Kegiatan[];
@@ -364,7 +402,7 @@ export default function KegiatanTab({ kegiatan, dataLoad }: KegiatanTabProps) {
                         </div>
                       </div>
                       <h3 style={{ fontSize: "clamp(13px, 3.5vw, 16px)", fontWeight: 700, color: "#1C3A2B", marginBottom: 6, lineHeight: 1.3 }}>{k.judul}</h3>
-                      {k.deskripsi && <p style={{ fontSize: "clamp(11px, 2.8vw, 13px)", lineHeight: 1.5, color: "#5A4A40", marginBottom: 0 }}>{k.deskripsi}</p>}
+                      {k.deskripsi && <ExpandableText text={k.deskripsi} />}
                     </div>
                   </div>
                 );
