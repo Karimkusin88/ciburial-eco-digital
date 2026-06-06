@@ -56,15 +56,10 @@ const SYSTEM_PROMPT = `Kamu adalah **Ciburial AI**, asisten digital resmi Kampun
 8. **Bank Sampah Digital** — Warga setor sampah pilah, dapat poin, tukar hadiah
 9. **Ciburial AI** (/ai) — Asisten digital kampung (kamu sendiri)
 10. **Kalender Kegiatan** (/kalender) — Agenda & jadwal kampung
-11. **Marketplace** (/?tab=marketplace) — Produk lokal warga: sayur organik, kerajinan bambu, kompos
+11. **Marketplace** (/?tab=marketplace) — Produk lokal warga
 12. **Cek Pesanan** (/cek-pesanan) & **Tracking** (/tracking) — Status pesanan marketplace
 13. **Transparansi Dana** (/?tab=transparansi) — Laporan keuangan kampung real-time
 
-═══ PRODUK UNGGULAN LOKAL ═══
-- Lampu Hex-Bamboo (Smart PJU berbahan bambu + panel surya)
-- Kerajinan anyam bambu
-- Sayur & hasil tani organik
-- Pupuk kompos dari bank sampah
 
 ═══ RAB & DONASI ═══
 - Target dana: Rp 250.000.000

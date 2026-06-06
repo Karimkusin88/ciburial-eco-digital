@@ -169,7 +169,7 @@ export default function AdminTokoPage() {
               </div>
               <div style={{ gridColumn: "1/-1" }}>
                 <label style={LS}>Deskripsi Toko</label>
-                <textarea value={formToko.deskripsi} onChange={e => setFormToko({ ...formToko, deskripsi: e.target.value })} placeholder="Jual produk lokal unggulan" style={{ ...IS, minHeight: 80, resize: "vertical" }} />
+                <textarea value={formToko.deskripsi} onChange={e => setFormToko({ ...formToko, deskripsi: e.target.value })} placeholder="Jual sayuran, makanan, dsb" style={{ ...IS, minHeight: 80, resize: "vertical" }} />
               </div>
               <div>
                 <label style={LS}>No. WhatsApp</label>

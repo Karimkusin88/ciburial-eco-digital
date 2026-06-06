@@ -923,7 +923,7 @@ export default function AdminPage() {
               <div className="form-heroic">
                 <div className="form-group-heroic">
                   <label className="form-label-heroic">NAMA PRODUK *</label>
-                  <input className="form-input-heroic" value={pForm.nama} onChange={e => setPForm({...pForm, nama:e.target.value})} placeholder="Cth: Lampu Hex-Bamboo" />
+                  <input className="form-input-heroic" value={pForm.nama} onChange={e => setPForm({...pForm, nama:e.target.value})} placeholder="Cth: Produk A" />
                 </div>
                 <div className="form-group-heroic">
                   <label className="form-label-heroic">DESKRIPSI</label>

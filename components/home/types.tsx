@@ -93,14 +93,7 @@ export const DEF_KEG: Kegiatan[] = [
   { id: "d4", judul: "Musyawarah Pembentukan Bank Sampah", tanggal: "2026-02-10", kategori: "kemasyarakatan", deskripsi: "Rembug warga menyiapkan sistem Bank Sampah Digital Ciburial perdana." },
 ];
 
-export const DEF_PROD: Produk[] = [
-  { id: "p1", nama: "Lampu Hex-Bamboo", deskripsi: "Lampu tidur estetik anyaman bambu asli pegunungan. Cahaya hangat, aroma alami.", harga: 150000, tag: "Best Seller", icon: <Lamp size={18} strokeWidth={1.5} /> },
-  { id: "p2", nama: "Keranjang Anyam", deskripsi: "Kerajinan tangan warga, multifungsi dan ramah lingkungan untuk dekorasi.", harga: 85000, tag: "Handmade", icon: <ShoppingBasket size={18} strokeWidth={1.5} />, fotos: ["https://images.unsplash.com/photo-1544816155-12df9643f363?w=800&q=80", "https://images.unsplash.com/photo-1586522336338-74c0b4dcb899?w=800&q=80", "https://images.unsplash.com/photo-1616489868749-d0f9d9217646?w=800&q=80"] },
-  { id: "p3", nama: "Mini Pot Bambu", deskripsi: "Pot tanaman dari bambu pilihan. Natural, kuat, mempercantik ruangan.", harga: 60000, tag: "Eco", icon: <Leaf size={18} strokeWidth={1.5} /> },
-  { id: "p4", nama: "Kompos Organik", deskripsi: "Pupuk dari Bank Sampah Ciburial. 100% organik, baik untuk tanaman.", harga: 25000, tag: "Eco-Waste", icon: <Sprout size={18} strokeWidth={1.5} /> },
-  { id: "p5", nama: "Sayur Organik Box", deskripsi: "Sayuran segar dari ladang warga Ciburial, bebas pestisida kimia.", harga: 45000, tag: "Fresh Farm", icon: <Carrot size={18} strokeWidth={1.5} /> },
-  { id: "p6", nama: "Pigura Bambu", deskripsi: "Pigura foto artistik dari bambu terpilih. Cocok untuk dekorasi atau hadiah.", harga: 70000, tag: "Craft", icon: <Trees size={18} strokeWidth={1.5} /> },
-];
+export const DEF_PROD: Produk[] = [];
 
 export const DEF_TX: Transaksi[] = [
   { id: "t1", tanggal: "2026-01-15", keterangan: "Donasi Ust. Kurniadin & jamaah", kategori: "Donasi Warga", tipe: "masuk", jumlah: 500000 },
@@ -112,7 +105,7 @@ export const DEF_TX: Transaksi[] = [
   { id: "t7", tanggal: "2026-03-01", keterangan: "Kas DKM bulan Maret", kategori: "DKM Masjid", tipe: "keluar", jumlah: 300000 },
   { id: "t8", tanggal: "2026-03-10", keterangan: "Pengadaan buku Learning Hub", kategori: "Learning Hub", tipe: "keluar", jumlah: 180000 },
   { id: "t9", tanggal: "2026-03-15", keterangan: "Donasi online via QRIS (Maret)", kategori: "Donasi Online", tipe: "masuk", jumlah: 420000 },
-  { id: "t10", tanggal: "2026-03-22", keterangan: "Penjualan Lampu Hex-Bamboo (3 unit)", kategori: "Marketplace", tipe: "masuk", jumlah: 450000 },
+  { id: "t10", tanggal: "2026-03-22", keterangan: "Donasi Hamba Allah", kategori: "Donasi Warga", tipe: "masuk", jumlah: 450000 },
 ];
 
 export const DEF_TESTIMONI: Testimoni[] = [
@@ -127,7 +120,7 @@ export const DEF_IKLAN: Iklan[] = [
     id: "ik1", 
     tipe: "video", 
     judul: "Pasar Lebaran Ciburial", 
-    deskripsi: "Diskon 50% untuk produk kerajinan bambu minggu ini. Tersedia di stand nomor 4!", 
+    deskripsi: "Kunjungi bazar amal minggu ini. Tersedia di pelataran Masjid Al Husain!", 
     mediaUrl: "https://www.w3schools.com/html/mov_bbb.mp4" 
   },
   { 
