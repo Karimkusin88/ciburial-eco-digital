@@ -468,19 +468,22 @@ export default function TransparansiTab() {
                   icon: <Landmark size={24} strokeWidth={1.5} />, 
                   title: "Transfer Bank", 
                   desc: "Rekening resmi untuk donasi melalui perbankan",
-                  detail: "SeaBank: 90135555066\na.n Ubay Rahmat H"
+                  detail: "SeaBank: 90135555066\na.n Ubay Rahmat H",
+                  copyText: "90135555066"
                 },
                 { 
                   icon: <Coins size={24} strokeWidth={1.5} />, 
                   title: "Crypto (EVM)", 
                   desc: "Donasi via jaringan blockchain (Ethereum, BSC, Polygon, dll)",
-                  detail: "0x71723715478b344164e992b49ae1fceb6467888b"
+                  detail: "0x71723715478b344164e992b49ae1fceb6467888b",
+                  copyText: "0x71723715478b344164e992b49ae1fceb6467888b"
                 },
                 { 
-                  icon: <Globe size={24} strokeWidth={1.5} />, 
+                  icon: <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm8.971-10.615c.032-.22.058-.436.08-.645.29-1.85-.008-3.08-1.02-4.23-1.11-1.26-3.11-1.802-5.67-1.802H5.98C5.457.045 5.01.427 4.927.946L1.84 20.597c-.083.518.361.94.885.94h4.606c.524 0 .968-.382 1.05-.9l1.12-7.105c.083-.518.526-.9 1.05-.9h2.19c4.28 0 7.64-1.74 8.62-6.76.03-.15.05-.3.07-.44.03-.17.05-.34.07-.5.02-.17.03-.34.03-.5 0-.01 0-.02 0-.03-.13-.75-.38-1.42-.74-2.02z"/></svg>, 
                   title: "PayPal", 
                   desc: "Donasi internasional melalui akun PayPal",
-                  detail: "@ciburialecodigtal"
+                  detail: "@ciburialecodigtal",
+                  copyText: "@ciburialecodigtal"
                 }
               ].map((m, i) => (
                 <div key={i} style={{ padding: "clamp(16px, 4vw, 20px)", background: "rgba(47,143,78,.04)", border: "1.5px solid rgba(47,143,78,.12)", borderRadius: 14, display: "flex", flexDirection: "column", gap: 12 }}>
@@ -491,6 +494,18 @@ export default function TransparansiTab() {
                     <div style={{ padding: "clamp(8px, 2vw, 12px)", background: "rgba(255,255,255,.6)", borderRadius: 8, border: "1px solid rgba(47,143,78,.1)", fontSize: 12, color: "#1C3A2B", fontFamily: "monospace", fontWeight: 500, lineHeight: 1.6, whiteSpace: "pre-wrap", wordBreak: "break-all" }}>
                       {m.detail}
                     </div>
+                    {m.copyText && (
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigator.clipboard.writeText(m.copyText!);
+                          alert("Disalin: " + m.copyText);
+                        }}
+                        style={{ marginTop: 8, background: "rgba(47,143,78,.1)", border: "none", color: "#1C3A2B", padding: "6px 12px", borderRadius: 6, fontSize: 11, fontWeight: 700, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6 }}
+                      >
+                        SALIN
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}

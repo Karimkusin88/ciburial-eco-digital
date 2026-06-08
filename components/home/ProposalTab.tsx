@@ -233,9 +233,9 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
         <div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 200px),1fr))", gap: "clamp(8px, 2vw, 12px)", marginBottom: 24 }}>
             {[
-              { id: "bank", icon: <Landmark size={24} strokeWidth={1.5} />, t: "Rekening Bank Resmi", sub: "Bank SeaBank", detail: "No. Rek: 901355550666\nA.n: Ubay Rahmat H" },
-              { id: "evm", icon: <Coins size={24} strokeWidth={1.5} />, t: "Crypto (EVM)", sub: "ETH / BSC / Polygon", detail: "0x71723715478b344164e992b49ae1fceb6467888b" },
-              { id: "paypal", icon: <Globe size={24} strokeWidth={1.5} />, t: "PayPal", sub: "Donasi Internasional", detail: "@ciburialecodigtal" },
+              { id: "bank", icon: <Landmark size={24} strokeWidth={1.5} />, t: "Rekening Bank Resmi", sub: "Bank SeaBank", detail: "No. Rek: 901355550666\nA.n: Ubay Rahmat H", copyText: "901355550666" },
+              { id: "evm", icon: <Coins size={24} strokeWidth={1.5} />, t: "Crypto (EVM)", sub: "ETH / BSC / Polygon", detail: "0x71723715478b344164e992b49ae1fceb6467888b", copyText: "0x71723715478b344164e992b49ae1fceb6467888b" },
+              { id: "paypal", icon: <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm8.971-10.615c.032-.22.058-.436.08-.645.29-1.85-.008-3.08-1.02-4.23-1.11-1.26-3.11-1.802-5.67-1.802H5.98C5.457.045 5.01.427 4.927.946L1.84 20.597c-.083.518.361.94.885.94h4.606c.524 0 .968-.382 1.05-.9l1.12-7.105c.083-.518.526-.9 1.05-.9h2.19c4.28 0 7.64-1.74 8.62-6.76.03-.15.05-.3.07-.44.03-.17.05-.34.07-.5.02-.17.03-.34.03-.5 0-.01 0-.02 0-.03-.13-.75-.38-1.42-.74-2.02z"/></svg>, t: "PayPal", sub: "Donasi Internasional", detail: "@ciburialecodigtal", copyText: "@ciburialecodigtal" },
               { id: "midtrans", icon: <Smartphone size={24} strokeWidth={1.5} />, t: "QRIS & E-Wallet", sub: "Secara Otomatis via Midtrans", detail: loadingDonasi ? "⏳ MEMUAT MIDTRANS..." : "SILAKAN KLIK KOTAK INI UNTUK MULAI DONASI" },
             ].map((m, i) => (
               <div key={i} onClick={m.id === "midtrans" ? bayarDonasi : undefined} style={{ padding: "clamp(14px, 4vw, 18px)", background: "var(--fo)", borderRadius: 14, cursor: m.id === "midtrans" ? (loadingDonasi ? "wait" : "pointer") : "default", opacity: m.id === "midtrans" && loadingDonasi ? 0.6 : 1, transition: "opacity .2s, background .2s" }}
@@ -247,9 +247,21 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
                 <div style={{ fontSize: 11, color: "rgba(250,248,243,.5)" }}>{m.sub}</div>
 
                 {m.detail && (
-                  <div style={{ fontSize: 11, color: m.id === "midtrans" ? "var(--gl)" : "rgba(250,248,243,.35)", fontWeight: m.id === "midtrans" ? 700 : 400, marginTop: 9, whiteSpace: "pre-line" }}>
+                  <div style={{ fontSize: 11, color: m.id === "midtrans" ? "var(--gl)" : "rgba(250,248,243,.35)", fontWeight: m.id === "midtrans" ? 700 : 400, marginTop: 9, whiteSpace: "pre-line", wordBreak: "break-all" }}>
                     {m.detail}
                   </div>
+                )}
+                {m.copyText && (
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigator.clipboard.writeText(m.copyText!);
+                      alert("Disalin: " + m.copyText);
+                    }}
+                    style={{ marginTop: 8, background: "rgba(255,255,255,.15)", border: "none", color: "var(--cr)", padding: "4px 10px", borderRadius: 6, fontSize: 10, fontWeight: 700, cursor: "pointer", display: "inline-block" }}
+                  >
+                    SALIN
+                  </button>
                 )}
               </div>
             ))}
