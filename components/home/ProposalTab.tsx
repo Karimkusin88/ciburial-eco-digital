@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { ALOKASI, Transaksi } from "./types";
 import { fRp } from "./types";
-import { FileText, BookOpen, Target, Lightbulb, Leaf, BarChart2, PenTool, Landmark, Wheat, Zap, ShoppingCart, Coins, Heart, Smartphone, Search, MapPin } from "lucide-react";
+import { FileText, BookOpen, Target, Lightbulb, Leaf, BarChart2, PenTool, Landmark, Wheat, Zap, ShoppingCart, Coins, Heart, Smartphone, Search, MapPin, Globe } from "lucide-react";
 
 interface ProposalTabProps {
   transaksi: Transaksi[];
@@ -234,6 +234,8 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 200px),1fr))", gap: "clamp(8px, 2vw, 12px)", marginBottom: 24 }}>
             {[
               { id: "bank", icon: <Landmark size={24} strokeWidth={1.5} />, t: "Rekening Bank Resmi", sub: "Bank SeaBank", detail: "No. Rek: 901355550666\nA.n: Ubay Rahmat H" },
+              { id: "evm", icon: <Coins size={24} strokeWidth={1.5} />, t: "Crypto (EVM)", sub: "ETH / BSC / Polygon", detail: "0x71723715478b344164e992b49ae1fceb6467888b" },
+              { id: "paypal", icon: <Globe size={24} strokeWidth={1.5} />, t: "PayPal", sub: "Donasi Internasional", detail: "@ciburialecodigtal" },
               { id: "midtrans", icon: <Smartphone size={24} strokeWidth={1.5} />, t: "QRIS & E-Wallet", sub: "Secara Otomatis via Midtrans", detail: loadingDonasi ? "⏳ MEMUAT MIDTRANS..." : "SILAKAN KLIK KOTAK INI UNTUK MULAI DONASI" },
             ].map((m, i) => (
               <div key={i} onClick={m.id === "midtrans" ? bayarDonasi : undefined} style={{ padding: "clamp(14px, 4vw, 18px)", background: "var(--fo)", borderRadius: 14, cursor: m.id === "midtrans" ? (loadingDonasi ? "wait" : "pointer") : "default", opacity: m.id === "midtrans" && loadingDonasi ? 0.6 : 1, transition: "opacity .2s, background .2s" }}

@@ -469,6 +469,18 @@ export default function TransparansiTab() {
                   title: "Transfer Bank", 
                   desc: "Rekening resmi untuk donasi melalui perbankan",
                   detail: "SeaBank: 90135555066\na.n Ubay Rahmat H"
+                },
+                { 
+                  icon: <Coins size={24} strokeWidth={1.5} />, 
+                  title: "Crypto (EVM)", 
+                  desc: "Donasi via jaringan blockchain (Ethereum, BSC, Polygon, dll)",
+                  detail: "0x71723715478b344164e992b49ae1fceb6467888b"
+                },
+                { 
+                  icon: <Globe size={24} strokeWidth={1.5} />, 
+                  title: "PayPal", 
+                  desc: "Donasi internasional melalui akun PayPal",
+                  detail: "@ciburialecodigtal"
                 }
               ].map((m, i) => (
                 <div key={i} style={{ padding: "clamp(16px, 4vw, 20px)", background: "rgba(47,143,78,.04)", border: "1.5px solid rgba(47,143,78,.12)", borderRadius: 14, display: "flex", flexDirection: "column", gap: 12 }}>
