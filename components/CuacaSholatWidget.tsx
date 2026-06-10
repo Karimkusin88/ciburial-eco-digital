@@ -42,16 +42,12 @@ export default function CuacaSholatWidget() {
  const [isOpen, setIsOpen] = useState(false);
  
  // Draggable state
- const [position, setPosition] = useState({ x: 24, y: 350 }); // middle-right offset
+ const [position, setPosition] = useState({ x: 24, y: 100 }); // bottom-right, just above BottomNav
  const [isDragging, setIsDragging] = useState(false);
  const dragRef = useRef<{ startX: number; startY: number; startPosX: number; startPosY: number } | null>(null);
 
  useEffect(() => {
  const timer = setInterval(() => setNow(new Date()), 60000);
- // Set to exact middle vertically on client
- if (typeof window !== 'undefined') {
-   setPosition({ x: 24, y: window.innerHeight / 2 - 28 });
- }
  return () => clearInterval(timer);
  }, []);
 
