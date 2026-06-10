@@ -628,6 +628,38 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
                 </div>
             </section>
 
+            {/* LOKASI KAMPUNG SECTION */}
+            <section className="sec" style={{ position: "relative", zIndex: 3, borderBottom: "1px solid var(--bo)", background: "var(--cw)" }}>
+                <div style={{ maxWidth: 1320, margin: "0 auto" }}>
+                    <div className="dlc" style={{ marginBottom: "clamp(32px, 5vw, 48px)" }} />
+                    <div style={{ textAlign: "center", marginBottom: "clamp(32px, 6vw, 56px)" }}>
+                        <h2 className="fnt" style={{ fontSize: "clamp(32px, 5vw, 56px)", fontWeight: 300, color: "var(--fo)", lineHeight: 1.15, letterSpacing: "-.02em", marginBottom: 16 }}>
+                            Lokasi <span style={{ color: "var(--accent)" }}>Kampung Kami</span>
+                        </h2>
+                        <p style={{ fontSize: "clamp(13px, 3vw, 15px)", lineHeight: 1.8, color: "var(--ts)", maxWidth: 580, margin: "0 auto" }}>
+                            Kunjungi kami di Ciburial Eco-Digital Village dan lihat langsung perkembangan inovasi digital dan lingkungan yang sedang kami bangun secara gotong royong.
+                        </p>
+                    </div>
+
+                    <Reveal>
+                        <div style={{ borderRadius: 28, overflow: "hidden", border: "1px solid var(--bo)", background: "var(--cr)", padding: 8 }}>
+                            <div style={{ borderRadius: 20, overflow: "hidden", height: "clamp(300px, 50vh, 500px)", position: "relative", background: "#e5e3df" }}>
+                                <iframe 
+                                    src="https://maps.google.com/maps?q=-7.4619804,107.5959689&z=17&output=embed" 
+                                    width="100%" 
+                                    height="100%" 
+                                    style={{ border: 0, display: "block" }} 
+                                    allowFullScreen 
+                                    loading="lazy" 
+                                    referrerPolicy="no-referrer-when-downgrade"
+                                    title="Peta Lokasi Ciburial Eco-Digital Village"
+                                ></iframe>
+                            </div>
+                        </div>
+                    </Reveal>
+                </div>
+            </section>
+
             {/* DONASI DETAIL POPOVER */}
             {selectedDonationMethod && (
                 <div
