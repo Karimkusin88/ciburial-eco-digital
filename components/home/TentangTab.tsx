@@ -645,7 +645,7 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
                         <div style={{ borderRadius: 28, overflow: "hidden", border: "1px solid var(--bo)", background: "var(--cr)", padding: 8 }}>
                             <div style={{ borderRadius: 20, overflow: "hidden", height: "clamp(300px, 50vh, 500px)", position: "relative", background: "#e5e3df" }}>
                                 <iframe 
-                                    src="https://maps.google.com/maps?q=-7.4619804,107.5959689&z=17&output=embed" 
+                                    src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d1978.0147851712545!2d107.5959689!3d-7.4619804!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e6621005a35f463%3A0xe17822ac9dd7c049!2sKp%20ciburial!5e0!3m2!1sid!2sid!4v1781097649864!5m2!1sid!2sid" 
                                     width="100%" 
                                     height="100%" 
                                     style={{ border: 0, display: "block" }} 
