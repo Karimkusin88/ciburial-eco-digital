@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import "../admin-styles-heroic.css";
+import Image from "next/image";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 interface VotingItem {
@@ -248,7 +249,7 @@ export default function AdminVotingPage() {
                               {uploadingId===o.id ? (
                                 <div style={{fontSize:12,color:"#3B82F6",fontWeight:800,textAlign:"center",lineHeight:1.3}}>⏳<br/>Upload...</div>
                               ) : o.foto ? (
-                                <img src={o.foto} alt="" style={{width:"100%",height:"100%",objectFit:"cover"}} onError={e=>{(e.target as HTMLImageElement).style.display="none";}} />
+                                <Image src={o.foto} alt="" width={64} height={64} style={{width:"100%",height:"100%",objectFit:"cover"}} onError={e=>{(e.target as HTMLImageElement).style.display="none";}} />
                               ) : "📷"}
                             </div>
                             <div style={{fontSize:9,color:"#94A3B8",fontWeight:700,textAlign:"center",marginTop:3,letterSpacing:"0.05em"}}>TAP GALERI</div>
@@ -321,7 +322,7 @@ export default function AdminVotingPage() {
                         <div key={p.id} style={{display:"flex",alignItems:"center",gap:16}}>
                           {t_tipe==="PEMILU"&&(
                             <div style={{width:40,height:40,borderRadius:"50%",background:"#E2E8F0",overflow:"hidden",flexShrink:0,border:"2px solid white",boxShadow:"0 2px 8px rgba(0,0,0,0.1)"}}>
-                              {foto?<img src={foto} alt={nama} style={{width:"100%",height:"100%",objectFit:"cover"}}/>:<div style={{width:"100%",height:"100%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18}}>👤</div>}
+                              {foto?<Image src={foto} alt={nama} width={40} height={40} style={{width:"100%",height:"100%",objectFit:"cover"}}/>:<div style={{width:"100%",height:"100%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18}}>👤</div>}
                             </div>
                           )}
                           <div style={{flex:1}}>

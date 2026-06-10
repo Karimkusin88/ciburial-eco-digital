@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Newspaper, User } from "lucide-react";
+import Image from "next/image";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 import { Testimoni, DEF_TESTIMONI } from "@/components/home/types";
 
@@ -46,9 +47,9 @@ export default function InfoHarianPage() {
               {/* COVER BESAR KHUSUS BERITA */}
               {t.tipe === "berita" && t.foto && (
                 (t.foto.toLowerCase().includes(".mp4") || t.foto.toLowerCase().includes(".webm")) ? (
-                  <video src={t.foto} controls playsInline style={{ width: "100%", height: 190, borderRadius: 14, objectFit: "cover", marginBottom: 4 }} />
+                  <video src={t.foto} controls playsInline preload="metadata" style={{ width: "100%", height: 190, borderRadius: 14, objectFit: "cover", marginBottom: 4 }} />
                 ) : (
-                  <img src={t.foto} alt={t.nama} style={{ width: "100%", height: 190, borderRadius: 14, objectFit: "cover", marginBottom: 4 }} />
+                  <Image src={t.foto} alt={t.nama} width={400} height={190} style={{ width: "100%", height: 190, borderRadius: 14, objectFit: "cover", marginBottom: 4 }} />
                 )
               )}
 
@@ -64,9 +65,9 @@ export default function InfoHarianPage() {
                   {/* AVATAR KECIL (Khusus Tokoh) */}
                   {t.tipe === "tokoh" && t.foto ? (
                     (t.foto.toLowerCase().includes(".mp4") || t.foto.toLowerCase().includes(".webm")) ? (
-                      <video src={t.foto} autoPlay muted loop playsInline style={{ width: 44, height: 44, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+                      <video src={t.foto} autoPlay muted loop playsInline preload="metadata" style={{ width: 44, height: 44, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
                     ) : (
-                      <img src={t.foto} alt={t.nama} style={{ width: 44, height: 44, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+                      <Image src={t.foto} alt={t.nama} width={44} height={44} style={{ width: 44, height: 44, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
                     )
                   ) : (
                     <div style={{ width: 44, height: 44, borderRadius: "50%", background: "var(--cd)", display: "flex", alignItems: "center", justifyContent: "center", color: "#2F8F4E" }}>

@@ -1,5 +1,6 @@
 "use client";
 import { Vote, Stethoscope, ShieldCheck, HandHeart, Megaphone, HandCoins, BookOpen, Smartphone, Landmark, Search, Lightbulb, Globe, AlertCircle, CheckCircle, FileText, Coins } from "lucide-react";
+import Image from "next/image";
 import { TabType, Testimoni } from "./types";
 import { useState, useEffect } from "react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
@@ -748,7 +749,7 @@ export default function TentangTab({ onNavigate, testimoni = [], transaksi = DEF
                                 <button onClick={() => setShowStory(false)} style={{ width: "clamp(28px, 7vw, 36px)", height: "clamp(28px, 7vw, 36px)", borderRadius: "50%", background: "rgba(255,255,255,.2)", border: "none", color: "white", fontSize: "clamp(14px, 3.5vw, 18px)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(4px)", transition: "background .2s" }} onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,.4)"} onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,.2)"}>X</button>
                             </div>
                             <div style={{ position: "absolute", bottom: "clamp(-24px, -6vw, -40px)", left: "clamp(20px, 5vw, 40px)", width: "clamp(50px, 14vw, 80px)", height: "clamp(50px, 14vw, 80px)", borderRadius: "clamp(12px, 3vw, 20px)", background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "clamp(30px, 8vw, 50px)", overflow: "hidden", border: "3px solid #FFFEF9", boxShadow: "0 8px 24px rgba(28,58,43,.15)" }}>
-                                <img src="/founder.png" alt="Ubay Rahmat H." style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement!.innerHTML = '<div style="width:100%;height:100%;background:#4FBF7E;display:flex;align-items:center;justify-content:center;color:white;font-size:40px;"><CheckCircle size={40} /></div>'; }} />
+                                <Image src="/founder.png" alt="Ubay Rahmat H." fill sizes="(max-width: 768px) 14vw, 80px" style={{ objectFit: "cover", objectPosition: "top" }} onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement!.innerHTML = '<div style="width:100%;height:100%;background:#4FBF7E;display:flex;align-items:center;justify-content:center;color:white;font-size:40px;"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg></div>'; }} />
                             </div>
                         </div>
 

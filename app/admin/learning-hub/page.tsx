@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Book, PlaySquare, FileText, Image as ImageIcon, Laptop, CheckCircle, XCircle, Trash2, Edit2, Upload, Folder, Save, Smartphone, ChevronRight } from "lucide-react";
+import Image from "next/image";
 import "../admin-styles-heroic.css";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
@@ -201,9 +202,9 @@ export default function AdminLearningHub() {
                   onMouseOut={e=>(e.currentTarget.style.background="")}>
                   {/* Thumbnail */}
                   {(tab==="buku"&&item.foto_sampul) ? (
-                    <img src={item.foto_sampul} alt="" style={{width:44,height:56,borderRadius:8,objectFit:"cover",flexShrink:0,border:"1px solid rgba(0,0,0,0.08)"}}/>
+                    <Image src={item.foto_sampul} alt="" width={44} height={56} style={{width:44,height:56,borderRadius:8,objectFit:"cover",flexShrink:0,border:"1px solid rgba(0,0,0,0.08)"}}/>
                   ) : tab==="galeri"&&item.url ? (
-                    <img src={item.url} alt="" style={{width:56,height:44,borderRadius:8,objectFit:"cover",flexShrink:0}}/>
+                    <Image src={item.url} alt="" width={56} height={44} style={{width:56,height:44,borderRadius:8,objectFit:"cover",flexShrink:0}}/>
                   ) : (
                     <div style={{width:44,height:44,borderRadius:12,background:"rgba(47,143,78,0.08)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0,color:"#2d5a40"}}>
                       {tab==="buku"?<Book size={20}/>:tab==="video"?<PlaySquare size={20}/>:tab==="dokumen"?<FileText size={20}/>:tab==="galeri"?<ImageIcon size={20}/>:<Laptop size={20}/>}
@@ -268,7 +269,7 @@ export default function AdminLearningHub() {
                   <UploadOrUrl label="File PDF E-Book" value={fB.file_url} onChange={v=>setFB({...fB,file_url:v})} bucket="dokumen-hub" accept=".pdf" urlPlaceholder="URL file PDF E-Book"/>
                 )}
                 <UploadOrUrl label="Foto Sampul" value={fB.foto_sampul} onChange={v=>setFB({...fB,foto_sampul:v})} bucket="buku-sampul" accept="image/*" urlPlaceholder="URL gambar sampul buku"/>
-                {fB.foto_sampul && <img src={fB.foto_sampul} alt="" style={{maxHeight:160,borderRadius:10,objectFit:"cover",border:"1px solid rgba(0,0,0,0.08)"}}/>}
+                {fB.foto_sampul && <Image src={fB.foto_sampul} alt="" width={200} height={160} style={{height: 160, width: "auto", borderRadius:10,objectFit:"cover",border:"1px solid rgba(0,0,0,0.08)"}}/>}
                 <textarea style={{...IS,minHeight:80}} placeholder="Deskripsi / sinopsis singkat" value={fB.deskripsi} onChange={e=>setFB({...fB,deskripsi:e.target.value})}/>
               </div>
             )}
@@ -308,7 +309,7 @@ export default function AdminLearningHub() {
               <div style={{display:"flex",flexDirection:"column",gap:14}}>
                 <input style={IS} placeholder="Judul / nama foto" value={fG.judul} onChange={e=>setFG({...fG,judul:e.target.value})}/>
                 <UploadOrUrl label="Foto Kegiatan *" value={fG.url} onChange={v=>setFG({...fG,url:v})} bucket="galeri-hub" accept="image/*" urlPlaceholder="https://... URL foto"/>
-                {fG.url && <img src={fG.url} alt="" style={{maxHeight:180,borderRadius:12,objectFit:"cover"}}/>}
+                {fG.url && <Image src={fG.url} alt="" width={200} height={180} style={{height: 180, width: "auto", borderRadius:12,objectFit:"cover"}}/>}
                 <textarea style={{...IS,minHeight:80}} placeholder="Keterangan foto / kegiatan" value={fG.deskripsi} onChange={e=>setFG({...fG,deskripsi:e.target.value})}/>
               </div>
             )}

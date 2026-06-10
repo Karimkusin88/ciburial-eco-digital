@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, ReactNode } from "react";
 import { Landmark, Home, User, HandHeart, Zap, FileText, Coins, Building, Monitor, Wheat, ShoppingCart, Megaphone, Lightbulb, BookOpen, Sprout, BarChart2, Wrench } from "lucide-react";
+import Image from "next/image";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 
 // ─── STRUKTUR ORGANISASI ─────────────────────────────────────────────────
@@ -140,7 +141,7 @@ export default function TentangPage() {
                 <div key={item.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: "clamp(30px, 8vw, 50px)", position: 'relative', width: "clamp(100px, 28vw, 220px)", minWidth: 100, animation: `float-heroic 6s ease-in-out infinite ${(i * 0.2).toFixed(1)}s` }}>
                   <div style={{ width: "clamp(60px, 18vw, 140px)", height: "clamp(60px, 18vw, 140px)", borderRadius: "clamp(14px, 4vw, 28px)", padding: 3, background: "var(--cw)", border: `2px solid var(--go)`, zIndex: 2, position: "relative", marginBottom: "clamp(-24px, -6vw, -40px)", boxShadow: `0 12px 24px rgba(184,148,63,.25)`, overflow: "hidden" }}>
                     {item.foto ? (
-                      <img src={item.foto} alt={item.nama} style={{ width: "100%", height: "100%", borderRadius: "clamp(12px, 3.5vw, 22px)", objectFit: "cover" }} />
+                      <Image src={item.foto} alt={item.nama} width={200} height={200} style={{ width: "100%", height: "100%", borderRadius: "clamp(12px, 3.5vw, 22px)", objectFit: "cover" }} />
                     ) : (
                       <div style={{ width: "100%", height: "100%", borderRadius: "clamp(12px, 3.5vw, 22px)", background: "var(--fo)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "clamp(24px, 6vw, 44px)" }}></div>
                     )}
@@ -164,7 +165,7 @@ export default function TentangPage() {
                   <div key={item.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: "clamp(24px, 6vw, 40px)", position: 'relative', width: "clamp(100px, 28vw, 220px)", minWidth: 100, animation: `float-heroic 6s ease-in-out infinite ${(i * 0.2 + 1).toFixed(1)}s` }}>
                     <div style={{ width: "clamp(60px, 18vw, 140px)", height: "clamp(60px, 18vw, 140px)", borderRadius: "clamp(14px, 4vw, 28px)", padding: 3, background: "var(--cw)", border: `2px solid #2F8F4E`, zIndex: 2, position: "relative", marginBottom: "clamp(-24px, -6vw, -40px)", boxShadow: `0 12px 24px rgba(47,143,78,.25)`, overflow: "hidden" }}>
                       {item.foto ? (
-                        <img src={item.foto} alt={item.nama} style={{ width: "100%", height: "100%", borderRadius: "clamp(12px, 3.5vw, 22px)", objectFit: "cover" }} />
+                        <Image src={item.foto} alt={item.nama} width={200} height={200} style={{ width: "100%", height: "100%", borderRadius: "clamp(12px, 3.5vw, 22px)", objectFit: "cover" }} />
                       ) : (
                         <div style={{ width: "100%", height: "100%", borderRadius: "clamp(12px, 3.5vw, 22px)", background: "var(--fo)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "clamp(24px, 6vw, 44px)" }}></div>
                       )}
@@ -186,7 +187,7 @@ export default function TentangPage() {
                   <div key={item.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: "clamp(24px, 6vw, 40px)", position: 'relative', width: "clamp(100px, 28vw, 220px)", minWidth: 100, animation: `float-heroic 6s ease-in-out infinite ${(i * 0.2 + 2).toFixed(1)}s` }}>
                     <div style={{ width: "clamp(60px, 18vw, 140px)", height: "clamp(60px, 18vw, 140px)", borderRadius: "clamp(14px, 4vw, 28px)", padding: 3, background: "var(--cw)", border: `2px solid var(--go)`, zIndex: 2, position: "relative", marginBottom: "clamp(-24px, -6vw, -40px)", boxShadow: `0 12px 24px rgba(184,148,63,.25)`, overflow: "hidden" }}>
                       {item.foto ? (
-                        <img src={item.foto} alt={item.nama} style={{ width: "100%", height: "100%", borderRadius: "clamp(12px, 3.5vw, 22px)", objectFit: "cover" }} />
+                        <Image src={item.foto} alt={item.nama} width={200} height={200} style={{ width: "100%", height: "100%", borderRadius: "clamp(12px, 3.5vw, 22px)", objectFit: "cover" }} />
                       ) : (
                         <div style={{ width: "100%", height: "100%", borderRadius: "clamp(12px, 3.5vw, 22px)", background: "var(--fo)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "clamp(24px, 6vw, 44px)" }}></div>
                       )}

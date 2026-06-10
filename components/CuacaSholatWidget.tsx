@@ -42,7 +42,7 @@ export default function CuacaSholatWidget() {
  const [isOpen, setIsOpen] = useState(false);
  
  // Draggable state
- const [position, setPosition] = useState({ x: 24, y: 100 }); // bottom-right, just above BottomNav
+ const [position, setPosition] = useState({ x: 16, y: 130 }); // bottom-right, just above BottomNav
  const [isDragging, setIsDragging] = useState(false);
  const dragRef = useRef<{ startX: number; startY: number; startPosX: number; startPosY: number } | null>(null);
 
