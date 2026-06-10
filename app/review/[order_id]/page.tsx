@@ -1,10 +1,10 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { supabase, isSupabaseReady } from "@/lib/supabase";
 import { Star, CheckCircle, ArrowLeft } from "lucide-react";
 
-export default function ReviewPage({ params }: { params: { order_id: string } }) {
-  const { order_id } = params;
+export default function ReviewPage({ params }: { params: Promise<{ order_id: string }> }) {
+  const { order_id } = use(params);
   
   const [toast, setToast] = useState("");
   const [loading, setLoading] = useState(true);
