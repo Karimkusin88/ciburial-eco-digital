@@ -3,7 +3,8 @@ import withSerwistInit from "@serwist/next";
 const withSerwist = withSerwistInit({
   swSrc: "app/sw.ts",
   swDest: "public/sw.js",
-  // Disable serwist di dev mode — tidak support Turbopack
+  // Disable serwist di dev mode karena Turbopack tidak support
+  // Di production (Vercel), serwist aktif dengan webpack
   disable: process.env.NODE_ENV !== "production",
 });
 
@@ -11,8 +12,6 @@ const withSerwist = withSerwistInit({
 const nextConfig = {
   // Matikan Vercel dev indicators
   devIndicators: false,
-  // Tambah empty turbopack config supaya Next.js 16 tidak complaint
-  turbopack: {},
   images: {
     remotePatterns: [
       {
