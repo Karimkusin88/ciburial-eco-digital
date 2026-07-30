@@ -197,7 +197,7 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
       )
     },
     {
-      title: "Bab VI — RAB Tahap 1 (Target Rp 5.952.308)", icon: <Coins size={20} strokeWidth={1.5} color="currentColor" />,
+      title: "Bab VI — RAB Tahap 1 (Target Rp 12.955.000)", icon: <Coins size={20} strokeWidth={1.5} color="currentColor" />,
       content: (
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <p style={{ fontSize: 13, lineHeight: 1.7, color: "var(--ts)", marginBottom: 8 }}>
@@ -209,9 +209,9 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
           <div style={{ padding: "clamp(12px, 3vw, 16px)", background: "var(--cr)", borderRadius: 13, border: "1px solid var(--bo)", marginBottom: 4 }}>
             <div style={{ fontSize: 14, fontWeight: 700, color: "var(--tp)", marginBottom: 12 }}>💡 Rincian Anggaran Material (20 Titik PJU - Tahap 1):</div>
             <ul style={{ fontSize: 13, lineHeight: 1.8, color: "var(--ts)", paddingLeft: 20, margin: 0 }}>
-              <li><strong>20 Tiang PJU Stainless</strong> = Rp 3.469.200</li>
-              <li><strong>20 pcs Lampu 22 Watt</strong> = Rp 837.000</li>
-              <li><strong>Kabel (50 meter)</strong> = Rp 611.108</li>
+              <li><strong>20 Tiang PJU Stainless</strong> = Rp 6.920.000</li>
+              <li><strong>20 pcs Lampu PJU Cobra 50Watt</strong> = Rp 2.100.000</li>
+              <li><strong>Kabel Twisted SR 2x10mm (500 meter)</strong> = Rp 2.900.000</li>
               <li><strong>Semen & Pasir (untuk pondasi)</strong> = Rp 500.000</li>
               <li><strong>Cetakan PJU</strong> = Rp 385.000</li>
               <li><strong>Cat & Material Pendukung</strong> = Rp 150.000</li>
@@ -220,8 +220,8 @@ export default function ProposalTab({ transaksi }: ProposalTabProps) {
           <div style={{ padding: "clamp(12px, 3vw, 16px) clamp(16px, 4vw, 22px)", background: "var(--fo)", borderRadius: 14, display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 8, marginTop: 4 }}>
             <span style={{ fontSize: 13, fontWeight: 700, color: "var(--cr)" }}>TOTAL KEBUTUHAN TAHAP 1</span>
             <div style={{ textAlign: "right" }}>
-              <span className="fnt" style={{ fontSize: 22, fontWeight: 600, color: "var(--gl)" }}>Rp 5.952.308</span>
-              <div style={{ fontSize: 11, color: "rgba(250,248,243,.45)" }}>Lima Juta Sembilan Ratus Lima Puluh Dua Ribu Tiga Ratus Delapan Rupiah</div>
+              <span className="fnt" style={{ fontSize: 22, fontWeight: 600, color: "var(--gl)" }}>Rp 12.955.000</span>
+              <div style={{ fontSize: 11, color: "rgba(250,248,243,.45)" }}>Dua Belas Juta Sembilan Ratus Lima Puluh Lima Ribu Rupiah</div>
             </div>
           </div>
         </div>

@@ -5,7 +5,7 @@ import { Home, TreePine, Wheat, Soup, Recycle, Leaf, QrCode, Heart, Landmark, Ch
 import { Transaksi, ALOKASI, fRp, DEF_TX } from "./types";
 
 // ─── RAB target tahap 1 ─────────────────────────────────────────────────────
-const RAB_TARGET = 5_952_308;
+const RAB_TARGET = 12_955_000;
 
 // ─── Warna kategori alokasi ────────────────────────────────────────────────
 const ALOKASI_COLORS = ["#2D5A40","#4A7C59","#B8943F","#1A3A6B","#6B4F3A","#8A7065"];

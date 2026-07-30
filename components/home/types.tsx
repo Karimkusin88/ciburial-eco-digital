@@ -77,9 +77,9 @@ export const KAT_CFG: Record<string, { label: string; bg: string; color: string 
 };
 
 export const ALOKASI = [
-  { label: "Tiang PJU Stainless", target: 3469200, icon: <Landmark size={18} strokeWidth={1.5} />, color: "#2D5A40", desc: "20 Tiang PJU" },
-  { label: "Lampu 22 Watt", target: 837000, icon: <Lightbulb size={18} strokeWidth={1.5} />, color: "#4A7C59", desc: "20 pcs Lampu" },
-  { label: "Kabel PJU", target: 611108, icon: <Lamp size={18} strokeWidth={1.5} />, color: "#B8943F", desc: "Kabel instalasi 50m" },
+  { label: "Tiang PJU Stainless", target: 6920000, icon: <Landmark size={18} strokeWidth={1.5} />, color: "#2D5A40", desc: "20 Tiang PJU" },
+  { label: "Lampu PJU Cobra 50Watt", target: 2100000, icon: <Lightbulb size={18} strokeWidth={1.5} />, color: "#4A7C59", desc: "20 pcs Lampu" },
+  { label: "Kabel Twisted SR 2x10mm", target: 2900000, icon: <Lamp size={18} strokeWidth={1.5} />, color: "#B8943F", desc: "Kabel instalasi 500m" },
   { label: "Semen & Pasir", target: 500000, icon: <Leaf size={18} strokeWidth={1.5} />, color: "#1A3A6B", desc: "Material pondasi" },
   { label: "Cetakan PJU", target: 385000, icon: <Recycle size={18} strokeWidth={1.5} />, color: "#6B4F3A", desc: "Cetakan cor" },
   { label: "Cat & Material", target: 150000, icon: <Sprout size={18} strokeWidth={1.5} />, color: "#8A7065", desc: "Cat & pendukung lainnya" },

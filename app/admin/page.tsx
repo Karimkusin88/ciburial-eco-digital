@@ -47,8 +47,8 @@ const KAT_MASUK = [
 // agar chart distribusi pengeluaran di Transparansi Dana terpetakan dengan benar
 const KAT_KELUAR = [
   "Tiang PJU Stainless",
-  "Lampu 22 Watt",
-  "Kabel PJU",
+  "Lampu PJU Cobra 50Watt",
+  "Kabel Twisted SR 2x10mm",
   "Semen & Pasir",
   "Cetakan PJU",
   "Cat & Material",
